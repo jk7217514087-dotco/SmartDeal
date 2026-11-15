@@ -1,0 +1,871 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+  Product,
+  CartItem,
+  Order,
+  PriceAlert,
+  SmartCoinsTransaction,
+  Role,
+  Seller,
+  CommissionSlab,
+  AdminSettings,
+  Address,
+  MarketplacePrice,
+  TrackedUser,
+  GuestSession,
+  ActivityActionType,
+  OutboundClickRecord,
+  CashbackWallet,
+  CashbackTransaction
+} from '../types';
+import { mockProducts, initialCommissionSlabs } from '../data/mockProducts';
+import { trackingService } from '../services/trackingService';
+
+interface AppContextType {
+  role: Role;
+  setRole: (role: Role) => void;
+  currentUser: TrackedUser | null;
+  guestSession: GuestSession;
+  loginUser: (email: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
+  registerUser: (name: string, email: string, phone: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
+  logoutUser: () => void;
+  trackActivity: (actionType: ActivityActionType, details: Record<string, any>, productId?: string, productName?: string, category?: string) => void;
+  trackOutboundClick: (productId: string, productName: string, category: string, marketplace: string, price: number, exactUrl: string) => OutboundClickRecord;
+  products: Product[];
+  addProduct: (product: Omit<Product, 'id' | 'dealScore' | 'dealScoreBreakdown' | 'fakeDiscountAudit' | 'buyNowRecommendation' | 'priceHistory' | 'marketplacePrices'>) => void;
+  cart: CartItem[];
+  addToCart: (product: Product, quantity?: number, selectedSellerPrice?: MarketplacePrice) => void;
+  removeFromCart: (productId: string, sellerName?: string) => void;
+  updateCartQuantity: (productId: string, quantity: number, sellerName?: string) => void;
+  clearCart: () => void;
+  appliedCoupon: string | null;
+  couponDiscount: number;
+  applyCoupon: (code: string) => { success: boolean; message: string };
+  removeCoupon: () => void;
+  useSmartCoins: boolean;
+  setUseSmartCoins: (use: boolean) => void;
+  coinsToRedeem: number;
+  setCoinsToRedeem: (coins: number) => void;
+  cartCalculations: {
+    mrpTotal: number;
+    sellingPriceTotal: number;
+    deliveryTotal: number;
+    couponDiscount: number;
+    smartCoinsDiscount: number;
+    finalPayable: number;
+    totalSavings: number;
+    coinsEarned: number;
+  };
+  wishlist: string[];
+  toggleWishlist: (productId: string) => void;
+  priceAlerts: PriceAlert[];
+  addPriceAlert: (productId: string, targetPrice: number, notifyVia?: ('in-app' | 'email' | 'sms')[]) => void;
+  removePriceAlert: (alertId: string) => void;
+  orders: Order[];
+  placeOrder: (
+    paymentMethod: 'UPI' | 'Credit / Debit Card' | 'Net Banking' | 'Cash on Delivery',
+    shippingAddress: Address
+  ) => Order;
+  smartCoinsBalance: number;
+  smartCoinsTransactions: SmartCoinsTransaction[];
+  claimDailyCoins: () => { success: boolean; message: string };
+  canClaimDaily: boolean;
+  seller: Seller;
+  updateSellerKYC: (status: 'Approved' | 'Pending' | 'Rejected') => void;
+  commissionSlabs: CommissionSlab[];
+  updateCommissionSlab: (index: number, newRate: number) => void;
+  adminSettings: AdminSettings;
+  updateAdminSettings: (newSettings: Partial<AdminSettings>) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  isAiAssistantOpen: boolean;
+  setIsAiAssistantOpen: (open: boolean) => void;
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+  cashbackWallet: CashbackWallet;
+  cashbackTransactions: CashbackTransaction[];
+  redeemCashback: (amount: number, method?: string, accountDetails?: string) => { success: boolean; message: string; newBalance?: number };
+  processReturnReversal: (orderRef: string, reason: string) => { success: boolean; message: string; reversedAmount?: number };
+  refreshCashback: () => void;
+  isSmsCenterOpen: boolean;
+  setIsSmsCenterOpen: (open: boolean) => void;
+}
+
+const defaultAddress: Address = {
+  id: 'addr-1',
+  fullName: 'Rohit Kumar',
+  street: '123, Green Park, Near Metro Station',
+  city: 'New Delhi',
+  state: 'Delhi',
+  pincode: '110016',
+  phone: '+91 98765 43210',
+  isDefault: true,
+};
+
+const initialOrders: Order[] = [
+  {
+    id: 'SD1234567890',
+    date: '27 May 2024, 10:30 AM',
+    items: [
+      {
+        productId: 'prod-samsung-m14',
+        productName: 'Samsung Galaxy M14 5G (Smoky Teal, 6GB RAM, 128GB Storage)',
+        productImage: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
+        price: 12490,
+        quantity: 1,
+        sellerName: 'SmartDeals Direct'
+      },
+      {
+        productId: 'prod-boat-airdopes',
+        productName: 'boAt Airdopes 141 Bluetooth TWS Earbuds',
+        productImage: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
+        price: 1299,
+        quantity: 1,
+        sellerName: 'SoundWave Hub'
+      }
+    ],
+    mrpTotal: 22489,
+    discountTotal: 8700,
+    deliveryTotal: 0,
+    couponDiscount: 200,
+    smartCoinsUsed: 230,
+    smartCoinsValue: 23,
+    smartCoinsEarned: 155,
+    finalAmount: 13566,
+    paymentMethod: 'UPI',
+    paymentStatus: 'Paid',
+    status: 'Shipped',
+    expectedDelivery: 'Tomorrow, by 2:00 PM',
+    trackingId: 'TRK-DELHIVERY-9842',
+    deliveryPartner: 'Delhivery Surface Air',
+    shippingAddress: defaultAddress,
+    timeline: [
+      { title: 'Order Confirmed', date: '27 May, 10:30 AM', completed: true, description: 'Order confirmed with SmartDeals Assured Seller.' },
+      { title: 'Packed', date: '27 May, 03:15 PM', completed: true, description: 'Item verified and packed with tamper-proof seal.' },
+      { title: 'Shipped', date: '28 May, 08:00 AM', completed: true, description: 'In transit from Okhla Logistics Center.' },
+      { title: 'Out for Delivery', date: 'Expected Tomorrow', completed: false, description: 'Delivery executive will call before arrival.' },
+      { title: 'Delivered', date: 'Expected 29 May', completed: false, description: 'Package handed to customer with OTP verification.' }
+    ]
+  }
+];
+
+const initialTransactions: SmartCoinsTransaction[] = [
+  { id: 'tx-1', date: '27 May 2024', type: 'redeemed', amount: 230, reason: 'Used on Order #SD1234567890', orderId: 'SD1234567890' },
+  { id: 'tx-2', date: '24 May 2024', type: 'earned', amount: 120, reason: 'Purchase reward for Samsung Galaxy M14 5G' },
+  { id: 'tx-3', date: '20 May 2024', type: 'earned', amount: 50, reason: 'Referral Bonus: Friend signed up' },
+  { id: 'tx-4', date: '15 May 2024', type: 'earned', amount: 15, reason: 'Verified Product Review' },
+  { id: 'tx-5', date: '10 May 2024', type: 'earned', amount: 45, reason: 'Welcome Signup Bonus' }
+];
+
+const initialSeller: Seller = {
+  id: 'seller-tech-01',
+  fullName: 'Jitendra Sharma',
+  businessName: 'iTech Retail Ventures Pvt Ltd',
+  email: 'seller.support@itechretail.in',
+  phone: '+91 98765 11223',
+  storeName: 'iTech India Premium',
+  gstNumber: '07AAAAA0000A1Z5',
+  panNumber: 'ABCDE1234F',
+  bankAccount: '918273645012',
+  bankIfsc: 'HDFC0001234',
+  category: 'Electronics & Mobiles',
+  address: 'Shop 42, Nehru Place Commercial Complex, New Delhi 110019',
+  kycStatus: 'Approved',
+  verified: true,
+  joinedDate: '15 Jan 2024',
+  totalSales: 125000,
+  totalOrders: 156,
+  deliveredOrdersCount: 149,
+  rating: 4.87,
+  commissionTier: 'Standard Tier (12%)',
+  salesCountForIncentive: 7 // 7 of 10 completed!
+};
+
+const defaultAdminSettings: AdminSettings = {
+  coinRedemptionRate: 10, // 10 coins = 1 rupee
+  maxCoinsPerOrder: 500,
+  baseCommissionPercent: 12,
+  incentiveThresholdSales: 10,
+  dailyLoginReward: 5,
+  reviewReward: 15,
+  referralReward: 50
+};
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<TrackedUser | null>(() => {
+    return trackingService.getCurrentUser();
+  });
+
+  const [guestSession, setGuestSession] = useState<GuestSession>(() => {
+    return trackingService.getGuestSession();
+  });
+
+  const [role, setRoleState] = useState<Role>(() => {
+    const active = trackingService.getCurrentUser();
+    if (active?.role === 'ADMIN') return 'ADMIN';
+    return (localStorage.getItem('smartdeals_role') as Role) || 'USER';
+  });
+
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('smartdeals_products');
+    return saved ? JSON.parse(saved) : mockProducts;
+  });
+
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('smartdeals_cart');
+    if (saved) return JSON.parse(saved);
+    // Initial sample cart item
+    return [{ product: mockProducts[0], quantity: 1 }];
+  });
+
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>('SMART200');
+  const [couponDiscount, setCouponDiscount] = useState<number>(200);
+  const [useSmartCoins, setUseSmartCoins] = useState<boolean>(true);
+  const [coinsToRedeem, setCoinsToRedeem] = useState<number>(230);
+
+  const [wishlist, setWishlist] = useState<string[]>(() => {
+    const saved = localStorage.getItem('smartdeals_wishlist');
+    return saved
+      ? JSON.parse(saved)
+      : ['prod-apple-iphone15', 'prod-hp-pavilion-15', 'prod-boat-airdopes', 'prod-nike-running-shoes'];
+  });
+
+  const [priceAlerts, setPriceAlerts] = useState<PriceAlert[]>(() => {
+    const saved = localStorage.getItem('smartdeals_alerts');
+    return saved ? JSON.parse(saved) : [
+      {
+        id: 'alert-1',
+        productId: 'prod-samsung-m14',
+        productName: 'Samsung Galaxy M14 5G (Smoky Teal, 6GB RAM)',
+        productImage: mockProducts[0].image,
+        currentPrice: 12490,
+        targetPrice: 11999,
+        createdDate: '28 May 2024',
+        active: true,
+        notifyVia: ['in-app', 'email']
+      }
+    ];
+  });
+
+  const [orders, setOrders] = useState<Order[]>(() => {
+    const saved = localStorage.getItem('smartdeals_orders');
+    return saved ? JSON.parse(saved) : initialOrders;
+  });
+
+  const [smartCoinsBalance, setSmartCoinsBalance] = useState<number>(() => {
+    const saved = localStorage.getItem('smartdeals_coins');
+    return saved ? Number(saved) : 230;
+  });
+
+  const [smartCoinsTransactions, setSmartCoinsTransactions] = useState<SmartCoinsTransaction[]>(() => {
+    const saved = localStorage.getItem('smartdeals_coin_txs');
+    return saved ? JSON.parse(saved) : initialTransactions;
+  });
+
+  const [seller, setSeller] = useState<Seller>(() => {
+    const saved = localStorage.getItem('smartdeals_seller');
+    return saved ? JSON.parse(saved) : initialSeller;
+  });
+
+  const [commissionSlabs, setCommissionSlabs] = useState<CommissionSlab[]>(() => {
+    const saved = localStorage.getItem('smartdeals_slabs');
+    return saved ? JSON.parse(saved) : initialCommissionSlabs;
+  });
+
+  const [adminSettings, setAdminSettings] = useState<AdminSettings>(() => {
+    const saved = localStorage.getItem('smartdeals_admin_settings');
+    return saved ? JSON.parse(saved) : defaultAdminSettings;
+  });
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAiAssistantOpen, setIsAiAssistantOpen] = useState(false);
+  const [isSmsCenterOpen, setIsSmsCenterOpen] = useState(false);
+  const [lastClaimDate, setLastClaimDate] = useState<string>(() => {
+    return localStorage.getItem('smartdeals_last_claim') || '';
+  });
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('smartdeals_dark_mode');
+    if (saved !== null) return saved === 'true';
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_dark_mode', isDarkMode.toString());
+    if (typeof document !== 'undefined') {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
+
+  // Sync to localStorage
+  useEffect(() => {
+    localStorage.setItem('smartdeals_role', role);
+  }, [role]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_cart', JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_alerts', JSON.stringify(priceAlerts));
+  }, [priceAlerts]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_orders', JSON.stringify(orders));
+  }, [orders]);
+
+  const [cashbackWallet, setCashbackWallet] = useState<CashbackWallet>(() => {
+    return trackingService.getCashbackWallet(currentUser?.id || 'U10025');
+  });
+
+  const refreshCashback = () => {
+    const updated = trackingService.getCashbackWallet(currentUser?.id || 'U10025');
+    setCashbackWallet(updated);
+  };
+
+  useEffect(() => {
+    refreshCashback();
+  }, [currentUser]);
+
+  const redeemCashback = (amount: number, method: string = 'UPI', accountDetails: string = 'user@okaxis') => {
+    const userId = currentUser?.id || 'U10025';
+    const res = trackingService.redeemCashback(userId, amount, method, accountDetails);
+    if (res.success) {
+      refreshCashback();
+    }
+    return res;
+  };
+
+  const processReturnReversal = (orderRef: string, reason: string) => {
+    const res = trackingService.processReturnAndReversal({ orderRef, reason });
+    if (res.success) {
+      refreshCashback();
+    }
+    return res;
+  };
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_coins', smartCoinsBalance.toString());
+  }, [smartCoinsBalance]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_coin_txs', JSON.stringify(smartCoinsTransactions));
+  }, [smartCoinsTransactions]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_seller', JSON.stringify(seller));
+  }, [seller]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_products', JSON.stringify(products));
+  }, [products]);
+
+  // Sync with local REST API server if reachable
+  useEffect(() => {
+    fetch('http://localhost:3001/api/products')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success) {
+          console.info(`[SmartDeals REST API] Connected. Synced ${data.count} catalog items from backend.`);
+        }
+      })
+      .catch(() => {
+        // Offline / standalone mode: seamless local state fallback
+      });
+  }, []);
+
+  const setRole = (newRole: Role) => {
+    setRoleState(newRole);
+    if (newRole === 'ADMIN' && currentUser?.role !== 'ADMIN') {
+      const admin = trackingService.getUsers().find(u => u.role === 'ADMIN');
+      if (admin) {
+        trackingService.setCurrentUser(admin);
+        setCurrentUser(admin);
+      }
+    }
+  };
+
+  const loginUser = async (email: string, password: string) => {
+    const res = await trackingService.authenticateUser(email, password);
+    if (res.success && res.user) {
+      setCurrentUser(res.user);
+      if (res.user.role === 'ADMIN') {
+        setRoleState('ADMIN');
+      } else {
+        setRoleState('USER');
+      }
+    }
+    return res;
+  };
+
+  const registerUser = async (name: string, email: string, phone: string, password: string) => {
+    const res = await trackingService.registerUser(name, email, phone, password);
+    if (res.success && res.user) {
+      setCurrentUser(res.user);
+      setRoleState('USER');
+    }
+    return res;
+  };
+
+  const logoutUser = () => {
+    trackingService.logoutUser();
+    setCurrentUser(null);
+    setRoleState('USER');
+  };
+
+  const trackActivity = (
+    actionType: ActivityActionType,
+    details: Record<string, any>,
+    productId?: string,
+    productName?: string,
+    category?: string
+  ) => {
+    trackingService.logActivity(actionType, details, productId, productName, category);
+  };
+
+  const trackOutboundClick = (
+    productId: string,
+    productName: string,
+    category: string,
+    marketplace: string,
+    price: number,
+    exactUrl: string
+  ) => {
+    return trackingService.recordOutboundClick(productId, productName, category, marketplace, price, exactUrl);
+  };
+
+  const addToCart = (product: Product, quantity = 1, selectedSellerPrice?: MarketplacePrice) => {
+    setCart(prev => {
+      const existing = prev.find(
+        item => item.product.id === product.id &&
+                (!selectedSellerPrice || item.selectedSellerPrice?.sellerName === selectedSellerPrice?.sellerName)
+      );
+      if (existing) {
+        return prev.map(item =>
+          item === existing
+            ? { ...item, quantity: item.quantity + quantity, selectedSellerPrice: selectedSellerPrice || item.selectedSellerPrice }
+            : item
+        );
+      }
+      return [...prev, { product, quantity, selectedSellerPrice }];
+    });
+  };
+
+  const removeFromCart = (productId: string, sellerName?: string) => {
+    setCart(prev => prev.filter(item => {
+      if (item.product.id !== productId) return true;
+      if (sellerName && item.selectedSellerPrice?.sellerName !== sellerName) return true;
+      return false;
+    }));
+  };
+
+  const updateCartQuantity = (productId: string, quantity: number, sellerName?: string) => {
+    if (quantity <= 0) {
+      removeFromCart(productId, sellerName);
+      return;
+    }
+    setCart(prev =>
+      prev.map(item => {
+        if (item.product.id === productId && (!sellerName || item.selectedSellerPrice?.sellerName === sellerName)) {
+          return { ...item, quantity };
+        }
+        return item;
+      })
+    );
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const applyCoupon = (code: string) => {
+    const upper = code.trim().toUpperCase();
+    if (upper === 'SMART200') {
+      setAppliedCoupon('SMART200');
+      setCouponDiscount(200);
+      return { success: true, message: 'Coupon applied! ₹200 savings added.' };
+    }
+    if (upper === 'DEAL500') {
+      setAppliedCoupon('DEAL500');
+      setCouponDiscount(500);
+      return { success: true, message: 'Mega Coupon applied! ₹500 off.' };
+    }
+    if (upper === 'WELCOME50') {
+      setAppliedCoupon('WELCOME50');
+      setCouponDiscount(50);
+      return { success: true, message: 'Welcome coupon applied! ₹50 savings added.' };
+    }
+    return { success: false, message: 'Invalid or expired coupon code. Try SMART200 or DEAL500' };
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponDiscount(0);
+  };
+
+  const toggleWishlist = (productId: string) => {
+    setWishlist(prev =>
+      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+    );
+  };
+
+  const addPriceAlert = (productId: string, targetPrice: number, notifyVia: ('in-app' | 'email' | 'sms')[] = ['in-app', 'email']) => {
+    const prod = products.find(p => p.id === productId);
+    if (!prod) return;
+    const newAlert: PriceAlert = {
+      id: `alert-${Date.now()}`,
+      productId,
+      productName: prod.name,
+      productImage: prod.image,
+      currentPrice: prod.sellingPrice,
+      targetPrice,
+      createdDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+      active: true,
+      notifyVia
+    };
+    setPriceAlerts(prev => [newAlert, ...prev.filter(a => a.productId !== productId)]);
+  };
+
+  const removePriceAlert = (alertId: string) => {
+    setPriceAlerts(prev => prev.filter(a => a.id !== alertId));
+  };
+
+  // Cart Calculations
+  const mrpTotal = cart.reduce((sum, item) => sum + item.product.mrp * item.quantity, 0);
+  const sellingPriceTotal = cart.reduce((sum, item) => {
+    const p = item.selectedSellerPrice ? item.selectedSellerPrice.finalPrice : item.product.sellingPrice;
+    return sum + p * item.quantity;
+  }, 0);
+  const deliveryTotal = sellingPriceTotal > 999 || sellingPriceTotal === 0 ? 0 : 49;
+  
+  // Dynamic SmartCoins earning:
+  const coinsEarned = cart.reduce((sum, item) => {
+    const pPrice = item.selectedSellerPrice ? item.selectedSellerPrice.finalPrice : item.product.sellingPrice;
+    let slabCoins = 10;
+    if (pPrice < 1000) slabCoins = 10;
+    else if (pPrice < 5000) slabCoins = 45;
+    else if (pPrice < 10000) slabCoins = 150;
+    else slabCoins = Math.min(500, Math.floor(pPrice * 0.015));
+    return sum + (slabCoins * item.quantity);
+  }, 0);
+
+  // Coins redemption: 10 coins = ₹1
+  const maxRedeemableCoins = Math.min(
+    smartCoinsBalance,
+    adminSettings.maxCoinsPerOrder,
+    Math.floor((sellingPriceTotal - couponDiscount) * adminSettings.coinRedemptionRate)
+  );
+
+  const effectiveCoinsToRedeem = useSmartCoins ? Math.min(coinsToRedeem, maxRedeemableCoins) : 0;
+  const smartCoinsDiscount = Math.floor(effectiveCoinsToRedeem / adminSettings.coinRedemptionRate);
+
+  const finalPayable = Math.max(0, sellingPriceTotal + deliveryTotal - couponDiscount - smartCoinsDiscount);
+  const totalSavings = Math.max(0, mrpTotal - finalPayable);
+
+  const placeOrder = (
+    paymentMethod: 'UPI' | 'Credit / Debit Card' | 'Net Banking' | 'Cash on Delivery',
+    shippingAddress: Address = defaultAddress
+  ): Order => {
+    const orderId = `SD${Date.now().toString().slice(-8)}`;
+    const newOrder: Order = {
+      id: orderId,
+      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      items: cart.map(item => ({
+        productId: item.product.id,
+        productName: item.product.name,
+        productImage: item.product.image,
+        price: item.selectedSellerPrice ? item.selectedSellerPrice.finalPrice : item.product.sellingPrice,
+        quantity: item.quantity,
+        sellerName: item.selectedSellerPrice ? item.selectedSellerPrice.sellerName : item.product.seller
+      })),
+      mrpTotal,
+      discountTotal: mrpTotal - sellingPriceTotal,
+      deliveryTotal,
+      couponDiscount,
+      smartCoinsUsed: effectiveCoinsToRedeem,
+      smartCoinsValue: smartCoinsDiscount,
+      smartCoinsEarned: coinsEarned,
+      finalAmount: finalPayable,
+      paymentMethod,
+      paymentStatus: paymentMethod === 'Cash on Delivery' ? 'Pending' : 'Paid',
+      status: 'Confirmed',
+      expectedDelivery: 'Tomorrow, by 6:00 PM',
+      trackingId: `TRK-SMART-${Math.floor(100000 + Math.random() * 900000)}`,
+      deliveryPartner: 'SmartDeals Express Assured',
+      shippingAddress,
+      timeline: [
+        { title: 'Order Confirmed', date: 'Just now', completed: true, description: 'Order confirmed and inventory locked.' },
+        { title: 'Packed', date: 'In progress', completed: false, description: 'Quality verification and tamper-proof packing.' },
+        { title: 'Shipped', date: 'Pending', completed: false, description: 'Handover to courier partner.' },
+        { title: 'Out for Delivery', date: 'Expected Tomorrow', completed: false, description: 'Dispatched for doorstep delivery.' },
+        { title: 'Delivered', date: 'Expected Tomorrow', completed: false, description: 'Delivery completed upon OTP confirmation.' }
+      ]
+    };
+
+    // Update wallet
+    let newBalance = smartCoinsBalance;
+    const newTransactions: SmartCoinsTransaction[] = [...smartCoinsTransactions];
+
+    if (effectiveCoinsToRedeem > 0) {
+      newBalance -= effectiveCoinsToRedeem;
+      newTransactions.unshift({
+        id: `tx-${Date.now()}-redeem`,
+        date: 'Today',
+        type: 'redeemed',
+        amount: effectiveCoinsToRedeem,
+        reason: `Redeemed on Order #${orderId}`,
+        orderId
+      });
+    }
+
+    if (coinsEarned > 0) {
+      newBalance += coinsEarned;
+      newTransactions.unshift({
+        id: `tx-${Date.now()}-earn`,
+        date: 'Today',
+        type: 'earned',
+        amount: coinsEarned,
+        reason: `Cashback earned on Order #${orderId}`,
+        orderId
+      });
+    }
+
+    setSmartCoinsBalance(newBalance);
+    setSmartCoinsTransactions(newTransactions);
+    setOrders(prev => [newOrder, ...prev]);
+
+    // Update seller incentive progress
+    setSeller(prev => {
+      const nextSales = prev.salesCountForIncentive + 1;
+      const willUnlockFree = nextSales >= 10;
+      return {
+        ...prev,
+        totalOrders: prev.totalOrders + 1,
+        totalSales: prev.totalSales + finalPayable,
+        salesCountForIncentive: willUnlockFree ? 0 : nextSales
+      };
+    });
+
+    // Sync order to REST server if available
+    fetch('http://localhost:3001/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder)
+    }).catch(() => {});
+
+    clearCart();
+    return newOrder;
+  };
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const canClaimDaily = lastClaimDate !== todayStr;
+
+  const claimDailyCoins = () => {
+    if (!canClaimDaily) {
+      return { success: false, message: 'You have already claimed today’s daily login reward. Come back tomorrow!' };
+    }
+    const reward = adminSettings.dailyLoginReward;
+    setSmartCoinsBalance(prev => prev + reward);
+    setSmartCoinsTransactions(prev => [
+      {
+        id: `tx-${Date.now()}-daily`,
+        date: 'Today',
+        type: 'earned',
+        amount: reward,
+        reason: 'Daily Login Reward streak bonus'
+      },
+      ...prev
+    ]);
+    setLastClaimDate(todayStr);
+    localStorage.setItem('smartdeals_last_claim', todayStr);
+
+    // Sync claim to backend REST server
+    fetch('http://localhost:3001/api/smartcoins/claim', { method: 'POST' }).catch(() => {});
+
+    return { success: true, message: `Congratulations! +${reward} SmartCoins added to your wallet!` };
+  };
+
+  const addProduct = (newProdData: Omit<Product, 'id' | 'dealScore' | 'dealScoreBreakdown' | 'fakeDiscountAudit' | 'buyNowRecommendation' | 'priceHistory' | 'marketplacePrices'>) => {
+    const id = `prod-seller-${Date.now()}`;
+    const calculatedDealScore = Math.min(96, Math.max(70, Math.floor(80 + Math.random() * 15)));
+    
+    const newProduct: Product = {
+      ...newProdData,
+      id,
+      dealScore: calculatedDealScore,
+      dealScoreBreakdown: {
+        priceAdvantage: 90,
+        historicalPrice: 85,
+        offerQuality: 88,
+        sellerReliability: 92,
+        delivery: 90,
+        transparency: 94,
+        overallScore: calculatedDealScore,
+        verdict: calculatedDealScore > 90 ? 'Excellent Deal' : 'Good Deal'
+      },
+      fakeDiscountAudit: {
+        isGenuine: true,
+        status: 'Genuine Deal',
+        reason: 'Seller listing verified against brand invoice catalogue.',
+        lowestPriceEver: newProdData.sellingPrice,
+        highestPriceEver: newProdData.mrp
+      },
+      buyNowRecommendation: {
+        action: 'BUY NOW',
+        confidence: 88,
+        reason: 'Competitive new seller listing with prompt dispatch guarantee.'
+      },
+      priceHistory: [
+        { date: 'Initial Listing', price: newProdData.sellingPrice }
+      ],
+      marketplacePrices: [
+        {
+          sellerName: newProdData.seller,
+          isSmartDealsSeller: true,
+          price: newProdData.sellingPrice,
+          deliveryCharge: newProdData.deliveryCharge,
+          deliveryDate: newProdData.deliveryDate,
+          couponText: '₹100 Store Off',
+          couponDiscount: 100,
+          finalPrice: newProdData.sellingPrice - 100,
+          smartCoins: newProdData.smartCoinsEarned,
+          dealScore: calculatedDealScore,
+          inStock: newProdData.stock > 0,
+          rating: 4.8,
+          tag: 'Best Overall'
+        }
+      ]
+    };
+
+    setProducts(prev => [newProduct, ...prev]);
+
+    // Sync new product to backend REST server
+    fetch('http://localhost:3001/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProduct)
+    }).catch(() => {});
+  };
+
+  const updateSellerKYC = (status: 'Approved' | 'Pending' | 'Rejected') => {
+    setSeller(prev => ({
+      ...prev,
+      kycStatus: status,
+      verified: status === 'Approved'
+    }));
+  };
+
+  const updateCommissionSlab = (index: number, newRate: number) => {
+    setCommissionSlabs(prev => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], commissionRate: newRate };
+
+      // Sync updated slabs to backend REST server
+      fetch('http://localhost:3001/api/seller/commission-slabs', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(copy)
+      }).catch(() => {});
+
+      return copy;
+    });
+  };
+
+  const updateAdminSettings = (newSettings: Partial<AdminSettings>) => {
+    setAdminSettings(prev => ({ ...prev, ...newSettings }));
+  };
+
+  return (
+    <AppContext.Provider
+      value={{
+        role,
+        setRole,
+        currentUser,
+        guestSession,
+        loginUser,
+        registerUser,
+        logoutUser,
+        trackActivity,
+        trackOutboundClick,
+        products,
+        addProduct,
+        cart,
+        addToCart,
+        removeFromCart,
+        updateCartQuantity,
+        clearCart,
+        appliedCoupon,
+        couponDiscount,
+        applyCoupon,
+        removeCoupon,
+        useSmartCoins,
+        setUseSmartCoins,
+        coinsToRedeem,
+        setCoinsToRedeem,
+        cartCalculations: {
+          mrpTotal,
+          sellingPriceTotal,
+          deliveryTotal,
+          couponDiscount,
+          smartCoinsDiscount,
+          finalPayable,
+          totalSavings,
+          coinsEarned
+        },
+        wishlist,
+        toggleWishlist,
+        priceAlerts,
+        addPriceAlert,
+        removePriceAlert,
+        orders,
+        placeOrder,
+        smartCoinsBalance,
+        smartCoinsTransactions,
+        claimDailyCoins,
+        canClaimDaily,
+        seller,
+        updateSellerKYC,
+        commissionSlabs,
+        updateCommissionSlab,
+        adminSettings,
+        updateAdminSettings,
+        searchQuery,
+        setSearchQuery,
+        isAiAssistantOpen,
+        setIsAiAssistantOpen,
+        isDarkMode,
+        toggleDarkMode,
+        cashbackWallet,
+        cashbackTransactions: cashbackWallet.transactions,
+        redeemCashback,
+        processReturnReversal,
+        refreshCashback,
+        isSmsCenterOpen,
+        setIsSmsCenterOpen
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) throw new Error('useApp must be used within an AppProvider');
+  return context;
+};

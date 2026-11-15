@@ -1,0 +1,19 @@
+{
+  "name": "SmartDeals - Intelligent Shopping & Price Comparison",
+  "short_name": "SmartDeals",
+  "description": "Smart Shopping. Better Deals. Every Time. Compare prices across Amazon, Flipkart, Croma, check Deal Scores and earn SmartCoins rewards.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "productivity", "utilities"]
+}

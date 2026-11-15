@@ -1,0 +1,323 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { Sparkles, Lock, Mail, User, Smartphone, CheckCircle2, Coins } from 'lucide-react';
+import confetti from 'canvas-confetti';
+
+export const LoginPage: React.FC = () => {
+  const { loginUser } = useApp();
+  const navigate = useNavigate();
+  const [identifier, setIdentifier] = useState('rohit.kumar@example.com');
+  const [password, setPassword] = useState('password123');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setIsLoading(true);
+
+    const result = await loginUser(identifier, password);
+    setIsLoading(false);
+
+    if (result.success && result.user) {
+      if (result.user.role === 'ADMIN') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
+    } else {
+      setErrorMessage(result.message || 'Invalid email or password.');
+    }
+  };
+
+  const handleQuickFill = (roleType: 'user' | 'admin') => {
+    if (roleType === 'admin') {
+      setIdentifier('admin@smartdeal.com');
+      setPassword('admin123');
+    } else {
+      setIdentifier('rohit.kumar@example.com');
+      setPassword('password123');
+    }
+  };
+
+  const handleForgot = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setResetSent(true);
+    setTimeout(() => setResetSent(false), 4000);
+  };
+
+  return (
+    <div className="max-w-md mx-auto px-4 py-12 space-y-6">
+      <div className="text-center space-y-2">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-md shadow-brand-500/25">
+          <Sparkles className="w-6 h-6 text-amber-300" />
+        </div>
+        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Welcome Back to SmartDeals</h1>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Sign in with secure SHA-256 encrypted authentication</p>
+      </div>
+
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-5">
+        {/* Quick Demo Fill Buttons */}
+        <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-[11px] flex items-center justify-between gap-2">
+          <span className="text-slate-500 dark:text-slate-400 font-bold">Quick Fill:</span>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => handleQuickFill('user')}
+              className="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-bold hover:bg-indigo-100 transition-colors cursor-pointer"
+            >
+              Demo User
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickFill('admin')}
+              className="px-2 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-100 transition-colors cursor-pointer"
+            >
+              Admin Access
+            </button>
+          </div>
+        </div>
+
+        {errorMessage && (
+          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold animate-fadeIn">
+            {errorMessage}
+          </div>
+        )}
+
+        {resetSent && (
+          <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center gap-2 animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>Password reset instructions have been sent to your email.</span>
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4 text-xs">
+          <div className="space-y-1">
+            <label className="font-bold text-slate-700 dark:text-slate-300">Email or Mobile Number</label>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                value={identifier}
+                onChange={e => setIdentifier(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+                placeholder="name@example.com or +91..."
+              />
+              <Mail className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <label className="font-bold text-slate-700 dark:text-slate-300">Password</label>
+              <button type="button" onClick={handleForgot} className="text-brand-600 dark:text-brand-400 hover:underline">
+                Forgot password?
+              </button>
+            </div>
+            <div className="relative">
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+              />
+              <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-extrabold text-xs shadow-md active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+          >
+            {isLoading ? 'Signing In...' : 'Sign In Securely'}
+          </button>
+        </form>
+
+        <div className="relative flex items-center justify-center">
+          <div className="border-t border-slate-200 dark:border-slate-800 w-full" />
+          <span className="bg-white dark:bg-slate-900 px-3 text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 shrink-0">
+            or continue with
+          </span>
+        </div>
+
+        <button
+          onClick={async () => {
+            await loginUser('rohit.kumar@example.com', 'password123');
+            navigate('/');
+          }}
+          className="w-full py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+        >
+          <span>Continue with Google (Demo Auto-Login)</span>
+        </button>
+
+        <div className="text-center text-xs text-slate-500 dark:text-slate-400 pt-2">
+          New to SmartDeals?{' '}
+          <Link to="/register" className="font-extrabold text-brand-600 dark:text-brand-400 hover:underline">
+            Create an Account
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const RegisterPage: React.FC = () => {
+  const { registerUser } = useApp();
+  const navigate = useNavigate();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage('');
+    if (password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters.');
+      return;
+    }
+
+    setIsLoading(true);
+    const result = await registerUser(name, email, phone, password);
+    setIsLoading(false);
+
+    if (result.success) {
+      setRegistered(true);
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      } catch {
+        // safe fallback
+      }
+
+      setTimeout(() => {
+        navigate('/');
+      }, 1800);
+    } else {
+      setErrorMessage(result.message || 'Registration failed.');
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto px-4 py-12 space-y-6">
+      <div className="text-center space-y-2">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-md shadow-brand-500/25">
+          <Sparkles className="w-6 h-6 text-amber-300" />
+        </div>
+        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Create SmartDeals Account</h1>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Sign up today and earn +45 SmartCoins welcome gift!</p>
+      </div>
+
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-5">
+        {registered ? (
+          <div className="py-6 px-4 rounded-2xl bg-gradient-to-tr from-amber-500/10 via-brand-500/10 to-emerald-500/10 border border-amber-400/40 text-center space-y-3 animate-fadeIn">
+            <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center mx-auto">
+              <Coins className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-black text-slate-900 dark:text-white">
+              Welcome to SmartDeals{name ? `, ${name}` : ''}!
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300">
+              <strong className="text-amber-500 font-bold">+45 SmartCoins</strong> welcome bonus has been credited to your wallet.
+            </p>
+            <div className="text-[11px] text-slate-400 pt-2 animate-pulse">
+              Redirecting to smart shopping...
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleRegister} className="space-y-3.5 text-xs">
+          <div className="space-y-1">
+            <label className="font-bold text-slate-700 dark:text-slate-300">Full Name</label>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+                placeholder="Rohit Kumar"
+              />
+              <User className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="font-bold text-slate-700 dark:text-slate-300">Email Address</label>
+            <div className="relative">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+                placeholder="rohit@example.com"
+              />
+              <Mail className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="font-bold text-slate-700 dark:text-slate-300">Mobile Number</label>
+            <div className="relative">
+              <input
+                type="tel"
+                required
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+                placeholder="+91 98765 43210"
+              />
+              <Smartphone className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="font-bold text-slate-700 dark:text-slate-300">Create Password</label>
+            <div className="relative">
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+                placeholder="Minimum 8 characters"
+              />
+              <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-600 dark:text-slate-400">
+            <input type="checkbox" required defaultChecked className="accent-brand-600 w-4 h-4" />
+            <span>I agree to the SmartDeals Terms of Service and Privacy Policy</span>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md active:scale-95 transition-all"
+          >
+            Create Account & Claim Coins
+          </button>
+        </form>
+        )}
+
+        <div className="text-center text-xs text-slate-500 dark:text-slate-400">
+          Already have an account?{' '}
+          <Link to="/login" className="font-extrabold text-brand-600 dark:text-brand-400 hover:underline">
+            Log In
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
