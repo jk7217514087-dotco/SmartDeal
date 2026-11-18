@@ -45,8 +45,175 @@ interface PromoAd {
   image: string;
 }
 
+interface HeroThemeConfig {
+  heroSectionBg: string;
+  heroBorder: string;
+  badgeBg: string;
+  badgeBorder: string;
+  badgeText: string;
+  badgeIcon: string;
+  titleGradient: string;
+  searchContainer: string;
+  searchBtn: string;
+  pillBg: string;
+  pedestalGlow: string;
+  pedestalOuter: string;
+  pedestalInner: string;
+  dealsBadge: string;
+  savingsBadge: string;
+  guaranteeCard: string;
+  promoCard: string;
+  promoButton: string;
+  promoBadge: string;
+  promoIcon: string;
+  promoText: string;
+}
+
+const HERO_THEMES: Record<string, HeroThemeConfig> = {
+  'steel-navy': {
+    heroSectionBg: 'bg-gradient-to-b from-[#071324] via-[#0b1a30] to-[#0e223f]',
+    heroBorder: 'border-sky-900/60',
+    badgeBg: 'bg-sky-950/60',
+    badgeBorder: 'border-sky-500/40',
+    badgeText: 'text-sky-300',
+    badgeIcon: 'text-sky-400',
+    titleGradient: 'bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent',
+    searchContainer: 'bg-[#071220]/95 border-sky-500/40 shadow-[0_8px_35px_rgba(56,189,248,0.22)] focus-within:border-sky-400 focus-within:ring-2 focus-within:ring-sky-400/25',
+    searchBtn: 'bg-gradient-to-r from-sky-400 via-sky-300 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-slate-950 shadow-sky-500/35 font-black',
+    pillBg: 'bg-[#0c1c33] hover:bg-sky-500/20 border-sky-900/50 hover:border-sky-400 text-sky-100 hover:text-white',
+    pedestalGlow: 'bg-gradient-to-tr from-sky-500/30 via-blue-400/25 to-sky-600/30',
+    pedestalOuter: 'border-sky-400/75 bg-[#112240]/90 shadow-[0_0_65px_rgba(56,189,248,0.55)]',
+    pedestalInner: 'border-sky-300/40 bg-gradient-to-b from-sky-950/60 to-[#0b1a30]/80',
+    dealsBadge: 'bg-gradient-to-r from-sky-400 to-cyan-300 text-slate-950 shadow-sky-500/40 font-black',
+    savingsBadge: 'bg-[#071426]/95 border-sky-400/50 text-sky-200',
+    guaranteeCard: 'bg-[#112240]/85 border-sky-900/50 hover:border-sky-500/50',
+    promoCard: 'bg-gradient-to-br from-[#0c1f38] via-[#102a4d] to-[#08172c] border-sky-500/40 hover:border-sky-400/60 hover:shadow-[0_12px_35px_-8px_rgba(56,189,248,0.35)]',
+    promoButton: 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-sky-500/30 text-white font-black',
+    promoBadge: 'bg-sky-500/15 border-sky-500/30 text-sky-300',
+    promoIcon: 'text-sky-300',
+    promoText: 'text-sky-100/70',
+  },
+  'matrix-lime': {
+    heroSectionBg: 'bg-gradient-to-b from-[#0a0d0a] via-[#111612] to-[#151c16]',
+    heroBorder: 'border-lime-900/60',
+    badgeBg: 'bg-lime-950/60',
+    badgeBorder: 'border-lime-500/40',
+    badgeText: 'text-lime-300',
+    badgeIcon: 'text-lime-400',
+    titleGradient: 'bg-gradient-to-r from-lime-300 via-lime-400 to-green-400 bg-clip-text text-transparent',
+    searchContainer: 'bg-[#0b0e0c]/95 border-lime-500/40 shadow-[0_8px_35px_rgba(163,230,53,0.22)] focus-within:border-lime-400 focus-within:ring-2 focus-within:ring-lime-400/25',
+    searchBtn: 'bg-gradient-to-r from-[#bef264] via-[#a3e635] to-[#84cc16] hover:from-[#d9f99d] hover:to-[#a3e635] text-slate-950 shadow-lime-500/35 font-black',
+    pillBg: 'bg-[#131c15] hover:bg-lime-500/20 border-lime-900/50 hover:border-lime-400 text-lime-100 hover:text-white',
+    pedestalGlow: 'bg-gradient-to-tr from-lime-500/35 via-green-400/25 to-lime-600/30',
+    pedestalOuter: 'border-lime-400/80 bg-[#162118]/90 shadow-[0_0_65px_rgba(163,230,53,0.6)]',
+    pedestalInner: 'border-lime-300/40 bg-gradient-to-b from-lime-950/60 to-[#111612]/80',
+    dealsBadge: 'bg-gradient-to-r from-[#bef264] to-[#a3e635] text-slate-950 shadow-lime-500/40 font-black',
+    savingsBadge: 'bg-[#0c120d]/95 border-lime-400/50 text-lime-200',
+    guaranteeCard: 'bg-[#172219]/85 border-lime-900/50 hover:border-lime-500/50',
+    promoCard: 'bg-gradient-to-br from-[#131d14] via-[#1a291d] to-[#0c140d] border-lime-500/40 hover:border-lime-400/60 hover:shadow-[0_12px_35px_-8px_rgba(163,230,53,0.35)]',
+    promoButton: 'bg-gradient-to-r from-lime-500 to-green-600 hover:from-lime-400 hover:to-green-500 shadow-lime-500/30 text-slate-950 font-black',
+    promoBadge: 'bg-lime-500/15 border-lime-500/30 text-lime-300',
+    promoIcon: 'text-lime-300',
+    promoText: 'text-lime-100/70',
+  },
+  'sunset-coral': {
+    heroSectionBg: 'bg-gradient-to-b from-[#13071c] via-[#1c0b29] to-[#250f37]',
+    heroBorder: 'border-rose-900/60',
+    badgeBg: 'bg-rose-950/60',
+    badgeBorder: 'border-rose-500/40',
+    badgeText: 'text-rose-300',
+    badgeIcon: 'text-rose-400',
+    titleGradient: 'bg-gradient-to-r from-rose-400 via-pink-300 to-orange-400 bg-clip-text text-transparent',
+    searchContainer: 'bg-[#14061e]/95 border-rose-500/40 shadow-[0_8px_35px_rgba(244,63,94,0.22)] focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-400/25',
+    searchBtn: 'bg-gradient-to-r from-orange-400 via-rose-400 to-pink-500 hover:from-orange-300 hover:to-pink-400 text-white shadow-rose-500/35 font-black',
+    pillBg: 'bg-[#220d32] hover:bg-rose-500/20 border-rose-900/50 hover:border-rose-400 text-rose-100 hover:text-white',
+    pedestalGlow: 'bg-gradient-to-tr from-rose-500/35 via-pink-400/25 to-orange-500/30',
+    pedestalOuter: 'border-rose-400/80 bg-[#28113b]/90 shadow-[0_0_65px_rgba(244,63,94,0.6)]',
+    pedestalInner: 'border-pink-300/40 bg-gradient-to-b from-rose-950/60 to-[#1c0b29]/80',
+    dealsBadge: 'bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-rose-500/40 font-black',
+    savingsBadge: 'bg-[#160721]/95 border-rose-400/50 text-rose-200',
+    guaranteeCard: 'bg-[#28113b]/85 border-rose-900/50 hover:border-rose-500/50',
+    promoCard: 'bg-gradient-to-br from-[#240e36] via-[#33144c] to-[#1a0927] border-rose-500/40 hover:border-rose-400/60 hover:shadow-[0_12px_35px_-8px_rgba(244,63,94,0.35)]',
+    promoButton: 'bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-400 hover:to-rose-500 shadow-rose-500/30 text-white font-black',
+    promoBadge: 'bg-rose-500/15 border-rose-500/30 text-rose-300',
+    promoIcon: 'text-rose-300',
+    promoText: 'text-rose-100/70',
+  },
+  'aurora-jade': {
+    heroSectionBg: 'bg-gradient-to-b from-[#02140d] via-[#051f15] to-[#092b1e]',
+    heroBorder: 'border-emerald-900/60',
+    badgeBg: 'bg-emerald-950/60',
+    badgeBorder: 'border-emerald-500/40',
+    badgeText: 'text-emerald-300',
+    badgeIcon: 'text-emerald-400',
+    titleGradient: 'bg-gradient-to-r from-emerald-300 via-teal-300 to-green-400 bg-clip-text text-transparent',
+    searchContainer: 'bg-[#03150e]/95 border-emerald-500/40 shadow-[0_8px_35px_rgba(34,197,94,0.22)] focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-400/25',
+    searchBtn: 'bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 shadow-emerald-500/35 font-black',
+    pillBg: 'bg-[#07261a] hover:bg-emerald-500/20 border-emerald-900/50 hover:border-emerald-400 text-emerald-100 hover:text-white',
+    pedestalGlow: 'bg-gradient-to-tr from-emerald-500/35 via-green-400/25 to-teal-500/30',
+    pedestalOuter: 'border-emerald-400/80 bg-[#092e20]/90 shadow-[0_0_65px_rgba(34,197,94,0.6)]',
+    pedestalInner: 'border-emerald-300/40 bg-gradient-to-b from-emerald-950/60 to-[#051f15]/80',
+    dealsBadge: 'bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-emerald-500/40 font-black',
+    savingsBadge: 'bg-[#041911]/95 border-emerald-400/50 text-emerald-200',
+    guaranteeCard: 'bg-[#092e20]/85 border-emerald-900/50 hover:border-emerald-500/50',
+    promoCard: 'bg-gradient-to-br from-[#08281c] via-[#0d3b2a] to-[#041a12] border-emerald-500/40 hover:border-emerald-400/60 hover:shadow-[0_12px_35px_-8px_rgba(34,197,94,0.35)]',
+    promoButton: 'bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-600/30 text-slate-950 font-black',
+    promoBadge: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
+    promoIcon: 'text-emerald-300',
+    promoText: 'text-emerald-100/70',
+  },
+  'royal-gold': {
+    heroSectionBg: 'bg-gradient-to-b from-[#140e05] via-[#241709] to-[#181107]',
+    heroBorder: 'border-amber-900/60',
+    badgeBg: 'bg-amber-500/15',
+    badgeBorder: 'border-amber-400/40',
+    badgeText: 'text-amber-300',
+    badgeIcon: 'text-amber-400',
+    titleGradient: 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent',
+    searchContainer: 'bg-[#0d0d08]/95 border-amber-500/40 shadow-[0_8px_35px_rgba(245,158,11,0.25)] focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/25',
+    searchBtn: 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-slate-950 shadow-amber-500/35 font-black',
+    pillBg: 'bg-[#12120b] hover:bg-amber-500/20 border-amber-900/50 hover:border-amber-400 text-amber-100 hover:text-white',
+    pedestalGlow: 'bg-gradient-to-tr from-amber-500/30 via-yellow-400/25 to-amber-600/30',
+    pedestalOuter: 'border-amber-400/70 bg-[#251a0b]/90 shadow-[0_0_65px_rgba(245,158,11,0.55)]',
+    pedestalInner: 'border-yellow-300/40 bg-gradient-to-b from-amber-950/40 to-[#181107]/80',
+    dealsBadge: 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 shadow-amber-500/40 font-black',
+    savingsBadge: 'bg-[#120f08]/95 border-amber-400/50 text-amber-300',
+    guaranteeCard: 'bg-[#241a0b]/85 border-amber-900/50 hover:border-amber-500/50',
+    promoCard: 'bg-gradient-to-br from-[#271b0b] via-[#35240f] to-[#1c1407] border-amber-500/40 hover:border-amber-400/60 hover:shadow-[0_12px_35px_-8px_rgba(245,158,11,0.35)]',
+    promoButton: 'bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 hover:from-amber-500 hover:to-yellow-500 shadow-amber-600/30 text-slate-950 font-black',
+    promoBadge: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+    promoIcon: 'text-amber-300',
+    promoText: 'text-amber-100/70',
+  },
+  'cyber-indigo': {
+    heroSectionBg: 'bg-gradient-to-b from-[#050620] via-[#08092d] to-[#0d0f3c]',
+    heroBorder: 'border-violet-900/60',
+    badgeBg: 'bg-violet-950/60',
+    badgeBorder: 'border-violet-500/40',
+    badgeText: 'text-violet-300',
+    badgeIcon: 'text-violet-400',
+    titleGradient: 'bg-gradient-to-r from-violet-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent',
+    searchContainer: 'bg-[#070826]/95 border-violet-500/40 shadow-[0_8px_35px_rgba(139,92,246,0.22)] focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-400/25',
+    searchBtn: 'bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 hover:from-violet-400 hover:to-indigo-400 text-white shadow-violet-500/35 font-black',
+    pillBg: 'bg-[#101347] hover:bg-violet-500/20 border-violet-900/50 hover:border-violet-400 text-violet-100 hover:text-white',
+    pedestalGlow: 'bg-gradient-to-tr from-violet-500/35 via-indigo-400/25 to-purple-500/30',
+    pedestalOuter: 'border-violet-400/80 bg-[#0f1248]/90 shadow-[0_0_65px_rgba(139,92,246,0.6)]',
+    pedestalInner: 'border-violet-300/40 bg-gradient-to-b from-violet-950/60 to-[#08092d]/80',
+    dealsBadge: 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white shadow-violet-500/40 font-black',
+    savingsBadge: 'bg-[#080930]/95 border-violet-400/50 text-violet-200',
+    guaranteeCard: 'bg-[#0f1248]/85 border-violet-900/50 hover:border-violet-500/50',
+    promoCard: 'bg-gradient-to-br from-[#0c0f44] via-[#14195d] to-[#070929] border-violet-500/40 hover:border-violet-400/60 hover:shadow-[0_12px_35px_-8px_rgba(139,92,246,0.35)]',
+    promoButton: 'bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-violet-600/30 text-white font-black',
+    promoBadge: 'bg-violet-500/15 border-violet-500/30 text-violet-300',
+    promoIcon: 'text-violet-300',
+    promoText: 'text-violet-100/70',
+  },
+};
+
 export const HomePage: React.FC = () => {
-  const { products, trackActivity } = useApp();
+  const { products, trackActivity, activeTheme } = useApp();
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
+  const heroTheme = HERO_THEMES[themeKey] || HERO_THEMES['steel-navy'];
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
@@ -155,24 +322,157 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
       {/* SECTION 4.2 & 4.3: PANEL 1 HERO SECTION (2-COLUMN WITH FLOATING SHOWCASE) */}
-      <section className="relative overflow-hidden w-full max-w-full bg-gradient-to-b from-[#080d1a] via-[#0B0F19] to-[#0B0F19] text-white pt-8 pb-12 border-b border-slate-800/80 -mt-2">
-        <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none" />
+      <section className={`relative overflow-hidden w-full max-w-full text-white pt-8 pb-12 border-b -mt-2 transition-colors duration-500 ${heroTheme.heroSectionBg} ${heroTheme.heroBorder}`}>
+        {/* Dynamic Theme Ambient Glow & Light Wave Sweeps */}
+        {themeKey === 'matrix-lime' && (
+          <>
+            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[linear-gradient(to_right,#a3e63518_1px,transparent_1px),linear-gradient(to_bottom,#a3e63518_1px,transparent_1px)] bg-[size:36px_36px]" />
+            <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-lime-500/18 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-green-500/14 rounded-full blur-[130px] pointer-events-none" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 1440 600" fill="none">
+              <path d="M-100 220 C350 120, 650 480, 1500 180" stroke="url(#limeGrad1)" strokeWidth="3" />
+              <path d="M-50 380 C450 260, 850 560, 1600 280" stroke="url(#limeGrad2)" strokeWidth="1.5" />
+              <defs>
+                <linearGradient id="limeGrad1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#bef264" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#a3e635" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#84cc16" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="limeGrad2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#65a30d" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#bef264" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#a3e635" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </>
+        )}
+        {themeKey === 'steel-navy' && (
+          <>
+            <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-sky-500/16 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-blue-500/14 rounded-full blur-[130px] pointer-events-none" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 1440 600" fill="none">
+              <path d="M-100 220 C350 120, 650 480, 1500 180" stroke="url(#skyGrad1)" strokeWidth="3" />
+              <path d="M-50 380 C450 260, 850 560, 1600 280" stroke="url(#skyGrad2)" strokeWidth="1.5" />
+              <defs>
+                <linearGradient id="skyGrad1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#0ea5e9" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="skyGrad2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#0369a1" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </>
+        )}
+        {themeKey === 'sunset-coral' && (
+          <>
+            <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-rose-500/18 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-orange-500/14 rounded-full blur-[130px] pointer-events-none" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 1440 600" fill="none">
+              <path d="M-100 220 C350 120, 650 480, 1500 180" stroke="url(#coralGrad1)" strokeWidth="3" />
+              <path d="M-50 380 C450 260, 850 560, 1600 280" stroke="url(#coralGrad2)" strokeWidth="1.5" />
+              <defs>
+                <linearGradient id="coralGrad1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#f43f5e" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#fb7185" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="coralGrad2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ea580c" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#f43f5e" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#fb7185" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </>
+        )}
+        {themeKey === 'aurora-jade' && (
+          <>
+            <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-emerald-500/18 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-teal-500/14 rounded-full blur-[130px] pointer-events-none" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 1440 600" fill="none">
+              <path d="M-100 220 C350 120, 650 480, 1500 180" stroke="url(#auroraGrad1)" strokeWidth="3" />
+              <path d="M-50 380 C450 260, 850 560, 1600 280" stroke="url(#auroraGrad2)" strokeWidth="1.5" />
+              <defs>
+                <linearGradient id="auroraGrad1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#22c55e" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#4ade80" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="auroraGrad2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#059669" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#22c55e" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#4ade80" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </>
+        )}
+        {themeKey === 'royal-gold' && (
+          <>
+            <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-yellow-500/10 rounded-full blur-[130px] pointer-events-none" />
+            <div className="hidden sm:block absolute bottom-10 left-1/3 w-[450px] h-[250px] bg-amber-600/10 rounded-full blur-[120px] pointer-events-none" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30" viewBox="0 0 1440 600" fill="none">
+              <path d="M-100 200 C300 100, 600 450, 1500 150" stroke="url(#goldGradient1)" strokeWidth="3" />
+              <path d="M-50 350 C400 250, 800 550, 1600 250" stroke="url(#goldGradient2)" strokeWidth="1.5" />
+              <defs>
+                <linearGradient id="goldGradient1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#F59E0B" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#FCD34D" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#D97706" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="goldGradient2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#B45309" stopOpacity="0" />
+                  <stop offset="60%" stopColor="#FDE68A" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </>
+        )}
+        {themeKey === 'cyber-indigo' && (
+          <>
+            <div className="hidden sm:block absolute top-1/4 left-1/4 w-[600px] h-[350px] bg-violet-500/18 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-indigo-500/14 rounded-full blur-[130px] pointer-events-none" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 1440 600" fill="none">
+              <path d="M-100 220 C350 120, 650 480, 1500 180" stroke="url(#indigoGrad1)" strokeWidth="3" />
+              <path d="M-50 380 C450 260, 850 560, 1600 280" stroke="url(#indigoGrad2)" strokeWidth="1.5" />
+              <defs>
+                <linearGradient id="indigoGrad1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#a855f7" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="indigoGrad2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#4f46e5" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </>
+        )}
 
         <div className="max-w-7xl mx-auto px-4 relative z-10 w-full overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Heading, Subtitle, Search Bar & Category Pills */}
             <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold">
-                <ShoppingBag className="w-3.5 h-3.5 text-blue-400" />
-                <span>SmartDeal Platform</span>
+              <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black shadow-xs border ${heroTheme.badgeBg} ${heroTheme.badgeBorder} ${heroTheme.badgeText}`}>
+                <ShoppingBag className={`w-3.5 h-3.5 ${heroTheme.badgeIcon}`} />
+                <span>SmartDeal Platform • Intelligent Comparison</span>
               </div>
 
               <div className="space-y-3">
                 <h1 className="text-3xl sm:text-5xl lg:text-5xl font-black tracking-tight leading-tight text-white">
                   Find the Best Price. <br />
-                  <span>Compare. Save. </span>
-                  <span className="text-blue-500">Buy Smarter.</span>
+                  <span className="text-slate-100">Compare. Save. </span>
+                  <span className={heroTheme.titleGradient}>Buy Smarter.</span>
                 </h1>
 
                 <p className="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed">
@@ -182,7 +482,7 @@ export const HomePage: React.FC = () => {
 
               {/* Search Bar matching Panel 1 */}
               <form onSubmit={handleHeroSearch} className="max-w-xl">
-                <div className="relative flex items-center bg-[#111827] rounded-2xl p-2 border border-slate-700/80 shadow-2xl focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                <div className={`relative flex items-center rounded-2xl p-2 border transition-all ${heroTheme.searchContainer}`}>
                   <Search className="w-5 h-5 text-slate-400 ml-3 shrink-0" />
                   <input
                     type="text"
@@ -193,14 +493,14 @@ export const HomePage: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-md shadow-blue-500/25 transition-all shrink-0 cursor-pointer"
+                    className={`px-6 py-2.5 rounded-xl font-black text-xs transition-all shrink-0 cursor-pointer active:scale-95 shadow-lg ${heroTheme.searchBtn}`}
                   >
                     Search
                   </button>
                 </div>
               </form>
 
-              {/* Category pill shortcuts directly under search matching Panel 1 */}
+              {/* Category pill shortcuts directly under search */}
               <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-300">
                 {[
                   { name: 'iPhone', query: 'iPhone 15' },
@@ -215,7 +515,7 @@ export const HomePage: React.FC = () => {
                     key={item.name}
                     type="button"
                     onClick={() => navigate(`/search?q=${encodeURIComponent(item.query)}`)}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#131b2e] hover:bg-blue-600/30 border border-slate-700 hover:border-blue-500 text-slate-200 hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-95 border ${heroTheme.pillBg}`}
                   >
                     {item.name}
                   </button>
@@ -223,119 +523,122 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Composite Multi-Device Glowing Showcase from Panel 1 */}
+            {/* Right Column: Composite Multi-Device Glowing Showcase */}
             <div className="lg:col-span-5 flex justify-center relative w-full overflow-hidden sm:overflow-visible">
               <div className="relative w-full max-w-[320px] sm:max-w-[420px] aspect-square flex items-center justify-center">
                 {/* Glowing neon circular pedestal */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-600/20 via-purple-600/20 to-cyan-500/10 blur-2xl animate-pulse" />
-                <div className="absolute w-72 h-72 rounded-full border border-blue-500/30 bg-[#0B0F19]/80 shadow-[0_0_50px_rgba(37,99,235,0.25)] flex items-center justify-center">
-                  <div className="w-56 h-56 rounded-full border border-purple-500/20 bg-gradient-to-b from-blue-950/40 to-purple-950/40" />
+                <div className={`absolute inset-0 rounded-full blur-2xl animate-pulse ${heroTheme.pedestalGlow}`} />
+
+                {/* Outer Ring */}
+                <div className={`absolute w-72 h-72 rounded-full border-2 flex items-center justify-center transition-all ${heroTheme.pedestalOuter}`}>
+                  {/* Inner Ring */}
+                  <div className={`w-56 h-56 rounded-full border ${heroTheme.pedestalInner}`} />
                 </div>
 
-                {/* Floating Best Price Badge */}
-                <div className="absolute top-4 right-4 z-20 px-3.5 py-1.5 rounded-xl bg-[#0c1427]/90 backdrop-blur-md border border-emerald-500/40 text-emerald-400 font-extrabold text-xs shadow-xl flex items-center gap-2 animate-bounce">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Best Price: ₹54,990</span>
+                {/* Floating % BEST DEALS Badge */}
+                <div className={`absolute top-2 right-2 z-20 px-4 py-2 rounded-2xl font-black text-xs shadow-xl flex items-center gap-1.5 rotate-6 hover:rotate-0 transition-transform ${heroTheme.dealsBadge}`}>
+                  <span className="text-sm font-black">%</span>
+                  <span>BEST DEALS</span>
                 </div>
 
                 {/* Floating Up to 50% Savings Badge */}
-                <div className="absolute bottom-6 right-2 z-20 px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-900/90 to-indigo-900/90 backdrop-blur-md border border-purple-400/40 text-purple-200 font-black text-xs shadow-xl flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-300" />
+                <div className={`absolute bottom-4 right-2 z-20 px-4 py-2 rounded-2xl backdrop-blur-md font-black text-xs shadow-xl flex items-center gap-2 border ${heroTheme.savingsBadge}`}>
+                  <span className="text-emerald-400">↗</span>
                   <span>Up to 50% Savings</span>
                 </div>
 
-                {/* Tech Devices Composition */}
+                {/* Tech Devices Composition: Phone, Smartwatch, AirPods, Sneaker */}
                 <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-                  {/* Laptop */}
-                  <img
-                    src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80"
-                    alt="Laptop"
-                    className="absolute w-52 h-36 object-cover rounded-xl shadow-2xl border border-slate-700/80 -rotate-3 -translate-y-6"
-                  />
-                  {/* Phone */}
+                  {/* iPhone */}
                   <img
                     src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80"
                     alt="iPhone"
-                    className="absolute w-28 h-44 object-cover rounded-2xl shadow-2xl border border-blue-500/50 -translate-x-20 translate-y-4 rotate-6 z-10"
+                    className="absolute w-32 h-52 object-cover rounded-3xl shadow-2xl border border-white/20 -translate-x-12 -translate-y-2 rotate-2 z-10"
                   />
-                  {/* Headphones */}
+                  {/* Earbuds / AirPods Case */}
                   <img
-                    src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80"
-                    alt="Headphones"
-                    className="absolute w-28 h-28 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] translate-x-20 translate-y-6 z-10"
+                    src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&auto=format&fit=crop&q=80"
+                    alt="Earbuds"
+                    className="absolute w-24 h-24 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)] -translate-x-28 translate-y-12 z-20"
                   />
                   {/* Smartwatch */}
                   <img
                     src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&auto=format&fit=crop&q=80"
                     alt="Smartwatch"
-                    className="absolute w-20 h-20 object-contain drop-shadow-xl translate-x-4 translate-y-16 z-20"
+                    className="absolute w-24 h-24 object-contain drop-shadow-xl translate-x-12 translate-y-12 z-20"
+                  />
+                  {/* Nike Sneaker */}
+                  <img
+                    src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80"
+                    alt="Sneaker"
+                    className="absolute w-36 h-28 object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)] translate-x-28 translate-y-16 rotate-12 z-20"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* MARKETPLACE RIBBON CARD (Direct from Panel 1) */}
-          <div className="mt-10 p-4 rounded-2xl bg-[#0e1628]/90 border border-slate-800 shadow-2xl backdrop-blur-md">
+          {/* MARKETPLACE RIBBON CARD */}
+          <div className={`mt-10 p-4 rounded-2xl border shadow-2xl backdrop-blur-md transition-colors ${heroTheme.guaranteeCard}`}>
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-              <span className="text-slate-400 font-bold flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <span className="text-slate-300 font-bold flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
                 <span>Supported Marketplaces:</span>
               </span>
               <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 font-black">
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/25 hover:bg-amber-500/20 transition-all cursor-pointer"
                 >
                   amazon
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-hp-pavilion-15')}
-                  className="px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/25 hover:bg-blue-500/20 transition-all cursor-pointer"
                 >
                   Flipkart
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 hover:bg-pink-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/25 hover:bg-pink-500/20 transition-all cursor-pointer"
                 >
                   meesho
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-samsung-watch-6')}
-                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/25 hover:bg-rose-500/20 transition-all cursor-pointer"
                 >
                   Myntra
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20 hover:bg-teal-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/25 hover:bg-teal-500/20 transition-all cursor-pointer"
                 >
                   AJIO
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/25 hover:bg-purple-500/20 transition-all cursor-pointer"
                 >
                   TATA CLIQ
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-500/20 transition-all cursor-pointer"
                 >
                   croma
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/25 hover:bg-red-500/20 transition-all cursor-pointer"
                 >
                   reliance digital
                 </button>
@@ -349,10 +652,10 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* 4 VALUE GUARANTEES STRIP (Direct from Panel 1) */}
+          {/* 4 VALUE GUARANTEES STRIP */}
           <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div className="p-3.5 rounded-2xl bg-[#0e1628]/60 border border-slate-800/80 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-cyan-400 flex items-center justify-center shrink-0">
                 <Truck className="w-5 h-5" />
               </div>
               <div>
@@ -361,7 +664,7 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#0e1628]/60 border border-slate-800/80 flex items-center gap-3">
+            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -371,7 +674,7 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#0e1628]/60 border border-slate-800/80 flex items-center gap-3">
+            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
                 <RotateCcw className="w-5 h-5" />
               </div>
@@ -381,7 +684,7 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#0e1628]/60 border border-slate-800/80 flex items-center gap-3">
+            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
                 <Headphones className="w-5 h-5" />
               </div>
@@ -546,18 +849,19 @@ export const HomePage: React.FC = () => {
             <ProductCard product={products.find(p => p.id === 'prod-samsung-watch-6')!} />
           )}
 
-          {/* Card 5: SmartDeal Cashback Special Promo Card (Panel 1) */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#1e1b4b] via-[#2e1065] to-[#0f172a] border border-indigo-500/30 p-5 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group hover:border-indigo-400 transition-all min-h-[360px]">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+          {/* Card 5: SmartDeal Cashback Special Promo Card */}
+          <div className={`rounded-3xl p-5 text-white flex flex-col justify-between shadow-2xl relative overflow-hidden group transition-all duration-300 min-h-[360px] border ${heroTheme.promoCard}`}>
+            <div className="absolute top-0 right-0 w-36 h-36 rounded-full blur-2xl pointer-events-none opacity-40 bg-white/10" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-30 bg-white/10" />
             <div className="space-y-3 relative z-10">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-black border border-indigo-500/30">
-                <Sparkles className="w-3 h-3 text-amber-300" />
-                <span>SmartDeal</span>
+              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black border ${heroTheme.promoBadge}`}>
+                <Sparkles className={`w-3 h-3 ${heroTheme.promoIcon}`} />
+                <span>SmartDeal Guarantee</span>
               </div>
               <h3 className="text-lg font-black leading-tight text-white">
                 Real-Time Best Price Finder
               </h3>
-              <p className="text-xs text-indigo-200/80 leading-snug">
+              <p className={`text-xs leading-snug ${heroTheme.promoText}`}>
                 Compare live prices and get the guaranteed lowest rates across top stores.
               </p>
             </div>
@@ -565,9 +869,9 @@ export const HomePage: React.FC = () => {
             <div className="pt-4 space-y-4 relative z-10">
               <Link
                 to="/wallet"
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs text-center flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+                className={`w-full py-2.5 px-4 rounded-xl font-black text-xs text-center flex items-center justify-center gap-1.5 shadow-lg transition-all cursor-pointer active:scale-95 ${heroTheme.promoButton}`}
               >
-                <span>Learn More</span>
+                <span>Explore Rewards Hub</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
 

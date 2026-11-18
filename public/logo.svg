@@ -1,11 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-  <rect width="48" height="48" rx="14" fill="url(#grad)" />
-  <path d="M14 26L22 34L34 16" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="34" cy="16" r="3.5" fill="#F59E0B" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <defs>
-    <linearGradient id="grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4F46E5" />
-      <stop offset="1" stop-color="#7C3AED" />
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#7C3AED" />
     </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#4338CA" flood-opacity="0.45" />
+    </filter>
   </defs>
+
+  <!-- App Icon Base Squircle -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGrad)" />
+
+  <!-- Inner Subtle Ring -->
+  <rect x="16" y="16" width="480" height="480" rx="108" stroke="white" stroke-opacity="0.18" stroke-width="4" />
+
+  <!-- Verified Deal Swoosh Checkmark -->
+  <path d="M140 260 L215 335 L370 170" stroke="white" stroke-width="44" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+  
+  <!-- Sparkle Deal Star -->
+  <circle cx="370" cy="170" r="32" fill="url(#goldGrad)" filter="url(#glow)" />
+  <path d="M370 148 L374 164 L390 170 L374 176 L370 192 L366 176 L350 170 L366 164 Z" fill="white" />
+
+  <!-- Bottom Brand Text -->
+  <text x="256" y="435" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="64" fill="white" letter-spacing="1">SmartDeal</text>
 </svg>

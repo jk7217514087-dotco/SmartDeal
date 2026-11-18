@@ -270,7 +270,7 @@ export const UIUXFlowchartPage: React.FC = () => {
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-extrabold transition-all shrink-0 cursor-pointer ${
                     isActive
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-indigo-500/30 ring-2 ring-indigo-400/40'
-                      : 'bg-[#0f172a] text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+                      : 'bg-white dark:bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
                   }`}
                 >
                   <Icon className="w-4 h-4" />

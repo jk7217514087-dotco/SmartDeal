@@ -2,12 +2,167 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --smartdeal-bg: #0b1a30;
+}
+
+/* THEME 1: STEEL NAVY (Image 1: #0b1a30) */
+html[data-theme="steel-navy"],
+body.theme-steel-navy,
+[data-theme="steel-navy"] {
+  --smartdeal-bg: #0b1a30;
+}
+[data-theme="steel-navy"] .dark .dark\:bg-slate-900,
+[data-theme="steel-navy"] .dark\:bg-slate-900,
+body.theme-steel-navy .dark\:bg-slate-900 {
+  background-color: #112240 !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+}
+[data-theme="steel-navy"] .dark .dark\:bg-slate-800,
+[data-theme="steel-navy"] .dark\:bg-slate-800,
+body.theme-steel-navy .dark\:bg-slate-800 {
+  background-color: #162d50 !important;
+}
+[data-theme="steel-navy"] .dark .dark\:bg-slate-950,
+[data-theme="steel-navy"] .dark\:bg-slate-950,
+body.theme-steel-navy .dark\:bg-slate-950 {
+  background-color: #0b1a30 !important;
+}
+
+/* THEME 2: CYBER MATRIX LIME (Image 2: #111612) */
+html[data-theme="matrix-lime"],
+body.theme-matrix-lime,
+[data-theme="matrix-lime"] {
+  --smartdeal-bg: #111612;
+}
+[data-theme="matrix-lime"] .dark .dark\:bg-slate-900,
+[data-theme="matrix-lime"] .dark\:bg-slate-900,
+body.theme-matrix-lime .dark\:bg-slate-900 {
+  background-color: #172219 !important;
+  border-color: rgba(163, 230, 53, 0.35) !important;
+}
+[data-theme="matrix-lime"] .dark .dark\:bg-slate-800,
+[data-theme="matrix-lime"] .dark\:bg-slate-800,
+body.theme-matrix-lime .dark\:bg-slate-800 {
+  background-color: #1f2d22 !important;
+}
+[data-theme="matrix-lime"] .dark .dark\:bg-slate-950,
+[data-theme="matrix-lime"] .dark\:bg-slate-950,
+body.theme-matrix-lime .dark\:bg-slate-950 {
+  background-color: #111612 !important;
+}
+
+/* THEME 3: COSMIC SUNSET CORAL (Image 3: #1c0b29) */
+html[data-theme="sunset-coral"],
+body.theme-sunset-coral,
+[data-theme="sunset-coral"] {
+  --smartdeal-bg: #1c0b29;
+}
+[data-theme="sunset-coral"] .dark .dark\:bg-slate-900,
+[data-theme="sunset-coral"] .dark\:bg-slate-900,
+body.theme-sunset-coral .dark\:bg-slate-900 {
+  background-color: #28113b !important;
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+[data-theme="sunset-coral"] .dark .dark\:bg-slate-800,
+[data-theme="sunset-coral"] .dark\:bg-slate-800,
+body.theme-sunset-coral .dark\:bg-slate-800 {
+  background-color: #36164f !important;
+}
+[data-theme="sunset-coral"] .dark .dark\:bg-slate-950,
+[data-theme="sunset-coral"] .dark\:bg-slate-950,
+body.theme-sunset-coral .dark\:bg-slate-950 {
+  background-color: #1c0b29 !important;
+}
+
+/* THEME 4: AURORA EMERALD JADE (Image 4: #051f15) */
+html[data-theme="aurora-jade"],
+body.theme-aurora-jade,
+[data-theme="aurora-jade"],
+html[data-theme="cyber-emerald"],
+body.theme-cyber-emerald,
+[data-theme="cyber-emerald"] {
+  --smartdeal-bg: #051f15;
+}
+[data-theme="aurora-jade"] .dark .dark\:bg-slate-900,
+[data-theme="aurora-jade"] .dark\:bg-slate-900,
+body.theme-aurora-jade .dark\:bg-slate-900,
+[data-theme="cyber-emerald"] .dark .dark\:bg-slate-900,
+[data-theme="cyber-emerald"] .dark\:bg-slate-900,
+body.theme-cyber-emerald .dark\:bg-slate-900 {
+  background-color: #092e20 !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+}
+[data-theme="aurora-jade"] .dark .dark\:bg-slate-800,
+[data-theme="aurora-jade"] .dark\:bg-slate-800,
+body.theme-aurora-jade .dark\:bg-slate-800,
+[data-theme="cyber-emerald"] .dark .dark\:bg-slate-800,
+[data-theme="cyber-emerald"] .dark\:bg-slate-800,
+body.theme-cyber-emerald .dark\:bg-slate-800 {
+  background-color: #0e3d2b !important;
+}
+[data-theme="aurora-jade"] .dark .dark\:bg-slate-950,
+[data-theme="aurora-jade"] .dark\:bg-slate-950,
+body.theme-aurora-jade .dark\:bg-slate-950,
+[data-theme="cyber-emerald"] .dark .dark\:bg-slate-950,
+[data-theme="cyber-emerald"] .dark\:bg-slate-950,
+body.theme-cyber-emerald .dark\:bg-slate-950 {
+  background-color: #051f15 !important;
+}
+
+/* THEME 5: ROYAL OBSIDIAN GOLD (Image 5: #181107) */
+html[data-theme="royal-gold"],
+body.theme-royal-gold,
+[data-theme="royal-gold"] {
+  --smartdeal-bg: #181107;
+}
+[data-theme="royal-gold"] .dark .dark\:bg-slate-900,
+[data-theme="royal-gold"] .dark\:bg-slate-900,
+body.theme-royal-gold .dark\:bg-slate-900 {
+  background-color: #241a0b !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+[data-theme="royal-gold"] .dark .dark\:bg-slate-800,
+[data-theme="royal-gold"] .dark\:bg-slate-800,
+body.theme-royal-gold .dark\:bg-slate-800 {
+  background-color: #2e200e !important;
+}
+[data-theme="royal-gold"] .dark .dark\:bg-slate-950,
+[data-theme="royal-gold"] .dark\:bg-slate-950,
+body.theme-royal-gold .dark\:bg-slate-950 {
+  background-color: #181107 !important;
+}
+
+/* THEME 6: CYBER COSMIC INDIGO (Image 6: #08092d) */
+html[data-theme="cyber-indigo"],
+body.theme-cyber-indigo,
+[data-theme="cyber-indigo"] {
+  --smartdeal-bg: #08092d;
+}
+[data-theme="cyber-indigo"] .dark .dark\:bg-slate-900,
+[data-theme="cyber-indigo"] .dark\:bg-slate-900,
+body.theme-cyber-indigo .dark\:bg-slate-900 {
+  background-color: #0f1248 !important;
+  border-color: rgba(139, 92, 246, 0.35) !important;
+}
+[data-theme="cyber-indigo"] .dark .dark\:bg-slate-800,
+[data-theme="cyber-indigo"] .dark\:bg-slate-800,
+body.theme-cyber-indigo .dark\:bg-slate-800 {
+  background-color: #171a63 !important;
+}
+[data-theme="cyber-indigo"] .dark .dark\:bg-slate-950,
+[data-theme="cyber-indigo"] .dark\:bg-slate-950,
+body.theme-cyber-indigo .dark\:bg-slate-950 {
+  background-color: #08092d !important;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
+    background-color: var(--smartdeal-bg, #0b1a30) !important;
   }
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -17,23 +172,21 @@
     max-width: 100vw;
     margin: 0;
     padding: 0;
+    background-color: var(--smartdeal-bg, #0b1a30) !important;
   }
   #root {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
     min-height: 100vh;
+    background-color: var(--smartdeal-bg, transparent);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
   }
   .dark body {
-    background-color: #0B0F19;
-    color: #F1F5F9;
-  }
-  .dark header {
-    background-color: rgba(15, 23, 42, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--smartdeal-bg, #0b1a30) !important;
+    color: #F8FAFC;
   }
 }
 
@@ -82,41 +235,51 @@
 }
 
 .glass-panel-dark {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(13, 20, 36, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.16);
 }
 
 .badge-glow-green {
-  box-shadow: 0 0 15px -2px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 15px -2px rgba(16, 185, 129, 0.45);
 }
 
 .badge-glow-amber {
-  box-shadow: 0 0 15px -2px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 15px -2px rgba(245, 158, 11, 0.45);
 }
 
 .badge-glow-purple {
-  box-shadow: 0 0 15px -2px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 0 15px -2px rgba(99, 102, 241, 0.45);
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+.badge-glow-cyan {
+  box-shadow: 0 0 15px -2px rgba(6, 182, 212, 0.45);
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2.5s infinite;
+.card-obsidian {
+  background: #0d1424;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dark .card-obsidian {
+  background: #0d1424;
+  border: 1px solid rgba(99, 102, 241, 0.14);
+}
+.dark .card-obsidian:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.22);
 }
 
 .text-gradient-brand {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #06b6d4 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 50%, #6366f1 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -124,7 +287,7 @@
 }
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;

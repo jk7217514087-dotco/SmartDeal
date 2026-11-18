@@ -5,6 +5,8 @@ import { DealScoreBadge } from '../components/common/DealScoreBadge';
 import { PriceComparisonTable } from '../components/common/PriceComparisonTable';
 import { PriceHistoryChart } from '../components/common/PriceHistoryChart';
 import { PriceAlertModal } from '../components/common/PriceAlertModal';
+import { ProductFullDetailsSection } from '../components/product/ProductFullDetailsSection';
+import { notificationService } from '../services/notificationService';
 import {
   Heart,
   ShoppingCart,
@@ -33,10 +35,119 @@ import {
   Tooltip
 } from 'recharts';
 
+const THEME_STYLES: Record<string, {
+  cardBg: string;
+  cardBorder: string;
+  badgeBg: string;
+  badgeText: string;
+  accentText: string;
+  pricingBg: string;
+  pricingBorder: string;
+  thumbActiveBorder: string;
+  thumbInactiveBg: string;
+  iconText: string;
+  mobileBg: string;
+  mobileBorder: string;
+  buyButton: string;
+}> = {
+  'steel-navy': {
+    cardBg: 'bg-[#112240]',
+    cardBorder: 'border-sky-800/60',
+    badgeBg: 'bg-sky-400',
+    badgeText: 'bg-sky-500/20 text-sky-300 border-sky-400/40',
+    accentText: 'text-sky-400',
+    pricingBg: 'bg-[#0c182b]',
+    pricingBorder: 'border-sky-900/60',
+    thumbActiveBorder: 'border-sky-400',
+    thumbInactiveBg: 'border-sky-900 bg-[#0f1d35]',
+    iconText: 'text-sky-400',
+    mobileBg: 'dark:bg-[#0b1a30]/95',
+    mobileBorder: 'dark:border-sky-800/80',
+    buyButton: 'bg-gradient-to-r from-sky-500 via-blue-500 to-sky-600 text-white shadow-sky-500/20'
+  },
+  'matrix-lime': {
+    cardBg: 'bg-[#172219]',
+    cardBorder: 'border-lime-800/60',
+    badgeBg: 'bg-lime-400',
+    badgeText: 'bg-lime-500/20 text-lime-300 border-lime-400/40',
+    accentText: 'text-lime-400',
+    pricingBg: 'bg-[#0e140f]',
+    pricingBorder: 'border-lime-900/60',
+    thumbActiveBorder: 'border-lime-400',
+    thumbInactiveBg: 'border-lime-900 bg-[#141d16]',
+    iconText: 'text-lime-400',
+    mobileBg: 'dark:bg-[#111612]/95',
+    mobileBorder: 'dark:border-lime-800/80',
+    buyButton: 'bg-gradient-to-r from-lime-400 via-lime-500 to-emerald-500 text-slate-950 shadow-lime-500/20'
+  },
+  'sunset-coral': {
+    cardBg: 'bg-[#28113b]',
+    cardBorder: 'border-rose-900/60',
+    badgeBg: 'bg-rose-400',
+    badgeText: 'bg-rose-500/20 text-rose-300 border-rose-400/40',
+    accentText: 'text-rose-400',
+    pricingBg: 'bg-[#160822]',
+    pricingBorder: 'border-rose-950/70',
+    thumbActiveBorder: 'border-rose-400',
+    thumbInactiveBg: 'border-rose-900 bg-[#200d30]',
+    iconText: 'text-rose-400',
+    mobileBg: 'dark:bg-[#1c0b29]/95',
+    mobileBorder: 'dark:border-rose-900/80',
+    buyButton: 'bg-gradient-to-r from-orange-500 via-rose-500 to-pink-600 text-white shadow-rose-500/20'
+  },
+  'aurora-jade': {
+    cardBg: 'bg-[#092e20]',
+    cardBorder: 'border-emerald-800/60',
+    badgeBg: 'bg-emerald-400',
+    badgeText: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40',
+    accentText: 'text-emerald-400',
+    pricingBg: 'bg-[#041710]',
+    pricingBorder: 'border-emerald-950/70',
+    thumbActiveBorder: 'border-emerald-400',
+    thumbInactiveBg: 'border-emerald-900 bg-[#072419]',
+    iconText: 'text-emerald-400',
+    mobileBg: 'dark:bg-[#051f15]/95',
+    mobileBorder: 'dark:border-emerald-800/80',
+    buyButton: 'bg-gradient-to-r from-emerald-500 via-green-400 to-teal-500 text-slate-950 shadow-emerald-500/20'
+  },
+  'royal-gold': {
+    cardBg: 'bg-[#241a0b]',
+    cardBorder: 'border-amber-900/60',
+    badgeBg: 'bg-amber-400',
+    badgeText: 'bg-amber-400/20 text-amber-300 border-amber-400/40',
+    accentText: 'text-amber-400',
+    pricingBg: 'bg-[#0c0c09]',
+    pricingBorder: 'border-amber-950/70',
+    thumbActiveBorder: 'border-amber-400',
+    thumbInactiveBg: 'border-amber-900 bg-[#1c1408]',
+    iconText: 'text-amber-400',
+    mobileBg: 'dark:bg-[#181107]/95',
+    mobileBorder: 'dark:border-amber-900/80',
+    buyButton: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-amber-500/20'
+  },
+  'cyber-indigo': {
+    cardBg: 'bg-[#0f1248]',
+    cardBorder: 'border-indigo-800/60',
+    badgeBg: 'bg-violet-400',
+    badgeText: 'bg-violet-500/20 text-violet-300 border-violet-400/40',
+    accentText: 'text-violet-400',
+    pricingBg: 'bg-[#060721]',
+    pricingBorder: 'border-indigo-950/70',
+    thumbActiveBorder: 'border-violet-400',
+    thumbInactiveBg: 'border-indigo-900 bg-[#0d103d]',
+    iconText: 'text-violet-400',
+    mobileBg: 'dark:bg-[#08092d]/95',
+    mobileBorder: 'dark:border-indigo-900/80',
+    buyButton: 'bg-gradient-to-r from-violet-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
+  }
+};
+
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { products, addToCart, wishlist, toggleWishlist, trackActivity } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist, trackActivity, trackOutboundClick, activeTheme } = useApp();
   const navigate = useNavigate();
+
+  const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['steel-navy'];
 
   const product = products.find(p => p.id === id) || products[0];
   const [activeImage, setActiveImage] = useState(product.image);
@@ -77,25 +188,58 @@ export const ProductDetailPage: React.FC = () => {
 
   const isWishlisted = wishlist.includes(product.id);
 
+  const fallbackCashback = Math.round(product.sellingPrice * 0.015);
   const bestMarketplace = product.marketplacePrices[0] || {
     sellerName: 'Amazon',
     price: product.sellingPrice,
+    finalPrice: Math.max(0, product.sellingPrice - fallbackCashback),
     url: '#',
-    cashbackAmount: undefined as number | undefined,
+    cashbackAmount: fallbackCashback,
   };
 
   const cashbackAmount =
-    bestMarketplace.cashbackAmount ||
-    Math.round(product.sellingPrice * 0.015);
+    bestMarketplace.cashbackAmount ??
+    fallbackCashback;
 
-  const handleBuyAtBestPrice = () => {
-    // Navigate or trigger compare section with modal
-    const element = document.getElementById('price-comparison-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigate(`/compare/${product.id}`);
+  const handleBuyAtBestPrice = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
+    const targetStore = bestMarketplace;
+    const storeName = targetStore.sellerName || 'Amazon';
+    const storePrice = targetStore.finalPrice || targetStore.price || product.sellingPrice;
+    const trackingId = `SD-AFF-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const targetUrl = (targetStore.url && targetStore.url !== '#')
+      ? targetStore.url
+      : (storeName.toLowerCase().includes('flipkart')
+          ? `https://www.flipkart.com/search?q=${encodeURIComponent(product.name)}`
+          : `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}`);
+
+    // 1. Dispatch real-time SMS to owner 7217514087
+    notificationService.notifyBuyClick({
+      clickId: trackingId,
+      productId: product.id,
+      productName: product.name,
+      marketplace: storeName,
+      price: storePrice,
+      targetUrl,
+      userName: 'Website Visitor',
+      userContact: 'Product Detail Page Direct Buy'
+    });
+
+    // 2. Track outbound click
+    trackOutboundClick(
+      product.id,
+      product.name,
+      product.category,
+      storeName,
+      storePrice,
+      targetUrl
+    );
+
+    // 3. Open official product page on that company directly
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Sparkline price history points for Panel 3
@@ -124,7 +268,7 @@ export const ProductDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Left: Gallery (5 cols) matching Panel 3 */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="relative aspect-square rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-8 flex items-center justify-center overflow-hidden shadow-sm">
+          <div className={`relative aspect-square rounded-3xl p-8 flex items-center justify-center overflow-hidden shadow-sm border ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
             <img
               src={activeImage}
               alt={product.name}
@@ -147,8 +291,11 @@ export const ProductDetailPage: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => setActiveImage(img)}
-                className={`w-16 h-16 rounded-2xl border-2 p-1.5 bg-white dark:bg-slate-800 overflow-hidden shrink-0 transition-all cursor-pointer ${activeImage === img ? 'border-brand-600 dark:border-brand-400 shadow-md scale-105' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                  }`}
+                className={`w-16 h-16 rounded-2xl border-2 p-1.5 overflow-hidden shrink-0 transition-all cursor-pointer ${
+                  activeImage === img 
+                    ? `${themeStyle.thumbActiveBorder} shadow-md scale-105` 
+                    : themeStyle.thumbInactiveBg
+                }`}
               >
                 <img src={img} alt="" className="w-full h-full object-contain" />
               </button>
@@ -156,17 +303,17 @@ export const ProductDetailPage: React.FC = () => {
           </div>
 
           {/* Guarantee Badges */}
-          <div className="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] font-semibold text-slate-600 dark:text-slate-400">
-            <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center gap-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] font-semibold text-slate-300">
+            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+              <ShieldCheck className={`w-4 h-4 ${themeStyle.iconText}`} />
               <span>100% Genuine</span>
             </div>
-            <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center gap-1">
-              <RotateCcw className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+              <RotateCcw className={`w-4 h-4 ${themeStyle.iconText}`} />
               <span>{product.returnDays} Days Return</span>
             </div>
-            <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center gap-1">
-              <Truck className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+              <Truck className={`w-4 h-4 ${themeStyle.iconText}`} />
               <span>Fast Dispatch</span>
             </div>
           </div>
@@ -177,42 +324,42 @@ export const ProductDetailPage: React.FC = () => {
           {/* Brand & Title */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span className={`text-xs font-bold uppercase tracking-wider ${themeStyle.accentText}`}>
                 {product.brand}
               </span>
-              <span className="text-slate-300 dark:text-slate-700">•</span>
+              <span className="text-slate-700">•</span>
               <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white">
                 Best Seller
               </span>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white">
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider text-slate-950 ${themeStyle.badgeBg}`}>
                 {product.discountPercent}% OFF
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
               {product.name}
             </h1>
 
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1 text-amber-500 font-bold bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-800/40">
+              <span className="flex items-center gap-1 text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30">
                 ★ {product.rating}
               </span>
-              <span className="text-slate-500 dark:text-slate-400">
+              <span className="text-slate-400">
                 ({product.reviewsCount.toLocaleString('en-IN')} verified reviews)
               </span>
             </div>
           </div>
 
           {/* Pricing Engine Box matching Panel 3 */}
-          <div className="p-5 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-4">
+          <div className={`p-5 rounded-3xl border space-y-4 shadow-sm ${themeStyle.pricingBg} ${themeStyle.pricingBorder}`}>
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl sm:text-4xl font-black text-slate-950 dark:text-white">
+              <span className="text-3xl sm:text-4xl font-black text-white">
                 ₹{product.sellingPrice.toLocaleString('en-IN')}
               </span>
-              <span className="text-lg text-slate-400 dark:text-slate-500 line-through">
+              <span className="text-lg text-slate-500 line-through">
                 ₹{product.mrp.toLocaleString('en-IN')}
               </span>
-              <span className="text-xs font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800/50">
+              <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg border ${themeStyle.badgeText}`}>
                 {product.discountPercent}% OFF
               </span>
             </div>
@@ -253,9 +400,10 @@ export const ProductDetailPage: React.FC = () => {
             <button
               onClick={handleBuyAtBestPrice}
               className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+              title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
             >
-              <span>Buy at Best Price</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'} (₹{product.sellingPrice.toLocaleString('en-IN')})</span>
+              <ExternalLink className="w-4 h-4" />
             </button>
           </div>
 
@@ -345,7 +493,7 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Right Card: About this Product & Price History Sparkline matching Panel 3 */}
-            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-6 shadow-sm flex flex-col justify-between">
+            <div className={`p-6 rounded-3xl border space-y-6 shadow-sm flex flex-col justify-between ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
               <div>
                 <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-3">
                   About this Product
@@ -402,22 +550,10 @@ export const ProductDetailPage: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 2: Specifications */}
+        {/* Tab 2: Specifications (Full Flipkart Structured View) */}
         {activeTab === 'specifications' && (
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-4">
-            <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Full Technical Specifications</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-xs">
-              {Object.entries(product.specs).map(([key, val]) => (
-                <div key={key} className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-500 dark:text-slate-400 font-semibold">{key}</span>
-                  <span className="text-slate-900 dark:text-white font-bold text-right">{String(val)}</span>
-                </div>
-              ))}
-              <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800">
-                <span className="text-slate-500 dark:text-slate-400 font-semibold">Warranty</span>
-                <span className="text-slate-900 dark:text-white font-bold text-right">{product.warranty}</span>
-              </div>
-            </div>
+          <div className="pt-2">
+            <ProductFullDetailsSection product={product} />
           </div>
         )}
 
@@ -460,6 +596,11 @@ export const ProductDetailPage: React.FC = () => {
         )}
       </div>
 
+      {/* SECTION: FULL FLIPKART-STYLE PRODUCT SPECIFICATIONS & DETAILS */}
+      <section className="pt-2">
+        <ProductFullDetailsSection product={product} />
+      </section>
+
       {/* SECTION 6: SMART PRICE COMPARISON TABLE matching Panel 4 */}
       <section id="price-comparison-section" className="space-y-6 pt-10 pb-8 border-t border-slate-100 dark:border-slate-800 my-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
@@ -486,7 +627,7 @@ export const ProductDetailPage: React.FC = () => {
       </section>
 
       {/* Mobile-Only Sticky Purchase Bar (Panel 10 Screen 3) */}
-      <div className="sm:hidden fixed bottom-14 left-0 right-0 z-30 p-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shadow-2xl">
+      <div className={`sm:hidden fixed bottom-14 left-0 right-0 z-30 p-3 backdrop-blur-md border-t flex items-center justify-between gap-3 shadow-2xl bg-white/95 ${themeStyle.mobileBg} border-slate-200 ${themeStyle.mobileBorder}`}>
         <div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-black text-slate-950 dark:text-white">
@@ -503,10 +644,11 @@ export const ProductDetailPage: React.FC = () => {
 
         <button
           onClick={handleBuyAtBestPrice}
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
+          className={`px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 ${themeStyle.buyButton}`}
+          title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
         >
-          <span>Buy Now</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'}</span>
+          <ExternalLink className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>

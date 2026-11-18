@@ -1,0 +1,450 @@
+[
+  {
+    "id": "U10000",
+    "name": "SmartDeal Owner",
+    "email": "jk7217514087@gmail.com",
+    "phone": "7217514087",
+    "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "ADMIN",
+    "status": "ACTIVE",
+    "createdAt": "2026-08-01T10:00:00.000Z"
+  },
+  {
+    "id": "U10001",
+    "name": "SmartDeal Administrator",
+    "email": "admin@smartdeal.com",
+    "phone": "7217514087",
+    "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "ADMIN",
+    "status": "ACTIVE",
+    "createdAt": "2026-08-01T10:00:00.000Z"
+  },
+  {
+    "id": "U10025",
+    "name": "Rahul Sharma",
+    "email": "rahul.sharma@example.com",
+    "phone": "9876543210",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-08-10T12:00:00.000Z"
+  },
+  {
+    "id": "U10026",
+    "name": "Rohit Kumar",
+    "email": "rohit.kumar@example.com",
+    "phone": "9876543211",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-08-10T12:00:00.000Z"
+  },
+  {
+    "id": "U-MWKPZNGH-07PR",
+    "name": "Audit Test User",
+    "email": "tester_1794921622145@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:20:22.145Z"
+  },
+  {
+    "id": "U-MWKPZNGO-QJOX",
+    "name": "Google Shopper",
+    "email": "google.shopper@smartdeal.com",
+    "phone": "9876543220",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:20:22.152Z"
+  },
+  {
+    "id": "U-MWKQ0CAA-5GG3",
+    "name": "Audit Test User",
+    "email": "tester_1794921654321@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:20:54.322Z"
+  },
+  {
+    "id": "U-MWKQ0CAG-2XZC",
+    "name": "Test Google User",
+    "email": "test.google@smartdeal.com",
+    "phone": "9876543220",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:20:54.329Z"
+  },
+  {
+    "id": "U-MWKQ59CO-OO0R",
+    "name": "Audit Test User",
+    "email": "tester_1794921883799@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:24:43.800Z"
+  },
+  {
+    "id": "U-MWKQDMJT-ALZG",
+    "name": "Newuser 1794922274153",
+    "email": "newuser_1794922274153@example.com",
+    "phone": "1794922274153",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:31:14.153Z"
+  },
+  {
+    "id": "U-MWKQDMJW-WPLN",
+    "name": "Audit Test User",
+    "email": "tester_1794922274155@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:31:14.156Z"
+  },
+  {
+    "id": "U-MWKQEPXO-56GY",
+    "name": "Newuser 1794922325195",
+    "email": "newuser_1794922325195@example.com",
+    "phone": "1794922325195",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:32:05.196Z"
+  },
+  {
+    "id": "U-MWKQEPXR-VCGP",
+    "name": "Audit Test User",
+    "email": "tester_1794922325198@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:32:05.199Z"
+  },
+  {
+    "id": "U-MWKQSFC3-3V6X",
+    "name": "Newuser 1794922964642",
+    "email": "newuser_1794922964642@example.com",
+    "phone": "1794922964642",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:42:44.643Z"
+  },
+  {
+    "id": "U-MWKQSFC4-3BB5",
+    "name": "Audit Test User",
+    "email": "tester_1794922964644@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T13:42:44.644Z"
+  },
+  {
+    "id": "U-MWKRQLZS-YE66",
+    "name": "Newuser 1794924559575",
+    "email": "newuser_1794924559575@example.com",
+    "phone": "1794924559575",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T14:09:19.576Z"
+  },
+  {
+    "id": "U-MWKRQLZX-3RCZ",
+    "name": "Audit Test User",
+    "email": "tester_1794924559581@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T14:09:19.581Z"
+  },
+  {
+    "id": "U-MWKRRYMM-HH8Q",
+    "name": "Newuser 1794924622605",
+    "email": "newuser_1794924622605@example.com",
+    "phone": "1794924622605",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T14:10:22.606Z"
+  },
+  {
+    "id": "U-MWKRRYMP-5M4Q",
+    "name": "Audit Test User",
+    "email": "tester_1794924622609@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T14:10:22.609Z"
+  },
+  {
+    "id": "U-MWKRSCKU-BROB",
+    "name": "Newuser 1794924640685",
+    "email": "newuser_1794924640685@example.com",
+    "phone": "1794924640685",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T14:10:40.686Z"
+  },
+  {
+    "id": "U-MWKRSCKX-LAU9",
+    "name": "Audit Test User",
+    "email": "tester_1794924640688@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T14:10:40.689Z"
+  },
+  {
+    "id": "U-MWL10Q3O-6URH",
+    "name": "Newuser 1794940148002",
+    "email": "newuser_1794940148002@example.com",
+    "phone": "1794940148002",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T18:29:08.004Z"
+  },
+  {
+    "id": "U-MWL10Q3S-4FV6",
+    "name": "Audit Test User",
+    "email": "tester_1794940148007@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T18:29:08.008Z"
+  },
+  {
+    "id": "U-MWL1H5NV-W59E",
+    "name": "Newuser 1794940914666",
+    "email": "newuser_1794940914666@example.com",
+    "phone": "1794940914666",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T18:41:54.667Z"
+  },
+  {
+    "id": "U-MWL1H5NZ-JYSW",
+    "name": "Audit Test User",
+    "email": "tester_1794940914671@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T18:41:54.672Z"
+  },
+  {
+    "id": "U-MWL1UYYV-T43Z",
+    "name": "Newuser 1794941559174",
+    "email": "newuser_1794941559174@example.com",
+    "phone": "1794941559174",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T18:52:39.175Z"
+  },
+  {
+    "id": "U-MWL1UYYZ-I6VT",
+    "name": "Audit Test User",
+    "email": "tester_1794941559178@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T18:52:39.179Z"
+  },
+  {
+    "id": "U-MWL2G68Z-CV5M",
+    "name": "Newuser 1794942548386",
+    "email": "newuser_1794942548386@example.com",
+    "phone": "1794942548386",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T19:09:08.387Z"
+  },
+  {
+    "id": "U-MWL2G692-U7E5",
+    "name": "Audit Test User",
+    "email": "tester_1794942548389@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T19:09:08.390Z"
+  },
+  {
+    "id": "U-MWL2OQT2-IT84",
+    "name": "Newuser 1794942948277",
+    "email": "newuser_1794942948277@example.com",
+    "phone": "1794942948277",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T19:15:48.278Z"
+  },
+  {
+    "id": "U-MWL2OQT5-7J5B",
+    "name": "Audit Test User",
+    "email": "tester_1794942948280@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T19:15:48.281Z"
+  },
+  {
+    "id": "U-MWL3JVHC-RFOU",
+    "name": "Newuser 1794944400671",
+    "email": "newuser_1794944400671@example.com",
+    "phone": "1794944400671",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T19:40:00.672Z"
+  },
+  {
+    "id": "U-MWL3JVHG-C1SP",
+    "name": "Audit Test User",
+    "email": "tester_1794944400675@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T19:40:00.676Z"
+  },
+  {
+    "id": "U-MWL4CEPG-Y97W",
+    "name": "Newuser 1794945731956",
+    "email": "newuser_1794945731956@example.com",
+    "phone": "1794945731956",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:02:11.956Z"
+  },
+  {
+    "id": "U-MWL4CEPJ-I42C",
+    "name": "Audit Test User",
+    "email": "tester_1794945731958@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:02:11.959Z"
+  },
+  {
+    "id": "U-MWL52DST-8FPZ",
+    "name": "Newuser 1794946943836",
+    "email": "newuser_1794946943836@example.com",
+    "phone": "1794946943836",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:22:23.837Z"
+  },
+  {
+    "id": "U-MWL52DSW-SKHV",
+    "name": "Audit Test User",
+    "email": "tester_1794946943839@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:22:23.840Z"
+  },
+  {
+    "id": "U-MWL5LBCN-6YIR",
+    "name": "Newuser 1794947827126",
+    "email": "newuser_1794947827126@example.com",
+    "phone": "1794947827126",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:37:07.127Z"
+  },
+  {
+    "id": "U-MWL5LBCO-SXXF",
+    "name": "Audit Test User",
+    "email": "tester_1794947827128@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:37:07.128Z"
+  },
+  {
+    "id": "U-MWL64YH0-EBHZ",
+    "name": "Newuser 1794948743556",
+    "email": "newuser_1794948743556@example.com",
+    "phone": "1794948743556",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:52:23.556Z"
+  },
+  {
+    "id": "U-MWL64YH2-G3G0",
+    "name": "Audit Test User",
+    "email": "tester_1794948743557@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T20:52:23.559Z"
+  },
+  {
+    "id": "U-MWL6QOXG-AWYY",
+    "name": "Newuser 1794949757619",
+    "email": "newuser_1794949757619@example.com",
+    "phone": "1794949757619",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T21:09:17.620Z"
+  },
+  {
+    "id": "U-MWL6QOXJ-CAGJ",
+    "name": "Audit Test User",
+    "email": "tester_1794949757622@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T21:09:17.623Z"
+  },
+  {
+    "id": "U-MWL6Y0UO-AD6S",
+    "name": "Newuser 1794950099664",
+    "email": "newuser_1794950099664@example.com",
+    "phone": "1794950099664",
+    "passwordHash": "a9fc8dc21063c33712ae47cd4d8d31bba4bb7c99949a198116e03efa045bc0dd",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T21:14:59.664Z"
+  },
+  {
+    "id": "U-MWL6Y0UT-Z92Y",
+    "name": "Audit Test User",
+    "email": "tester_1794950099668@smartdeal-test.com",
+    "phone": "+91 98765 00000",
+    "passwordHash": "b926e929192ee30e047ab90fc9d1e0d811a4ccc5f0411da2047abfccc8cd8f60",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T21:14:59.669Z"
+  }
+]

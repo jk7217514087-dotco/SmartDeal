@@ -21,14 +21,48 @@ import {
 import { mockProducts, initialCommissionSlabs } from '../data/mockProducts';
 import { trackingService } from '../services/trackingService';
 
+export type ThemeId = 
+  | 'steel-navy'
+  | 'matrix-lime'
+  | 'sunset-coral'
+  | 'aurora-jade'
+  | 'royal-gold'
+  | 'cyber-indigo'
+  | 'cyber-emerald';
+
+export const THEME_BG_MAP: Record<string, string> = {
+  'steel-navy': '#0b1a30',
+  'matrix-lime': '#111612',
+  'sunset-coral': '#1c0b29',
+  'aurora-jade': '#051f15',
+  'royal-gold': '#181107',
+  'cyber-indigo': '#08092d',
+  'cyber-emerald': '#051f15',
+};
+
+export const THEME_CYCLE_ORDER: ThemeId[] = [
+  'steel-navy',
+  'matrix-lime',
+  'sunset-coral',
+  'aurora-jade',
+  'royal-gold',
+  'cyber-indigo',
+];
+
+export const getThemeDefaultBg = (theme: ThemeId): string => {
+  return THEME_BG_MAP[theme] || '#0b1a30';
+};
+
 interface AppContextType {
   role: Role;
   setRole: (role: Role) => void;
   currentUser: TrackedUser | null;
   guestSession: GuestSession;
-  loginUser: (email: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
+  isAuthValidating: boolean;
+  loginUser: (emailOrPhone: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
+  loginWithGoogle: (credential?: string, email?: string, name?: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
   registerUser: (name: string, email: string, phone: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
-  logoutUser: () => void;
+  logoutUser: () => Promise<void>;
   trackActivity: (actionType: ActivityActionType, details: Record<string, any>, productId?: string, productName?: string, category?: string) => void;
   trackOutboundClick: (productId: string, productName: string, category: string, marketplace: string, price: number, exactUrl: string) => OutboundClickRecord;
   products: Product[];
@@ -82,6 +116,14 @@ interface AppContextType {
   setIsAiAssistantOpen: (open: boolean) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  activeTheme: ThemeId;
+  setActiveTheme: (theme: ThemeId) => void;
+  toggleTheme: () => void;
+  customBg: string;
+  setCustomBg: (color: string) => void;
+  resetCustomBg: () => void;
+  isBgModalOpen: boolean;
+  setIsBgModalOpen: (open: boolean) => void;
   cashbackWallet: CashbackWallet;
   cashbackTransactions: CashbackTransaction[];
   redeemCashback: (amount: number, method?: string, accountDetails?: string) => { success: boolean; message: string; newBalance?: number };
@@ -197,6 +239,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<TrackedUser | null>(() => {
     return trackingService.getCurrentUser();
   });
+  const [isAuthValidating, setIsAuthValidating] = useState<boolean>(true);
 
   const [guestSession, setGuestSession] = useState<GuestSession>(() => {
     return trackingService.getGuestSession();
@@ -289,11 +332,135 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('smartdeals_dark_mode');
     if (saved !== null) return saved === 'true';
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
+    return true;
   });
+
+  const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
+    const saved = localStorage.getItem('smartdeals_active_theme') as ThemeId | null;
+    if (saved && (saved in THEME_BG_MAP)) {
+      return saved === 'cyber-emerald' ? 'aurora-jade' : saved;
+    }
+    return 'steel-navy';
+  });
+
+  const [customBg, setCustomBgState] = useState<string>(() => {
+    const savedBg = localStorage.getItem('smartdeals_custom_bg');
+    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'steel-navy';
+    // Purge any legacy black background values
+    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08') {
+      return savedBg;
+    }
+    return getThemeDefaultBg(savedTheme);
+  });
+  const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_active_theme', activeTheme);
+    const bg = getThemeDefaultBg(activeTheme);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', activeTheme);
+      document.body.classList.remove(
+        'theme-cyber-neon',
+        'theme-royal-gold',
+        'theme-cyber-emerald',
+        'theme-steel-navy',
+        'theme-matrix-lime',
+        'theme-sunset-coral',
+        'theme-aurora-jade',
+        'theme-cyber-indigo'
+      );
+      document.body.classList.add(`theme-${activeTheme}`);
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.setProperty('--smartdeal-bg', bg);
+      document.body.style.backgroundColor = bg;
+      document.documentElement.style.backgroundColor = bg;
+    }
+  }, [activeTheme]);
+
+  const setActiveTheme = (theme: ThemeId) => {
+    const normalizedTheme = theme === 'cyber-emerald' ? 'aurora-jade' : theme;
+    setActiveThemeState(normalizedTheme);
+    const bg = getThemeDefaultBg(normalizedTheme);
+    setCustomBgState(bg);
+    localStorage.setItem('smartdeals_active_theme', normalizedTheme);
+    localStorage.setItem('smartdeals_custom_bg', bg);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', normalizedTheme);
+      document.body.classList.remove(
+        'theme-cyber-neon',
+        'theme-royal-gold',
+        'theme-cyber-emerald',
+        'theme-steel-navy',
+        'theme-matrix-lime',
+        'theme-sunset-coral',
+        'theme-aurora-jade',
+        'theme-cyber-indigo'
+      );
+      document.body.classList.add(`theme-${normalizedTheme}`);
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.setProperty('--smartdeal-bg', bg);
+      document.body.style.backgroundColor = bg;
+      document.documentElement.style.backgroundColor = bg;
+    }
+  };
+
+  const toggleTheme = () => {
+    const currentIndex = THEME_CYCLE_ORDER.indexOf(activeTheme);
+    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % THEME_CYCLE_ORDER.length;
+    setActiveTheme(THEME_CYCLE_ORDER[nextIndex]);
+  };
+
+  useEffect(() => {
+    if (customBg) {
+      localStorage.setItem('smartdeals_custom_bg', customBg);
+      if (typeof document !== 'undefined') {
+        document.documentElement.style.setProperty('--smartdeal-bg', customBg);
+        document.body.style.backgroundColor = customBg;
+        document.documentElement.style.backgroundColor = customBg;
+      }
+    }
+  }, [customBg]);
+
+  const setCustomBg = (color: string) => {
+    setCustomBgState(color);
+    localStorage.setItem('smartdeals_custom_bg', color);
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.setProperty('--smartdeal-bg', color);
+      document.body.style.backgroundColor = color;
+      document.documentElement.style.backgroundColor = color;
+    }
+    const lower = color.toLowerCase();
+    if (lower === '#0b1a30' || lower === '#112240') {
+      setActiveThemeState('steel-navy');
+      localStorage.setItem('smartdeals_active_theme', 'steel-navy');
+      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'steel-navy');
+    } else if (lower === '#111612' || lower === '#172219') {
+      setActiveThemeState('matrix-lime');
+      localStorage.setItem('smartdeals_active_theme', 'matrix-lime');
+      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'matrix-lime');
+    } else if (lower === '#1c0b29' || lower === '#28113b') {
+      setActiveThemeState('sunset-coral');
+      localStorage.setItem('smartdeals_active_theme', 'sunset-coral');
+      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'sunset-coral');
+    } else if (lower === '#051f15' || lower === '#092e20' || lower === '#031926') {
+      setActiveThemeState('aurora-jade');
+      localStorage.setItem('smartdeals_active_theme', 'aurora-jade');
+      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'aurora-jade');
+    } else if (lower === '#181107' || lower === '#241a0b' || lower === '#070709') {
+      setActiveThemeState('royal-gold');
+      localStorage.setItem('smartdeals_active_theme', 'royal-gold');
+      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'royal-gold');
+    } else if (lower === '#08092d' || lower === '#0f1248') {
+      setActiveThemeState('cyber-indigo');
+      localStorage.setItem('smartdeals_active_theme', 'cyber-indigo');
+      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'cyber-indigo');
+    }
+  };
+
+  const resetCustomBg = () => {
+    const defaultColor = getThemeDefaultBg(activeTheme);
+    setCustomBgState(defaultColor);
+  };
 
   useEffect(() => {
     localStorage.setItem('smartdeals_dark_mode', isDarkMode.toString());
@@ -375,6 +542,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('smartdeals_products', JSON.stringify(products));
   }, [products]);
 
+  // Validate session on app initialization
+  useEffect(() => {
+    let isMounted = true;
+    trackingService.validateSession()
+      .then(user => {
+        if (isMounted) {
+          setCurrentUser(user);
+          if (user?.role === 'ADMIN') {
+            setRoleState('ADMIN');
+            localStorage.setItem('smartdeals_role', 'ADMIN');
+          } else if (!user) {
+            setRoleState('USER');
+            localStorage.setItem('smartdeals_role', 'USER');
+          }
+          setIsAuthValidating(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIsAuthValidating(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Sync with local REST API server if reachable
   useEffect(() => {
     fetch('http://localhost:3001/api/products')
@@ -390,13 +585,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const setRole = (newRole: Role) => {
-    setRoleState(newRole);
-    if (newRole === 'ADMIN' && currentUser?.role !== 'ADMIN') {
-      const admin = trackingService.getUsers().find(u => u.role === 'ADMIN');
-      if (admin) {
-        trackingService.setCurrentUser(admin);
-        setCurrentUser(admin);
+    if (newRole === 'ADMIN') {
+      if (currentUser?.role === 'ADMIN') {
+        setRoleState('ADMIN');
+        localStorage.setItem('smartdeals_role', 'ADMIN');
+      } else {
+        console.warn('[SmartDeals Security] Unauthorized attempt to switch to ADMIN role blocked.');
       }
+    } else {
+      setRoleState('USER');
+      localStorage.setItem('smartdeals_role', 'USER');
     }
   };
 
@@ -406,8 +604,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentUser(res.user);
       if (res.user.role === 'ADMIN') {
         setRoleState('ADMIN');
+        localStorage.setItem('smartdeals_role', 'ADMIN');
       } else {
         setRoleState('USER');
+        localStorage.setItem('smartdeals_role', 'USER');
+      }
+    }
+    return res;
+  };
+
+  const loginWithGoogle = async (credential?: string, email?: string, name?: string) => {
+    const res = await trackingService.loginWithGoogle(credential, email, name);
+    if (res.success && res.user) {
+      setCurrentUser(res.user);
+      if (res.user.role === 'ADMIN') {
+        setRoleState('ADMIN');
+        localStorage.setItem('smartdeals_role', 'ADMIN');
+      } else {
+        setRoleState('USER');
+        localStorage.setItem('smartdeals_role', 'USER');
       }
     }
     return res;
@@ -418,14 +633,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (res.success && res.user) {
       setCurrentUser(res.user);
       setRoleState('USER');
+      localStorage.setItem('smartdeals_role', 'USER');
     }
     return res;
   };
 
-  const logoutUser = () => {
-    trackingService.logoutUser();
+  const logoutUser = async () => {
+    await trackingService.logoutUser();
     setCurrentUser(null);
     setRoleState('USER');
+    localStorage.setItem('smartdeals_role', 'USER');
+    sessionStorage.removeItem('smartdeal_admin_authenticated');
   };
 
   const trackActivity = (
@@ -797,7 +1015,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setRole,
         currentUser,
         guestSession,
+        isAuthValidating,
         loginUser,
+        loginWithGoogle,
         registerUser,
         logoutUser,
         trackActivity,
@@ -850,6 +1070,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsAiAssistantOpen,
         isDarkMode,
         toggleDarkMode,
+        activeTheme,
+        setActiveTheme,
+        toggleTheme,
+        customBg,
+        setCustomBg,
+        resetCustomBg,
+        isBgModalOpen,
+        setIsBgModalOpen,
         cashbackWallet,
         cashbackTransactions: cashbackWallet.transactions,
         redeemCashback,

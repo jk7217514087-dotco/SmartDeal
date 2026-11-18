@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppProvider, useApp } from './context/AppContext';
+import { AppProvider, useApp, getThemeDefaultBg } from './context/AppContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { MobileNav } from './components/layout/MobileNav';
@@ -10,6 +10,8 @@ import { GlobalBackButton } from './components/common/GlobalBackButton';
 import { ScrollController } from './components/common/ScrollController';
 import { LiveSmsToast } from './components/common/LiveSmsToast';
 import { SmsAlertCenterModal } from './components/common/SmsAlertCenterModal';
+import { InstallAppPrompt } from './components/common/InstallAppPrompt';
+import { BackgroundCustomizerModal } from './components/common/BackgroundCustomizerModal';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -50,12 +52,17 @@ import { ProductReturnsPage } from './pages/ProductReturnsPage';
 import { AdminSecurityGuard } from './components/admin/AdminSecurityGuard';
 
 function AppContent() {
-  const { isSmsCenterOpen, setIsSmsCenterOpen, role } = useApp();
+  const { isSmsCenterOpen, setIsSmsCenterOpen, role, customBg, activeTheme } = useApp();
+
+  const currentBg = customBg || getThemeDefaultBg(activeTheme);
 
   return (
     <Router>
       <ScrollController />
-      <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <div 
+        className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 transition-colors duration-200"
+        style={{ backgroundColor: currentBg }}
+      >
         <Navbar />
           <GlobalBackButton />
           <main className="flex-1 w-full max-w-full overflow-x-hidden pb-16 sm:pb-0">
@@ -199,6 +206,8 @@ function AppContent() {
           <MobileNav />
           <QuickDemoBar />
           <AIAssistantModal />
+          <BackgroundCustomizerModal />
+          <InstallAppPrompt />
           {role === 'ADMIN' && (
             <>
               <LiveSmsToast onOpenCenter={() => setIsSmsCenterOpen(true)} />

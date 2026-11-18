@@ -7,9 +7,10 @@ import {
   CheckCircle2,
   AlertCircle,
   KeyRound,
-  ShieldCheck
+  ShieldCheck,
+  Info
 } from 'lucide-react';
-import { trackingService, hashPassword } from '../services/trackingService';
+import { trackingService } from '../services/trackingService';
 
 export const ForgotPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,29 +20,42 @@ export const ForgotPasswordPage: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRequestCode = (e: React.FormEvent) => {
+  const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email) {
+    setInfoMessage(null);
+
+    if (!email.trim()) {
       setError('Please enter your registered email address.');
       return;
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    const result = await trackingService.requestPasswordReset(email);
+    setIsLoading(false);
+
+    if (result.success) {
+      if (result.devCode) {
+        setInfoMessage(`Verification code sent! (Verification Code: ${result.devCode})`);
+        setCode(result.devCode);
+      } else {
+        setInfoMessage('Verification code sent to your email.');
+      }
       setStep('verify');
-    }, 800);
+    } else {
+      setError(result.message || 'Unable to request password recovery. Please check your email.');
+    }
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (code.length < 4) {
-      setError('Please enter the 4-6 digit recovery code sent to your email.');
+    if (!code.trim()) {
+      setError('Please enter the 6-digit verification code.');
       return;
     }
     if (newPassword.length < 6) {
@@ -54,18 +68,13 @@ export const ForgotPasswordPage: React.FC = () => {
     }
 
     setIsLoading(true);
-    try {
-      const users = trackingService.getUsers();
-      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (user) {
-        user.passwordHash = await hashPassword(newPassword);
-        localStorage.setItem('smartdeal_tracked_users_v2', JSON.stringify(users));
-      }
-      setIsLoading(false);
+    const result = await trackingService.resetPasswordWithCode(email, code, newPassword);
+    setIsLoading(false);
+
+    if (result.success) {
       setStep('success');
-    } catch {
-      setIsLoading(false);
-      setError('An error occurred while resetting your password. Please try again.');
+    } else {
+      setError(result.message || 'Failed to reset password. Please check the code.');
     }
   };
 
@@ -94,6 +103,13 @@ export const ForgotPasswordPage: React.FC = () => {
           </div>
         )}
 
+        {infoMessage && (
+          <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold flex items-center gap-2">
+            <Info className="w-4 h-4 shrink-0" />
+            <span>{infoMessage}</span>
+          </div>
+        )}
+
         {/* Step 1: Request Code */}
         {step === 'request' && (
           <form onSubmit={handleRequestCode} className="space-y-4">
@@ -115,7 +131,7 @@ export const ForgotPasswordPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <span>{isLoading ? 'Sending Code...' : 'Send Recovery Code'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -177,7 +193,7 @@ export const ForgotPasswordPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <span>{isLoading ? 'Updating Password...' : 'Save New Password'}</span>
               <ShieldCheck className="w-4 h-4" />

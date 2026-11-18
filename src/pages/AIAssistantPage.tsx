@@ -10,13 +10,18 @@ import {
   User,
   ArrowRight,
   ShieldCheck,
+  Scale,
+  Award,
+  Volume2,
+  VolumeX,
+  Store,
+  RotateCcw,
   Zap,
   TrendingDown,
   Layers,
-  Scale,
-  CheckCircle2,
-  Volume2
+  CheckCircle2
 } from 'lucide-react';
+import { queryAiShoppingAssistant, AIQueryResult, ComparisonResult } from '../services/aiShoppingAgent';
 
 interface Message {
   id: string;
@@ -26,10 +31,16 @@ interface Message {
     id: string;
     name: string;
     price: number;
+    mrp: number;
+    discountPercent: number;
     tag: string;
     dealScore: number;
     image: string;
+    marketplacePrices?: { marketplace: string; price: number }[];
   }[];
+  comparison?: ComparisonResult;
+  suggestedPrompts?: string[];
+  badges?: string[];
 }
 
 export const AIAssistantPage: React.FC = () => {
@@ -39,27 +50,44 @@ export const AIAssistantPage: React.FC = () => {
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'm-1',
       sender: 'ai',
-      text: 'Namaste! I am your SmartDeals Autonomous Shopping Intelligence Agent. I cross-analyze live pricing across top marketplaces (Amazon, Flipkart, Croma, Tata CLiQ, Reliance Digital), audit artificial MRP inflation, and calculate real payable prices including coupons and SmartCoins. How can I assist your shopping today?'
+      text: 'Namaste! I am your SmartDeal Autonomous Shopping Intelligence Agent. I cross-analyze live pricing across Amazon, Flipkart, Croma, Reliance Digital and Tata CLiQ, audit artificial MRP inflation, and calculate real payable prices including coupons and SmartCoins. Ask me anything to find the best products, compare items side-by-side, or verify genuine discounts!',
+      suggestedPrompts: [
+        'Best phone under ₹20,000?',
+        'Compare iPhone 15 vs Samsung M14',
+        'Should I buy iPhone 15 now or wait?',
+        'How does SmartDeal cashback work?',
+        'Best laptop for multitasking?'
+      ]
     }
   ]);
 
   const quickPrompts = [
     'Best phone under ₹20,000?',
-    'Should I buy iPhone 15 now or wait?',
-    'Find genuine deals with 90+ Deal Score',
-    'Compare MacBook Air M2 vs ASUS Vivobook 15',
-    'Are boAt Airdopes discounts authentic?'
+    'Compare iPhone 15 vs Samsung M14',
+    'Which laptop is best for coding?',
+    'Fake discount audit & Deal Score',
+    'How does cashback work?'
   ];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const handleSend = (textToSend?: string) => {
     const query = (textToSend || input).trim();
@@ -76,255 +104,452 @@ export const AIAssistantPage: React.FC = () => {
     setIsTyping(true);
 
     setTimeout(() => {
-      let reply: Message;
-      const lower = query.toLowerCase();
+      const aiResult: AIQueryResult = queryAiShoppingAssistant(query, products);
 
-      if (lower.includes('phone') || lower.includes('20,000') || lower.includes('mobile')) {
-        const phone = products.find(p => p.id === 'prod-samsung-m14') || products[0];
-        reply = {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: 'Deep Scan Result: For under ₹20,000, our Deal DNA engine gives highest recommendation to the Samsung Galaxy M14 5G. It scores 92/100, features a genuine 6000mAh battery, 5nm Exynos processor, and is currently selling at ₹12,490 on SmartDeals (vs ₹12,999 on Amazon and ₹12,890 on Flipkart). You save an additional ₹200 with coupon SMART200 and earn 120 SmartCoins (≈₹12 cashback).',
-          recommendations: [
-            {
-              id: phone.id,
-              name: phone.name,
-              price: phone.sellingPrice,
-              tag: 'Best Overall Under ₹20k',
-              dealScore: phone.dealScore,
-              image: phone.image
-            }
-          ]
-        };
-      } else if (lower.includes('iphone') || lower.includes('wait') || lower.includes('buy now')) {
-        const iphone = products.find(p => p.id === 'prod-apple-iphone15') || products[1];
-        reply = {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: 'AI Price Forecast: BUY NOW (94% Confidence). The iPhone 15 128GB is listed at ₹65,999 on SmartDeals Partner with ₹1,500 direct coupon and 500 SmartCoins reward (equivalent to ₹50). The 90-day price trend indicates stability with minimal likelihood of drops below ₹64,990 before September festive sales.',
-          recommendations: [
-            {
-              id: iphone.id,
-              name: iphone.name,
-              price: iphone.sellingPrice,
-              tag: 'Lowest Effective Market Price',
-              dealScore: iphone.dealScore,
-              image: iphone.image
-            }
-          ]
-        };
-      } else if (lower.includes('macbook') || lower.includes('asus') || lower.includes('laptop')) {
-        const mac = products.find(p => p.id === 'prod-macbook-air-m2') || products[4];
-        const asus = products.find(p => p.id === 'prod-asus-vivobook') || products[4];
-        reply = {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: 'Comparative Evaluation: If your workload demands MacOS ecosystem & 18h battery endurance, MacBook Air M2 at ₹84,990 is unmatched. For Windows multitasking and 16GB dual-channel RAM on a budget, ASUS Vivobook 15 at ₹48,990 is the top value pick with 1 Year accidental damage protection included.',
-          recommendations: [
-            {
-              id: mac.id,
-              name: mac.name,
-              price: mac.sellingPrice,
-              tag: 'Best Premium Laptop',
-              dealScore: mac.dealScore,
-              image: mac.image
-            },
-            {
-              id: asus.id,
-              name: asus.name,
-              price: asus.sellingPrice,
-              tag: 'Best Windows Multitasking',
-              dealScore: asus.dealScore,
-              image: asus.image
-            }
-          ]
-        };
-      } else if (lower.includes('boat') || lower.includes('fake') || lower.includes('authentic')) {
-        const boat = products.find(p => p.id === 'prod-boat-airdopes') || products[2];
-        reply = {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: 'Fake Discount Audit Alert ⚠️: boAt Airdopes 141 lists an MRP of ₹4,490 with a 71% discount claim. Our 18-month price tracker reveals this product has NEVER sold above ₹1,699 in the Indian market. The actual effective discount is around 24%, not 71%. Moreover, weekend sales regularly discount it to ₹1,149. Recommendation: WAIT 3-5 days unless urgent.',
-          recommendations: [
-            {
-              id: boat.id,
-              name: boat.name,
-              price: boat.sellingPrice,
-              tag: 'Possible Inflated MRP Alert',
-              dealScore: boat.dealScore,
-              image: boat.image
-            }
-          ]
-        };
-      } else {
-        reply = {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: 'I analyzed our real-time price indexes across 5 marketplaces. Here are verified choices that maximize your authentic savings with 90+ Deal Scores:',
-          recommendations: products.slice(0, 3).map(p => ({
-            id: p.id,
-            name: p.name,
-            price: p.sellingPrice,
-            tag: p.dealScoreBreakdown.verdict,
-            dealScore: p.dealScore,
-            image: p.image
-          }))
-        };
-      }
+      const reply: Message = {
+        id: `ai-${Date.now()}`,
+        sender: 'ai',
+        text: aiResult.text,
+        recommendations: aiResult.recommendations.map(r => ({
+          id: r.product.id,
+          name: r.product.name,
+          price: r.product.sellingPrice,
+          mrp: r.product.mrp,
+          discountPercent: r.product.discountPercent,
+          tag: r.highlightTag,
+          dealScore: r.product.dealScore,
+          image: r.product.image,
+          marketplacePrices: r.product.marketplacePrices?.map(m => ({ marketplace: m.sellerName, price: m.price }))
+        })),
+        comparison: aiResult.comparison,
+        suggestedPrompts: aiResult.suggestedPrompts,
+        badges: aiResult.badges
+      };
 
       setMessages(prev => [...prev, reply]);
       setIsTyping(false);
-    }, 1000);
+    }, 700);
   };
 
   const handleVoiceInput = () => {
-    setIsRecording(true);
-    setTimeout(() => {
-      setIsRecording(false);
-      handleSend('Are boAt Airdopes discounts authentic?');
-    }, 2200);
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      setIsRecording(true);
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setIsRecording(false);
+        handleSend(transcript);
+      };
+
+      recognition.onerror = () => {
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognition.start();
+    } else {
+      setIsRecording(true);
+      setTimeout(() => {
+        setIsRecording(false);
+        handleSend('Compare iPhone 15 vs Samsung Galaxy M14');
+      }, 1500);
+    }
   };
 
-  const handleImageUpload = () => {
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     const userMsg: Message = {
       id: `u-${Date.now()}`,
       sender: 'user',
-      text: '📷 [Visual Search: Uploaded product photo - scanning image features]'
+      text: `📷 [Uploaded Product Image: "${file.name}"]`
     };
     setMessages(prev => [...prev, userMsg]);
     setIsTyping(true);
+
     setTimeout(() => {
+      const matched = products.find(p => p.id === 'prod-samsung-m14') || products[0];
       setIsTyping(false);
-      const sony = products.find(p => p.id === 'prod-sony-wh1000xm5') || products[0];
       setMessages(prev => [
         ...prev,
         {
           id: `ai-${Date.now()}`,
           sender: 'ai',
-          text: 'Visual match confirmed (99.1% accuracy)! Product identified: Sony WH-1000XM5 Wireless Headphones. Current lowest verified price across all stores is ₹27,990 on Flipkart with free delivery and 350 SmartCoins cashback.',
+          text: `🔍 **Visual Identification Complete!**
+Product: **${matched.name}**
+Lowest price across all stores: **₹${matched.sellingPrice.toLocaleString('en-IN')}** with **${matched.dealScore}/100 Deal Score**.`,
           recommendations: [
             {
-              id: sony.id,
-              name: sony.name,
-              price: sony.sellingPrice,
-              tag: 'Visual Match Verified',
-              dealScore: sony.dealScore,
-              image: sony.image
+              id: matched.id,
+              name: matched.name,
+              price: matched.sellingPrice,
+              mrp: matched.mrp,
+              discountPercent: matched.discountPercent,
+              tag: 'Visual Match • Best Deal',
+              dealScore: matched.dealScore,
+              image: matched.image
             }
+          ],
+          suggestedPrompts: [
+            `Compare ${matched.brand} with iPhone`,
+            'Check price history across stores',
+            'Is the discount genuine?'
           ]
         }
       ]);
-    }, 1400);
+    }, 1100);
+  };
+
+  const toggleSpeak = (msgId: string, text: string) => {
+    if (!('speechSynthesis' in window)) return;
+
+    if (speakingId === msgId) {
+      window.speechSynthesis.cancel();
+      setSpeakingId(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/[*_#`[\]()•]/g, ' ').replace(/\s+/g, ' ').trim();
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'en-IN';
+    utterance.rate = 1.0;
+
+    utterance.onend = () => setSpeakingId(null);
+    utterance.onerror = () => setSpeakingId(null);
+
+    setSpeakingId(msgId);
+    window.speechSynthesis.speak(utterance);
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-      {/* Top Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-bold border border-brand-400/30">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Autonomous Shopping Intelligence Copilot</span>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {/* Page Title & Intro */}
+      <div className="bg-gradient-to-r from-brand-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl relative overflow-hidden">
+        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-400/30 text-amber-300 text-xs font-black uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              Autonomous Shopping Intelligence
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">SmartDeal Ask AI Agent</h1>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
+              Cross-checks Amazon, Flipkart, Croma, and Reliance Digital. Trained to compare products, detect fake discounts, and find lowest verified prices.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black">
-            SmartDeals AI Shopping Assistant
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-            Ask complex queries, upload product photos, compare specifications, and uncover whether festive sales are genuine.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="bg-white/10 p-3 rounded-2xl border border-white/20 text-xs">
-            <div className="text-slate-400">Stores Indexed</div>
-            <div className="text-base font-black text-emerald-400">5 Platforms</div>
-          </div>
-          <div className="bg-white/10 p-3 rounded-2xl border border-white/20 text-xs">
-            <div className="text-slate-400">Response Speed</div>
-            <div className="text-base font-black text-amber-400">&lt; 1.2s</div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMessages([messages[0]])}
+              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Chat</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Main Chat Interface */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col h-[650px] overflow-hidden">
-        {/* Quick Prompts Carousel */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 pl-1">
-            Suggested Prompts:
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col h-[650px] overflow-hidden">
+        {/* Quick Prompts Bar */}
+        <div className="p-3 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar shrink-0">
+          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0 flex items-center gap-1">
+            <Zap className="w-3 h-3 text-amber-500" /> Prompts:
           </span>
-          {quickPrompts.map((q, i) => (
+          {quickPrompts.map((p, idx) => (
             <button
-              key={i}
-              onClick={() => handleSend(q)}
-              className="shrink-0 bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 hover:text-brand-700 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 hover:border-brand-300 text-slate-700 dark:text-slate-300 font-semibold px-3 py-1.5 rounded-full transition-all text-xs"
+              key={idx}
+              onClick={() => handleSend(p)}
+              className="shrink-0 bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-700 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 hover:border-brand-300 text-slate-700 dark:text-slate-300 font-semibold px-3 py-1 rounded-full transition-all text-xs cursor-pointer shadow-2xs"
             >
-              {q}
+              {p}
             </button>
           ))}
         </div>
 
-        {/* Conversation Feed */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Message Flow */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
           {messages.map(m => (
             <div
               key={m.id}
               className={`flex gap-3.5 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {m.sender === 'ai' && (
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-purple-600 text-white flex items-center justify-center shrink-0 mt-1 shadow-md shadow-brand-500/20">
-                  <Bot className="w-5 h-5 text-amber-300" />
+                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-md shadow-brand-500/20">
+                  <Bot className="w-5 h-5" />
                 </div>
               )}
 
-              <div className={`max-w-[80%] space-y-3 ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
+              <div className={`max-w-[88%] sm:max-w-[80%] space-y-3 ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
                 <div
-                  className={`p-4 rounded-3xl text-xs sm:text-sm leading-relaxed ${
+                  className={`p-4 sm:p-5 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-tr-none shadow-md shadow-brand-500/20'
-                      : 'bg-slate-100/90 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-200/80 dark:border-slate-700'
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-tr-none shadow-md shadow-brand-500/20 font-medium'
+                      : 'bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-200/80 dark:border-slate-700/80 shadow-xs'
                   }`}
                 >
-                  {m.text}
+                  <div className="whitespace-pre-wrap">{m.text}</div>
+
+                  {m.badges && m.badges.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-2.5 mt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                      {m.badges.map((b, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 px-2 py-0.5 rounded-full font-bold border border-brand-200/60 dark:border-brand-800/60"
+                        >
+                          ✓ {b}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {m.sender === 'ai' && (
+                    <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-200/50 dark:border-slate-700/50 text-[11px] text-slate-400">
+                      <span>SmartDeal Multi-Store Intelligence</span>
+                      <button
+                        onClick={() => toggleSpeak(m.id, m.text)}
+                        className="flex items-center gap-1 hover:text-brand-600 dark:hover:text-brand-400 font-bold transition-colors cursor-pointer"
+                        title="Listen to this response"
+                      >
+                        {speakingId === m.id ? (
+                          <>
+                            <VolumeX className="w-3.5 h-3.5 text-rose-500" />
+                            <span className="text-rose-500">Stop</span>
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="w-3.5 h-3.5" />
+                            <span>Listen</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* Recommendations Cards */}
+                {/* Side-by-Side Comparison Matrix */}
+                {m.comparison && (
+                  <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 space-y-3 shadow-sm animate-fadeIn">
+                    <div className="flex items-center justify-between text-xs font-black text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">
+                      <div className="flex items-center gap-1.5">
+                        <Scale className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                        <span>Side-by-Side Comparison Matrix</span>
+                      </div>
+                      <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                        Winner: {m.comparison.winnerName?.split(' ')[0] || (m.comparison.winner === 'A' ? m.comparison.nameA?.split(' ')[0] : m.comparison.nameB?.split(' ')[0])}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      {/* Product A */}
+                      <div className={`p-3 rounded-xl border relative ${
+                        m.comparison.winner === 'A'
+                          ? 'bg-brand-50/60 dark:bg-brand-950/30 border-brand-300 dark:border-brand-700 ring-1 ring-brand-400/30'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                      }`}>
+                        {m.comparison.winner === 'A' && (
+                          <span className="absolute -top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-[9px] px-1.5 py-0.2 rounded-full shadow-xs flex items-center gap-0.5">
+                            <Award className="w-2.5 h-2.5" /> WINNER
+                          </span>
+                        )}
+                        {m.comparison.imageA ? (
+                          <img
+                            src={m.comparison.imageA}
+                            alt={m.comparison.nameA}
+                            className="w-14 h-14 object-contain mx-auto mb-1.5"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center mx-auto mb-1.5 text-xs font-bold text-slate-500">
+                            {m.comparison.nameA.slice(0, 2)}
+                          </div>
+                        )}
+                        <div className="font-bold text-slate-900 dark:text-white line-clamp-1 text-center">
+                          {m.comparison.nameA}
+                        </div>
+                        {m.comparison.priceA && (
+                          <div className="text-center font-extrabold text-brand-600 dark:text-brand-400 pt-0.5">
+                            ₹{m.comparison.priceA.toLocaleString('en-IN')}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Product B */}
+                      <div className={`p-3 rounded-xl border relative ${
+                        m.comparison.winner === 'B'
+                          ? 'bg-brand-50/60 dark:bg-brand-950/30 border-brand-300 dark:border-brand-700 ring-1 ring-brand-400/30'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                      }`}>
+                        {m.comparison.winner === 'B' && (
+                          <span className="absolute -top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-[9px] px-1.5 py-0.2 rounded-full shadow-xs flex items-center gap-0.5">
+                            <Award className="w-2.5 h-2.5" /> WINNER
+                          </span>
+                        )}
+                        {m.comparison.imageB ? (
+                          <img
+                            src={m.comparison.imageB}
+                            alt={m.comparison.nameB}
+                            className="w-14 h-14 object-contain mx-auto mb-1.5"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center mx-auto mb-1.5 text-xs font-bold text-slate-500">
+                            {m.comparison.nameB.slice(0, 2)}
+                          </div>
+                        )}
+                        <div className="font-bold text-slate-900 dark:text-white line-clamp-1 text-center">
+                          {m.comparison.nameB}
+                        </div>
+                        {m.comparison.priceB && (
+                          <div className="text-center font-extrabold text-brand-600 dark:text-brand-400 pt-0.5">
+                            ₹{m.comparison.priceB.toLocaleString('en-IN')}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-xs pt-1">
+                      {m.comparison.features.map((f, idx) => (
+                        <div
+                          key={idx}
+                          className="grid grid-cols-3 p-2 rounded-lg bg-white dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 items-center text-center"
+                        >
+                          <div className={`font-semibold ${f.winner === 'A' ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-300'}`}>
+                            {f.valA}
+                          </div>
+                          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                            {f.title}
+                          </div>
+                          <div className={`font-semibold ${f.winner === 'B' ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-300'}`}>
+                            {f.valB}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <button
+                        onClick={() => {
+                          if (m.comparison?.productA?.id) {
+                            navigate(`/product/${m.comparison.productA.id}`);
+                          } else {
+                            navigate(`/search?q=${encodeURIComponent(m.comparison?.nameA || '')}`);
+                          }
+                        }}
+                        className="py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold text-center transition-all cursor-pointer shadow-xs truncate"
+                      >
+                        View {m.comparison.nameA?.split(' ')[0]}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (m.comparison?.productB?.id) {
+                            navigate(`/product/${m.comparison.productB.id}`);
+                          } else {
+                            navigate(`/search?q=${encodeURIComponent(m.comparison?.nameB || '')}`);
+                          }
+                        }}
+                        className="py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold text-center transition-all cursor-pointer shadow-xs truncate"
+                      >
+                        View {m.comparison.nameB?.split(' ')[0]}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommendation Cards */}
                 {m.recommendations && m.recommendations.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                  <div className="space-y-2.5 mt-2">
                     {m.recommendations.map(rec => (
                       <div
                         key={rec.id}
-                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-brand-400 dark:hover:border-brand-500 p-4 rounded-2xl shadow-xs transition-all flex items-center justify-between gap-3"
+                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 p-3 sm:p-4 rounded-2xl shadow-sm hover:border-brand-400 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                       >
-                        <img src={rec.image} alt="" className="w-14 h-14 object-contain rounded-xl bg-slate-50 dark:bg-slate-900 p-1 shrink-0" />
-                        <div className="flex-1 space-y-1">
-                          <span className="text-[10px] bg-brand-100 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 font-black px-2 py-0.5 rounded-full border border-brand-200/50 dark:border-brand-800/50">
-                            {rec.tag}
-                          </span>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{rec.name}</div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-black text-brand-600 dark:text-brand-400">₹{rec.price.toLocaleString('en-IN')}</span>
-                            <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold px-1.5 py-0.2 rounded border border-emerald-200/50 dark:border-emerald-800/50">
-                              Score {rec.dealScore}/100
-                            </span>
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={rec.image}
+                            alt={rec.name}
+                            className="w-14 h-14 object-contain rounded-xl bg-slate-50 dark:bg-slate-900/60 p-1 border border-slate-100 dark:border-slate-800 shrink-0"
+                          />
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 font-extrabold px-2 py-0.5 rounded-full border border-brand-200/50 dark:border-brand-800/50">
+                                {rec.tag}
+                              </span>
+                              <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-extrabold px-1.5 py-0.5 rounded-full border border-emerald-200/50 dark:border-emerald-800/50">
+                                Deal Score: {rec.dealScore}/100
+                              </span>
+                            </div>
+                            <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-brand-600 transition-colors">
+                              {rec.name}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-black text-brand-600 dark:text-brand-400">
+                                ₹{rec.price.toLocaleString('en-IN')}
+                              </span>
+                              <span className="text-xs text-slate-400 line-through">
+                                ₹{rec.mrp.toLocaleString('en-IN')}
+                              </span>
+                              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                                {rec.discountPercent}% OFF
+                              </span>
+                            </div>
+                            {rec.marketplacePrices && rec.marketplacePrices.length > 0 && (
+                              <div className="flex items-center gap-1.5 text-[10px] text-slate-500 pt-0.5 flex-wrap">
+                                <Store className="w-3 h-3 text-slate-400" />
+                                {rec.marketplacePrices.slice(0, 3).map((mp, i) => (
+                                  <span key={i} className="bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.2 rounded font-medium">
+                                    {mp.marketplace}: ₹{mp.price.toLocaleString('en-IN')}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
 
                         <button
                           onClick={() => navigate(`/product/${rec.id}`)}
-                          className="p-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 rounded-xl shadow-xs"
-                          title="View Deal"
+                          className="bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer shrink-0"
                         >
-                          <ArrowRight className="w-4 h-4" />
+                          <span>View Deal</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))}
                   </div>
                 )}
+
+                {/* Follow-up Prompts */}
+                {m.suggestedPrompts && m.suggestedPrompts.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500 block">
+                      Suggested Follow-Ups:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {m.suggestedPrompts.map((p, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleSend(p)}
+                          className="text-[11px] bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 dark:hover:bg-brand-950/40 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-300 font-semibold px-2.5 py-1 rounded-lg border border-slate-200/70 dark:border-slate-700/70 transition-all cursor-pointer"
+                        >
+                          💬 {p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {m.sender === 'user' && (
-                <div className="w-10 h-10 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 mt-1">
+                <div className="w-9 h-9 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 mt-0.5">
                   <User className="w-5 h-5" />
                 </div>
               )}
@@ -332,53 +557,64 @@ export const AIAssistantPage: React.FC = () => {
           ))}
 
           {isTyping && (
-            <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-xs italic pl-14">
+            <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-xs italic pl-12">
               <span className="w-2 h-2 rounded-full bg-brand-500 animate-bounce" />
               <span className="w-2 h-2 rounded-full bg-brand-500 animate-bounce [animation-delay:0.2s]" />
               <span className="w-2 h-2 rounded-full bg-brand-500 animate-bounce [animation-delay:0.4s]" />
-              <span>Scanning live price indexes and checking merchant review authenticity...</span>
+              <span>Analyzing live marketplace pricing across stores...</span>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Controls */}
-        <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 space-y-2">
-          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
+        {/* Input Bar */}
+        <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+
+          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 rounded-2xl px-3.5 py-2.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all shadow-inner">
             <button
-              onClick={handleImageUpload}
-              title="Visual Product Search (Barcode / Receipt / Product Image)"
-              className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              title="Upload product picture or receipt"
+              className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors cursor-pointer"
             >
-              <ImageIcon className="w-5 h-5" />
+              <ImageIcon className="w-4 h-4" />
             </button>
             <button
               onClick={handleVoiceInput}
-              title="Voice Search"
-              className={`p-1.5 rounded-xl transition-colors ${
-                isRecording ? 'text-rose-600 bg-rose-100 dark:bg-rose-950/60 animate-pulse' : 'text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-slate-700'
+              title="Voice Search (Click and speak)"
+              className={`p-1.5 rounded-xl transition-colors cursor-pointer ${
+                isRecording
+                  ? 'text-rose-600 bg-rose-100 dark:bg-rose-950/60 animate-pulse'
+                  : 'text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-slate-700'
               }`}
             >
-              <Mic className="w-5 h-5" />
+              <Mic className="w-4 h-4" />
             </button>
             <input
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
-              placeholder={isRecording ? 'Listening for question...' : 'Ask AI to evaluate a deal, compare specifications, or forecast price drops...'}
-              className="flex-1 bg-transparent text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
+              placeholder={isRecording ? 'Listening to voice...' : 'Ask AI to compare products, find deals, audit prices...'}
+              className="flex-1 bg-transparent text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none font-medium"
             />
             <button
               onClick={() => handleSend()}
               disabled={!input.trim()}
-              className="p-2.5 bg-gradient-to-r from-brand-600 to-indigo-600 disabled:opacity-40 text-white rounded-xl shadow-md transition-all active:scale-95"
+              className="p-2.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 disabled:opacity-30 text-white rounded-xl shadow-md transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed"
             >
               <Send className="w-4 h-4" />
             </button>
           </div>
-          <div className="text-[11px] text-center text-slate-400 dark:text-slate-500">
-            Powered by SmartDeals multi-store crawler and 90-day price volatility engine.
+          <div className="text-[10px] text-center text-slate-400 dark:text-slate-500 mt-2 flex items-center justify-center gap-1.5">
+            <ShieldCheck className="w-3 h-3 text-emerald-500" />
+            <span>AI cross-checks Amazon, Flipkart, Croma, OEM warranties & anti-fake discount scores.</span>
           </div>
         </div>
       </div>

@@ -52,10 +52,18 @@ export const UserProfilePage: React.FC = () => {
   const location = useLocation();
 
   const [activeTab, setActiveTab] = useState<ProfileTab>('profile');
-  const [name, setName] = useState(currentUser?.name || 'Rohit Kumar');
-  const [email, setEmail] = useState(currentUser?.email || 'rohit.kumar@example.com');
-  const [phone, setPhone] = useState(currentUser?.phone || '+91 98765 43210');
+  const [name, setName] = useState(currentUser?.name || '');
+  const [email, setEmail] = useState(currentUser?.email || '');
+  const [phone, setPhone] = useState(currentUser?.phone || '');
   const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name || '');
+      setEmail(currentUser.email || '');
+      setPhone(currentUser.phone || '');
+    }
+  }, [currentUser]);
 
   // Cashback filter & modal state
   const [cashbackFilter, setCashbackFilter] = useState<'All' | 'Available' | 'Pending' | 'Confirmed' | 'Redeemed' | 'Reversed'>('All');
@@ -403,6 +411,19 @@ export const UserProfilePage: React.FC = () => {
           >
             <KeyRound className="w-4 h-4 text-amber-500" />
             <span>Security & 2FA Settings</span>
+          </button>
+
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('trigger-app-install'))}
+            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              <Download className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span>Download SmartDeal App</span>
+            </div>
+            <span className="text-[10px] bg-indigo-200/80 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-200 px-1.5 py-0.5 rounded font-black">
+              APK
+            </span>
           </button>
 
           <div className="pt-2 my-2 border-t border-slate-100 dark:border-slate-800" />

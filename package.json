@@ -8,6 +8,7 @@
     "dev:all": "node scripts/dev_all.mjs",
     "server": "node server/server.mjs",
     "build": "tsc -b && vite build",
+    "build:app": "tsc -b && vite build",
     "lint": "oxlint",
     "test": "node test_business_logic.mjs",
     "preview": "vite preview"

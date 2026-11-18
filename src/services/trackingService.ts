@@ -12,6 +12,7 @@ import {
   AuditLog,
   ConversionStatus
 } from '../types';
+import { apiRequest } from './api';
 
 // ============================================================================
 // SECURITY: SHA-256 Password Hashing via Web Crypto API
@@ -33,6 +34,7 @@ const ACTIVITIES_KEY = 'smartdeal_activity_logs_v2';
 const CLICKS_KEY = 'smartdeal_outbound_clicks_v2';
 const ACTIVE_GUEST_KEY = 'smartdeal_current_guest_session_id';
 const CURRENT_USER_KEY = 'smartdeal_current_user_v2';
+const AUTH_TOKEN_KEY = 'smartdeal_auth_token';
 const CONVERSIONS_KEY = 'smartdeal_conversions_v3';
 const CASHBACK_KEY = 'smartdeal_cashback_wallets_v3';
 const AUDIT_LOGS_KEY = 'smartdeal_audit_logs_v3';
@@ -1073,8 +1075,57 @@ class TrackingService {
     }
   }
 
-  public logoutUser(): void {
-    this.setCurrentUser(null);
+  public async logoutUser(): Promise<void> {
+    try {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (token) {
+        await apiRequest('/auth/logout', { method: 'POST' }).catch(() => {});
+      }
+    } catch {
+      // safe fallback
+    } finally {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      sessionStorage.removeItem('smartdeal_admin_authenticated');
+      this.setCurrentUser(null);
+    }
+  }
+
+  public async validateSession(): Promise<TrackedUser | null> {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!token) {
+      if (localStorage.getItem(CURRENT_USER_KEY)) {
+        this.setCurrentUser(null);
+      }
+      return null;
+    }
+
+    try {
+      const res = await apiRequest<{ success: boolean; user?: any; error?: string }>('/account/me');
+      if (res && res.success && res.user) {
+        const users = this.getUsers();
+        const existing = users.find(u => u.id === res.user.id || u.email.toLowerCase() === res.user.email.toLowerCase());
+        const validatedUser = normalizeUser({
+          ...existing,
+          ...res.user,
+          status: 'ACTIVE'
+        });
+        this.setCurrentUser(validatedUser);
+        return validatedUser;
+      } else {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        sessionStorage.removeItem('smartdeal_admin_authenticated');
+        this.setCurrentUser(null);
+        return null;
+      }
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 403) {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        sessionStorage.removeItem('smartdeal_admin_authenticated');
+        this.setCurrentUser(null);
+        return null;
+      }
+      return this.getCurrentUser();
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -1364,80 +1415,285 @@ class TrackingService {
       ? { name: dataOrName, email: email || '', phone, password: password || '' }
       : dataOrName;
 
-    const users = this.getUsers();
-    if (users.some(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-      return { success: false, message: 'Email is already registered' };
+    if (!data.name || !data.email || !data.password) {
+      return { success: false, message: 'Name, email, and password are required' };
+    }
+    if (data.password.length < 6) {
+      return { success: false, message: 'Password must be at least 6 characters long' };
     }
 
-    const passwordHash = await hashPassword(data.password);
-    const userId = 'U' + Math.floor(10000 + Math.random() * 90000);
+    try {
+      const payload = await apiRequest<any>('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: data.name.trim(),
+          email: data.email.trim().toLowerCase(),
+          password: data.password,
+          phone: data.phone?.trim()
+        })
+      });
 
-    const newUser: TrackedUser = normalizeUser({
-      id: userId,
-      user_id: userId,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      passwordHash,
-      createdAt: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      lastLoginAt: new Date().toISOString(),
-      last_login: new Date().toISOString(),
-      role: 'USER',
-      status: 'ACTIVE',
-      totalSearches: 0,
-      totalViews: 0,
-      totalComparisons: 0,
-      totalClicks: 0,
-      totalCommissionEarned: 0,
-      total_spend: 0,
-      total_activities: 0,
-      lastActivity: 'Account created'
-    });
+      if (!payload.success || !payload.token || !payload.user) {
+        return {
+          success: false,
+          message: payload.error || payload.message || 'Registration failed'
+        };
+      }
 
-    users.unshift(newUser);
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    this.setCurrentUser(newUser);
+      localStorage.setItem(AUTH_TOKEN_KEY, payload.token);
 
-    this.logActivity('LOGIN', {
-      actorType: 'USER',
-      actorId: userId,
-      actorName: newUser.name,
-      description: 'User registered and logged in'
-    });
+      const passwordHash = await hashPassword(data.password);
+      const newUser: TrackedUser = normalizeUser({
+        ...payload.user,
+        phone: data.phone || payload.user.phone,
+        passwordHash,
+        createdAt: payload.user.createdAt || new Date().toISOString(),
+        created_at: payload.user.createdAt || new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        role: payload.user.role || 'USER',
+        status: 'ACTIVE',
+        totalSearches: 0,
+        totalViews: 0,
+        totalComparisons: 0,
+        totalClicks: 0,
+        totalCommissionEarned: 0,
+        total_spend: 0,
+        total_activities: 0,
+        lastActivity: 'Account created'
+      });
 
-    return { success: true, message: 'Registration successful', user: newUser };
+      const users = this.getUsers();
+      const existingIndex = users.findIndex(
+        u => u.id === newUser.id || u.email.toLowerCase() === newUser.email.toLowerCase()
+      );
+      if (existingIndex >= 0) {
+        users[existingIndex] = newUser;
+      } else {
+        users.unshift(newUser);
+      }
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      this.setCurrentUser(newUser);
+
+      this.logActivity('LOGIN', {
+        actorType: 'USER',
+        actorId: newUser.id,
+        actorName: newUser.name,
+        description: 'User registered and logged in'
+      });
+
+      return { success: true, message: payload.message || 'Registration successful', user: newUser };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Registration failed due to a server or network error'
+      };
+    }
   }
 
   public async authenticateUser(
-    email: string,
+    emailOrPhone: string,
     passwordAttempt: string
   ): Promise<{ success: boolean; message: string; user?: TrackedUser }> {
-    const users = this.getUsers();
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (!user) {
-      return { success: false, message: 'Invalid email or password' };
+    try {
+      const payload = await apiRequest<any>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: emailOrPhone.trim(),
+          identifier: emailOrPhone.trim(),
+          phone: emailOrPhone.trim(),
+          password: passwordAttempt
+        })
+      });
+
+      if (!payload.success || !payload.token || !payload.user) {
+        return {
+          success: false,
+          message: payload.error || payload.message || 'Login failed'
+        };
+      }
+
+      const users = this.getUsers();
+      const existingUser = users.find(
+        u => u.id === payload.user.id || u.email.toLowerCase() === payload.user.email.toLowerCase()
+      );
+
+      const user = normalizeUser({
+        ...existingUser,
+        ...payload.user,
+        status: 'ACTIVE',
+        totalSearches: existingUser?.totalSearches ?? 0,
+        totalViews: existingUser?.totalViews ?? 0,
+        totalComparisons: existingUser?.totalComparisons ?? 0,
+        totalClicks: existingUser?.totalClicks ?? 0,
+        totalCommissionEarned: existingUser?.totalCommissionEarned ?? 0,
+        total_spend: existingUser?.total_spend ?? 0,
+        total_activities: existingUser?.total_activities ?? 0,
+        lastLoginAt: new Date().toISOString(),
+        lastActivity: 'Logged in just now'
+      });
+
+      localStorage.setItem(AUTH_TOKEN_KEY, payload.token);
+
+      const existingIndex = users.findIndex(
+        u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase()
+      );
+
+      if (existingIndex >= 0) {
+        users[existingIndex] = user;
+      } else {
+        users.unshift(user);
+      }
+
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      this.setCurrentUser(user);
+
+      this.logActivity('LOGIN', {
+        actorType: 'USER',
+        actorId: user.id,
+        actorName: user.name,
+        description: `User signed in (${user.role})`
+      });
+
+      return {
+        success: true,
+        message: 'Login successful',
+        user
+      };
+    } catch (error) {
+      console.error('Backend login error:', error);
+      return {
+        success: false,
+        message: error instanceof Error
+          ? error.message
+          : 'Unable to connect to server'
+      };
     }
+  }
 
-    const attemptHash = await hashPassword(passwordAttempt);
-    if (user.passwordHash && user.passwordHash !== attemptHash) {
-      return { success: false, message: 'Invalid email or password' };
+  public async loginWithGoogle(
+    credential?: string,
+    email?: string,
+    name?: string
+  ): Promise<{ success: boolean; message: string; user?: TrackedUser }> {
+    try {
+      const payload = await apiRequest<any>('/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({
+          credential: credential || '',
+          email: email || '',
+          name: name || '',
+          devMode: !import.meta.env.VITE_GOOGLE_CLIENT_ID
+        })
+      });
+
+      if (!payload.success || !payload.token || !payload.user) {
+        return {
+          success: false,
+          message: payload.error || payload.message || 'Google authentication failed'
+        };
+      }
+
+      const users = this.getUsers();
+      const existingUser = users.find(
+        u => u.id === payload.user.id || u.email.toLowerCase() === payload.user.email.toLowerCase()
+      );
+
+      const user = normalizeUser({
+        ...existingUser,
+        ...payload.user,
+        status: 'ACTIVE',
+        totalSearches: existingUser?.totalSearches ?? 0,
+        totalViews: existingUser?.totalViews ?? 0,
+        totalComparisons: existingUser?.totalComparisons ?? 0,
+        totalClicks: existingUser?.totalClicks ?? 0,
+        totalCommissionEarned: existingUser?.totalCommissionEarned ?? 0,
+        total_spend: existingUser?.total_spend ?? 0,
+        total_activities: existingUser?.total_activities ?? 0,
+        lastLoginAt: new Date().toISOString(),
+        lastActivity: 'Logged in with Google'
+      });
+
+      localStorage.setItem(AUTH_TOKEN_KEY, payload.token);
+
+      const existingIndex = users.findIndex(
+        u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase()
+      );
+
+      if (existingIndex >= 0) {
+        users[existingIndex] = user;
+      } else {
+        users.unshift(user);
+      }
+
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      this.setCurrentUser(user);
+
+      this.logActivity('LOGIN', {
+        actorType: 'USER',
+        actorId: user.id,
+        actorName: user.name,
+        description: `User signed in via Google (${user.role})`
+      });
+
+      return {
+        success: true,
+        message: 'Google login successful',
+        user
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Google authentication failed'
+      };
     }
+  }
 
-    user.lastLoginAt = new Date().toISOString();
-    user.last_login = user.lastLoginAt;
-    user.lastActivity = 'Logged in just now';
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    this.setCurrentUser(user);
+  public async requestPasswordReset(
+    email: string
+  ): Promise<{ success: boolean; message: string; devCode?: string }> {
+    try {
+      const res = await apiRequest<any>('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim().toLowerCase() })
+      });
+      return {
+        success: Boolean(res?.success),
+        message: res?.message || 'Password reset instructions sent.',
+        devCode: res?.devCode
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Failed to send password reset request.'
+      };
+    }
+  }
 
-    this.logActivity('LOGIN', {
-      actorType: 'USER',
-      actorId: user.id,
-      actorName: user.name,
-      description: `User signed in (${user.role})`
-    });
-
-    return { success: true, message: 'Login successful', user };
+  public async resetPasswordWithCode(
+    email: string,
+    code: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      const res = await apiRequest<any>('/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          code: code.trim(),
+          newPassword
+        })
+      });
+      return {
+        success: Boolean(res?.success),
+        message: res?.message || 'Password has been reset successfully.'
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Failed to reset password.'
+      };
+    }
   }
 
   // --------------------------------------------------------------------------

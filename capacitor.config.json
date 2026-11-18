@@ -1,0 +1,9 @@
+{
+  "appId": "com.smartdeal.app",
+  "appName": "SmartDeal",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -24,15 +24,20 @@ export const AdminSecurityGuard: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
 
   const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
-    // Check if admin is currently active or session token exists
     const sessionAuth = sessionStorage.getItem('smartdeal_admin_authenticated');
     const isOwnerRole = role === 'ADMIN' && currentUser?.role === 'ADMIN';
-    return sessionAuth === 'true' || isOwnerRole;
+    return sessionAuth === 'true' && isOwnerRole;
   });
+
+  React.useEffect(() => {
+    if (role !== 'ADMIN' || currentUser?.role !== 'ADMIN') {
+      setIsUnlocked(false);
+    }
+  }, [role, currentUser]);
 
   const [loginMethod, setLoginMethod] = useState<'pin' | 'credentials'>('pin');
   const [pin, setPin] = useState('');
-  const [email, setEmail] = useState('admin@smartdeal.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -115,11 +120,10 @@ export const AdminSecurityGuard: React.FC<Props> = ({ children }) => {
               setLoginMethod('pin');
               setErrorMsg(null);
             }}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-              loginMethod === 'pin'
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${loginMethod === 'pin'
                 ? 'bg-rose-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
-            }`}
+              }`}
           >
             Owner Master PIN
           </button>
@@ -129,11 +133,10 @@ export const AdminSecurityGuard: React.FC<Props> = ({ children }) => {
               setLoginMethod('credentials');
               setErrorMsg(null);
             }}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-              loginMethod === 'credentials'
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${loginMethod === 'credentials'
                 ? 'bg-rose-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
-            }`}
+              }`}
           >
             Admin Credentials
           </button>

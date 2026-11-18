@@ -14,11 +14,17 @@ import {
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
-  const { role } = useApp();
+  const { role, activeTheme } = useApp();
   return (
-    <footer className="bg-slate-900 text-slate-300 pt-16 pb-24 sm:pb-12 border-t border-slate-800">
+    <footer className={`text-slate-300 pt-16 pb-24 sm:pb-12 border-t transition-colors ${
+      activeTheme === 'royal-gold'
+        ? 'bg-[#181107] border-amber-900/60'
+        : 'bg-[#031926] border-teal-900/60'
+    }`}>
       {/* 6 Core Value Pillars Banner */}
-      <div className="max-w-7xl mx-auto px-4 pb-12 border-b border-slate-800 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center sm:text-left">
+      <div className={`max-w-7xl mx-auto px-4 pb-12 border-b grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center sm:text-left ${
+        activeTheme === 'royal-gold' ? 'border-amber-950/50' : 'border-teal-950/50'
+      }`}>
         <div className="space-y-1">
           <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center mx-auto sm:mx-0">
             <TrendingDown className="w-5 h-5" />
@@ -73,13 +79,22 @@ export const Footer: React.FC = () => {
         {/* Brand column */}
         <div className="col-span-2 space-y-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-purple-600 flex items-center justify-center text-white font-black">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black transition-all ${
+              activeTheme === 'royal-gold'
+                ? 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-md shadow-amber-500/25'
+                : 'bg-gradient-to-tr from-teal-500 via-emerald-400 to-cyan-400 text-slate-950 shadow-md shadow-teal-500/25'
+            }`}>
               <Sparkles className="w-4 h-4 text-amber-300" />
             </div>
-            <span className="font-extrabold text-xl text-white">SmartDeals</span>
+            <span className="font-extrabold text-xl text-white">
+              Smart<span className={activeTheme === 'royal-gold'
+                ? 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent'
+                : 'bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent'
+              }>Deal</span>
+            </span>
           </div>
           <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
-            SmartDeals is an intelligent dual platform: multi-marketplace price comparison engine plus high-trust direct marketplace. We calculate the true final payable price, detect fake sales, and reward you with real SmartCoins.
+            SmartDeal is an intelligent dual platform: multi-marketplace price comparison engine plus high-trust direct marketplace. We calculate the true final payable price, detect fake sales, and reward you with real SmartCoins.
           </p>
           <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
             <span className="bg-slate-800 text-emerald-400 font-bold px-3 py-1 rounded-full border border-slate-700">
@@ -96,6 +111,7 @@ export const Footer: React.FC = () => {
           <h5 className="font-bold text-white text-sm uppercase tracking-wider">Shopping & Tools</h5>
           <ul className="space-y-2 text-xs text-slate-400">
             <li><Link to="/categories" className="hover:text-white transition-colors">Browse Categories</Link></li>
+            <li><button onClick={() => window.dispatchEvent(new CustomEvent('trigger-app-install'))} className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors cursor-pointer flex items-center gap-1">📲 Download SmartDeal App (.apk)</button></li>
             <li><Link to="/compare" className="hover:text-white transition-colors">Price Comparison Engine</Link></li>
             <li><Link to="/flowchart" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">UI/UX Flowchart & Architecture</Link></li>
             <li><Link to="/product-vs-product" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Head-to-Head AI Comparison</Link></li>
@@ -153,7 +169,7 @@ export const Footer: React.FC = () => {
 
       {/* Bottom Legal bar */}
       <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">
-        <p>© 2026 SmartDeals Inc. All rights reserved. “Smart Shopping. Better Deals. Every Time.”</p>
+        <p>© 2026 SmartDeal Inc. All rights reserved. “Smart Shopping. Better Deals. Every Time.”</p>
         <div className="flex items-center gap-4">
           <span>Encrypted 256-bit TLS</span>
           <span>Verified Merchant API</span>

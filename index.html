@@ -1,18 +1,45 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark" data-theme="royal-gold">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#4F46E5" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SmartDeals - Smart Shopping. Better Deals. Every Time.</title>
+    <meta name="theme-color" content="#181107" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SmartDeal" />
+    <meta name="application-name" content="SmartDeal" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>SmartDeal - Smart Shopping. Better Deals. Every Time.</title>
     <meta name="description" content="Intelligent e-commerce and price comparison platform. Compare live prices across Amazon, Flipkart, Croma, check real final payable price, Deal Score, earn SmartCoins rewards." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('smartdeals_active_theme') || 'steel-navy';
+          var bgMap = {
+            'steel-navy': '#0b1a30',
+            'matrix-lime': '#111612',
+            'sunset-coral': '#1c0b29',
+            'aurora-jade': '#051f15',
+            'royal-gold': '#181107',
+            'cyber-indigo': '#08092d',
+            'cyber-emerald': '#051f15'
+          };
+          var bg = localStorage.getItem('smartdeals_custom_bg') || bgMap[theme] || '#0b1a30';
+          if (bg === '#000000' || bg === '#070709' || bg === '#030a0d') bg = bgMap[theme] || '#0b1a30';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.setProperty('--smartdeal-bg', bg);
+          document.documentElement.style.backgroundColor = bg;
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#F8FAFC] text-slate-800 antialiased selection:bg-brand-500 selection:text-white min-h-screen">
+  <body class="antialiased selection:bg-brand-500 selection:text-white min-h-screen text-slate-100" style="background-color: #0b1a30;">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

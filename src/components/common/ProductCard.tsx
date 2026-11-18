@@ -5,6 +5,7 @@ import { useApp } from '../../context/AppContext';
 import { DealScoreBadge } from './DealScoreBadge';
 import { PriceAlertModal } from './PriceAlertModal';
 import { PurchaseTrackerModal } from './PurchaseTrackerModal';
+import { ProductQuickDetailsModal } from '../product/ProductQuickDetailsModal';
 import { notificationService } from '../../services/notificationService';
 import {
   Heart,
@@ -18,9 +19,10 @@ interface Props {
 }
 
 export const ProductCard: React.FC<Props> = ({ product }) => {
-  const { cart, addToCart, wishlist, toggleWishlist, priceAlerts, trackActivity, trackOutboundClick } = useApp();
+  const { cart, addToCart, wishlist, toggleWishlist, priceAlerts, trackActivity, trackOutboundClick, activeTheme } = useApp();
   const navigate = useNavigate();
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [isQuickDetailsOpen, setIsQuickDetailsOpen] = useState(false);
   const [trackerStore, setTrackerStore] = useState<{
     storeName: string;
     price: number;
@@ -97,7 +99,11 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
   };
 
   return (
-    <div className="group bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500/50 hover:shadow-xl hover:shadow-brand-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden relative">
+    <div className={`group bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden relative ${
+      activeTheme === 'royal-gold'
+        ? 'dark:bg-[#241a0b] dark:border-amber-900/60 hover:border-amber-400/70 hover:shadow-xl hover:shadow-amber-500/15'
+        : 'dark:bg-[#062537] dark:border-teal-900/60 hover:border-teal-400/70 hover:shadow-xl hover:shadow-teal-500/20'
+    }`}>
       {/* Top Badges & Actions */}
       <div className="p-2 sm:p-3.5 pb-0 flex items-center justify-between gap-1 z-10">
         <DealScoreBadge score={product.dealScore} breakdown={product.dealScoreBreakdown} size="sm" />
@@ -112,7 +118,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
               hasAlert
                 ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                : 'bg-slate-100 dark:bg-[#131d33] text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
             }`}
             title={hasAlert ? 'Price Alert Active' : 'Set Price Alert'}
           >
@@ -135,7 +141,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
               isWishlisted
                 ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+                : 'bg-slate-100 dark:bg-[#131d33] text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40'
             }`}
             title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
@@ -146,7 +152,11 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
 
       {/* Product Image */}
       <Link to={`/product/${product.id}`} className="block relative px-2.5 py-2 sm:px-4 sm:py-3 group-hover:scale-105 transition-transform duration-300">
-        <div className="aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800/80 flex items-center justify-center p-1.5 sm:p-2">
+        <div className={`aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center p-1.5 sm:p-2 border transition-colors ${
+          activeTheme === 'royal-gold'
+            ? 'dark:bg-[#1a1308] dark:border-amber-900/40'
+            : 'dark:bg-[#041e2d] dark:border-teal-900/40'
+        }`}>
           <img
             src={product.image}
             alt={product.name}
@@ -164,13 +174,13 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
       {/* Product Information */}
       <div className="p-2.5 sm:p-4 pt-1 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
         <div>
-          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-semibold mb-1">
+          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-400 font-semibold mb-1">
             <span className="truncate max-w-[70px] sm:max-w-none">{product.brand}</span>
             <span className="text-amber-500 font-bold shrink-0">★ {product.rating}</span>
           </div>
 
           <Link to={`/product/${product.id}`} className="block">
-            <h3 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-2 hover:text-brand-600 dark:hover:text-brand-400 transition-colors leading-snug">
+            <h3 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-2 hover:text-brand-600 dark:hover:text-cyan-300 transition-colors leading-snug">
               {product.name}
             </h3>
           </Link>
@@ -183,18 +193,24 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
               ₹{product.mrp.toLocaleString('en-IN')}
             </span>
-            <span className="text-[9px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50">
+            <span className="text-[9px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
               {product.discountPercent}% OFF
             </span>
           </div>
 
           {/* Lowest Store Indicator */}
           {lowestStoreListing && (
-            <div className="mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-[11px] bg-slate-50 dark:bg-slate-800/80 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl border border-slate-200/60 dark:border-slate-800">
+            <div className={`mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-[11px] px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl border ${
+              activeTheme === 'royal-gold'
+                ? 'bg-[#2b1f0d] border-amber-900/60'
+                : 'bg-[#082e43] border-teal-900/60'
+            }`}>
               <span className="text-slate-500 dark:text-slate-400 truncate">
-                Best: <strong className="text-slate-900 dark:text-white">{lowestStoreListing.sellerName}</strong>
+                Best: <strong className="text-slate-900 dark:text-slate-200">{lowestStoreListing.sellerName}</strong>
               </span>
-              <span className="font-black text-brand-600 dark:text-brand-400 font-mono shrink-0 ml-1">
+              <span className={`font-black font-mono shrink-0 ml-1 ${
+                activeTheme === 'royal-gold' ? 'text-amber-400' : 'text-teal-300'
+              }`}>
                 ₹{lowestStoreListing.finalPrice.toLocaleString('en-IN')}
               </span>
             </div>
@@ -202,18 +218,33 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
         </div>
 
         {/* Action Buttons: View Details, Buy at Best Price, Compare */}
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-1.5 sm:gap-2">
+        <div className={`pt-2 border-t flex flex-col gap-1.5 sm:gap-2 ${
+          activeTheme === 'royal-gold' ? 'border-amber-950/60' : 'border-teal-950/60'
+        }`}>
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Link
-              to={`/product/${product.id}`}
-              className="flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-[10px] sm:text-xs text-center transition-all truncate"
+            <button
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsQuickDetailsOpen(true);
+              }}
+              className={`flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs text-center transition-all truncate cursor-pointer active:scale-95 border ${
+                activeTheme === 'royal-gold'
+                  ? 'bg-[#2c1f0e] hover:bg-[#382812] text-amber-200 border-amber-900/50 hover:border-amber-400/50'
+                  : 'bg-[#083046] hover:bg-[#0c3e59] text-teal-200 border-teal-900/50 hover:border-teal-400/50'
+              }`}
+              title="View full Flipkart-style details & specifications"
             >
               View Details
-            </Link>
+            </button>
 
             <button
               onClick={handleQuickOutboundBuy}
-              className="flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-[10px] sm:text-xs text-center shadow-sm shadow-brand-500/20 active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer truncate"
+              className={`flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs text-center active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer truncate ${
+                activeTheme === 'royal-gold'
+                  ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black shadow-sm shadow-amber-500/30'
+                  : 'bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black shadow-sm shadow-teal-500/30'
+              }`}
               title={`Buy directly on ${lowestStoreListing?.sellerName || 'Amazon'}`}
             >
               <span className="truncate">Buy {lowestStoreListing?.sellerName?.split(' ')[0] || 'Amazon'}</span>
@@ -224,7 +255,11 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           {/* Direct Marketplace Comparison Button */}
           <Link
             to={`/compare/${product.id}`}
-            className="w-full py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] sm:text-xs flex items-center justify-center gap-1 shadow-md shadow-blue-600/20 active:scale-95 transition-all truncate"
+            className={`w-full py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs flex items-center justify-center gap-1 active:scale-95 transition-all truncate ${
+              activeTheme === 'royal-gold'
+                ? 'bg-[#12110c] hover:bg-[#1c1a12] text-amber-300 border border-amber-500/30 hover:border-amber-400/60 shadow-xs'
+                : 'bg-[#061a20] hover:bg-[#0b2832] text-teal-300 border border-teal-500/30 hover:border-teal-400/60 shadow-xs'
+            }`}
           >
             <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
             <span className="truncate">Compare {externalListings.length} Stores</span>
@@ -240,6 +275,13 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           onClose={() => setIsAlertModalOpen(false)}
         />
       )}
+
+      {/* Quick Specifications & Details Modal */}
+      <ProductQuickDetailsModal
+        product={product}
+        isOpen={isQuickDetailsOpen}
+        onClose={() => setIsQuickDetailsOpen(false)}
+      />
 
       {/* Purchase Tracker & Verification Modal */}
       {trackerStore && (
