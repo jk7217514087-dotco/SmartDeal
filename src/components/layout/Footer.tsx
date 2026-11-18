@@ -5,175 +5,278 @@ import {
   Sparkles,
   ShieldCheck,
   Truck,
-  Coins,
+  RotateCcw,
+  TrendingDown,
+  Phone,
+  Mail,
+  Clock,
+  Lock,
+  CheckCircle2,
   Store,
   HelpCircle,
-  TrendingDown,
-  Lock,
-  HeartHandshake
+  Smartphone
 } from 'lucide-react';
 
+interface FooterThemeConfig {
+  bg: string;
+  border: string;
+  cardBg: string;
+  cardBorder: string;
+  accentText: string;
+  logoBadge: string;
+  logoGradient: string;
+  subBorder: string;
+}
+
+const FOOTER_THEMES: Record<string, FooterThemeConfig> = {
+  'steel-navy': {
+    bg: 'bg-[#081426] text-slate-300',
+    border: 'border-sky-900/40',
+    cardBg: 'bg-[#0f213d]',
+    cardBorder: 'border-sky-800/40',
+    accentText: 'text-sky-400',
+    logoBadge: 'bg-gradient-to-tr from-sky-400 via-sky-500 to-blue-600 text-slate-950 shadow-sky-500/25',
+    logoGradient: 'bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent',
+    subBorder: 'border-sky-950/80',
+  },
+  'matrix-lime': {
+    bg: 'bg-[#0d120e] text-slate-300',
+    border: 'border-lime-900/40',
+    cardBg: 'bg-[#152217]',
+    cardBorder: 'border-lime-800/40',
+    accentText: 'text-lime-400',
+    logoBadge: 'bg-gradient-to-tr from-[#bef264] via-[#a3e635] to-[#84cc16] text-slate-950 shadow-lime-500/25',
+    logoGradient: 'bg-gradient-to-r from-lime-300 via-lime-400 to-green-400 bg-clip-text text-transparent',
+    subBorder: 'border-lime-950/80',
+  },
+  'sunset-coral': {
+    bg: 'bg-[#14081e] text-slate-300',
+    border: 'border-rose-900/40',
+    cardBg: 'bg-[#250f36]',
+    cardBorder: 'border-rose-800/40',
+    accentText: 'text-rose-400',
+    logoBadge: 'bg-gradient-to-tr from-orange-400 via-rose-500 to-pink-600 text-white shadow-rose-500/25',
+    logoGradient: 'bg-gradient-to-r from-rose-400 via-pink-300 to-orange-400 bg-clip-text text-transparent',
+    subBorder: 'border-rose-950/80',
+  },
+  'aurora-jade': {
+    bg: 'bg-[#031710] text-slate-300',
+    border: 'border-emerald-900/40',
+    cardBg: 'bg-[#082a1d]',
+    cardBorder: 'border-emerald-800/40',
+    accentText: 'text-emerald-400',
+    logoBadge: 'bg-gradient-to-tr from-emerald-400 via-green-400 to-teal-500 text-slate-950 shadow-emerald-500/25',
+    logoGradient: 'bg-gradient-to-r from-emerald-300 via-teal-300 to-green-400 bg-clip-text text-transparent',
+    subBorder: 'border-emerald-950/80',
+  },
+  'royal-gold': {
+    bg: 'bg-[#120d05] text-slate-300',
+    border: 'border-amber-900/40',
+    cardBg: 'bg-[#21160a]',
+    cardBorder: 'border-amber-800/40',
+    accentText: 'text-amber-400',
+    logoBadge: 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-amber-500/25',
+    logoGradient: 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent',
+    subBorder: 'border-amber-950/80',
+  },
+  'cyber-indigo': {
+    bg: 'bg-[#060721] text-slate-300',
+    border: 'border-indigo-900/40',
+    cardBg: 'bg-[#0e123d]',
+    cardBorder: 'border-indigo-800/40',
+    accentText: 'text-violet-400',
+    logoBadge: 'bg-gradient-to-tr from-violet-500 via-purple-400 to-indigo-600 text-white shadow-violet-500/25',
+    logoGradient: 'bg-gradient-to-r from-violet-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent',
+    subBorder: 'border-indigo-950/80',
+  }
+};
+
 export const Footer: React.FC = () => {
-  const { role, activeTheme } = useApp();
+  const { activeTheme } = useApp();
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
+  const theme = FOOTER_THEMES[themeKey] || FOOTER_THEMES['steel-navy'];
+
   return (
-    <footer className={`text-slate-300 pt-16 pb-24 sm:pb-12 border-t transition-colors ${
-      activeTheme === 'royal-gold'
-        ? 'bg-[#181107] border-amber-900/60'
-        : 'bg-[#031926] border-teal-900/60'
-    }`}>
-      {/* 6 Core Value Pillars Banner */}
-      <div className={`max-w-7xl mx-auto px-4 pb-12 border-b grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center sm:text-left ${
-        activeTheme === 'royal-gold' ? 'border-amber-950/50' : 'border-teal-950/50'
-      }`}>
-        <div className="space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center mx-auto sm:mx-0">
-            <TrendingDown className="w-5 h-5" />
-          </div>
-          <h4 className="font-bold text-white text-sm">Best Price Comparison</h4>
-          <p className="text-xs text-slate-400">Live prices from Amazon, Flipkart, Croma & SmartDeals</p>
-        </div>
-
-        <div className="space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto sm:mx-0">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <h4 className="font-bold text-white text-sm">Deal Intelligence</h4>
-          <p className="text-xs text-slate-400">0–100 Deal DNA & Fake Discount Detector</p>
-        </div>
-
-        <div className="space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto sm:mx-0">
-            <Coins className="w-5 h-5" />
-          </div>
-          <h4 className="font-bold text-white text-sm">SmartCoins Rewards</h4>
-          <p className="text-xs text-slate-400">10 Coins = ₹1 real value on orders</p>
-        </div>
-
-        <div className="space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto sm:mx-0">
-            <Truck className="w-5 h-5" />
-          </div>
-          <h4 className="font-bold text-white text-sm">Early Delivery</h4>
-          <p className="text-xs text-slate-400">Transparent delivery dates & zero hidden costs</p>
-        </div>
-
-        <div className="space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto sm:mx-0">
-            <Lock className="w-5 h-5" />
-          </div>
-          <h4 className="font-bold text-white text-sm">Buyer Protection</h4>
-          <p className="text-xs text-slate-400">Verified sellers, genuine invoices & easy returns</p>
-        </div>
-
-        <div className="space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center mx-auto sm:mx-0">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <h4 className="font-bold text-white text-sm">AI Shopping Copilot</h4>
-          <p className="text-xs text-slate-400">Find the right product with transparent logic</p>
-        </div>
-      </div>
-
-      {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-6 gap-8">
-        {/* Brand column */}
-        <div className="col-span-2 space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black transition-all ${
-              activeTheme === 'royal-gold'
-                ? 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-md shadow-amber-500/25'
-                : 'bg-gradient-to-tr from-teal-500 via-emerald-400 to-cyan-400 text-slate-950 shadow-md shadow-teal-500/25'
-            }`}>
-              <Sparkles className="w-4 h-4 text-amber-300" />
+    <footer className={`pt-12 pb-24 sm:pb-12 border-t transition-colors duration-300 ${theme.bg} ${theme.border}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* 4 Customer Trust Guarantees */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-10 border-b border-white/10">
+          <div className={`p-4 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} flex items-start gap-3.5 shadow-sm`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white/5 ${theme.accentText}`}>
+              <ShieldCheck className="w-5 h-5" />
             </div>
-            <span className="font-extrabold text-xl text-white">
-              Smart<span className={activeTheme === 'royal-gold'
-                ? 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent'
-                : 'bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent'
-              }>Deal</span>
-            </span>
+            <div>
+              <h4 className="font-extrabold text-white text-sm">100% Genuine Products</h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Direct authorized sellers from Amazon, Flipkart, Croma & verified brands.
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
-            SmartDeal is an intelligent dual platform: multi-marketplace price comparison engine plus high-trust direct marketplace. We calculate the true final payable price, detect fake sales, and reward you with real SmartCoins.
-          </p>
-          <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
-            <span className="bg-slate-800 text-emerald-400 font-bold px-3 py-1 rounded-full border border-slate-700">
-              ✓ Anti-Fake Price Guarantee
-            </span>
-            <span className="bg-slate-800 text-amber-400 font-bold px-3 py-1 rounded-full border border-slate-700">
-              ✓ 10 SmartCoins = ₹1
-            </span>
+
+          <div className={`p-4 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} flex items-start gap-3.5 shadow-sm`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white/5 ${theme.accentText}`}>
+              <TrendingDown className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-white text-sm">Best Price Guarantee</h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Live multi-store comparison with true final price, cashbacks, and coupons.
+              </p>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} flex items-start gap-3.5 shadow-sm`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white/5 ${theme.accentText}`}>
+              <Truck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-white text-sm">Fast & Reliable Delivery</h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Speedy doorstep shipping to 27,000+ pin codes with live package tracking.
+              </p>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} flex items-start gap-3.5 shadow-sm`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white/5 ${theme.accentText}`}>
+              <RotateCcw className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-white text-sm">7-Day Easy Returns</h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Hassle-free replacement or 100% refund guarantee with free doorstep pickup.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Quick Nav */}
-        <div className="space-y-3">
-          <h5 className="font-bold text-white text-sm uppercase tracking-wider">Shopping & Tools</h5>
-          <ul className="space-y-2 text-xs text-slate-400">
-            <li><Link to="/categories" className="hover:text-white transition-colors">Browse Categories</Link></li>
-            <li><button onClick={() => window.dispatchEvent(new CustomEvent('trigger-app-install'))} className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors cursor-pointer flex items-center gap-1">📲 Download SmartDeal App (.apk)</button></li>
-            <li><Link to="/compare" className="hover:text-white transition-colors">Price Comparison Engine</Link></li>
-            <li><Link to="/flowchart" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">UI/UX Flowchart & Architecture</Link></li>
-            <li><Link to="/product-vs-product" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Head-to-Head AI Comparison</Link></li>
-            <li><Link to="/ai-assistant" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">AI Shopping Copilot</Link></li>
-            <li><Link to="/fake-discount-detector/prod-boat-airdopes" className="hover:text-white transition-colors">Fake Discount Detector</Link></li>
-            <li><Link to="/deal-intelligence/prod-samsung-m14" className="hover:text-white transition-colors">Deal DNA Score (0-100)</Link></li>
-            <li><Link to="/wallet" className="hover:text-white transition-colors">SmartCoins Rewards Wallet</Link></li>
-            <li><Link to="/price-alerts" className="hover:text-white transition-colors">Price Drop Alerts</Link></li>
-          </ul>
+        {/* Main 4 Customer-Centric Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
+          {/* Column 1: Brand & Customer Care (5 cols) */}
+          <div className="lg:col-span-5 space-y-5">
+            <div className="flex items-center gap-2.5">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black ${theme.logoBadge}`}>
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-black text-xl text-white tracking-tight">
+                Smart<span className={theme.logoGradient}>Deal</span>
+              </span>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/15 tracking-wider">
+                PRO
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
+              India's trusted smart shopping and real-time price comparison platform. Compare live prices across Flipkart, Amazon, Croma, and Reliance Digital to guarantee you always pay the lowest price.
+            </p>
+
+            {/* Direct Customer Support Box */}
+            <div className={`p-4 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} space-y-2.5 text-xs`}>
+              <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+                <span>Customer Care & Order Support</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-200">
+                <Phone className={`w-3.5 h-3.5 shrink-0 ${theme.accentText}`} />
+                <span className="font-bold">Phone / WhatsApp:</span>
+                <a href="tel:7217514087" className="font-black text-white hover:underline">+91 72175 14087</a>
+              </div>
+              <div className="flex items-center gap-2 text-slate-200">
+                <Mail className={`w-3.5 h-3.5 shrink-0 ${theme.accentText}`} />
+                <span className="font-bold">Support Email:</span>
+                <a href="mailto:jk7217514087@gmail.com" className="font-semibold text-white hover:underline truncate">jk7217514087@gmail.com</a>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400 text-[11px] pt-0.5">
+                <Clock className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                <span>Support Timings: 9:00 AM – 9:00 PM (All 7 Days)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Popular Categories (2 cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h5 className="font-extrabold text-white text-xs uppercase tracking-wider">
+              Popular Categories
+            </h5>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li><Link to="/categories?cat=Mobiles" className="hover:text-white transition-colors">Smartphones & 5G</Link></li>
+              <li><Link to="/categories?cat=Laptops" className="hover:text-white transition-colors">Laptops & Computers</Link></li>
+              <li><Link to="/categories?cat=Audio" className="hover:text-white transition-colors">Wireless Earbuds</Link></li>
+              <li><Link to="/categories?cat=TV" className="hover:text-white transition-colors">Smart TVs & Video</Link></li>
+              <li><Link to="/categories?cat=Shoes" className="hover:text-white transition-colors">Sneakers & Footwear</Link></li>
+              <li><Link to="/categories?cat=Smartwatch" className="hover:text-white transition-colors">Fitness Smartwatches</Link></li>
+              <li><Link to="/deals" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">🔥 Today's Best Deals</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Customer Services (3 cols) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h5 className="font-extrabold text-white text-xs uppercase tracking-wider">
+              Customer Services
+            </h5>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li><Link to="/orders" className="hover:text-white transition-colors">Track My Order & Delivery</Link></li>
+              <li><Link to="/returns" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">Easy Returns & Refunds</Link></li>
+              <li><Link to="/price-alerts" className="hover:text-white transition-colors">Price Drop Alerts</Link></li>
+              <li><Link to="/wishlist" className="hover:text-white transition-colors">My Saved Wishlist</Link></li>
+              <li><Link to="/compare" className="hover:text-white transition-colors">Live Store Price Comparison</Link></li>
+              <li><Link to="/support" className="hover:text-white transition-colors">Help Center & FAQs</Link></li>
+              <li>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('trigger-app-install'))}
+                  className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  <span>Download App (.apk)</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Safe Shopping & Trust (2 cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h5 className="font-extrabold text-white text-xs uppercase tracking-wider">
+              Safe Shopping
+            </h5>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li><span className="text-emerald-400 font-semibold flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" /> 100% Genuine Invoice</span></li>
+              <li><span className="text-slate-300 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-blue-400" /> Brand Warranty</span></li>
+              <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/become-seller" className="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1.5 pt-1"><Store className="w-3.5 h-3.5" /> Become a Seller</Link></li>
+            </ul>
+          </div>
         </div>
 
-        {/* Customer & Orders */}
-        <div className="space-y-3">
-          <h5 className="font-bold text-white text-sm uppercase tracking-wider">Customer & Orders</h5>
-          <ul className="space-y-2 text-xs text-slate-400">
-            <li><Link to="/orders" className="hover:text-white transition-colors">My Orders & Invoices</Link></li>
-            <li><Link to="/tracking/ORD-98231" className="hover:text-white transition-colors">Live Order Tracking</Link></li>
-            <li><Link to="/returns" className="text-emerald-400 hover:text-emerald-300 font-bold transition-colors">Product Returns & Refunds</Link></li>
-            <li><Link to="/wishlist" className="hover:text-white transition-colors">Saved Wishlist</Link></li>
-            <li><Link to="/notifications" className="hover:text-white transition-colors">Price & Order Alerts</Link></li>
-            <li><Link to="/profile" className="hover:text-white transition-colors">Delivery Address Manager</Link></li>
-            <li><Link to="/support" className="hover:text-white transition-colors">Help Center & FAQs</Link></li>
-          </ul>
+        {/* Accepted Payment Methods & Security Strip */}
+        <div className={`pt-6 pb-2 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400`}>
+          <div className="flex flex-wrap items-center gap-2 text-slate-300">
+            <span className="font-extrabold text-[11px] text-slate-400 uppercase tracking-wider mr-1">
+              Supported Marketplaces:
+            </span>
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-bold text-white">Amazon</span>
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-bold text-white">Flipkart</span>
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-bold text-white">Croma</span>
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-bold text-white">Reliance Digital</span>
+            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-bold text-white">Tata CLiQ</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-[11px] font-medium text-slate-400">
+            <Lock className="w-3.5 h-3.5 text-emerald-400" />
+            <span>256-Bit SSL Encrypted & Verified Deals</span>
+          </div>
         </div>
 
-        {/* For Sellers & Admins */}
-        <div className="space-y-3">
-          <h5 className="font-bold text-white text-sm uppercase tracking-wider">Seller & Admin</h5>
-          <ul className="space-y-2 text-xs text-slate-400">
-            <li><Link to="/become-seller" className="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1"><Store className="w-3.5 h-3.5" /> Become a Seller</Link></li>
-            <li><Link to="/seller/dashboard" className="hover:text-white transition-colors">Seller Dashboard</Link></li>
-            <li><Link to="/seller/commission" className="hover:text-white transition-colors">Commission Slabs & 0% Incentive</Link></li>
-            {role === 'ADMIN' && (
-              <>
-                <li><Link to="/admin/dashboard" className="text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> Admin Control Suite</Link></li>
-                <li><Link to="/admin/commission-control" className="hover:text-white transition-colors">Platform Commission Admin</Link></li>
-                <li><Link to="/admin/smartcoins-control" className="hover:text-white transition-colors">SmartCoins Rules Config</Link></li>
-              </>
-            )}
-          </ul>
-        </div>
-
-        {/* Legal & Trust */}
-        <div className="space-y-3">
-          <h5 className="font-bold text-white text-sm uppercase tracking-wider">Trust & Support</h5>
-          <ul className="space-y-2 text-xs text-slate-400">
-            <li><Link to="/about" className="hover:text-white transition-colors">About SmartDeals Mission</Link></li>
-            <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
-            <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-            <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy & Data Policy</Link></li>
-            <li><span className="text-emerald-400 font-medium block">GSTIN: 06AABCS9876Q1Z2</span></li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Bottom Legal bar */}
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">
-        <p>© 2026 SmartDeal Inc. All rights reserved. “Smart Shopping. Better Deals. Every Time.”</p>
-        <div className="flex items-center gap-4">
-          <span>Encrypted 256-bit TLS</span>
-          <span>Verified Merchant API</span>
-          <span>Zero Fake Pricing Promise</span>
+        {/* Bottom Legal Bar */}
+        <div className={`pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500`}>
+          <p>© 2026 SmartDeal Inc. All rights reserved. “Smart Shopping. Better Deals. Every Time.”</p>
+          <div className="flex items-center gap-4 text-[11px]">
+            <Link to="/privacy" className="hover:text-slate-300 transition-colors">Privacy</Link>
+            <span>•</span>
+            <Link to="/terms" className="hover:text-slate-300 transition-colors">Terms</Link>
+            <span>•</span>
+            <Link to="/support" className="hover:text-slate-300 transition-colors">Help Center</Link>
+          </div>
         </div>
       </div>
     </footer>
