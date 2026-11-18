@@ -52,7 +52,7 @@ import { ProductReturnsPage } from './pages/ProductReturnsPage';
 import { AdminSecurityGuard } from './components/admin/AdminSecurityGuard';
 
 function AppContent() {
-  const { isSmsCenterOpen, setIsSmsCenterOpen, role, customBg, activeTheme } = useApp();
+  const { isSmsCenterOpen, setIsSmsCenterOpen, role, currentUser, customBg, activeTheme } = useApp();
 
   const currentBg = customBg || getThemeDefaultBg(activeTheme);
 
@@ -204,7 +204,9 @@ function AppContent() {
           </main>
           <Footer />
           <MobileNav />
-          <QuickDemoBar />
+          {(role === 'ADMIN' || currentUser?.role === 'ADMIN') && (
+            <QuickDemoBar />
+          )}
           <AIAssistantModal />
           <BackgroundCustomizerModal />
           <InstallAppPrompt />

@@ -21,7 +21,13 @@ export const QuickDemoBar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { role, setRole, setIsAiAssistantOpen } = useApp();
+  const { role, setRole, setIsAiAssistantOpen, currentUser } = useApp();
+
+  // ONLY Owner / Admin can see this interactive demo panel
+  const isOwner = currentUser?.role === 'ADMIN' || currentUser?.email === 'jk7217514087@gmail.com' || role === 'ADMIN';
+  if (!isOwner) {
+    return null;
+  }
 
   const scenarios = [
     ...(role === 'ADMIN' ? [{
