@@ -599,7 +599,7 @@ export const SearchPage: React.FC = () => {
                         </div>
 
                         <Link
-                          to={`/product/${product.id}`}
+                          to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
                           className="block text-sm sm:text-base font-black text-slate-900 dark:text-white hover:text-brand-600 dark:hover:text-brand-400 transition-colors line-clamp-2 sm:line-clamp-1"
                         >
                           {product.name}
@@ -648,7 +648,7 @@ export const SearchPage: React.FC = () => {
                             Compare Prices
                           </Link>
                           <Link
-                            to={`/product/${product.id}`}
+                            to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
                             className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs text-center shadow-md shadow-brand-500/20 transition-all cursor-pointer"
                           >
                             View Details

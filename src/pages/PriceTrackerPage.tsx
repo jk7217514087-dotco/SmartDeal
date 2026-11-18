@@ -251,7 +251,7 @@ export const PriceTrackerPage: React.FC = () => {
                       />
                       <div className="space-y-1">
                         <Link
-                          to={`/product/${alert.productId}`}
+                          to={alert.productId === 'prod-boat-airdopes' ? '/' : `/product/${alert.productId}`}
                           className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-1 hover:text-brand-600 transition-colors"
                         >
                           {alert.productName}

@@ -440,7 +440,7 @@ Lowest price across all stores: **₹${matched.sellingPrice.toLocaleString('en-I
                       <button
                         onClick={() => {
                           if (m.comparison?.productA?.id) {
-                            navigate(`/product/${m.comparison.productA.id}`);
+                            navigate(m.comparison.productA.id === 'prod-boat-airdopes' ? '/' : `/product/${m.comparison.productA.id}`);
                           } else {
                             navigate(`/search?q=${encodeURIComponent(m.comparison?.nameA || '')}`);
                           }
@@ -452,7 +452,7 @@ Lowest price across all stores: **₹${matched.sellingPrice.toLocaleString('en-I
                       <button
                         onClick={() => {
                           if (m.comparison?.productB?.id) {
-                            navigate(`/product/${m.comparison.productB.id}`);
+                            navigate(m.comparison.productB.id === 'prod-boat-airdopes' ? '/' : `/product/${m.comparison.productB.id}`);
                           } else {
                             navigate(`/search?q=${encodeURIComponent(m.comparison?.nameB || '')}`);
                           }
@@ -516,7 +516,7 @@ Lowest price across all stores: **₹${matched.sellingPrice.toLocaleString('en-I
                         </div>
 
                         <button
-                          onClick={() => navigate(`/product/${rec.id}`)}
+                          onClick={() => navigate(rec.id === 'prod-boat-airdopes' ? '/' : `/product/${rec.id}`)}
                           className="bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer shrink-0"
                         >
                           <span>View Deal</span>

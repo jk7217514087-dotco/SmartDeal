@@ -196,7 +196,7 @@ export const WishlistPage: React.FC = () => {
                       {/* Product Info matching Panel 6 */}
                       <div className="space-y-1">
                         <Link
-                          to={`/product/${product.id}`}
+                          to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
                           className="text-sm font-black text-slate-900 dark:text-white hover:text-brand-600 transition-colors line-clamp-1"
                         >
                           {product.name}

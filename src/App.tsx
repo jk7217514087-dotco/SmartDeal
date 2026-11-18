@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp, getThemeDefaultBg } from './context/AppContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -76,6 +76,8 @@ function AppContent() {
               <Route path="/coupons" element={<CouponsPage />} />
               <Route path="/price-tracker" element={<PriceTrackerPage />} />
               <Route path="/marketplaces" element={<MarketplacesPage />} />
+              <Route path="/product/prod-boat-airdopes" element={<Navigate to="/" replace />} />
+              <Route path="/product/slug/prod-boat-airdopes" element={<Navigate to="/" replace />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/product/slug/:id" element={<ProductDetailPage />} />
               <Route path="/compare" element={<PriceComparisonPage />} />

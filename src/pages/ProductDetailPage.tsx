@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, Navigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { DealScoreBadge } from '../components/common/DealScoreBadge';
 import { PriceComparisonTable } from '../components/common/PriceComparisonTable';
@@ -144,8 +144,20 @@ const THEME_STYLES: Record<string, {
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+
+  // If boAt Airdopes or specified product, immediately redirect to home page
+  if (id === 'prod-boat-airdopes') {
+    return <Navigate to="/" replace />;
+  }
+
   const { products, addToCart, wishlist, toggleWishlist, trackActivity, trackOutboundClick, activeTheme } = useApp();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (id === 'prod-boat-airdopes') {
+      navigate('/', { replace: true });
+    }
+  }, [id, navigate]);
 
   const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['steel-navy'];
 

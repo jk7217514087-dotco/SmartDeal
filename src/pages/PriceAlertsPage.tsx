@@ -85,7 +85,7 @@ export const PriceAlertsPage: React.FC = () => {
                 />
                 <div className="space-y-1">
                   <Link
-                    to={`/product/${alert.productId}`}
+                    to={alert.productId === 'prod-boat-airdopes' ? '/' : `/product/${alert.productId}`}
                     className="text-sm font-bold text-slate-900 dark:text-white hover:text-brand-600 dark:hover:text-brand-400 line-clamp-1"
                   >
                     {alert.productName}
@@ -113,7 +113,7 @@ export const PriceAlertsPage: React.FC = () => {
 
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
                 <Link
-                  to={`/product/${alert.productId}`}
+                  to={alert.productId === 'prod-boat-airdopes' ? '/' : `/product/${alert.productId}`}
                   className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold text-xs shadow-xs"
                 >
                   View Live Deal

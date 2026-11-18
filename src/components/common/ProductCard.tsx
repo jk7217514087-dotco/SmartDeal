@@ -33,6 +33,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
   const isWishlisted = wishlist.includes(product.id);
   const isInCart = cart.some(item => item.product.id === product.id);
   const hasAlert = priceAlerts.some(a => a.productId === product.id);
+  const productDetailLink = product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -151,7 +152,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
       </div>
 
       {/* Product Image */}
-      <Link to={`/product/${product.id}`} className="block relative px-2.5 py-2 sm:px-4 sm:py-3 group-hover:scale-105 transition-transform duration-300">
+      <Link to={productDetailLink} className="block relative px-2.5 py-2 sm:px-4 sm:py-3 group-hover:scale-105 transition-transform duration-300">
         <div className={`aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center p-1.5 sm:p-2 border transition-colors ${
           activeTheme === 'royal-gold'
             ? 'dark:bg-[#1a1308] dark:border-amber-900/40'
@@ -179,7 +180,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             <span className="text-amber-500 font-bold shrink-0">★ {product.rating}</span>
           </div>
 
-          <Link to={`/product/${product.id}`} className="block">
+          <Link to={productDetailLink} className="block">
             <h3 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-2 hover:text-brand-600 dark:hover:text-cyan-300 transition-colors leading-snug">
               {product.name}
             </h3>

@@ -163,7 +163,7 @@ export const DealIntelligencePage: React.FC = () => {
           <p className="text-xs text-slate-500 dark:text-slate-400">Get the authentic deal with verified invoice & SmartCoins rewards</p>
         </div>
         <button
-          onClick={() => navigate(`/product/${product.id}`)}
+          onClick={() => navigate(product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`)}
           className="px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs shadow-md flex items-center gap-1.5 transition-colors"
         >
           <span>Go to Product Page</span>
