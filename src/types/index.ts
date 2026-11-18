@@ -448,6 +448,31 @@ export interface CouponItem {
   terms?: string;
 }
 
+export type AffiliateApprovalStatus =
+  | 'APPROVED'
+  | 'PENDING_APPROVAL'
+  | 'WRITTEN_APPROVAL_REQUIRED'
+  | 'RESTRICTED'
+  | 'NOT_APPLIED';
+
+export interface MarketplaceComplianceConfig {
+  marketplaceId: string;
+  marketplaceName: string;
+  domain: string;
+  priceTrackingAllowed: boolean;
+  priceAlertsAllowed: boolean;
+  priceDisplayAllowed: boolean;
+  apiAccessAllowed: boolean;
+  affiliateApprovalStatus: AffiliateApprovalStatus;
+  writtenApprovalObtained: boolean;
+  writtenApprovalDate?: string;
+  writtenApprovalRef?: string;
+  complianceDisclaimer: string;
+  policyNotes: string;
+  restrictedFeatures: string[];
+  lastAuditedDate: string;
+}
+
 export interface MarketplacePartner {
   id: string;
   name: string;
@@ -459,5 +484,6 @@ export interface MarketplacePartner {
   returnPolicyDays: number;
   affiliateStatus: 'Active Partner' | 'Integrated API' | 'Verified Network';
   categories: string[];
+  compliance?: MarketplaceComplianceConfig;
 }
 

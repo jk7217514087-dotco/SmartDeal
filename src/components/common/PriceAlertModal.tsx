@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Product } from '../../types';
 import { useApp } from '../../context/AppContext';
-import { Bell, X, Check, Mail, Smartphone, BellRing } from 'lucide-react';
+import { Bell, X, Check, Mail, Smartphone, BellRing, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { marketplaceComplianceService } from '../../services/marketplaceComplianceService';
 
 interface Props {
   product: Product;
@@ -21,6 +22,9 @@ export const PriceAlertModal: React.FC<Props> = ({ product, isOpen, onClose }) =
   const [saved, setSaved] = useState(false);
 
   if (!isOpen) return null;
+
+  const isAmazonAlertsAllowed = marketplaceComplianceService.isPriceAlertsAllowed('amazon');
+  const permittedStores = marketplaceComplianceService.getPermittedMarketplaces('price_alerts');
 
   const toggleChannel = (ch: 'in-app' | 'email' | 'sms') => {
     setChannels(prev =>
@@ -87,38 +91,57 @@ export const PriceAlertModal: React.FC<Props> = ({ product, isOpen, onClose }) =
           <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => toggleChannel('in-app')}
-              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${
-                channels.includes('in-app')
+              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${channels.includes('in-app')
                   ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-300 dark:border-brand-700 text-brand-700 dark:text-brand-300'
                   : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
-              }`}
+                }`}
             >
               <BellRing className="w-4 h-4" />
               <span>In-App</span>
             </button>
             <button
               onClick={() => toggleChannel('email')}
-              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${
-                channels.includes('email')
+              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${channels.includes('email')
                   ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-300 dark:border-brand-700 text-brand-700 dark:text-brand-300'
                   : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
-              }`}
+                }`}
             >
               <Mail className="w-4 h-4" />
               <span>Email</span>
             </button>
             <button
               onClick={() => toggleChannel('sms')}
-              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${
-                channels.includes('sms')
+              className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all ${channels.includes('sms')
                   ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-300 dark:border-brand-700 text-brand-700 dark:text-brand-300'
                   : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
-              }`}
+                }`}
             >
               <Smartphone className="w-4 h-4" />
               <span>SMS</span>
             </button>
           </div>
+        </div>
+
+        {/* Marketplace Affiliate Policy Compliance Note */}
+        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-[11px] space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Monitored Marketplaces</span>
+            </span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+              {permittedStores.slice(0, 3).join(', ')} Active
+            </span>
+          </div>
+
+          {!isAmazonAlertsAllowed && (
+            <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-800 dark:text-amber-300 text-[10px] flex items-start gap-1.5">
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+              <span>
+                <strong>Amazon India Notice:</strong> Automated price tracking and alerts are disabled by default per Amazon Operating Agreement until written approval is obtained.
+              </span>
+            </div>
+          )}
         </div>
 
         <button

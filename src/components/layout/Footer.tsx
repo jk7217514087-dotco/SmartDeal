@@ -155,8 +155,8 @@ export const Footer: React.FC = () => {
           {/* Column 1: Brand & Customer Care (5 cols) */}
           <div className="lg:col-span-5 space-y-5">
             <div className="flex items-center gap-2.5">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black ${theme.logoBadge}`}>
-                <Sparkles className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-brand-500/20 ring-1 ring-white/20 bg-[#00061e] flex items-center justify-center shrink-0">
+                <img src="/smartdeal_icon_mark.png" alt="SmartDeal" className="w-full h-full object-cover" />
               </div>
               <span className="font-black text-xl text-white tracking-tight">
                 Smart<span className={theme.logoGradient}>Deal</span>
@@ -269,7 +269,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Legal Bar */}
         <div className={`pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500`}>
-          <p>© 2026 SmartDeal Inc. All rights reserved. “Smart Shopping. Better Deals. Every Time.”</p>
+          <p>© 2026 SmartDeal Inc. All rights reserved. “Compare. Save. Buy Smarter.”</p>
           <div className="flex items-center gap-4 text-[11px]">
             <Link to="/privacy" className="hover:text-slate-300 transition-colors">Privacy</Link>
             <span>•</span>

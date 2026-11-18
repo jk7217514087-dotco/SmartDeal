@@ -9,10 +9,14 @@ import {
   Sparkles,
   Info,
   CheckCircle2,
-  RefreshCw
+  RefreshCw,
+  ShieldAlert,
+  Lock,
+  Check
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MarketplacePartner } from '../types';
+import { marketplaceComplianceService } from '../services/marketplaceComplianceService';
 
 export const MarketplacesPage: React.FC = () => {
   const partners: MarketplacePartner[] = [
@@ -183,6 +187,51 @@ export const MarketplacesPage: React.FC = () => {
                     </span>
                   ))}
                 </div>
+
+                {/* Marketplace-Specific Policy Compliance Badges */}
+                {(() => {
+                  const compliance = marketplaceComplianceService.getComplianceConfig(partner.id);
+                  const isTrackingAllowed = marketplaceComplianceService.isPriceTrackingAllowed(partner.id);
+                  const isAlertsAllowed = marketplaceComplianceService.isPriceAlertsAllowed(partner.id);
+                  return (
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1 text-[11px]">
+                      <div className="font-extrabold text-slate-400 text-[10px] uppercase tracking-wider mb-1">
+                        Affiliate Policy Status
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Price Tracking:</span>
+                        <span className={`font-bold ${isTrackingAllowed ? 'text-emerald-500' : 'text-amber-500'}`}>
+                          {isTrackingAllowed ? '✓ Permitted' : '⚠️ Disabled'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Price Alerts:</span>
+                        <span className={`font-bold ${isAlertsAllowed ? 'text-emerald-500' : 'text-amber-500'}`}>
+                          {isAlertsAllowed ? '✓ Permitted' : '⚠️ Disabled'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Price Display:</span>
+                        <span className="font-bold text-emerald-500">✓ Real-time Sync</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Approval:</span>
+                        <span className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded ${
+                          compliance.writtenApprovalObtained
+                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                        }`}>
+                          {compliance.writtenApprovalObtained ? 'Approved' : 'Written Req.'}
+                        </span>
+                      </div>
+                      {!isTrackingAllowed && (
+                        <p className="text-[10px] text-amber-500/90 leading-tight pt-1">
+                          *Tracking paused per {partner.name} policy
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               <a
@@ -208,7 +257,7 @@ export const MarketplacesPage: React.FC = () => {
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
           <div className="space-y-2 p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -236,6 +285,16 @@ export const MarketplacesPage: React.FC = () => {
             </div>
             <p>
               Cashback stays pending during the marketplace's 7-14 day return window. If you return an order, the partner clawback reverses the commission and pending cashback idempotently with full ledger auditability.
+            </p>
+          </div>
+
+          <div className="space-y-2 p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
+            <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-brand-500" />
+              4. Marketplace Policy Compliance
+            </div>
+            <p>
+              Each affiliate partner operates under independent terms. Price tracking & alerts are paused for Amazon India by default until formal written approval is obtained, while active for permitted networks.
             </p>
           </div>
         </div>

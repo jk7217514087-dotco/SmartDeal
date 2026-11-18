@@ -119,8 +119,8 @@ export const InstallAppPrompt: React.FC = () => {
       {showBanner && !showDownloadModal && (
         <div className="fixed bottom-16 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-slideUp">
           <div className="bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-brand-500/30 flex items-center gap-3">
-            <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-purple-600 flex items-center justify-center shadow-md shadow-brand-500/40">
-              <Sparkles className="w-6 h-6 text-amber-300" />
+            <div className="w-11 h-11 shrink-0 rounded-xl overflow-hidden shadow-md shadow-brand-500/40 ring-1 ring-white/20 bg-[#00061e] flex items-center justify-center">
+              <img src="/smartdeal_app_icon.png" alt="SmartDeal App" className="w-full h-full object-cover" />
             </div>
 
             <div className="flex-1 min-w-0">
@@ -167,8 +167,8 @@ export const InstallAppPrompt: React.FC = () => {
 
             {/* Header */}
             <div className="flex items-center gap-3.5 mb-4">
-              <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-brand-500/30 shrink-0">
-                <Smartphone className="w-7 h-7 text-white" />
+              <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-lg shadow-brand-500/30 ring-2 ring-brand-500/40 shrink-0 bg-[#00061e] flex items-center justify-center">
+                <img src="/smartdeal_app_icon.png" alt="SmartDeal App" className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">

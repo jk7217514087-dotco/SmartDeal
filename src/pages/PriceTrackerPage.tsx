@@ -11,9 +11,11 @@ import {
   ArrowRight,
   Layers,
   Radio,
-  Sliders
+  Sliders,
+  ShieldAlert
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { marketplaceComplianceService } from '../services/marketplaceComplianceService';
 
 export const PriceTrackerPage: React.FC = () => {
   const { products, priceAlerts, addPriceAlert, removePriceAlert } = useApp();
@@ -188,6 +190,28 @@ export const PriceTrackerPage: React.FC = () => {
               <Bell className="w-4 h-4" />
               <span>Activate Price Radar Alert</span>
             </button>
+
+            {/* Marketplace Affiliate Policy Compliance Note */}
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-[11px] space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Monitored Platforms</span>
+                </span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                  {marketplaceComplianceService.getPermittedMarketplaces('price_tracking').slice(0, 3).join(', ')} Active
+                </span>
+              </div>
+
+              {!marketplaceComplianceService.isPriceTrackingAllowed('amazon') && (
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-800 dark:text-amber-300 text-[10px] flex items-start gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Amazon India:</strong> Price tracking & alerts are paused by default in compliance with the Amazon Associates Operating Agreement until written approval is obtained.
+                  </span>
+                </div>
+              )}
+            </div>
 
             {showSuccessToast && (
               <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2">

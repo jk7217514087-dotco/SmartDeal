@@ -48,7 +48,8 @@ import {
   Tag,
   AlertCircle,
   Database,
-  FolderKanban
+  FolderKanban,
+  Info
 } from 'lucide-react';
 import {
   AreaChart,
@@ -75,8 +76,10 @@ import {
   CommissionStatus,
   AffiliateConversion,
   CashbackTransaction,
-  AuditLog
+  AuditLog,
+  MarketplaceComplianceConfig
 } from '../types';
+import { marketplaceComplianceService } from '../services/marketplaceComplianceService';
 
 type AdminTab =
   | 'all-category'
@@ -149,6 +152,103 @@ export const AdminDashboardPage: React.FC = () => {
   const [reversalOrderRef, setReversalOrderRef] = useState('171-1234567-890123');
   const [reversalReason, setReversalReason] = useState('Customer returned item to marketplace. Verified commission clawback.');
   const [reversalSuccessMsg, setReversalSuccessMsg] = useState<string | null>(null);
+
+  // Marketplace Compliance States & Handlers
+  const [complianceList, setComplianceList] = useState<MarketplaceComplianceConfig[]>(() =>
+    marketplaceComplianceService.getAllComplianceConfigs()
+  );
+  const [approvalModalStore, setApprovalModalStore] = useState<MarketplaceComplianceConfig | null>(null);
+  const [approvalRefInput, setApprovalRefInput] = useState('');
+  const [complianceSuccessMsg, setComplianceSuccessMsg] = useState<string | null>(null);
+
+  const handleToggleWrittenApproval = (config: MarketplaceComplianceConfig) => {
+    if (config.writtenApprovalObtained) {
+      marketplaceComplianceService.setWrittenApproval(config.marketplaceId, false);
+      trackingService.logAuditEvent(
+        'U10001',
+        'admin@smartdeal.com',
+        'COMPLIANCE_REVOKE_APPROVAL',
+        'MarketplaceCompliance',
+        config.marketplaceId,
+        {
+          message: `Revoked written approval for ${config.marketplaceName}. Tracking and alerts are now paused.`
+        }
+      );
+      setComplianceList(marketplaceComplianceService.getAllComplianceConfigs());
+      setComplianceSuccessMsg(`Revoked written approval for ${config.marketplaceName}. Tracking and alerts paused.`);
+      setTimeout(() => setComplianceSuccessMsg(null), 4000);
+      refreshData();
+    } else {
+      setApprovalModalStore(config);
+      setApprovalRefInput(`${config.marketplaceId.toUpperCase()}-WRITTEN-APP-${Date.now().toString().slice(-6)}`);
+    }
+  };
+
+  const handleConfirmWrittenApproval = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!approvalModalStore) return;
+    const ref = approvalRefInput.trim() || `WRITTEN-APP-${Date.now()}`;
+    marketplaceComplianceService.setWrittenApproval(approvalModalStore.marketplaceId, true, ref);
+    trackingService.logAuditEvent(
+      'U10001',
+      'admin@smartdeal.com',
+      'COMPLIANCE_GRANT_APPROVAL',
+      'MarketplaceCompliance',
+      approvalModalStore.marketplaceId,
+      {
+        refId: ref,
+        message: `Recorded verified written approval for ${approvalModalStore.marketplaceName}. Enabled tracking strictly for this marketplace.`
+      }
+    );
+    setComplianceList(marketplaceComplianceService.getAllComplianceConfigs());
+    setComplianceSuccessMsg(`Verified written approval recorded for ${approvalModalStore.marketplaceName}. Ref: ${ref}`);
+    setApprovalModalStore(null);
+    setApprovalRefInput('');
+    setTimeout(() => setComplianceSuccessMsg(null), 4000);
+    refreshData();
+  };
+
+  const handleToggleTracking = (marketplaceId: string, currentVal: boolean) => {
+    const config = marketplaceComplianceService.getComplianceConfig(marketplaceId);
+    if (marketplaceId === 'amazon' && !config.writtenApprovalObtained && !currentVal) {
+      alert('Amazon Associates Operating Agreement Section 4 requires written approval before price tracking can be enabled.');
+      return;
+    }
+    marketplaceComplianceService.updateMarketplaceCompliance(marketplaceId, {
+      priceTrackingAllowed: !currentVal
+    });
+    trackingService.logAuditEvent(
+      'U10001',
+      'admin@smartdeal.com',
+      'COMPLIANCE_UPDATE_TRACKING',
+      'MarketplaceCompliance',
+      marketplaceId,
+      { priceTrackingAllowed: !currentVal }
+    );
+    setComplianceList(marketplaceComplianceService.getAllComplianceConfigs());
+    refreshData();
+  };
+
+  const handleToggleAlerts = (marketplaceId: string, currentVal: boolean) => {
+    const config = marketplaceComplianceService.getComplianceConfig(marketplaceId);
+    if (marketplaceId === 'amazon' && !config.writtenApprovalObtained && !currentVal) {
+      alert('Amazon Associates Operating Agreement Section 4 requires written approval before price alerts can be enabled.');
+      return;
+    }
+    marketplaceComplianceService.updateMarketplaceCompliance(marketplaceId, {
+      priceAlertsAllowed: !currentVal
+    });
+    trackingService.logAuditEvent(
+      'U10001',
+      'admin@smartdeal.com',
+      'COMPLIANCE_UPDATE_ALERTS',
+      'MarketplaceCompliance',
+      marketplaceId,
+      { priceAlertsAllowed: !currentVal }
+    );
+    setComplianceList(marketplaceComplianceService.getAllComplianceConfigs());
+    refreshData();
+  };
 
   useEffect(() => {
     const path = location.pathname;
@@ -1378,50 +1478,274 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 8: MARKETPLACE ANALYTICS */}
+          {/* TAB 8: MARKETPLACE ANALYTICS & COMPLIANCE */}
           {activeTab === 'marketplaces' && (
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4 animate-fadeIn text-xs">
-              <div>
-                <h2 className="font-extrabold text-slate-900 dark:text-white text-base">
-                  Marketplace Performance Breakdown
-                </h2>
-                <p className="text-slate-400">
-                  Performance across all supported partner platforms (Amazon, Flipkart, Meesho, Myntra, Ajio, Tata CLiQ, Croma, Reliance Digital)
-                </p>
+            <div className="space-y-6">
+              {complianceSuccessMsg && (
+                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center gap-2 animate-fadeIn">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>{complianceSuccessMsg}</span>
+                </div>
+              )}
+
+              {/* Performance Breakdown */}
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4 animate-fadeIn text-xs">
+                <div>
+                  <h2 className="font-extrabold text-slate-900 dark:text-white text-base">
+                    Marketplace Performance Breakdown
+                  </h2>
+                  <p className="text-slate-400">
+                    Performance across all supported partner platforms (Amazon, Flipkart, Meesho, Myntra, Ajio, Tata CLiQ, Croma, Reliance Digital)
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                  {marketplaceStats.map(store => (
+                    <div key={store.marketplace} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-black text-sm text-slate-900 dark:text-white">{store.marketplace}</span>
+                        <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded">
+                          {store.total_clicks} Clicks
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 text-slate-600 dark:text-slate-300 text-[11px]">
+                        <div className="flex justify-between">
+                          <span>Confirmed Orders:</span>
+                          <strong className="text-emerald-600 dark:text-emerald-400">{store.confirmed_orders}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Estimated GMV:</span>
+                          <strong className="text-slate-900 dark:text-white">₹{store.estimated_gmv.toLocaleString('en-IN')}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Commission Revenue:</span>
+                          <strong className="text-amber-600 dark:text-amber-400">₹{store.commission_earned}</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Conversion Rate:</span>
+                          <strong className="text-indigo-600 dark:text-indigo-400">
+                            {store.total_clicks > 0 ? ((store.confirmed_orders / store.total_clicks) * 100).toFixed(1) : 0}%
+                          </strong>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-                {marketplaceStats.map(store => (
-                  <div key={store.marketplace} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-black text-sm text-slate-900 dark:text-white">{store.marketplace}</span>
-                      <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded">
-                        {store.total_clicks} Clicks
-                      </span>
+              {/* Marketplace Affiliate Policy & Compliance Manager */}
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-6 animate-fadeIn text-xs">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                      <h2 className="font-extrabold text-slate-900 dark:text-white text-base">
+                        Marketplace Affiliate Policy & Compliance Manager
+                      </h2>
                     </div>
-
-                    <div className="space-y-1 text-slate-600 dark:text-slate-300 text-[11px]">
-                      <div className="flex justify-between">
-                        <span>Confirmed Orders:</span>
-                        <strong className="text-emerald-600 dark:text-emerald-400">{store.confirmed_orders}</strong>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Estimated GMV:</span>
-                        <strong className="text-slate-900 dark:text-white">₹{store.estimated_gmv.toLocaleString('en-IN')}</strong>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Commission Revenue:</span>
-                        <strong className="text-amber-600 dark:text-amber-400">₹{store.commission_earned}</strong>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Conversion Rate:</span>
-                        <strong className="text-indigo-600 dark:text-indigo-400">
-                          {store.total_clicks > 0 ? ((store.confirmed_orders / store.total_clicks) * 100).toFixed(1) : 0}%
-                        </strong>
-                      </div>
-                    </div>
+                    <p className="text-slate-400">
+                      Granular, isolated compliance per marketplace. Amazon India price tracking & alerts are paused by default until advance written approval is recorded per Operating Agreement Section 4 & PA-API terms.
+                    </p>
                   </div>
-                ))}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      Isolated Store Governance
+                    </span>
+                  </div>
+                </div>
+
+                {/* Compliance Governance Overview Bar */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-1">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Registered Marketplaces</span>
+                    <div className="text-base font-black text-slate-900 dark:text-white">{complianceList.length} Stores</div>
+                    <p className="text-[10px] text-slate-500">Separately audited & configured</p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 space-y-1">
+                    <span className="text-emerald-600 dark:text-emerald-400 text-[10px] uppercase font-bold tracking-wider">Price Tracking Permitted</span>
+                    <div className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                      {complianceList.filter(c => marketplaceComplianceService.isPriceTrackingAllowed(c.marketplaceId)).length} of {complianceList.length} Active
+                    </div>
+                    <p className="text-[10px] text-emerald-600/80">Flipkart, Croma, Reliance Digital, etc.</p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 space-y-1">
+                    <span className="text-emerald-600 dark:text-emerald-400 text-[10px] uppercase font-bold tracking-wider">Price Alerts Permitted</span>
+                    <div className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                      {complianceList.filter(c => marketplaceComplianceService.isPriceAlertsAllowed(c.marketplaceId)).length} of {complianceList.length} Active
+                    </div>
+                    <p className="text-[10px] text-emerald-600/80">User drop alerts enabled where permitted</p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 space-y-1">
+                    <span className="text-amber-600 dark:text-amber-400 text-[10px] uppercase font-bold tracking-wider">Amazon India Gate</span>
+                    <div className="text-base font-black text-amber-600 dark:text-amber-400">
+                      {marketplaceComplianceService.isPriceTrackingAllowed('amazon') ? 'Written Approval Active' : 'Paused by Default (Safe)'}
+                    </div>
+                    <p className="text-[10px] text-amber-600/80">Operating Agreement Sec 4 Enforced</p>
+                  </div>
+                </div>
+
+                {/* Marketplaces Compliance Matrix */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-slate-800 dark:text-slate-200 text-xs">
+                      Platform Policy Matrix & Approval Controls
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Changes logged to Audit Trail with full ledger immutability
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {complianceList.map(config => {
+                      const isTrackingAllowed = marketplaceComplianceService.isPriceTrackingAllowed(config.marketplaceId);
+                      const isAlertsAllowed = marketplaceComplianceService.isPriceAlertsAllowed(config.marketplaceId);
+                      const isAmazon = config.marketplaceId === 'amazon';
+
+                      return (
+                        <div
+                          key={config.marketplaceId}
+                          className={`p-4 rounded-2xl border transition-all ${
+                            isAmazon && !config.writtenApprovalObtained
+                              ? 'bg-amber-500/[0.03] dark:bg-amber-500/[0.05] border-amber-500/30'
+                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60'
+                          }`}
+                        >
+                          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            {/* Marketplace Info */}
+                            <div className="space-y-1 lg:w-1/4">
+                              <div className="flex items-center gap-2">
+                                <span className="font-black text-sm text-slate-900 dark:text-white">
+                                  {config.marketplaceName}
+                                </span>
+                                <span
+                                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+                                    config.affiliateApprovalStatus === 'APPROVED' || config.writtenApprovalObtained
+                                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40'
+                                      : 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/40'
+                                  }`}
+                                >
+                                  {config.affiliateApprovalStatus}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-mono">
+                                domain: {config.domain || 'Direct API'}
+                              </div>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                                {config.complianceDisclaimer}
+                              </p>
+                            </div>
+
+                            {/* Permission Switches / Status */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 lg:w-1/2 text-[11px]">
+                              {/* Price Tracking */}
+                              <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+                                <span className="text-slate-400 text-[10px]">Price Tracking</span>
+                                <div className="flex items-center justify-between pt-1">
+                                  <span className={`font-bold ${isTrackingAllowed ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500'}`}>
+                                    {isTrackingAllowed ? 'Permitted' : 'Paused'}
+                                  </span>
+                                  <button
+                                    onClick={() => handleToggleTracking(config.marketplaceId, config.priceTrackingAllowed)}
+                                    className={`text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer ${
+                                      config.priceTrackingAllowed
+                                        ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                                    }`}
+                                  >
+                                    {config.priceTrackingAllowed ? 'ON' : 'OFF'}
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Price Alerts */}
+                              <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+                                <span className="text-slate-400 text-[10px]">Price Alerts</span>
+                                <div className="flex items-center justify-between pt-1">
+                                  <span className={`font-bold ${isAlertsAllowed ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500'}`}>
+                                    {isAlertsAllowed ? 'Permitted' : 'Paused'}
+                                  </span>
+                                  <button
+                                    onClick={() => handleToggleAlerts(config.marketplaceId, config.priceAlertsAllowed)}
+                                    className={`text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer ${
+                                      config.priceAlertsAllowed
+                                        ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                                    }`}
+                                  >
+                                    {config.priceAlertsAllowed ? 'ON' : 'OFF'}
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Price Display */}
+                              <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+                                <span className="text-slate-400 text-[10px]">Price Display</span>
+                                <div className="flex items-center justify-between pt-1">
+                                  <span className="font-bold text-emerald-600 dark:text-emerald-400">Live Sync</span>
+                                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">
+                                    SYNC
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* API Access */}
+                              <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+                                <span className="text-slate-400 text-[10px]">API Access</span>
+                                <div className="flex items-center justify-between pt-1">
+                                  <span className="font-bold text-cyan-600 dark:text-cyan-400">Permitted</span>
+                                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300">
+                                    API
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Written Approval Controls */}
+                            <div className="flex flex-col justify-between items-start lg:items-end gap-2 lg:w-1/4">
+                              <div className="space-y-0.5 text-left lg:text-right">
+                                <div className="flex items-center gap-1.5 lg:justify-end">
+                                  <span className="text-[10px] text-slate-400">Written Approval:</span>
+                                  <strong className={`font-black ${config.writtenApprovalObtained ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500'}`}>
+                                    {config.writtenApprovalObtained ? '✓ Obtained' : 'Required'}
+                                  </strong>
+                                </div>
+                                {config.writtenApprovalRef && (
+                                  <div className="text-[10px] font-mono text-slate-400">
+                                    Ref: {config.writtenApprovalRef}
+                                  </div>
+                                )}
+                              </div>
+
+                              <button
+                                onClick={() => handleToggleWrittenApproval(config)}
+                                className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+                                  config.writtenApprovalObtained
+                                    ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 hover:bg-rose-100'
+                                    : 'bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-600/20'
+                                }`}
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>{config.writtenApprovalObtained ? 'Revoke Approval' : 'Record Written Approval'}</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Operating Agreement Policy Notes */}
+                          {config.policyNotes && (
+                            <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-start gap-1.5">
+                              <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                              <span>{config.policyNotes}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -2262,6 +2586,71 @@ export const AdminDashboardPage: React.FC = () => {
                 <span>Mark Cancelled</span>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: RECORD WRITTEN APPROVAL MODAL */}
+      {approvalModalStore && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-white space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-brand-600" />
+                <h3 className="font-black text-sm">Record Written Affiliate Approval</h3>
+              </div>
+              <button
+                onClick={() => setApprovalModalStore(null)}
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 text-xs space-y-1.5 border border-slate-200 dark:border-slate-700/60">
+              <div className="font-bold text-slate-900 dark:text-white">{approvalModalStore.marketplaceName} ({approvalModalStore.domain})</div>
+              <p className="text-slate-400 text-[11px]">
+                In accordance with {approvalModalStore.marketplaceName} affiliate policy (e.g. Amazon Operating Agreement Section 4 & PA-API terms), price tracking and alerts may only be activated once written authorization has been received.
+              </p>
+            </div>
+
+            <form onSubmit={handleConfirmWrittenApproval} className="space-y-4 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 dark:text-slate-300">
+                  Written Approval Reference ID / Agreement Ref:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={approvalRefInput}
+                  onChange={e => setApprovalRefInput(e.target.value)}
+                  placeholder="e.g. AMZ-IN-APPROVAL-2026-DOC89"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 font-mono text-xs"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] leading-relaxed">
+                Notice: Granting written approval applies strictly to {approvalModalStore.marketplaceName}. Permissions are strictly isolated and never leak or apply to other marketplaces.
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="submit"
+                  className="py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black flex items-center justify-center gap-1.5 shadow-md shadow-brand-600/20 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Confirm & Enable</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setApprovalModalStore(null)}
+                  className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center justify-center cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

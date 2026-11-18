@@ -376,23 +376,30 @@ export const Navbar: React.FC = () => {
 
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all group-hover:scale-105 ${navTheme.logoIcon}`}>
-              <Sparkles className="w-5 h-5 text-current" />
+            <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-lg shadow-brand-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform bg-[#00061e] flex items-center justify-center shrink-0">
+              <img
+                src="/smartdeal_icon_mark.png"
+                alt="SmartDeal Logo"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
             </div>
             <div>
-            <div className="flex items-center gap-1">
-              <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white font-sans">
-                Smart<span className={navTheme.logoTextGradient}>Deal</span>
-              </span>
-              <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
-                PRO
-              </span>
+              <div className="flex items-center gap-1">
+                <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white font-sans">
+                  Smart<span className={navTheme.logoTextGradient}>Deal</span>
+                </span>
+                <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
+                  PRO
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
+                Compare. Save. Buy Smarter.
+              </p>
             </div>
-            <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
-              Smart Shopping. Better Deals.
-            </p>
-          </div>
-        </Link>
+          </Link>
         </div>
 
         {/* Global Search Bar */}
