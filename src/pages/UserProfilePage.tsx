@@ -98,28 +98,78 @@ export const UserProfilePage: React.FC = () => {
     }
   }, [location.pathname]);
 
-  const [addresses, setAddresses] = useState<Address[]>([
-    {
-      id: 'addr-1',
-      fullName: 'Rohit Kumar',
-      street: '123, Green Park, Near Metro Station',
-      city: 'New Delhi',
-      state: 'Delhi',
-      pincode: '110016',
-      phone: '+91 98765 43210',
-      isDefault: true
-    },
-    {
-      id: 'addr-2',
-      fullName: 'Rohit Kumar (Office)',
-      street: 'Tower B, Level 8, DLF Cyber City',
-      city: 'Gurugram',
-      state: 'Haryana',
-      pincode: '122002',
-      phone: '+91 98765 43210',
-      isDefault: false
+  const addressKey = currentUser ? `smartdeals_addresses_${currentUser.id}` : 'smartdeals_addresses_guest';
+
+  const [addresses, setAddresses] = useState<Address[]>(() => {
+    const saved = localStorage.getItem(addressKey);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
     }
-  ]);
+    return currentUser?.id === 'U10025' ? [
+      {
+        id: 'addr-1',
+        fullName: 'Rohit Kumar',
+        street: '123, Green Park, Near Metro Station',
+        city: 'New Delhi',
+        state: 'Delhi',
+        pincode: '110016',
+        phone: '+91 98765 43210',
+        isDefault: true
+      },
+      {
+        id: 'addr-2',
+        fullName: 'Rohit Kumar (Office)',
+        street: 'Tower B, Level 8, DLF Cyber City',
+        city: 'Gurugram',
+        state: 'Haryana',
+        pincode: '122002',
+        phone: '+91 98765 43210',
+        isDefault: false
+      }
+    ] : [];
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem(addressKey);
+    if (saved) {
+      try {
+        setAddresses(JSON.parse(saved));
+      } catch {
+        setAddresses([]);
+      }
+    } else {
+      setAddresses(currentUser?.id === 'U10025' ? [
+        {
+          id: 'addr-1',
+          fullName: 'Rohit Kumar',
+          street: '123, Green Park, Near Metro Station',
+          city: 'New Delhi',
+          state: 'Delhi',
+          pincode: '110016',
+          phone: '+91 98765 43210',
+          isDefault: true
+        },
+        {
+          id: 'addr-2',
+          fullName: 'Rohit Kumar (Office)',
+          street: 'Tower B, Level 8, DLF Cyber City',
+          city: 'Gurugram',
+          state: 'Haryana',
+          pincode: '122002',
+          phone: '+91 98765 43210',
+          isDefault: false
+        }
+      ] : []);
+    }
+  }, [currentUser, addressKey]);
+
+  useEffect(() => {
+    localStorage.setItem(addressKey, JSON.stringify(addresses));
+  }, [addresses, addressKey]);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newAddr, setNewAddr] = useState({
@@ -219,15 +269,15 @@ export const UserProfilePage: React.FC = () => {
       profile: { name, email, phone },
       addresses,
       cashbackWallet,
-      outboundClicks: trackingService.getOutboundClicks().filter(c => c.actorId === (currentUser?.id || 'U10025')),
-      activityLogs: trackingService.getUserActivityTimeline(currentUser?.id || 'U10025'),
+      outboundClicks: trackingService.getOutboundClicks().filter(c => currentUser ? c.actorId === currentUser.id : c.actorId === guestSession.sessionId),
+      activityLogs: currentUser ? trackingService.getUserActivityTimeline(currentUser.id) : trackingService.getGuestActivityTimeline(guestSession.sessionId),
       exportedAt: new Date().toISOString()
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `smartdeal_personal_data_${currentUser?.id || 'U10025'}.json`;
+    a.download = `smartdeal_personal_data_${currentUser?.id || 'guest'}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -431,7 +481,7 @@ export const UserProfilePage: React.FC = () => {
               <span>Download SmartDeal App</span>
             </div>
             <span className="text-[10px] bg-indigo-200/80 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-200 px-1.5 py-0.5 rounded font-black">
-              APK
+              App
             </span>
           </button>
 

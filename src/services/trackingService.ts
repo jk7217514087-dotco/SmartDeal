@@ -2071,7 +2071,17 @@ class TrackingService {
 
   public getCashbackWallet(userId?: string): CashbackWallet {
     const all = this.getCashbackTransactions();
-    const uId = userId || this.getCurrentUser()?.id || 'U10025';
+    const uId = userId || this.getCurrentUser()?.id;
+    if (!uId) {
+      return {
+        availableBalance: 0,
+        pendingBalance: 0,
+        totalEarned: 0,
+        totalRedeemed: 0,
+        totalReversed: 0,
+        transactions: []
+      };
+    }
     const userTx = all.filter(t => t.userId === uId);
 
     let availableBalance = 0;

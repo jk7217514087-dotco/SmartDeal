@@ -85,6 +85,7 @@ type AdminTab =
   | 'all-category'
   | 'overview'
   | 'database'
+  | 'orders'
   | 'users'
   | 'guests'
   | 'product-activity'
@@ -112,7 +113,9 @@ export const AdminDashboardPage: React.FC = () => {
     adminSettings,
     updateAdminSettings,
     setIsSmsCenterOpen,
-    logoutUser
+    logoutUser,
+    allOrders,
+    orders
   } = useApp();
 
   const navigate = useNavigate();
@@ -124,6 +127,9 @@ export const AdminDashboardPage: React.FC = () => {
   const refreshData = () => setVersion(v => v + 1);
 
   // Filters & State
+  const [orderSearchQuery, setOrderSearchQuery] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState<'ALL' | 'Confirmed' | 'Shipped' | 'Delivered'>('ALL');
+  const [orderOwnerFilter, setOrderOwnerFilter] = useState<'ALL' | 'CUSTOMERS' | 'ADMIN'>('ALL');
   const [userSearch, setUserSearch] = useState('');
   const [guestSearch, setGuestSearch] = useState('');
   const [clickSearch, setClickSearch] = useState('');
@@ -153,6 +159,38 @@ export const AdminDashboardPage: React.FC = () => {
   const [reversalOrderRef, setReversalOrderRef] = useState('171-1234567-890123');
   const [reversalReason, setReversalReason] = useState('Customer returned item to marketplace. Verified commission clawback.');
   const [reversalSuccessMsg, setReversalSuccessMsg] = useState<string | null>(null);
+
+  // Filtered Orders for Admin Command Center
+  const filteredOrders = useMemo(() => {
+    let list = allOrders;
+
+    if (orderOwnerFilter === 'ADMIN') {
+      list = list.filter(o => o.userEmail === currentUser?.email || o.userId === currentUser?.id);
+    } else if (orderOwnerFilter === 'CUSTOMERS') {
+      list = list.filter(o => !(currentUser && (o.userEmail === currentUser.email || o.userId === currentUser.id)));
+    }
+
+    if (orderStatusFilter !== 'ALL') {
+      list = list.filter(o => o.status === orderStatusFilter);
+    }
+
+    if (orderSearchQuery.trim()) {
+      const q = orderSearchQuery.toLowerCase();
+      list = list.filter(o =>
+        o.id.toLowerCase().includes(q) ||
+        (o.userName && o.userName.toLowerCase().includes(q)) ||
+        (o.userEmail && o.userEmail.toLowerCase().includes(q)) ||
+        (o.shippingAddress?.fullName && o.shippingAddress.fullName.toLowerCase().includes(q)) ||
+        o.items.some(it => it.productName.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [allOrders, orderOwnerFilter, orderStatusFilter, orderSearchQuery, currentUser]);
+
+  const totalOrdersAmount = useMemo(() => {
+    return allOrders.reduce((sum, o) => sum + o.finalAmount, 0);
+  }, [allOrders]);
 
   // Marketplace Compliance States & Handlers
   const [complianceList, setComplianceList] = useState<MarketplaceComplianceConfig[]>(() =>
@@ -424,6 +462,7 @@ export const AdminDashboardPage: React.FC = () => {
           { key: 'all-category', label: 'All Category', icon: FolderKanban },
           { key: 'database', label: 'Live SQL', icon: Database },
           { key: 'overview', label: 'Overview', icon: BarChart3 },
+          { key: 'orders', label: 'Orders', icon: ShoppingBag },
           { key: 'users', label: 'Users', icon: Users },
           { key: 'guests', label: 'Guests', icon: Globe },
           { key: 'product-activity', label: 'Products', icon: Tag },
@@ -514,6 +553,23 @@ export const AdminDashboardPage: React.FC = () => {
                 <span>Overview</span>
               </div>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/20">10 KPIs</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('orders')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl flex items-center justify-between transition-all cursor-pointer ${
+                activeTab === 'orders'
+                  ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <ShoppingBag className="w-4 h-4 text-emerald-400" />
+                <span>Customer Orders</span>
+              </div>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                {allOrders.length}
+              </span>
             </button>
 
             <button
@@ -1018,6 +1074,251 @@ export const AdminDashboardPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: ALL CUSTOMER ORDERS & ADMIN ORDERS */}
+          {activeTab === 'orders' && (
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-6 animate-fadeIn">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-extrabold text-slate-900 dark:text-white text-base sm:text-lg">
+                      Platform Customer Orders ({allOrders.length})
+                    </h2>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                      Live Stream
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Comprehensive view of all customer orders across the platform and admin's own placed orders.
+                  </p>
+                </div>
+
+                {/* Scope Filter: All vs Customers Only vs Admin Only */}
+                <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl shrink-0 text-xs font-bold">
+                  <button
+                    onClick={() => setOrderOwnerFilter('ALL')}
+                    className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                      orderOwnerFilter === 'ALL'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    All Orders ({allOrders.length})
+                  </button>
+                  <button
+                    onClick={() => setOrderOwnerFilter('CUSTOMERS')}
+                    className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                      orderOwnerFilter === 'CUSTOMERS'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    Customers' Data
+                  </button>
+                  <button
+                    onClick={() => setOrderOwnerFilter('ADMIN')}
+                    className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                      orderOwnerFilter === 'ADMIN'
+                        ? 'bg-rose-600 text-white shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    Admin's Own Orders
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 Summary Stat Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">Total Orders</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
+                    {allOrders.length}
+                  </div>
+                  <div className="text-[10px] text-emerald-500 font-bold mt-0.5">100% captured</div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">Total Sales Volume</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
+                    ₹{totalOrdersAmount.toLocaleString('en-IN')}
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium mt-0.5">Gross GMV</div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">In-Transit / Shipped</div>
+                  <div className="text-xl sm:text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">
+                    {allOrders.filter(o => o.status === 'Shipped' || o.status === 'Confirmed').length}
+                  </div>
+                  <div className="text-[10px] text-blue-500 font-medium mt-0.5">Active fulfillment</div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">Delivered Orders</div>
+                  <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
+                    {allOrders.filter(o => o.status === 'Delivered').length}
+                  </div>
+                  <div className="text-[10px] text-emerald-500 font-medium mt-0.5">Doorstep complete</div>
+                </div>
+              </div>
+
+              {/* Search & Status Filter Controls */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                <div className="relative w-full sm:w-80">
+                  <input
+                    type="text"
+                    value={orderSearchQuery}
+                    onChange={e => setOrderSearchQuery(e.target.value)}
+                    placeholder="Search by Order ID, customer name, email, product..."
+                    className="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 border-none text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500"
+                  />
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  {orderSearchQuery && (
+                    <button
+                      onClick={() => setOrderSearchQuery('')}
+                      className="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+                  {(['ALL', 'Confirmed', 'Shipped', 'Delivered'] as const).map(st => (
+                    <button
+                      key={st}
+                      onClick={() => setOrderStatusFilter(st)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                        orderStatusFilter === st
+                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {st === 'ALL' ? 'All Statuses' : st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Orders List / Table */}
+              <div className="space-y-3.5">
+                {filteredOrders.length === 0 ? (
+                  <div className="text-center py-12 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl">
+                    <ShoppingBag className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">No orders match criteria</h3>
+                    <p className="text-xs text-slate-400 mt-1">Try resetting the search query or status filter.</p>
+                  </div>
+                ) : (
+                  filteredOrders.map(order => (
+                    <div
+                      key={order.id}
+                      className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all space-y-3.5"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-200/60 dark:border-slate-800/80">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-black text-sm text-slate-900 dark:text-white">
+                              #{order.id}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                              order.status === 'Delivered'
+                                ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                                : order.status === 'Shipped'
+                                ? 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30'
+                                : 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                            }`}>
+                              {order.status}
+                            </span>
+                            {order.userId === currentUser?.id || order.userEmail === currentUser?.email ? (
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-500/20 text-rose-500 border border-rose-500/30">
+                                Admin Order
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-indigo-500/15 text-indigo-500 border border-indigo-500/30">
+                                Customer Order
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            Placed on {order.date} • {order.items.length} item(s)
+                          </div>
+                        </div>
+
+                        {/* Customer Info Badge */}
+                        <div className="text-left sm:text-right">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white flex sm:justify-end items-center gap-1.5">
+                            <Users className="w-3.5 h-3.5 text-slate-400" />
+                            <span>{order.userName || order.shippingAddress?.fullName || 'Customer'}</span>
+                          </div>
+                          <div className="text-[11px] text-slate-400 font-mono">
+                            {order.userEmail || (order.userId ? `ID: ${order.userId}` : 'Guest Session')}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Items Row */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                        {order.items.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800 flex items-center gap-3"
+                          >
+                            <img
+                              src={item.productImage}
+                              alt={item.productName}
+                              className="w-12 h-12 rounded-lg object-cover shrink-0 bg-slate-100 dark:bg-slate-800"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                                {item.productName}
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-0.5">
+                                Qty: {item.quantity} • ₹{item.price.toLocaleString('en-IN')} each
+                              </div>
+                              <div className="text-[10px] text-slate-500 truncate">
+                                Seller: {item.sellerName}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Financials & Delivery Footer */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 text-xs">
+                        <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
+                          <div>
+                            Payment: <strong className="text-slate-700 dark:text-slate-300">{order.paymentMethod}</strong> ({order.paymentStatus})
+                          </div>
+                          <div>
+                            Partner: <strong className="text-slate-700 dark:text-slate-300">{order.deliveryPartner}</strong>
+                          </div>
+                          {order.trackingId && (
+                            <div>
+                              Tracking: <span className="font-mono text-indigo-500 font-bold">{order.trackingId}</span>
+                            </div>
+                          )}
+                          {order.shippingAddress && (
+                            <div>
+                              Ship to: <strong className="text-slate-700 dark:text-slate-300">{order.shippingAddress.city}, {order.shippingAddress.state}</strong>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-right">
+                          <span className="text-xs text-slate-400 mr-2">Final Amount:</span>
+                          <span className="text-base font-black text-slate-900 dark:text-white">
+                            ₹{order.finalAmount.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

@@ -116,6 +116,9 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  userId?: string;
+  userEmail?: string;
+  userName?: string;
   date: string;
   items: OrderItem[];
   mrpTotal: number;

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import {
   Product,
   CartItem,
@@ -99,6 +99,7 @@ interface AppContextType {
   addPriceAlert: (productId: string, targetPrice: number, notifyVia?: ('in-app' | 'email' | 'sms')[]) => void;
   removePriceAlert: (alertId: string) => void;
   orders: Order[];
+  allOrders: Order[];
   placeOrder: (
     paymentMethod: 'UPI' | 'Credit / Debit Card' | 'Net Banking' | 'Cash on Delivery',
     shippingAddress: Address
@@ -150,6 +151,9 @@ const defaultAddress: Address = {
 const initialOrders: Order[] = [
   {
     id: 'SD1234567890',
+    userId: 'U10025',
+    userEmail: 'rohit.kumar@example.com',
+    userName: 'Rohit Kumar',
     date: '27 May 2024, 10:30 AM',
     items: [
       {
@@ -272,15 +276,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [coinsToRedeem, setCoinsToRedeem] = useState<number>(0);
 
   const [wishlist, setWishlist] = useState<string[]>(() => {
-    const saved = localStorage.getItem('smartdeals_wishlist');
-    return saved
-      ? JSON.parse(saved)
-      : ['prod-apple-iphone15', 'prod-hp-pavilion-15', 'prod-boat-airdopes', 'prod-nike-running-shoes'];
+    const userKey = currentUser ? `smartdeals_wishlist_${currentUser.id}` : 'smartdeals_wishlist_guest';
+    const saved = localStorage.getItem(userKey);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
+    }
+    return currentUser?.id === 'U10025' ? ['prod-apple-iphone15', 'prod-hp-pavilion-15', 'prod-boat-airdopes', 'prod-nike-running-shoes'] : [];
   });
 
   const [priceAlerts, setPriceAlerts] = useState<PriceAlert[]>(() => {
-    const saved = localStorage.getItem('smartdeals_alerts');
-    return saved ? JSON.parse(saved) : [
+    const userKey = currentUser ? `smartdeals_alerts_${currentUser.id}` : 'smartdeals_alerts_guest';
+    const saved = localStorage.getItem(userKey);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
+    }
+    return currentUser?.id === 'U10025' ? [
       {
         id: 'alert-1',
         productId: 'prod-samsung-m14',
@@ -292,13 +310,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         active: true,
         notifyVia: ['in-app', 'email']
       }
-    ];
+    ] : [];
   });
 
-  const [orders, setOrders] = useState<Order[]>(() => {
+  const [allOrders, setAllOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem('smartdeals_orders');
-    return saved ? JSON.parse(saved) : initialOrders;
+    if (saved) {
+      try {
+        const parsed: Order[] = JSON.parse(saved);
+        return parsed.map(o => o.id === 'SD1234567890' && !o.userId ? { ...o, userId: 'U10025', userEmail: 'rohit.kumar@example.com', userName: 'Rohit Kumar' } : o);
+      } catch {
+        return initialOrders;
+      }
+    }
+    return initialOrders;
   });
+
+  // User Data Isolation:
+  // - Admin sees all orders from all users across the platform
+  // - Logged-in regular user sees ONLY their own orders
+  // - Guest sees only their own guest-session orders
+  const visibleOrders = useMemo(() => {
+    if (role === 'ADMIN' || currentUser?.role === 'ADMIN') {
+      return allOrders;
+    }
+    if (currentUser) {
+      return allOrders.filter(o => o.userId === currentUser.id || o.userEmail === currentUser.email);
+    }
+    const currentGuestId = guestSession?.sessionId;
+    return allOrders.filter(o => o.userId === ('guest_' + currentGuestId));
+  }, [allOrders, role, currentUser, guestSession]);
 
   const [smartCoinsBalance, setSmartCoinsBalance] = useState<number>(0);
 
@@ -517,24 +558,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('smartdeals_cart', JSON.stringify(cart));
   }, [cart]);
 
+  // User-scoped Wishlist & Price Alerts: each user only sees their own!
   useEffect(() => {
-    localStorage.setItem('smartdeals_wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+    const userWishlistKey = currentUser ? `smartdeals_wishlist_${currentUser.id}` : 'smartdeals_wishlist_guest';
+    const savedWishlist = localStorage.getItem(userWishlistKey);
+    if (savedWishlist) {
+      try {
+        setWishlist(JSON.parse(savedWishlist));
+      } catch {
+        setWishlist([]);
+      }
+    } else {
+      setWishlist(currentUser?.id === 'U10025' ? ['prod-apple-iphone15', 'prod-hp-pavilion-15', 'prod-boat-airdopes', 'prod-nike-running-shoes'] : []);
+    }
+
+    const userAlertsKey = currentUser ? `smartdeals_alerts_${currentUser.id}` : 'smartdeals_alerts_guest';
+    const savedAlerts = localStorage.getItem(userAlertsKey);
+    if (savedAlerts) {
+      try {
+        setPriceAlerts(JSON.parse(savedAlerts));
+      } catch {
+        setPriceAlerts([]);
+      }
+    } else {
+      setPriceAlerts(currentUser?.id === 'U10025' ? [
+        {
+          id: 'alert-1',
+          productId: 'prod-samsung-m14',
+          productName: 'Samsung Galaxy M14 5G (Smoky Teal, 6GB RAM)',
+          productImage: mockProducts[0].image,
+          currentPrice: 12490,
+          targetPrice: 11999,
+          createdDate: '28 May 2024',
+          active: true,
+          notifyVia: ['in-app', 'email']
+        }
+      ] : []);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('smartdeals_alerts', JSON.stringify(priceAlerts));
-  }, [priceAlerts]);
+    const userWishlistKey = currentUser ? `smartdeals_wishlist_${currentUser.id}` : 'smartdeals_wishlist_guest';
+    localStorage.setItem(userWishlistKey, JSON.stringify(wishlist));
+  }, [wishlist, currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('smartdeals_orders', JSON.stringify(orders));
-  }, [orders]);
+    const userAlertsKey = currentUser ? `smartdeals_alerts_${currentUser.id}` : 'smartdeals_alerts_guest';
+    localStorage.setItem(userAlertsKey, JSON.stringify(priceAlerts));
+  }, [priceAlerts, currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem('smartdeals_orders', JSON.stringify(allOrders));
+  }, [allOrders]);
 
   const [cashbackWallet, setCashbackWallet] = useState<CashbackWallet>(() => {
-    return trackingService.getCashbackWallet(currentUser?.id || 'U10025');
+    return trackingService.getCashbackWallet(currentUser?.id);
   });
 
   const refreshCashback = () => {
-    const updated = trackingService.getCashbackWallet(currentUser?.id || 'U10025');
+    const updated = trackingService.getCashbackWallet(currentUser?.id);
     setCashbackWallet(updated);
   };
 
@@ -543,8 +625,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [currentUser]);
 
   const redeemCashback = (amount: number, method: string = 'UPI', accountDetails: string = 'user@okaxis') => {
-    const userId = currentUser?.id || 'U10025';
-    const res = trackingService.redeemCashback(userId, amount, method, accountDetails);
+    if (!currentUser?.id) {
+      return { success: false, message: 'Please sign in to redeem cashback' };
+    }
+    const res = trackingService.redeemCashback(currentUser.id, amount, method, accountDetails);
     if (res.success) {
       refreshCashback();
     }
@@ -819,6 +903,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const orderId = `SD${Date.now().toString().slice(-8)}`;
     const newOrder: Order = {
       id: orderId,
+      userId: currentUser?.id || ('guest_' + (guestSession?.sessionId || 'guest')),
+      userEmail: currentUser?.email || 'guest@smartdeal.com',
+      userName: currentUser?.name || shippingAddress.fullName || 'Shopper',
       date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       items: cart.map(item => ({
         productId: item.product.id,
@@ -882,7 +969,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setSmartCoinsBalance(newBalance);
     setSmartCoinsTransactions(newTransactions);
-    setOrders(prev => [newOrder, ...prev]);
+    setAllOrders(prev => [newOrder, ...prev]);
 
     // Update seller incentive progress
     setSeller(prev => {
@@ -1069,7 +1156,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         priceAlerts,
         addPriceAlert,
         removePriceAlert,
-        orders,
+        orders: visibleOrders,
+        allOrders,
         placeOrder,
         smartCoinsBalance,
         smartCoinsTransactions,
