@@ -20,19 +20,47 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
-// 1. Direct download for Laptop / PC Windows Internet Shortcut (.url)
+// 1. Direct download for Windows Laptop / PC Standalone Executable (.exe)
+export const downloadWindowsAppExe = () => {
+  try {
+    const link = document.createElement('a');
+    link.href = '/SmartDeal-Windows-App.exe';
+    link.setAttribute('download', 'SmartDeal-Windows-App.exe');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return true;
+  } catch (err) {
+    console.error('Failed to download exe:', err);
+    return false;
+  }
+};
+
+// 2. Direct download for Windows Laptop 1-Click Desktop Setup Script (.bat)
+export const downloadWindowsBatchSetup = () => {
+  try {
+    const link = document.createElement('a');
+    link.href = '/SmartDeal-Windows-Setup.bat';
+    link.setAttribute('download', 'SmartDeal-Windows-Setup.bat');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return true;
+  } catch (err) {
+    console.error('Failed to download bat setup:', err);
+    return false;
+  }
+};
+
+// 3. Direct download for Laptop / PC Windows Internet Shortcut (.url)
 export const downloadDesktopShortcut = () => {
   try {
-    const shortcutContent = `[InternetShortcut]\nURL=https://smart-deal-m4ca.vercel.app/\nIconIndex=0\nIconFile=https://smart-deal-m4ca.vercel.app/favicon.png\nHotKey=0\n[{000214A0-0000-0000-C000-000000000046}]\nProp3=19,11\n`;
-    const blob = new Blob([shortcutContent], { type: 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = url;
+    link.href = '/SmartDeal.url';
     link.setAttribute('download', 'SmartDeal.url');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
     return true;
   } catch (err) {
     console.error('Failed to download shortcut:', err);
@@ -167,7 +195,8 @@ export const triggerDirectAppDownload = (deferredPrompt?: BeforeInstallPromptEve
   if (isMobile) {
     downloadMobileAppLauncher();
   } else {
-    downloadDesktopShortcut();
+    // For Laptop / Windows: direct download the native Windows Executable!
+    downloadWindowsAppExe();
   }
 
   return true;
@@ -313,7 +342,9 @@ export const InstallAppPrompt: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
             </div>
             <div className="text-slate-300 text-[11px] mt-0.5">
-              SmartDeal App file Downloads folder me direct save ho rahi hai.
+              {activeTab === 'desktop'
+                ? 'Windows App (SmartDeal-Windows-App.exe) aapke Downloads folder me direct save ho rahi hai.'
+                : 'SmartDeal App file Downloads folder me direct save ho rahi hai.'}
             </div>
           </div>
           <button
@@ -536,76 +567,117 @@ export const InstallAppPrompt: React.FC = () => {
             {/* TAB 2: LAPTOP / PC (WINDOWS & MAC) */}
             {activeTab === 'desktop' && (
               <div className="space-y-4">
-                {/* 1-Click Desktop Install Button if deferredPrompt available */}
-                {deferredPrompt ? (
-                  <button
-                    onClick={triggerPwaInstall}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-95 transition-all cursor-pointer"
-                  >
-                    <Monitor className="w-4 h-4" />
-                    <span>Install SmartDeal on Laptop / PC Window</span>
-                  </button>
-                ) : null}
+                {/* 1. Primary: Download Windows App (.exe) */}
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-brand-950/30 to-purple-950/30 border border-brand-500/40 shadow-xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-brand-400">
+                        <Laptop className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="font-extrabold text-sm text-slate-900 dark:text-white block">
+                          Windows Standalone App (.exe)
+                        </span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Windows 11 / 10 / 8 / 7 ke liye direct installer
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-brand-600 text-white shadow-xs">
+                      RECOMMENDED
+                    </span>
+                  </div>
 
-                {/* Windows/Mac Browser Steps Card */}
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Double-click karte hi automatically aapke <strong>Desktop</strong> aur <strong>Start Menu</strong> par SmartDeal ka colorful logo ban jayega aur app bina address bar ke standalone window me open hogi.
+                  </p>
+
+                  <button
+                    onClick={() => {
+                      downloadWindowsAppExe();
+                      setShowDownloadToast(true);
+                      setTimeout(() => setShowDownloadToast(false), 4500);
+                    }}
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>📥 Download Windows App (SmartDeal-Windows-App.exe)</span>
+                  </button>
+                </div>
+
+                {/* 2. Secondary Fast Options: 1-Click Setup Script & Shortcut */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    onClick={() => {
+                      downloadWindowsBatchSetup();
+                      setShowDownloadToast(true);
+                      setTimeout(() => setShowDownloadToast(false), 4500);
+                    }}
+                    className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70 hover:border-brand-500 flex flex-col items-start gap-1.5 text-left transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-brand-400 transition-colors">
+                        ⚙️ 1-Click Setup (.bat)
+                      </span>
+                      <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-400" />
+                    </div>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Antivirus-safe instant batch setup
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      downloadDesktopShortcut();
+                      setShowDownloadToast(true);
+                      setTimeout(() => setShowDownloadToast(false), 4500);
+                    }}
+                    className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70 hover:border-brand-500 flex flex-col items-start gap-1.5 text-left transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-brand-400 transition-colors">
+                        🔗 Direct Shortcut (.url)
+                      </span>
+                      <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-400" />
+                    </div>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Desktop drag & drop shortcut file
+                    </span>
+                  </button>
+                </div>
+
+                {/* 3. Browser PWA App Mode */}
                 <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-extrabold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
                       <Monitor className="w-4 h-4 text-brand-500" />
-                      <span>Chrome / Edge me Laptop App Install karein:</span>
+                      <span>Chrome / Edge Browser se Install:</span>
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                      Standalone Window
+                      Browser PWA
                     </span>
                   </div>
 
-                  <div className="space-y-2.5 text-xs">
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
-                        1
-                      </div>
-                      <div className="text-slate-700 dark:text-slate-300">
-                        Browser ke URL / Address bar me upar right side <strong>Install Icon (🖥️ ya ⬇️)</strong> par click karein.
-                      </div>
-                    </div>
+                  {deferredPrompt && (
+                    <button
+                      onClick={triggerPwaInstall}
+                      className="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      <span>1-Click Install as Windows App</span>
+                    </button>
+                  )}
 
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
-                        2
-                      </div>
-                      <div className="text-slate-700 dark:text-slate-300">
-                        Ya browser ke <strong>3 dots (⋮)</strong> menu &rarr; <strong>"Save and share" / "Apps"</strong> &rarr; <strong>"Install SmartDeal"</strong> par click karein.
-                      </div>
+                  <div className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-brand-500 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">1</span>
+                      <span>Chrome ya Edge me URL bar ke right side <strong>Install Icon (🖥️ / ⬇️)</strong> par click karein.</span>
                     </div>
-
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
-                        3
-                      </div>
-                      <div className="text-slate-700 dark:text-slate-300">
-                        SmartDeal aapke Windows Desktop, Start Menu aur Taskbar me save ho jayegi aur ek alag desktop window me open hogi!
-                      </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-brand-500 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">2</span>
+                      <span>Ya <strong>3 dots (⋮)</strong> &rarr; <strong>"Apps"</strong> &rarr; <strong>"Install SmartDeal"</strong> select karein.</span>
                     </div>
                   </div>
-                </div>
-
-                {/* 1-Click Desktop Shortcut File Download */}
-                <div className="p-3.5 rounded-2xl bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/60 flex items-center justify-between gap-3">
-                  <div className="text-xs">
-                    <span className="font-extrabold text-brand-900 dark:text-brand-200 block">
-                      1-Click Windows Desktop Shortcut
-                    </span>
-                    <span className="text-[11px] text-brand-700 dark:text-brand-300">
-                      Desktop par icon lane ke liye shortcut file download karein
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => downloadDesktopShortcut()}
-                    className="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer shrink-0"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Save Shortcut</span>
-                  </button>
                 </div>
               </div>
             )}
