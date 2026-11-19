@@ -150,6 +150,25 @@ const COMPARE_THEMES: Record<string, {
     searchIcon: 'text-violet-400',
     selectBg: 'bg-[#0d103d]',
     selectBorder: 'border-indigo-800/60 focus:border-violet-400'
+  },
+  'pure-white': {
+    cardBg: 'bg-white',
+    cardBorder: 'border-slate-200/80',
+    bestPriceBg: 'bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/50',
+    bestPriceBorder: 'border-indigo-300',
+    bestPriceBadge: 'bg-indigo-600 text-white',
+    bestPriceText: 'text-indigo-600',
+    outsidePriceBg: 'bg-white',
+    outsidePriceBorder: 'border-slate-200/80',
+    outsidePriceText: 'text-slate-600',
+    savingsBg: 'bg-gradient-to-br from-indigo-50/50 via-white to-white',
+    savingsBorder: 'border-indigo-200',
+    savingsText: 'text-indigo-600',
+    switcherBg: 'bg-white',
+    switcherBorder: 'border-slate-200/80',
+    searchIcon: 'text-indigo-600',
+    selectBg: 'bg-slate-50',
+    selectBorder: 'border-slate-200 focus:border-indigo-500'
   }
 };
 
@@ -193,13 +212,13 @@ export const PriceComparisonPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 text-slate-100 transition-colors">
+    <div className={`min-h-screen py-8 px-4 sm:px-6 lg:px-8 ${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-slate-100'} transition-colors`}>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Top Product Summary Row matching screenshot: 4 responsive cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
           {/* Product Info Card */}
           <div className={`border rounded-2xl p-4 flex items-center gap-4 shadow-xl transition-all ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/5 rounded-2xl p-2 flex items-center justify-center shrink-0 border border-slate-700/60 overflow-hidden">
+            <div className={`w-16 h-16 sm:w-20 sm:h-20 ${activeTheme === 'pure-white' ? 'bg-slate-50' : 'bg-white/5'} rounded-2xl p-2 flex items-center justify-center shrink-0 border ${activeTheme === 'pure-white' ? 'border-slate-200' : 'border-slate-700/60'} overflow-hidden`}>
               <img
                 src={currentProduct.image}
                 alt={currentProduct.name}
@@ -207,7 +226,7 @@ export const PriceComparisonPage: React.FC = () => {
               />
             </div>
             <div className="space-y-1 overflow-hidden min-w-0">
-              <h1 className="text-sm sm:text-base font-extrabold text-white truncate" title={currentProduct.name}>
+              <h1 className={`text-sm sm:text-base font-extrabold ${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-white'} truncate`} title={currentProduct.name}>
                 {currentProduct.name}
               </h1>
               <div className="text-xs text-slate-400 font-medium truncate">
@@ -216,11 +235,11 @@ export const PriceComparisonPage: React.FC = () => {
                   : '6GB RAM | 128GB Storage'}
               </div>
               <div className="flex items-center gap-3 pt-0.5">
-                <span className="text-xs font-bold text-amber-400">
-                  ★ {currentProduct.rating} <span className="text-slate-500 font-normal">({currentProduct.reviewsCount.toLocaleString()})</span>
+                <span className="text-xs font-bold text-amber-500">
+                  ★ {currentProduct.rating} <span className="text-slate-400 font-normal">({currentProduct.reviewsCount.toLocaleString()})</span>
                 </span>
-                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                   In Stock
                 </span>
               </div>
@@ -238,7 +257,7 @@ export const PriceComparisonPage: React.FC = () => {
               </span>
             </div>
             <div className="my-1.5">
-              <div className="text-2xl sm:text-3xl font-black text-white">
+              <div className={`text-2xl sm:text-3xl font-black ${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>
                 ₹{lowestStore.finalPrice.toLocaleString('en-IN')}
               </div>
             </div>
@@ -254,12 +273,12 @@ export const PriceComparisonPage: React.FC = () => {
               LOWEST OUTSIDE PRICE
             </div>
             <div className="my-1.5">
-              <div className="text-2xl sm:text-3xl font-black text-white">
+              <div className={`text-2xl sm:text-3xl font-black ${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>
                 ₹{(comparisonPrices[1]?.finalPrice || highestStore.finalPrice).toLocaleString('en-IN')}
               </div>
             </div>
             <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
-              <Store className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+              <Store className="w-3.5 h-3.5 text-blue-500 shrink-0" />
               <span>Amazon / Flipkart Average</span>
             </div>
           </div>
@@ -270,11 +289,11 @@ export const PriceComparisonPage: React.FC = () => {
               REAL EXTRA SAVINGS
             </div>
             <div className="my-1.5">
-              <div className="text-2xl sm:text-3xl font-black text-white">
+              <div className={`text-2xl sm:text-3xl font-black ${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>
                 ₹{(netSavings || 480).toLocaleString('en-IN')}
               </div>
             </div>
-            <div className="text-[11px] text-amber-400 font-medium flex items-center gap-1.5">
+            <div className="text-[11px] text-amber-500 font-medium flex items-center gap-1.5">
               <Coins className="w-3.5 h-3.5 shrink-0" />
               <span>+{lowestStore.smartCoins || 120} SmartCoins reward</span>
             </div>
@@ -282,7 +301,7 @@ export const PriceComparisonPage: React.FC = () => {
         </div>
 
         {/* Filter Pills & Stock Legend Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-y border-slate-800/80">
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-y ${activeTheme === 'pure-white' ? 'border-slate-200' : 'border-slate-800/80'}`}>
           {/* Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
             {categories.map((cat, idx) => {
@@ -295,7 +314,9 @@ export const PriceComparisonPage: React.FC = () => {
                   className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
                     isActive
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/40'
-                      : 'bg-[#0f172a] text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+                      : activeTheme === 'pure-white'
+                        ? 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200'
+                        : 'bg-[#0f172a] text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -327,7 +348,7 @@ export const PriceComparisonPage: React.FC = () => {
           <div className="flex items-center gap-2 text-xs text-slate-400 min-w-0">
             <Search className={`w-4 h-4 shrink-0 ${themeStyle.searchIcon}`} />
             <span className="shrink-0">Comparing for:</span>
-            <span className="text-white font-extrabold truncate">{currentProduct.name}</span>
+            <span className={`${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-white'} font-extrabold truncate`}>{currentProduct.name}</span>
           </div>
 
           <div className="w-full sm:w-80 shrink-0">
@@ -337,7 +358,7 @@ export const PriceComparisonPage: React.FC = () => {
                 setSelectedId(e.target.value);
                 navigate(`/compare/${e.target.value}`);
               }}
-              className={`w-full text-white text-xs font-bold py-2 px-3 rounded-xl border focus:outline-none cursor-pointer transition-colors ${themeStyle.selectBg} ${themeStyle.selectBorder}`}
+              className={`w-full ${activeTheme === 'pure-white' ? 'text-slate-900' : 'text-white'} text-xs font-bold py-2 px-3 rounded-xl border focus:outline-none cursor-pointer transition-colors ${themeStyle.selectBg} ${themeStyle.selectBorder}`}
             >
               {products.map(p => (
                 <option key={p.id} value={p.id}>

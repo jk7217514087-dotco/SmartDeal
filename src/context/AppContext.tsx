@@ -28,6 +28,7 @@ export type ThemeId =
   | 'aurora-jade'
   | 'royal-gold'
   | 'cyber-indigo'
+  | 'pure-white'
   | 'cyber-emerald';
 
 export const THEME_BG_MAP: Record<string, string> = {
@@ -37,6 +38,7 @@ export const THEME_BG_MAP: Record<string, string> = {
   'aurora-jade': '#051f15',
   'royal-gold': '#181107',
   'cyber-indigo': '#08092d',
+  'pure-white': '#f8fafd',
   'cyber-emerald': '#051f15',
 };
 
@@ -47,6 +49,7 @@ export const THEME_CYCLE_ORDER: ThemeId[] = [
   'aurora-jade',
   'royal-gold',
   'cyber-indigo',
+  'pure-white',
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
@@ -367,10 +370,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'theme-matrix-lime',
         'theme-sunset-coral',
         'theme-aurora-jade',
-        'theme-cyber-indigo'
+        'theme-cyber-indigo',
+        'theme-pure-white'
       );
       document.body.classList.add(`theme-${activeTheme}`);
-      document.documentElement.classList.add('dark');
+      if (activeTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('text-slate-100');
+        document.body.classList.add('text-slate-900');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.body.classList.remove('text-slate-900');
+        document.body.classList.add('text-slate-100');
+      }
       document.documentElement.style.setProperty('--smartdeal-bg', bg);
       document.body.style.backgroundColor = bg;
       document.documentElement.style.backgroundColor = bg;
@@ -394,10 +406,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'theme-matrix-lime',
         'theme-sunset-coral',
         'theme-aurora-jade',
-        'theme-cyber-indigo'
+        'theme-cyber-indigo',
+        'theme-pure-white'
       );
       document.body.classList.add(`theme-${normalizedTheme}`);
-      document.documentElement.classList.add('dark');
+      if (normalizedTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('text-slate-100');
+        document.body.classList.add('text-slate-900');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.body.classList.remove('text-slate-900');
+        document.body.classList.add('text-slate-100');
+      }
       document.documentElement.style.setProperty('--smartdeal-bg', bg);
       document.body.style.backgroundColor = bg;
       document.documentElement.style.backgroundColor = bg;
@@ -417,6 +438,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         document.documentElement.style.setProperty('--smartdeal-bg', customBg);
         document.body.style.backgroundColor = customBg;
         document.documentElement.style.backgroundColor = customBg;
+        const lower = customBg.toLowerCase();
+        if (lower === '#ffffff' || lower === '#f8fafd' || lower === '#f8fafc' || lower === '#faf7f2') {
+          document.documentElement.classList.remove('dark');
+          document.body.classList.remove('text-slate-100');
+          document.body.classList.add('text-slate-900');
+        }
       }
     }
   }, [customBg]);
@@ -454,6 +481,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setActiveThemeState('cyber-indigo');
       localStorage.setItem('smartdeals_active_theme', 'cyber-indigo');
       if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'cyber-indigo');
+    } else if (lower === '#f8fafd' || lower === '#ffffff' || lower === '#f8fafc' || lower === '#faf7f2') {
+      setActiveThemeState('pure-white');
+      localStorage.setItem('smartdeals_active_theme', 'pure-white');
+      if (typeof document !== 'undefined') {
+        document.documentElement.setAttribute('data-theme', 'pure-white');
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('text-slate-100');
+        document.body.classList.add('text-slate-900');
+      }
     }
   };
 

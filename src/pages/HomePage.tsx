@@ -208,6 +208,29 @@ const HERO_THEMES: Record<string, HeroThemeConfig> = {
     promoIcon: 'text-violet-300',
     promoText: 'text-violet-100/70',
   },
+  'pure-white': {
+    heroSectionBg: 'bg-gradient-to-b from-[#f8faff] via-[#ffffff] to-[#eef2f9]',
+    heroBorder: 'border-slate-200/80',
+    badgeBg: 'bg-indigo-50',
+    badgeBorder: 'border-indigo-200',
+    badgeText: 'text-indigo-700',
+    badgeIcon: 'text-indigo-600',
+    titleGradient: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent',
+    searchContainer: 'bg-white border-slate-200/90 shadow-[0_8px_35px_rgba(79,70,229,0.12)] focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20',
+    searchBtn: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:to-purple-800 text-white shadow-indigo-500/25 font-black',
+    pillBg: 'bg-white hover:bg-indigo-50 border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 shadow-xs',
+    pedestalGlow: 'bg-gradient-to-tr from-indigo-500/15 via-purple-400/10 to-indigo-600/15',
+    pedestalOuter: 'border-indigo-100 bg-white/95 shadow-[0_0_65px_rgba(79,70,229,0.18)]',
+    pedestalInner: 'border-slate-100 bg-gradient-to-b from-indigo-50/50 to-white',
+    dealsBadge: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-500/25 font-black',
+    savingsBadge: 'bg-white border-indigo-200 text-indigo-700 shadow-xs',
+    guaranteeCard: 'bg-white border-slate-200/80 hover:border-indigo-400/50 shadow-xs',
+    promoCard: 'bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 border-indigo-500 text-white shadow-lg shadow-indigo-500/20',
+    promoButton: 'bg-white hover:bg-slate-100 text-indigo-700 font-black shadow-md',
+    promoBadge: 'bg-white/20 border-white/30 text-white',
+    promoIcon: 'text-white',
+    promoText: 'text-indigo-100/90',
+  },
 };
 
 export const HomePage: React.FC = () => {
@@ -322,7 +345,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
       {/* SECTION 4.2 & 4.3: PANEL 1 HERO SECTION (2-COLUMN WITH FLOATING SHOWCASE) */}
-      <section className={`relative overflow-hidden w-full max-w-full text-white pt-8 pb-12 border-b -mt-2 transition-colors duration-500 ${heroTheme.heroSectionBg} ${heroTheme.heroBorder}`}>
+      <section className={`relative overflow-hidden w-full max-w-full ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'} pt-8 pb-12 border-b -mt-2 transition-colors duration-500 ${heroTheme.heroSectionBg} ${heroTheme.heroBorder}`}>
         {/* Dynamic Theme Ambient Glow & Light Wave Sweeps */}
         {themeKey === 'matrix-lime' && (
           <>
@@ -458,6 +481,12 @@ export const HomePage: React.FC = () => {
             </svg>
           </>
         )}
+        {themeKey === 'pure-white' && (
+          <>
+            <div className="hidden sm:block absolute top-0 right-1/4 w-[500px] h-[350px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/3 left-1/4 w-[400px] h-[250px] bg-purple-500/8 rounded-full blur-[120px] pointer-events-none" />
+          </>
+        )}
 
         <div className="max-w-7xl mx-auto px-4 relative z-10 w-full overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -469,13 +498,13 @@ export const HomePage: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h1 className="text-3xl sm:text-5xl lg:text-5xl font-black tracking-tight leading-tight text-white">
+                <h1 className={`text-3xl sm:text-5xl lg:text-5xl font-black tracking-tight leading-tight ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>
                   Find the Best Price. <br />
-                  <span className="text-slate-100">Compare. Save. </span>
+                  <span className={themeKey === 'pure-white' ? 'text-slate-700' : 'text-slate-100'}>Compare. Save. </span>
                   <span className={heroTheme.titleGradient}>Buy Smarter.</span>
                 </h1>
 
-                <p className="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed">
+                <p className={`text-sm sm:text-base ${themeKey === 'pure-white' ? 'text-slate-600' : 'text-slate-300'} max-w-xl leading-relaxed`}>
                   Compare prices, offers and deals across multiple marketplaces before you buy.
                 </p>
               </div>
@@ -489,7 +518,7 @@ export const HomePage: React.FC = () => {
                     value={heroSearch}
                     onChange={e => setHeroSearch(e.target.value)}
                     placeholder="Search products, brands or categories..."
-                    className="w-full bg-transparent px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none"
+                    className={`w-full bg-transparent px-3 py-2 text-sm ${themeKey === 'pure-white' ? 'text-slate-900 placeholder-slate-400' : 'text-white placeholder-slate-400'} focus:outline-none`}
                   />
                   <button
                     type="submit"
@@ -501,7 +530,7 @@ export const HomePage: React.FC = () => {
               </form>
 
               {/* Category pill shortcuts directly under search */}
-              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-300">
+              <div className={`flex flex-wrap items-center gap-2 pt-1 text-xs ${themeKey === 'pure-white' ? 'text-slate-600' : 'text-slate-300'}`}>
                 {[
                   { name: 'iPhone', query: 'iPhone 15' },
                   { name: 'Laptop', query: 'Laptop' },
@@ -581,7 +610,7 @@ export const HomePage: React.FC = () => {
           {/* MARKETPLACE RIBBON CARD */}
           <div className={`mt-10 p-4 rounded-2xl border shadow-2xl backdrop-blur-md transition-colors ${heroTheme.guaranteeCard}`}>
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-              <span className="text-slate-300 font-bold flex items-center gap-2">
+              <span className={`${themeKey === 'pure-white' ? 'text-slate-700' : 'text-slate-300'} font-bold flex items-center gap-2`}>
                 <ShieldCheck className="w-4 h-4 text-cyan-400" />
                 <span>Supported Marketplaces:</span>
               </span>
@@ -659,7 +688,7 @@ export const HomePage: React.FC = () => {
                 <Truck className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-white">Free Shipping</div>
+                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>Free Shipping</div>
                 <div className="text-[11px] text-slate-400">On orders over ₹499</div>
               </div>
             </div>
@@ -669,7 +698,7 @@ export const HomePage: React.FC = () => {
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-white">Secure Payments</div>
+                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>Secure Payments</div>
                 <div className="text-[11px] text-slate-400">100% secure & trusted</div>
               </div>
             </div>
@@ -679,7 +708,7 @@ export const HomePage: React.FC = () => {
                 <RotateCcw className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-white">Easy Returns</div>
+                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>Easy Returns</div>
                 <div className="text-[11px] text-slate-400">Hassle-free process</div>
               </div>
             </div>
@@ -689,7 +718,7 @@ export const HomePage: React.FC = () => {
                 <Headphones className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-white">24/7 Support</div>
+                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>24/7 Support</div>
                 <div className="text-[11px] text-slate-400">We're here to help</div>
               </div>
             </div>

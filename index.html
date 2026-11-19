@@ -29,6 +29,7 @@
             'aurora-jade': '#051f15',
             'royal-gold': '#181107',
             'cyber-indigo': '#08092d',
+            'pure-white': '#f8fafd',
             'cyber-emerald': '#051f15'
           };
           var bg = localStorage.getItem('smartdeals_custom_bg') || bgMap[theme] || '#0b1a30';
@@ -36,6 +37,11 @@
           document.documentElement.setAttribute('data-theme', theme);
           document.documentElement.style.setProperty('--smartdeal-bg', bg);
           document.documentElement.style.backgroundColor = bg;
+          if (theme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
         } catch (e) {}
       })();
     </script>

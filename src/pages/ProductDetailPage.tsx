@@ -139,6 +139,21 @@ const THEME_STYLES: Record<string, {
     mobileBg: 'dark:bg-[#08092d]/95',
     mobileBorder: 'dark:border-indigo-900/80',
     buyButton: 'bg-gradient-to-r from-violet-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
+  },
+  'pure-white': {
+    cardBg: 'bg-white',
+    cardBorder: 'border-slate-200/80',
+    badgeBg: 'bg-indigo-600',
+    badgeText: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    accentText: 'text-indigo-600',
+    pricingBg: 'bg-slate-50',
+    pricingBorder: 'border-slate-200/80',
+    thumbActiveBorder: 'border-indigo-600',
+    thumbInactiveBg: 'border-slate-200 bg-white',
+    iconText: 'text-indigo-600',
+    mobileBg: 'bg-white/95',
+    mobileBorder: 'border-slate-200',
+    buyButton: 'bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
   }
 };
 

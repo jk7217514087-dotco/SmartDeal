@@ -95,6 +95,19 @@ const FLAGSHIP_THEMES: FlagshipThemeDef[] = [
     iconBg: 'from-violet-500 to-indigo-600',
     badgeEmoji: '🔮',
   },
+  {
+    id: 'pure-white',
+    name: 'Pure Minimalist White',
+    subtitle: 'Crisp Studio White & Electric Indigo Accents (Buyhatke Style)',
+    color: '#f8fafd',
+    cardBg: '#ffffff',
+    accentBorder: 'border-indigo-500',
+    tag: 'Minimalist White',
+    tagBg: 'bg-indigo-600 text-white',
+    bannerGradient: 'from-[#f8faff] via-[#ffffff] to-[#eef2f9]',
+    iconBg: 'from-indigo-600 to-purple-600',
+    badgeEmoji: '✨',
+  },
 ];
 
 interface PresetTheme {
@@ -112,6 +125,7 @@ const PRESET_THEMES: PresetTheme[] = [
   { id: 'aurora-jade-p', name: 'Aurora Emerald Jade', color: '#051f15', isDark: true, badge: 'Emerald' },
   { id: 'royal-gold-p', name: 'Royal Obsidian Gold', color: '#181107', isDark: true, badge: '24K Gold' },
   { id: 'cyber-indigo-p', name: 'Cyber Cosmic Indigo', color: '#08092d', isDark: true, badge: 'Violet' },
+  { id: 'pure-white-p', name: 'Pure Minimalist White', color: '#f8fafd', isDark: false, badge: 'Buyhatke' },
   { id: 'midnight-sapphire', name: 'Midnight Sapphire', color: '#0a0f1d', isDark: true },
   { id: 'deep-navy', name: 'Deep Oceanic Navy', color: '#061124', isDark: true },
   { id: 'titanium-slate', name: 'Titanium Slate', color: '#0f172a', isDark: true },
@@ -179,7 +193,7 @@ export const BackgroundCustomizerModal: React.FC = () => {
               <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>Theme & Color Studio</span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/60">
-                  6 Flagship Themes
+                  7 Flagship Themes
                 </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -198,7 +212,7 @@ export const BackgroundCustomizerModal: React.FC = () => {
 
         {/* Content */}
         <div className="p-5 space-y-5 max-h-[75vh] overflow-y-auto">
-          {/* THE 6 PRIMARY THEMES REQUESTED BY USER */}
+          {/* THE PRIMARY THEMES REQUESTED BY USER */}
           <div>
             <div className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-300 mb-3 flex items-center justify-between">
               <span>Select Primary Visual Theme</span>
@@ -223,12 +237,12 @@ export const BackgroundCustomizerModal: React.FC = () => {
                     style={{ backgroundColor: theme.cardBg }}
                   >
                     {/* Visual Glow preview banner */}
-                    <div className={`h-12 w-full rounded-xl bg-gradient-to-r ${theme.bannerGradient} p-2.5 flex items-center justify-between relative overflow-hidden mb-2.5 border border-white/10`}>
+                    <div className={`h-12 w-full rounded-xl bg-gradient-to-r ${theme.bannerGradient} p-2.5 flex items-center justify-between relative overflow-hidden mb-2.5 border ${theme.id === 'pure-white' ? 'border-slate-200' : 'border-white/10'}`}>
                       <div className="flex items-center gap-2 z-10">
-                        <div className={`w-6 h-6 rounded-full bg-gradient-to-tr ${theme.iconBg} flex items-center justify-center text-slate-950 text-[10px] font-black`}>
+                        <div className={`w-6 h-6 rounded-full bg-gradient-to-tr ${theme.iconBg} flex items-center justify-center text-white text-[10px] font-black`}>
                           S
                         </div>
-                        <span className="text-xs font-black text-white">{theme.name}</span>
+                        <span className={`text-xs font-black ${theme.id === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>{theme.name}</span>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full ${theme.tagBg} text-[9px] font-black`}>
                         {theme.tag}
@@ -237,10 +251,10 @@ export const BackgroundCustomizerModal: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-xs font-black text-white flex items-center gap-1.5">
+                        <div className={`text-xs font-black ${theme.id === 'pure-white' ? 'text-slate-900' : 'text-white'} flex items-center gap-1.5`}>
                           <span>{theme.badgeEmoji} {theme.name}</span>
                           {isCurrentTheme && (
-                            <span className="text-[10px] text-brand-300 font-bold">• Active</span>
+                            <span className={`text-[10px] ${theme.id === 'pure-white' ? 'text-indigo-600' : 'text-brand-300'} font-bold`}>• Active</span>
                           )}
                         </div>
                         <div className="text-[11px] text-slate-400 line-clamp-1">
@@ -248,7 +262,7 @@ export const BackgroundCustomizerModal: React.FC = () => {
                         </div>
                       </div>
                       {isCurrentTheme && (
-                        <div className="w-6 h-6 rounded-full bg-white text-slate-950 flex items-center justify-center shrink-0 shadow-md font-black">
+                        <div className={`w-6 h-6 rounded-full ${theme.id === 'pure-white' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-950'} flex items-center justify-center shrink-0 shadow-md font-black`}>
                           <Check className="w-3.5 h-3.5" />
                         </div>
                       )}
