@@ -62,6 +62,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
   {
     label: 'Intelligence & Audit',
     items: [
+      { name: 'Price Intelligence', to: '/admin/price-intelligence', icon: Sparkles, badge: 'AI Engine' },
       { name: 'Website Analytics', to: '/admin/analytics', icon: Database, badge: 'Live SQL' },
       { name: 'Search Analytics', to: '/admin/searches', icon: Search },
       { name: 'Activity Audit Logs', to: '/admin/activity-logs', icon: ShieldCheck, badge: 'Security' },

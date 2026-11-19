@@ -111,6 +111,7 @@ function AppContent() {
           <Route path="outbound-clicks" element={<AdminDashboardPage />} />
           <Route path="orders" element={<AdminDashboardPage />} />
           <Route path="analytics" element={<AdminDashboardPage />} />
+          <Route path="price-intelligence" element={<AdminDashboardPage />} />
           <Route path="database" element={<AdminDashboardPage />} />
           <Route path="searches" element={<AdminDashboardPage />} />
           <Route path="search-analytics" element={<AdminDashboardPage />} />

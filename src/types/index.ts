@@ -38,6 +38,61 @@ export interface PriceHistoryPoint {
   event?: string;
 }
 
+export type SmartBuyRecommendationLevel = 'SKIP' | 'WAIT' | 'OKAY' | 'YES';
+
+export interface SmartBuyRecommendationResult {
+  productId: string;
+  productName?: string;
+  marketplaceId: string;
+  recommendation: SmartBuyRecommendationLevel;
+  score: number; // 0 to 100
+  confidence: number; // e.g. 88
+  constantPriceChance: number; // e.g. 8.67%
+  volatilityPercent: number; // e.g. 3.2%
+  currentPrice: number;
+  averagePrice: number;
+  lowestPrice: number;
+  lowestPriceDate?: string;
+  highestPrice: number;
+  highestPriceDate?: string;
+  priceChange: number;
+  priceChangePercent: number;
+  expectedLowTarget?: number;
+  lastUpdated: string;
+  analysisText: string;
+  isReliable: boolean;
+  unreliableReason?: string;
+}
+
+export interface HistoricalPriceRecord {
+  id: string;
+  product_id: string;
+  marketplace_id: string;
+  price: number;
+  offer_price: number;
+  recorded_at: string;
+  currency: string;
+  availability_status: 'IN_STOCK' | 'OUT_OF_STOCK' | 'PRICE_DROP';
+  event?: string;
+}
+
+export interface PriceHistoryResponse {
+  success: boolean;
+  count: number;
+  records: HistoricalPriceRecord[];
+  marketplace: string;
+  trackingDisabled?: boolean;
+  policyMessage?: string;
+  stats?: {
+    currentPrice: number;
+    lowestPrice: number;
+    highestPrice: number;
+    averagePrice: number;
+    totalChanges: number;
+    lastUpdated: string;
+  };
+}
+
 export interface Product {
   id: string;
   name: string;

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { PriceComparisonTable } from '../components/common/PriceComparisonTable';
+import { SmartBuyRecommendation } from '../components/product/SmartBuyRecommendation';
+import { InteractivePriceHistoryChart } from '../components/product/InteractivePriceHistoryChart';
 import {
   Sparkles,
   CheckCircle2,
@@ -180,6 +182,7 @@ export const PriceComparisonPage: React.FC = () => {
 
   const [selectedId, setSelectedId] = useState<string>(id || products[0]?.id || '');
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [selectedMarketplace, setSelectedMarketplace] = useState<string>('flipkart');
   const currentProduct = products.find(p => p.id === selectedId) || products[0];
 
   // Compare only external marketplaces (Amazon, Flipkart, Croma, Reliance Digital, etc.)
@@ -370,6 +373,24 @@ export const PriceComparisonPage: React.FC = () => {
 
         {/* Comparison Table with Amazon, Flipkart, Croma, Reliance Digital */}
         <PriceComparisonTable product={currentProduct} prices={currentProduct.marketplacePrices} />
+
+        {/* FEATURE 1: AI SMART BUY RECOMMENDATION SYSTEM */}
+        <div className="pt-2">
+          <SmartBuyRecommendation
+            product={currentProduct}
+            selectedMarketplace={selectedMarketplace}
+            onMarketplaceChange={setSelectedMarketplace}
+          />
+        </div>
+
+        {/* FEATURE 2: INTERACTIVE PRICE HISTORY GRAPH */}
+        <div className="pt-2">
+          <InteractivePriceHistoryChart
+            product={currentProduct}
+            initialMarketplace={selectedMarketplace}
+            onMarketplaceChange={setSelectedMarketplace}
+          />
+        </div>
       </div>
     </div>
   );

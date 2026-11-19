@@ -128,6 +128,23 @@ export const DEFAULT_MARKETPLACE_COMPLIANCE: Record<string, MarketplaceComplianc
     restrictedFeatures: [],
     lastAuditedDate: '2026-11-18',
   },
+  ajio: {
+    marketplaceId: 'ajio',
+    marketplaceName: 'AJIO',
+    domain: 'ajio.com',
+    priceTrackingAllowed: false, // PAUSED per affiliate configuration policy
+    priceAlertsAllowed: false,   // PAUSED per affiliate configuration policy
+    priceDisplayAllowed: true,
+    apiAccessAllowed: false,
+    affiliateApprovalStatus: 'RESTRICTED',
+    writtenApprovalObtained: false,
+    complianceDisclaimer:
+      'Price tracking and price alerts are currently disabled for AJIO in our configuration per affiliate terms.',
+    policyNotes:
+      'AJIO price tracking and price drop alerts are paused until advance written approval is granted.',
+    restrictedFeatures: ['price_tracking', 'price_drop_alerts'],
+    lastAuditedDate: '2026-11-20',
+  },
 };
 
 class MarketplaceComplianceService {
@@ -142,6 +159,7 @@ class MarketplaceComplianceService {
     if (clean.includes('tatacliq') || clean.includes('cliq')) return 'tatacliq';
     if (clean.includes('meesho')) return 'meesho';
     if (clean.includes('myntra')) return 'myntra';
+    if (clean.includes('ajio')) return 'ajio';
     return clean;
   }
 

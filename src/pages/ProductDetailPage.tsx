@@ -4,6 +4,8 @@ import { useApp } from '../context/AppContext';
 import { DealScoreBadge } from '../components/common/DealScoreBadge';
 import { PriceComparisonTable } from '../components/common/PriceComparisonTable';
 import { PriceHistoryChart } from '../components/common/PriceHistoryChart';
+import { SmartBuyRecommendation } from '../components/product/SmartBuyRecommendation';
+import { InteractivePriceHistoryChart } from '../components/product/InteractivePriceHistoryChart';
 import { PriceAlertModal } from '../components/common/PriceAlertModal';
 import { ProductFullDetailsSection } from '../components/product/ProductFullDetailsSection';
 import { notificationService } from '../services/notificationService';
@@ -181,6 +183,7 @@ export const ProductDetailPage: React.FC = () => {
   const [pincode, setPincode] = useState('110016');
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'specifications' | 'features' | 'reviews' | 'price-history'>('overview');
+  const [selectedMarketplace, setSelectedMarketplace] = useState<string>('flipkart');
 
   useEffect(() => {
     if (product) {
@@ -478,6 +481,15 @@ export const ProductDetailPage: React.FC = () => {
         <div className="pt-1">
           <PriceComparisonTable product={product} />
         </div>
+
+        {/* FEATURE 1: AI SMART BUY RECOMMENDATION SYSTEM */}
+        <div className="pt-4">
+          <SmartBuyRecommendation
+            product={product}
+            selectedMarketplace={selectedMarketplace}
+            onMarketplaceChange={setSelectedMarketplace}
+          />
+        </div>
       </section>
 
       {/* MIDDLE SECTION: Tabs Bar matching Panel 3 */}
@@ -642,9 +654,17 @@ export const ProductDetailPage: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 5: Price History */}
+        {/* Tab 5: Interactive Price History Graph */}
         {activeTab === 'price-history' && (
-          <PriceHistoryChart product={product} />
+          <div className="space-y-6">
+            <InteractivePriceHistoryChart
+              product={product}
+              initialMarketplace={selectedMarketplace}
+              onMarketplaceChange={setSelectedMarketplace}
+            />
+            {/* Legacy Fake Discount Audit Card for additional cross-verification */}
+            <PriceHistoryChart product={product} />
+          </div>
         )}
       </div>
 

@@ -67,6 +67,7 @@ import {
 import { trackingService } from '../services/trackingService';
 import { DatabaseAnalyticsView } from '../components/admin/DatabaseAnalyticsView';
 import { AllCategoryDashboardView } from '../components/admin/AllCategoryDashboardView';
+import { PriceIntelligenceAdminView } from '../components/admin/PriceIntelligenceAdminView';
 import { AdminSecurityGuard } from '../components/admin/AdminSecurityGuard';
 import {
   TrackedUser,
@@ -85,6 +86,7 @@ type AdminTab =
   | 'all-category'
   | 'overview'
   | 'database'
+  | 'price-intelligence'
   | 'orders'
   | 'users'
   | 'guests'
@@ -293,6 +295,7 @@ export const AdminDashboardPage: React.FC = () => {
     const path = location.pathname;
     if (path.includes('/admin/all-category') || path.includes('/admin/categories') || path.includes('/admin/all-data')) setActiveTab('all-category');
     else if (path.includes('/admin/database') || path.includes('/admin/analytics')) setActiveTab('database');
+    else if (path.includes('/admin/price-intelligence')) setActiveTab('price-intelligence');
     else if (path.includes('/admin/users')) setActiveTab('users');
     else if (path.includes('/admin/guest-sessions') || path.includes('/admin/guests')) setActiveTab('guests');
     else if (path.includes('/admin/product-activity') || path.includes('/admin/products')) setActiveTab('product-activity');
@@ -541,6 +544,23 @@ export const AdminDashboardPage: React.FC = () => {
               </div>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
                 Live SQL
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('price-intelligence')}
+              className={`w-full text-left px-3.5 py-2.5 rounded-2xl flex items-center justify-between transition-all cursor-pointer ${
+                activeTab === 'price-intelligence'
+                  ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span>Price Intelligence</span>
+              </div>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">
+                AI Engine
               </span>
             </button>
 
@@ -804,6 +824,13 @@ export const AdminDashboardPage: React.FC = () => {
           {activeTab === 'database' && (
             <div className="space-y-6 animate-fadeIn">
               <DatabaseAnalyticsView onRefreshData={refreshData} />
+            </div>
+          )}
+
+          {/* TAB: PRICE INTELLIGENCE & HISTORICAL AUDIT ENGINE */}
+          {activeTab === 'price-intelligence' && (
+            <div className="space-y-6 animate-fadeIn">
+              <PriceIntelligenceAdminView />
             </div>
           )}
 
