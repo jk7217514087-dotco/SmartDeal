@@ -492,19 +492,13 @@ export const Navbar: React.FC = () => {
             <span>Ask AI</span>
           </button>
 
-          {/* Download SmartDeal App Button */}
+          {/* Download & Install SmartDeal App Button */}
           <button
             onClick={() => {
-              const link = document.createElement('a');
-              link.href = '/SmartDeal.apk';
-              link.setAttribute('download', 'SmartDeal.apk');
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
               window.dispatchEvent(new CustomEvent('trigger-app-install'));
             }}
             className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all cursor-pointer ${navTheme.appBtn}`}
-            title="Download SmartDeal App (.apk)"
+            title="Install SmartDeal App on Phone or Laptop"
           >
             <Download className="w-3.5 h-3.5 text-indigo-400" />
             <span className="hidden sm:inline">SmartDeal App</span>
