@@ -265,26 +265,23 @@ export const InstallAppPrompt: React.FC = () => {
   }, []);
 
   const handleAppDownloadClick = () => {
-    // 1. Immediately trigger DIRECT file download into user's Downloads folder!
-    triggerDirectAppDownload(deferredPrompt);
+    // 1. Always open download modal immediately so user sees the 1-Click Install button!
+    setShowDownloadModal(true);
+    setShowBanner(false);
 
-    // 2. Show instant high-visibility download toast
+    // 2. Also trigger direct download so file starts downloading right away
+    triggerDirectAppDownload(deferredPrompt);
     setShowDownloadToast(true);
     setTimeout(() => setShowDownloadToast(false), 4500);
-
-    // 3. If native prompt wasn't fired by browser, open modal for 1-click Chrome install
-    if (!deferredPrompt) {
-      setShowDownloadModal(true);
-      setShowBanner(false);
-    }
   };
 
-  const triggerPwaInstall = async () => {
-    // Trigger direct file download
-    triggerDirectAppDownload(deferredPrompt);
+  const handleMobileInstallClick = async () => {
+    // 1. Direct download mobile launcher file
+    downloadMobileAppLauncher();
     setShowDownloadToast(true);
     setTimeout(() => setShowDownloadToast(false), 4500);
 
+    // 2. If browser has native PWA prompt, trigger it!
     if (deferredPrompt) {
       try {
         deferredPrompt.prompt();
@@ -297,10 +294,42 @@ export const InstallAppPrompt: React.FC = () => {
         }
       } catch (err) {
         console.warn('Install prompt error:', err);
-        setShowDownloadModal(true);
       }
     } else {
-      setShowDownloadModal(true);
+      // If deferredPrompt not available (e.g. Vivo browser), open in Google Chrome for 100% install
+      openInChromeIntent();
+    }
+  };
+
+  const handleDesktopInstallClick = async () => {
+    // 1. Direct download Windows Standalone Executable (.exe) and shortcut (.url)
+    downloadWindowsAppExe();
+    downloadDesktopShortcut();
+    setShowDownloadToast(true);
+    setTimeout(() => setShowDownloadToast(false), 4500);
+
+    // 2. If browser supports native desktop PWA, trigger it
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          setIsInstalled(true);
+          setShowBanner(false);
+          setShowDownloadModal(false);
+          setDeferredPrompt(null);
+        }
+      } catch (err) {
+        console.warn('Desktop install prompt error:', err);
+      }
+    }
+  };
+
+  const triggerPwaInstall = async () => {
+    if (activeTab === 'mobile') {
+      handleMobileInstallClick();
+    } else {
+      handleDesktopInstallClick();
     }
   };
 
@@ -456,16 +485,14 @@ export const InstallAppPrompt: React.FC = () => {
             {/* TAB 1: PHONE (ANDROID / VIVO / IPHONE) */}
             {activeTab === 'mobile' && (
               <div className="space-y-4">
-                {/* Direct 1-Click Install Button if supported */}
-                {deferredPrompt ? (
-                  <button
-                    onClick={triggerPwaInstall}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-95 transition-all cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>1-Click Phone Screen par Install karein</span>
-                  </button>
-                ) : null}
+                {/* 1-Click Phone Screen Install Button (Circled in Red by User) - ALWAYS VISIBLE */}
+                <button
+                  onClick={handleMobileInstallClick}
+                  className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-brand-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-indigo-400/40"
+                >
+                  <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+                  <span>1-Click Phone Screen par Install karein</span>
+                </button>
 
                 {/* Direct Download Mobile App File Button */}
                 <button
@@ -567,6 +594,15 @@ export const InstallAppPrompt: React.FC = () => {
             {/* TAB 2: LAPTOP / PC (WINDOWS & MAC) */}
             {activeTab === 'desktop' && (
               <div className="space-y-4">
+                {/* 1-Click Laptop Screen Install Button (Circled in Red by User) - ALWAYS VISIBLE */}
+                <button
+                  onClick={handleDesktopInstallClick}
+                  className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-brand-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-indigo-400/40"
+                >
+                  <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+                  <span>1-Click Laptop Window par Install karein</span>
+                </button>
+
                 {/* 1. Primary: Download Windows App (.exe) */}
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-brand-950/30 to-purple-950/30 border border-brand-500/40 shadow-xl space-y-3">
                   <div className="flex items-center justify-between">
