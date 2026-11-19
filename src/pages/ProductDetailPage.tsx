@@ -455,8 +455,33 @@ export const ProductDetailPage: React.FC = () => {
         </div>
       </div>
 
+      {/* SECTION: SMART PRICE COMPARISON TABLE (Compare Prices Across Marketplaces) */}
+      <section id="price-comparison-section" className="space-y-6 pt-6 pb-6 border-t border-slate-100 dark:border-slate-800 my-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+              Compare Prices Across Marketplaces
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Live pricing, delivery estimates, and verified store discounts compared side-by-side.
+            </p>
+          </div>
+          <Link
+            to={`/compare/${product.id}`}
+            className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1 self-start sm:self-auto"
+          >
+            <span>Full Comparison View</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+
+        <div className="pt-1">
+          <PriceComparisonTable product={product} />
+        </div>
+      </section>
+
       {/* MIDDLE SECTION: Tabs Bar matching Panel 3 */}
-      <div className="space-y-6 pt-4">
+      <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
         {/* Navigation Tabs matching Panel 3 */}
         <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-1 text-xs font-extrabold">
           {[
@@ -626,31 +651,6 @@ export const ProductDetailPage: React.FC = () => {
       {/* SECTION: FULL FLIPKART-STYLE PRODUCT SPECIFICATIONS & DETAILS */}
       <section className="pt-2">
         <ProductFullDetailsSection product={product} />
-      </section>
-
-      {/* SECTION 6: SMART PRICE COMPARISON TABLE matching Panel 4 */}
-      <section id="price-comparison-section" className="space-y-6 pt-10 pb-8 border-t border-slate-100 dark:border-slate-800 my-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-          <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">
-              Compare Prices Across Marketplaces
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Live pricing, delivery estimates, and verified store discounts compared side-by-side.
-            </p>
-          </div>
-          <Link
-            to={`/compare/${product.id}`}
-            className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1 self-start sm:self-auto"
-          >
-            <span>Full Comparison View</span>
-            <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-
-        <div className="mt-6 pt-2">
-          <PriceComparisonTable product={product} />
-        </div>
       </section>
 
       {/* Mobile-Only Sticky Purchase Bar (Panel 10 Screen 3) */}
