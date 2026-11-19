@@ -56,6 +56,31 @@ function AppContent() {
 
   const currentBg = customBg || getThemeDefaultBg(activeTheme);
 
+  // Guarantee smooth rotating loader visibility (1.2s) on phone screen, laptop window or slow internet
+  React.useEffect(() => {
+    const startTime = (window as unknown as { __smartdeal_start_time?: number }).__smartdeal_start_time || Date.now();
+    const elapsed = Date.now() - startTime;
+    const minSplashDuration = 1200; // 1.2s full rotation minimum
+    const remaining = Math.max(0, minSplashDuration - elapsed);
+
+    const timer = setTimeout(() => {
+      const splash = document.getElementById('smartdeal-splash-screen');
+      if (splash) {
+        splash.style.transition = 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s ease';
+        splash.style.opacity = '0';
+        splash.style.transform = 'scale(1.02)';
+        splash.style.pointerEvents = 'none';
+        setTimeout(() => {
+          if (splash && splash.parentNode) {
+            splash.parentNode.removeChild(splash);
+          }
+        }, 500);
+      }
+    }, remaining);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Router>
       <ScrollController />

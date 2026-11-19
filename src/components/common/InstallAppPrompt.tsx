@@ -20,9 +20,10 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
+// 1. Direct download for Laptop / PC Windows Internet Shortcut (.url)
 export const downloadDesktopShortcut = () => {
   try {
-    const shortcutContent = `[InternetShortcut]\nURL=https://smart-deal-m4ca.vercel.app/\nIconIndex=0\nIconFile=https://smart-deal-m4ca.vercel.app/favicon.png\n`;
+    const shortcutContent = `[InternetShortcut]\nURL=https://smart-deal-m4ca.vercel.app/\nIconIndex=0\nIconFile=https://smart-deal-m4ca.vercel.app/favicon.png\nHotKey=0\n[{000214A0-0000-0000-C000-000000000046}]\nProp3=19,11\n`;
     const blob = new Blob([shortcutContent], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -39,10 +40,144 @@ export const downloadDesktopShortcut = () => {
   }
 };
 
+// 2. Direct download for Mobile / Phone standalone launcher (.html)
+export const downloadMobileAppLauncher = () => {
+  try {
+    const launcherHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SmartDeal PRO App</title>
+  <link rel="icon" type="image/png" href="https://smart-deal-m4ca.vercel.app/smartdeal_app_icon.png">
+  <meta name="theme-color" content="#0b1a30">
+  <meta http-equiv="refresh" content="1; url=https://smart-deal-m4ca.vercel.app/">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0b1a30;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px;
+      padding: 32px 24px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      box-shadow: 0 12px 30px rgba(99,102,241,0.4);
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 30%, #818cf8 70%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      text-decoration: none;
+      display: block;
+      box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+    }
+    .note {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="https://smart-deal-m4ca.vercel.app/smartdeal_app_icon.png" class="icon" alt="SmartDeal PRO">
+    <h1>SmartDeal PRO</h1>
+    <p>Opening live shopping engine, verified coupons & best price comparison...</p>
+    <a href="https://smart-deal-m4ca.vercel.app/" class="btn">🚀 Open SmartDeal App</a>
+    <div class="note">Official Progressive Web Application</div>
+  </div>
+  <script>
+    setTimeout(function() {
+      window.location.replace("https://smart-deal-m4ca.vercel.app/");
+    }, 600);
+  </script>
+</body>
+</html>`;
+    const blob = new Blob([launcherHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'SmartDeal-App.html');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    console.error('Failed to download mobile launcher:', err);
+    return false;
+  }
+};
+
+// 3. Unified Direct Download Trigger (Works across Phone, Laptop & Desktop)
+export const triggerDirectAppDownload = (deferredPrompt?: BeforeInstallPromptEvent | null) => {
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  const isMobile = /android|iphone|ipad|ipod|mobile/.test(userAgent);
+
+  // Prompt native install if available (Chromium / Edge / Android Chrome)
+  if (deferredPrompt) {
+    try {
+      deferredPrompt.prompt();
+    } catch (e) {
+      console.warn('Native install prompt error:', e);
+    }
+  }
+
+  // Direct download appropriate launcher file
+  if (isMobile) {
+    downloadMobileAppLauncher();
+  } else {
+    downloadDesktopShortcut();
+  }
+
+  return true;
+};
+
 export const InstallAppPrompt: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showDownloadToast, setShowDownloadToast] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [activeTab, setActiveTab] = useState<'mobile' | 'desktop'>('mobile');
   const [isIosDevice, setIsIosDevice] = useState(false);
@@ -101,17 +236,26 @@ export const InstallAppPrompt: React.FC = () => {
   }, []);
 
   const handleAppDownloadClick = () => {
-    // If native 1-click install prompt is supported by browser, trigger it directly!
-    if (deferredPrompt) {
-      triggerPwaInstall();
-      return;
+    // 1. Immediately trigger DIRECT file download into user's Downloads folder!
+    triggerDirectAppDownload(deferredPrompt);
+
+    // 2. Show instant high-visibility download toast
+    setShowDownloadToast(true);
+    setTimeout(() => setShowDownloadToast(false), 4500);
+
+    // 3. If native prompt wasn't fired by browser, open modal for 1-click Chrome install
+    if (!deferredPrompt) {
+      setShowDownloadModal(true);
+      setShowBanner(false);
     }
-    // Otherwise open the install modal with tailored instructions
-    setShowDownloadModal(true);
-    setShowBanner(false);
   };
 
   const triggerPwaInstall = async () => {
+    // Trigger direct file download
+    triggerDirectAppDownload(deferredPrompt);
+    setShowDownloadToast(true);
+    setTimeout(() => setShowDownloadToast(false), 4500);
+
     if (deferredPrompt) {
       try {
         deferredPrompt.prompt();
@@ -157,6 +301,30 @@ export const InstallAppPrompt: React.FC = () => {
 
   return (
     <>
+      {/* Direct Download Floating Status Toast */}
+      {showDownloadToast && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999999] bg-slate-900/95 dark:bg-slate-950/95 text-white border border-emerald-500/60 shadow-2xl rounded-2xl px-4 py-3 flex items-center gap-3 backdrop-blur-md animate-slideDown max-w-sm w-[92%] sm:w-auto">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+            <Download className="w-4 h-4 text-emerald-400 animate-bounce" />
+          </div>
+          <div className="text-xs flex-1">
+            <div className="font-extrabold text-emerald-400 flex items-center gap-1.5">
+              <span>Direct Download Started!</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            </div>
+            <div className="text-slate-300 text-[11px] mt-0.5">
+              SmartDeal App file Downloads folder me direct save ho rahi hai.
+            </div>
+          </div>
+          <button
+            onClick={() => setShowDownloadToast(false)}
+            className="p-1 text-slate-400 hover:text-white transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Floating Bottom App Install Banner (Mobile & Desktop) */}
       {showBanner && !showDownloadModal && (
         <div className="fixed bottom-16 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-slideUp">
@@ -267,6 +435,19 @@ export const InstallAppPrompt: React.FC = () => {
                     <span>1-Click Phone Screen par Install karein</span>
                   </button>
                 ) : null}
+
+                {/* Direct Download Mobile App File Button */}
+                <button
+                  onClick={() => {
+                    downloadMobileAppLauncher();
+                    setShowDownloadToast(true);
+                    setTimeout(() => setShowDownloadToast(false), 4500);
+                  }}
+                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>📥 Direct Download SmartDeal App File (.html)</span>
+                </button>
 
                 {/* Android / Vivo Step-by-Step Instructions */}
                 <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 space-y-3">

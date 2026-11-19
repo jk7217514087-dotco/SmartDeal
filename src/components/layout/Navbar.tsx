@@ -497,11 +497,11 @@ export const Navbar: React.FC = () => {
             onClick={() => {
               window.dispatchEvent(new CustomEvent('trigger-app-install'));
             }}
-            className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all cursor-pointer ${navTheme.appBtn}`}
-            title="Install SmartDeal App on Phone or Laptop"
+            className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
+            title="Direct Download SmartDeal App on Phone or Laptop"
           >
             <Download className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="hidden sm:inline">SmartDeal App</span>
+            <span className="hidden sm:inline">Download App</span>
             <span className="sm:hidden">App</span>
           </button>
 
