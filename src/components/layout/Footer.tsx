@@ -237,7 +237,7 @@ export const Footer: React.FC = () => {
                   className="text-indigo-500 hover:text-indigo-600 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <Smartphone className="w-3.5 h-3.5" />
-                  <span>Download App (.apk)</span>
+                  <span>Install SmartDeal App</span>
                 </button>
               </li>
             </ul>

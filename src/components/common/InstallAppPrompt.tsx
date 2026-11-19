@@ -261,44 +261,42 @@ export const InstallAppPrompt: React.FC = () => {
             {/* TAB 1: PHONE (ANDROID & IPHONE) */}
             {activeTab === 'mobile' && (
               <div className="space-y-4">
-                {/* 1-Click PWA Install Button if available */}
-                {deferredPrompt ? (
-                  <button
-                    onClick={triggerPwaInstall}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-95 transition-all cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>1-Click Add to Phone Screen</span>
-                  </button>
-                ) : null}
+                {/* 1-Click PWA Install Button */}
+                <button
+                  onClick={triggerPwaInstall}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-95 transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <span>1-Click Add to Phone Screen (Install)</span>
+                </button>
 
                 {/* Android Steps Card */}
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-3">
+                <div className="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span>🤖 Android Screen par Add karne ka tareeqa:</span>
+                    <span className="font-extrabold text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                      <span>🤖 100% Working (No Error) Installation:</span>
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                      Recommended
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-600 text-white">
+                      Best Method
                     </span>
                   </div>
 
                   <div className="space-y-2 text-xs">
                     <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
                         1
                       </div>
-                      <div className="text-slate-700 dark:text-slate-300">
-                        Browser me upar right side <strong>3 dots (⋮)</strong> menu par tap karein.
+                      <div className="text-slate-800 dark:text-slate-200">
+                        Chrome browser me upar right side <strong>3 dots (⋮)</strong> par tap karein.
                       </div>
                     </div>
 
                     <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
                         2
                       </div>
-                      <div className="text-slate-700 dark:text-slate-300">
-                        Menu me <strong className="text-brand-600 dark:text-brand-400">"Install app"</strong> ya <strong className="text-brand-600 dark:text-brand-400">"Add to Home screen"</strong> par click karein.
+                      <div className="text-slate-800 dark:text-slate-200">
+                        Menu me <strong className="text-emerald-700 dark:text-emerald-400">"Install app"</strong> ya <strong className="text-emerald-700 dark:text-emerald-400">"Add to Home screen"</strong> par click karein.
                       </div>
                     </div>
 
@@ -306,8 +304,8 @@ export const InstallAppPrompt: React.FC = () => {
                       <div className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
                         3
                       </div>
-                      <div className="text-slate-700 dark:text-slate-300">
-                        Phone home screen par SmartDeal icon aa jayega aur dusre apps ki tarah full-screen khulega!
+                      <div className="text-slate-800 dark:text-slate-200">
+                        <strong>"Install"</strong> dabate hi bina kisi file download error ke SmartDeal app aapke phone screen par aa jayegi!
                       </div>
                     </div>
                   </div>
@@ -322,20 +320,6 @@ export const InstallAppPrompt: React.FC = () => {
                   <p className="text-xs text-indigo-800 dark:text-indigo-300 leading-relaxed">
                     Safari me niche <strong>Share (📤)</strong> icon dabayein &rarr; Scroll karke <strong>"Add to Home Screen"</strong> select karein.
                   </p>
-                </div>
-
-                {/* Direct APK Download fallback */}
-                <div className="pt-2">
-                  <button
-                    onClick={() => {
-                      downloadSmartDealApk();
-                      setIsDownloaded(true);
-                    }}
-                    className="w-full py-2.5 px-4 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download Direct APK Package (SmartDeal.apk)</span>
-                  </button>
                 </div>
               </div>
             )}
