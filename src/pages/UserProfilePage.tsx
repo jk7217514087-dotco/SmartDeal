@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { trackingService, hashPassword } from '../services/trackingService';
 
-type ProfileTab = 'profile' | 'cashback' | 'timeline' | 'outbound' | 'privacy' | 'security';
+type ProfileTab = 'profile' | 'timeline' | 'outbound' | 'privacy' | 'security';
 
 export const UserProfilePage: React.FC = () => {
   const {
@@ -40,10 +40,6 @@ export const UserProfilePage: React.FC = () => {
     priceAlerts,
     currentUser,
     guestSession,
-    cashbackWallet,
-    redeemCashback,
-    processReturnReversal,
-    refreshCashback,
     logoutUser
   } = useApp();
 
@@ -64,14 +60,6 @@ export const UserProfilePage: React.FC = () => {
     }
   }, [currentUser]);
 
-  // Cashback filter & modal state
-  const [cashbackFilter, setCashbackFilter] = useState<'All' | 'Available' | 'Pending' | 'Confirmed' | 'Redeemed' | 'Reversed'>('All');
-  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
-  const [redeemAmount, setRedeemAmount] = useState<number>(100);
-  const [redeemMethod, setRedeemMethod] = useState<'UPI' | 'Bank Transfer'>('UPI');
-  const [redeemAccount, setRedeemAccount] = useState('rohit.kumar@okaxis');
-  const [redeemMessage, setRedeemMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
   // Security state
   const [currentPwd, setCurrentPwd] = useState('');
   const [newPwd, setNewPwd] = useState('');
@@ -85,15 +73,15 @@ export const UserProfilePage: React.FC = () => {
   // Detect route subpaths
   useEffect(() => {
     const path = location.pathname;
-    if (path.includes('/cashback') || path.includes('/transactions')) {
-      setActiveTab('cashback');
-    } else if (path.includes('/privacy')) {
+    if (path.includes('/privacy')) {
       setActiveTab('privacy');
     } else if (path.includes('/security')) {
       setActiveTab('security');
     } else if (path.includes('/search-history') || path.includes('/recently-viewed') || path.includes('/comparisons')) {
       setActiveTab('timeline');
-    } else if (path.includes('/profile')) {
+    } else if (path.includes('/outbound')) {
+      setActiveTab('outbound');
+    } else {
       setActiveTab('profile');
     }
   }, [location.pathname]);
@@ -229,46 +217,11 @@ export const UserProfilePage: React.FC = () => {
     setTimeout(() => setIsSaved(false), 2500);
   };
 
-  const handleRedeemSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setRedeemMessage(null);
-    const res = redeemCashback(redeemAmount, redeemMethod, redeemAccount);
-    if (res.success) {
-      setRedeemMessage({ type: 'success', text: res.message });
-      setTimeout(() => {
-        setIsRedeemModalOpen(false);
-        setRedeemMessage(null);
-      }, 2000);
-    } else {
-      setRedeemMessage({ type: 'error', text: res.message });
-    }
-  };
-
-  const handleSimulateReturnReversal = () => {
-    // Find an eligible order to reverse (e.g. 171-1234567-890123)
-    const res = processReturnReversal(
-      '171-1234567-890123',
-      'Customer returned item to Amazon within 7-day return policy. Partner commission reversed.'
-    );
-    alert(res.message);
-  };
-
-  const handleExportCashbackCSV = () => {
-    const csv = trackingService.exportCSV('cashback');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `smartdeal_cashback_ledger_${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   const handleExportPersonalData = () => {
     const data = {
       profile: { name, email, phone },
       addresses,
-      cashbackWallet,
+      orders: orders.map(o => ({ id: o.id, date: o.date, total: o.finalAmount, status: o.status })),
       outboundClicks: trackingService.getOutboundClicks().filter(c => currentUser ? c.actorId === currentUser.id : c.actorId === guestSession.sessionId),
       activityLogs: currentUser ? trackingService.getUserActivityTimeline(currentUser.id) : trackingService.getGuestActivityTimeline(guestSession.sessionId),
       exportedAt: new Date().toISOString()
@@ -300,12 +253,6 @@ export const UserProfilePage: React.FC = () => {
     }
   };
 
-  // Filter cashback transactions
-  const filteredCashbackTransactions = cashbackWallet.transactions.filter(t => {
-    if (cashbackFilter === 'All') return true;
-    return t.status.toLowerCase() === cashbackFilter.toLowerCase();
-  });
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       {/* Top Welcome Card */}
@@ -330,15 +277,15 @@ export const UserProfilePage: React.FC = () => {
 
         {/* Quick Balance & Auth Actions */}
         <div className="flex flex-wrap items-center gap-4">
-          {/* Cashback Wallet Widget */}
+          {/* Shopper Activity Widget */}
           <div className="flex items-center gap-3 bg-white/10 p-3.5 rounded-2xl border border-white/20 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-lg">
-              ₹
+            <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold">
+              <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[10px] text-emerald-200 font-bold uppercase tracking-wider">Available Cashback</div>
-              <div className="text-lg font-black text-white">₹{cashbackWallet.availableBalance.toLocaleString('en-IN')}</div>
-              <div className="text-[10px] text-slate-300">Pending: ₹{cashbackWallet.pendingBalance.toLocaleString('en-IN')}</div>
+              <div className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">My Shopping</div>
+              <div className="text-sm font-black text-white">{orders.length} Orders &bull; {wishlist.length} Saved</div>
+              <div className="text-[10px] text-slate-300">{priceAlerts.length} Active Alerts</div>
             </div>
           </div>
 
@@ -383,23 +330,6 @@ export const UserProfilePage: React.FC = () => {
           >
             <User className="w-4 h-4 text-brand-500" />
             <span>Personal Profile & Addresses</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('cashback')}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold transition-all cursor-pointer ${
-              activeTab === 'cashback'
-                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-emerald-500" />
-              <span>Cashback Wallet & Ledger</span>
-            </div>
-            <span className="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full text-[10px]">
-              ₹{cashbackWallet.availableBalance}
-            </span>
           </button>
 
           <button
@@ -644,156 +574,7 @@ export const UserProfilePage: React.FC = () => {
             </>
           )}
 
-          {/* TAB 2: CASHBACK WALLET & REVERSIBLE LEDGER (Section 11, 12, 13) */}
-          {activeTab === 'cashback' && (
-            <div className="space-y-6">
-              {/* Balance Summary KPI Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1">
-                  <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Available</div>
-                  <div className="text-xl font-black text-emerald-700 dark:text-emerald-300">₹{cashbackWallet.availableBalance}</div>
-                  <div className="text-[10px] text-emerald-600/70">Ready to withdraw</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-1">
-                  <div className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Pending</div>
-                  <div className="text-xl font-black text-amber-700 dark:text-amber-300">₹{cashbackWallet.pendingBalance}</div>
-                  <div className="text-[10px] text-amber-600/70">In return window</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 space-y-1">
-                  <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Total Earned</div>
-                  <div className="text-xl font-black text-blue-700 dark:text-blue-300">₹{cashbackWallet.totalEarned}</div>
-                  <div className="text-[10px] text-blue-600/70">Lifetime confirmed</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-1">
-                  <div className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Redeemed</div>
-                  <div className="text-xl font-black text-purple-700 dark:text-purple-300">₹{cashbackWallet.totalRedeemed}</div>
-                  <div className="text-[10px] text-purple-600/70">Paid out to UPI/Bank</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-1 col-span-2 sm:col-span-1">
-                  <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Reversed</div>
-                  <div className="text-xl font-black text-rose-700 dark:text-rose-300">₹{cashbackWallet.totalReversed}</div>
-                  <div className="text-[10px] text-rose-600/70">Customer returns</div>
-                </div>
-              </div>
-
-              {/* Action Buttons & Simulation Tools */}
-              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => setIsRedeemModalOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <DollarSign className="w-4 h-4" />
-                    <span>Withdraw Cashback</span>
-                  </button>
-
-                  <button
-                    onClick={handleExportCashbackCSV}
-                    className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Export CSV</span>
-                  </button>
-                </div>
-
-                {/* Return Reversal Test Button */}
-                <button
-                  onClick={handleSimulateReturnReversal}
-                  className="px-3.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-bold text-xs hover:bg-rose-100 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Test Section 12 return reversal business rule"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Simulate Marketplace Return (Reversal Test)</span>
-                </button>
-              </div>
-
-              {/* Transactions Ledger Table */}
-              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <div>
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Complete Cashback Ledger</h3>
-                    <p className="text-xs text-slate-400">Append-only financial records with reversal audit trail</p>
-                  </div>
-
-                  {/* Filter Pills */}
-                  <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                    {(['All', 'Available', 'Pending', 'Confirmed', 'Redeemed', 'Reversed'] as const).map(tab => (
-                      <button
-                        key={tab}
-                        onClick={() => setCashbackFilter(tab)}
-                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          cashbackFilter === tab
-                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Table */}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
-                        <th className="pb-3">Transaction / Order</th>
-                        <th className="pb-3">Product / Store</th>
-                        <th className="pb-3 text-right">Amount</th>
-                        <th className="pb-3">Status</th>
-                        <th className="pb-3">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {filteredCashbackTransactions.map(tx => (
-                        <tr key={tx.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                          <td className="py-3 font-mono font-bold text-slate-900 dark:text-white">
-                            <div>{tx.id}</div>
-                            <div className="text-[10px] text-slate-400 font-normal">{tx.orderRef}</div>
-                          </td>
-                          <td className="py-3">
-                            <div className="font-bold text-slate-800 dark:text-slate-200">{tx.productName}</div>
-                            <div className="text-[10px] text-slate-400">{tx.marketplace}</div>
-                            {tx.reversalReason && (
-                              <div className="text-[10px] text-rose-500 font-semibold mt-0.5">
-                                Reversal: {tx.reversalReason}
-                              </div>
-                            )}
-                          </td>
-                          <td className="py-3 text-right font-black">
-                            <span className={tx.amount > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
-                              {tx.amount > 0 ? `+₹${tx.amount}` : `-₹${Math.abs(tx.amount)}`}
-                            </span>
-                          </td>
-                          <td className="py-3">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
-                              tx.status === 'Available' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' :
-                              tx.status === 'Pending' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' :
-                              tx.status === 'Confirmed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' :
-                              tx.status === 'Redeemed' ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300' :
-                              'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                            }`}>
-                              {tx.status}
-                            </span>
-                          </td>
-                          <td className="py-3 font-mono text-slate-400 text-[11px]">
-                            {tx.date}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: TIMELINE */}
+          {/* TAB 2: TIMELINE */}
           {activeTab === 'timeline' && (
             <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-6 text-xs">
               <div className="pb-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -1015,98 +796,6 @@ export const UserProfilePage: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Redeem Cashback Modal */}
-      {isRedeemModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-emerald-500" />
-                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Withdraw Confirmed Cashback</h3>
-              </div>
-              <button
-                onClick={() => setIsRedeemModalOpen(false)}
-                className="p-1 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
-              Available to Withdraw: <strong>₹{cashbackWallet.availableBalance}</strong>
-            </div>
-
-            {redeemMessage && (
-              <div className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 ${
-                redeemMessage.type === 'success'
-                  ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200'
-                  : 'bg-rose-50 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-200'
-              }`}>
-                {redeemMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
-                <span>{redeemMessage.text}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleRedeemSubmit} className="space-y-4 text-xs">
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700 dark:text-slate-300">Withdrawal Amount (₹)</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={cashbackWallet.availableBalance}
-                  value={redeemAmount}
-                  onChange={e => setRedeemAmount(Number(e.target.value))}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-black text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700 dark:text-slate-300">Payout Method</label>
-                <select
-                  value={redeemMethod}
-                  onChange={e => setRedeemMethod(e.target.value as any)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold text-slate-900 dark:text-white"
-                >
-                  <option value="UPI">Instant UPI (VPA)</option>
-                  <option value="Bank Transfer">NEFT / IMPS Bank Transfer</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700 dark:text-slate-300">
-                  {redeemMethod === 'UPI' ? 'UPI ID (VPA)' : 'Bank Account & IFSC'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={redeemAccount}
-                  onChange={e => setRedeemAccount(e.target.value)}
-                  placeholder={redeemMethod === 'UPI' ? 'e.g. name@upi' : 'Account number, IFSC'}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setIsRedeemModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 font-bold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={cashbackWallet.availableBalance <= 0}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold shadow-md cursor-pointer"
-                >
-                  Confirm Withdrawal
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Add New Address Modal */}
       {isAddModalOpen && (

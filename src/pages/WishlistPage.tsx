@@ -47,8 +47,7 @@ export const WishlistPage: React.FC = () => {
     { label: 'Comparison History', path: '/comparisons', icon: Scale, active: false },
     { label: 'Price Alerts', path: '/price-alerts', icon: Bell, active: false },
     { label: 'Notifications', path: '/notifications', icon: Bell, active: false },
-    { label: 'Cashback Wallet', path: '/wallet', icon: Wallet, active: false },
-    { label: 'Settings', path: '/settings', icon: Settings, active: false }
+    { label: 'Account Profile', path: '/profile', icon: Settings, active: false }
   ];
 
   return (

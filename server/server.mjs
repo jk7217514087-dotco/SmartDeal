@@ -194,6 +194,53 @@ export const notificationLogs = [];
 export const productReturns = [];
 export const purchaseVerifications = [];
 
+// Categories Table (Section 7)
+export const categories = [
+  { id: 'cat-mobiles', name: 'Mobiles & Tablets', slug: 'mobiles', icon: 'Smartphone', count: 24 },
+  { id: 'cat-laptops', name: 'Laptops & Computers', slug: 'laptops', icon: 'Laptop', count: 18 },
+  { id: 'cat-audio', name: 'Audio & Headphones', slug: 'audio', icon: 'Headphones', count: 32 },
+  { id: 'cat-wearables', name: 'Smartwatches & Wearables', slug: 'wearables', icon: 'Watch', count: 15 },
+  { id: 'cat-appliances', name: 'Home Appliances', slug: 'appliances', icon: 'Tv', count: 20 },
+  { id: 'cat-fashion', name: 'Fashion & Footwear', slug: 'fashion', icon: 'ShoppingBag', count: 45 }
+];
+
+// Marketplaces Table (Section 7: 8 core supported platforms)
+export const marketplaces = [
+  { id: 'amazon', name: 'Amazon India', domain: 'amazon.in', affiliateTag: 'smartdeal-21', commissionRate: 5.5, returnWindowDays: 7, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Electronics', 'Mobiles', 'Fashion', 'Appliances'] },
+  { id: 'flipkart', name: 'Flipkart', domain: 'flipkart.com', affiliateTag: 'smartdeal', commissionRate: 6.0, returnWindowDays: 10, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Electronics', 'Mobiles', 'Fashion', 'Appliances'] },
+  { id: 'meesho', name: 'Meesho', domain: 'meesho.com', affiliateTag: 'smartdeal_aff', commissionRate: 8.0, returnWindowDays: 7, active: true, priceTrackingAllowed: true, priceAlertsAllowed: false, categories: ['Fashion', 'Home', 'Beauty'] },
+  { id: 'myntra', name: 'Myntra', domain: 'myntra.com', affiliateTag: 'smartdeal_myn', commissionRate: 7.5, returnWindowDays: 14, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Fashion', 'Footwear', 'Accessories'] },
+  { id: 'ajio', name: 'AJIO', domain: 'ajio.com', affiliateTag: 'smartdeal_ajio', commissionRate: 7.0, returnWindowDays: 15, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Fashion', 'Footwear'] },
+  { id: 'tatacliq', name: 'Tata CLiQ', domain: 'tatacliq.com', affiliateTag: 'smartdeal_tata', commissionRate: 5.0, returnWindowDays: 7, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Electronics', 'Luxury', 'Fashion'] },
+  { id: 'croma', name: 'Croma', domain: 'croma.com', affiliateTag: 'smartdeal_crm', commissionRate: 4.5, returnWindowDays: 15, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Electronics', 'Mobiles', 'Appliances'] },
+  { id: 'reliancedigital', name: 'Reliance Digital', domain: 'reliancedigital.in', affiliateTag: 'smartdeal_rd', commissionRate: 4.0, returnWindowDays: 7, active: true, priceTrackingAllowed: true, priceAlertsAllowed: true, categories: ['Electronics', 'Mobiles', 'Appliances'] }
+];
+
+// Search Analytics Table
+export const searchAnalytics = [
+  { id: 'search-1', query: 'iPhone 15 128GB', count: 184, zeroResults: false, lastSearchedAt: new Date(Date.now() - 3600000).toISOString() },
+  { id: 'search-2', query: 'Samsung Galaxy M14', count: 142, zeroResults: false, lastSearchedAt: new Date(Date.now() - 7200000).toISOString() },
+  { id: 'search-3', query: 'boAt Airdopes 141', count: 120, zeroResults: false, lastSearchedAt: new Date(Date.now() - 10800000).toISOString() },
+  { id: 'search-4', query: 'HP Pavilion 15', count: 95, zeroResults: false, lastSearchedAt: new Date(Date.now() - 14400000).toISOString() },
+  { id: 'search-5', query: 'Sony WH-1000XM5', count: 68, zeroResults: false, lastSearchedAt: new Date(Date.now() - 18000000).toISOString() },
+  { id: 'search-6', query: 'OnePlus 12R 5G', count: 54, zeroResults: false, lastSearchedAt: new Date(Date.now() - 21600000).toISOString() },
+  { id: 'search-7', query: 'Nike Air Max shoes', count: 41, zeroResults: false, lastSearchedAt: new Date(Date.now() - 25200000).toISOString() }
+];
+
+// Admin Platform Settings
+export const adminSettings = {
+  platformName: 'SmartDeal',
+  maintenanceMode: false,
+  autoApproveSellers: false,
+  defaultAffiliateTag: 'smartdeal-21',
+  clickTrackingEnabled: true,
+  priceAlertsGlobalEnabled: true,
+  minPayoutThreshold: 500,
+  supportEmail: 'support@smartdeal.com',
+  ownerPhone: '7217514087',
+  ownerEmail: 'jk7217514087@gmail.com'
+};
+
 // Owner Notification Configuration for Phone (SMS: 7217514087) & Email (jk7217514087@gmail.com)
 export const OWNER_NOTIFICATION_CONFIG = {
   phone: process.env.OWNER_PHONE || '7217514087',
@@ -984,8 +1031,12 @@ export const server = http.createServer(async (req, res) => {
     }
 
     // ------------------------------------------------------------------------
-    // SECTION 19: PRODUCTS & COMPARISONS
+    // SECTION 19: CATEGORIES, PRODUCTS & COMPARISONS
     // ------------------------------------------------------------------------
+    if (method === 'GET' && path === '/api/categories') {
+      return sendJSON(200, { success: true, count: categories.length, data: categories });
+    }
+
     if (method === 'GET' && path === '/api/products') {
       const q = reqUrl.searchParams.get('q');
       const cat = reqUrl.searchParams.get('category');
@@ -1702,60 +1753,373 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
     // ------------------------------------------------------------------------
     if (path.startsWith('/api/admin')) {
       const session = getAuthSession(req);
-      if (!session || session.role !== 'ADMIN') {
+      if (!session) {
+        return sendJSON(401, {
+          success: false,
+          error: 'HTTP 401 Unauthorized: Valid authentication token required.'
+        });
+      }
+      if (session.role !== 'ADMIN') {
         return sendJSON(403, {
           success: false,
           error: 'HTTP 403 Forbidden: Administrator role authorization required.'
         });
       }
 
-      if (path === '/api/admin/analytics') {
+      // 1. OVERVIEW & ANALYTICS
+      if (path === '/api/admin/overview' || path === '/api/admin/analytics') {
         const totalCommissionConfirmed = conversions
           .filter(c => c.status === 'CONFIRMED')
-          .reduce((sum, c) => safeMoneyAdd(sum, c.commissionEarned), 0);
+          .reduce((sum, c) => safeMoneyAdd(sum, c.commissionEarned || 0), 0);
 
-        const totalCashbackLiability = conversions
-          .filter(c => c.status === 'CONFIRMED')
-          .reduce((sum, c) => safeMoneyAdd(sum, c.userCashbackAllocation), 0);
+        const totalCommissionPending = outboundClicks
+          .filter(c => c.commissionStatus === 'PENDING')
+          .reduce((sum, c) => safeMoneyAdd(sum, c.estimatedCommission || safeMoneyMultiply(c.priceAtClick || 0, 5.0)), 0);
 
-        const totalCashbackReversed = conversions
-          .filter(c => c.status === 'REVERSED')
-          .reduce((sum, c) => safeMoneyAdd(sum, c.userCashbackAllocation), 0);
+        const totalViews = 120 + outboundClicks.length * 2;
+        const totalComparisons = 68 + Math.floor(outboundClicks.length * 1.5);
+        const totalSearches = searchAnalytics.reduce((sum, s) => sum + s.count, 0);
 
         return sendJSON(200, {
           success: true,
           metrics: {
             totalRegisteredUsers: users.length,
-            activeGuestSessions: 142,
+            totalGuestVisitors: 142 + outboundClicks.filter(c => c.guestId).length,
+            totalProducts: products.length,
+            totalProductSearches: totalSearches,
+            totalProductViews: totalViews,
+            totalComparisons: totalComparisons,
             totalOutboundClicks: outboundClicks.length,
-            totalConversions: conversions.length,
-            confirmedCommission: totalCommissionConfirmed,
-            cashbackLiability: totalCashbackLiability,
-            cashbackReversed: totalCashbackReversed,
-            netPlatformMargin: safeMoneySubtract(totalCommissionConfirmed, totalCashbackLiability)
+            pendingCommissions: totalCommissionPending,
+            confirmedCommissions: totalCommissionConfirmed,
+            totalAffiliateRevenue: totalCommissionConfirmed
+          },
+          charts: {
+            userGrowth: [
+              { month: 'Jun', users: Math.max(1, users.length - 3), guests: 80 },
+              { month: 'Jul', users: Math.max(2, users.length - 2), guests: 110 },
+              { month: 'Aug', users: users.length, guests: 142 }
+            ],
+            topMarketplaces: marketplaces.map(m => ({
+              marketplace: m.name,
+              clicks: outboundClicks.filter(c => (c.marketplace || '').toLowerCase() === m.id.toLowerCase() || (c.marketplace || '').toLowerCase() === m.name.toLowerCase()).length,
+              commissionRate: m.commissionRate
+            })),
+            commissionStatusBreakdown: [
+              { status: 'Confirmed', amount: totalCommissionConfirmed },
+              { status: 'Pending', amount: totalCommissionPending }
+            ]
           }
         });
       }
 
-      if (path === '/api/admin/users') {
-        return sendJSON(200, { success: true, count: users.length, data: users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role, status: u.status, createdAt: u.createdAt })) });
+      // 2. USER MANAGEMENT
+      if (method === 'GET' && path === '/api/admin/users') {
+        const search = (reqUrl.searchParams.get('q') || '').toLowerCase().trim();
+        const statusFilter = reqUrl.searchParams.get('status');
+
+        let filtered = users.map(u => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          phone: u.phone,
+          role: u.role,
+          status: u.status || 'ACTIVE',
+          createdAt: u.createdAt,
+          lastLoginAt: u.lastLoginAt || u.createdAt,
+          activityCount: outboundClicks.filter(c => c.userId === u.id).length,
+          wishlistCount: (wishlists.get(u.id) || []).length
+        }));
+
+        if (search) {
+          filtered = filtered.filter(u =>
+            u.name.toLowerCase().includes(search) ||
+            u.email.toLowerCase().includes(search) ||
+            u.id.toLowerCase().includes(search)
+          );
+        }
+
+        if (statusFilter && statusFilter !== 'ALL') {
+          filtered = filtered.filter(u => u.status === statusFilter);
+        }
+
+        return sendJSON(200, { success: true, count: filtered.length, data: filtered });
       }
 
-      if (path === '/api/admin/conversions') {
-        return sendJSON(200, { success: true, count: conversions.length, data: conversions });
+      if (method === 'PUT' && path.startsWith('/api/admin/users/') && path.endsWith('/status')) {
+        const userId = path.split('/')[4];
+        const { status } = await parseJsonBody(req);
+        const validStatuses = ['ACTIVE', 'INACTIVE', 'SUSPENDED'];
+        if (!validStatuses.includes(status)) {
+          return sendJSON(400, { success: false, error: 'Invalid status. Must be ACTIVE, INACTIVE, or SUSPENDED.' });
+        }
+
+        const user = users.find(u => u.id === userId);
+        if (!user) {
+          return sendJSON(404, { success: false, error: 'User not found.' });
+        }
+
+        const prevStatus = user.status;
+        user.status = status;
+        saveUsersToFile();
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'USER_STATUS_UPDATE',
+          targetEntity: 'User',
+          entityId: userId,
+          details: { previousStatus: prevStatus, newStatus: status, userEmail: user.email },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(200, { success: true, message: `User status updated to ${status}.`, user: { id: user.id, email: user.email, status: user.status } });
       }
 
-      if (path === '/api/admin/cashback') {
-        return sendJSON(200, { success: true, count: cashbackTransactions.length, data: cashbackTransactions });
+      // 3. GUEST MANAGEMENT
+      if (method === 'GET' && path === '/api/admin/guests') {
+        const guestsList = [
+          { sessionId: 'GUEST-SESSION-9842', createdAt: new Date(Date.now() - 3600000 * 2).toISOString(), lastActivityAt: new Date(Date.now() - 600000).toISOString(), searches: 4, views: 6, comparisons: 2, clicks: 1 },
+          { sessionId: 'GUEST-SESSION-7219', createdAt: new Date(Date.now() - 3600000 * 5).toISOString(), lastActivityAt: new Date(Date.now() - 1800000).toISOString(), searches: 2, views: 3, comparisons: 1, clicks: 0 },
+          { sessionId: 'GUEST-SESSION-5140', createdAt: new Date(Date.now() - 3600000 * 12).toISOString(), lastActivityAt: new Date(Date.now() - 7200000).toISOString(), searches: 5, views: 8, comparisons: 3, clicks: 2 },
+          { sessionId: 'GUEST-SESSION-3321', createdAt: new Date(Date.now() - 86400000).toISOString(), lastActivityAt: new Date(Date.now() - 43200000).toISOString(), searches: 1, views: 2, comparisons: 0, clicks: 1 }
+        ];
+
+        return sendJSON(200, { success: true, count: guestsList.length, data: guestsList });
       }
 
-      if (path === '/api/admin/audit-logs') {
+      // 4. PRODUCT MANAGEMENT (CRUD)
+      if (method === 'GET' && path === '/api/admin/products') {
+        return sendJSON(200, { success: true, count: products.length, data: products });
+      }
+
+      if (method === 'POST' && path === '/api/admin/products') {
+        const body = await parseJsonBody(req);
+        if (!body.name || !body.category || !body.sellingPrice) {
+          return sendJSON(400, { success: false, error: 'Product name, category, and selling price are required.' });
+        }
+
+        const newProd = {
+          id: body.id || `prod-${Date.now().toString(36)}`,
+          name: body.name.trim(),
+          brand: body.brand || 'Generic',
+          category: body.category,
+          mrp: Number(body.mrp) || Number(body.sellingPrice),
+          sellingPrice: Number(body.sellingPrice),
+          discountPercent: body.mrp ? Math.round(((body.mrp - body.sellingPrice) / body.mrp) * 100) : 0,
+          rating: Number(body.rating) || 4.5,
+          reviewsCount: Number(body.reviewsCount) || 10,
+          dealScore: Number(body.dealScore) || 85,
+          active: body.active !== false,
+          image: body.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
+          description: body.description || '',
+          marketplaceListings: Array.isArray(body.marketplaceListings) ? body.marketplaceListings : []
+        };
+
+        products.unshift(newProd);
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'PRODUCT_CREATE',
+          targetEntity: 'Product',
+          entityId: newProd.id,
+          details: { name: newProd.name, category: newProd.category, price: newProd.sellingPrice },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(201, { success: true, message: 'Product created successfully.', product: newProd });
+      }
+
+      if (method === 'PUT' && path.startsWith('/api/admin/products/')) {
+        const prodId = path.split('/')[4];
+        const body = await parseJsonBody(req);
+        const prod = products.find(p => p.id === prodId);
+        if (!prod) {
+          return sendJSON(404, { success: false, error: 'Product not found.' });
+        }
+
+        Object.assign(prod, body);
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'PRODUCT_UPDATE',
+          targetEntity: 'Product',
+          entityId: prodId,
+          details: { name: prod.name, updatedFields: Object.keys(body) },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(200, { success: true, message: 'Product updated successfully.', product: prod });
+      }
+
+      if (method === 'DELETE' && path.startsWith('/api/admin/products/')) {
+        const prodId = path.split('/')[4];
+        const idx = products.findIndex(p => p.id === prodId);
+        if (idx === -1) {
+          return sendJSON(404, { success: false, error: 'Product not found.' });
+        }
+
+        const removed = products.splice(idx, 1)[0];
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'PRODUCT_DELETE',
+          targetEntity: 'Product',
+          entityId: prodId,
+          details: { name: removed.name },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(200, { success: true, message: 'Product deleted successfully.' });
+      }
+
+      // 5. CATEGORIES
+      if (method === 'GET' && path === '/api/admin/categories') {
+        return sendJSON(200, { success: true, count: categories.length, data: categories });
+      }
+
+      if (method === 'POST' && path === '/api/admin/categories') {
+        const { name, slug, icon } = await parseJsonBody(req);
+        if (!name || !slug) {
+          return sendJSON(400, { success: false, error: 'Category name and slug are required.' });
+        }
+
+        const newCat = {
+          id: `cat-${slug.toLowerCase().replace(/\s+/g, '-')}`,
+          name: name.trim(),
+          slug: slug.toLowerCase().trim(),
+          icon: icon || 'Tag',
+          count: 0
+        };
+        categories.push(newCat);
+
+        return sendJSON(201, { success: true, message: 'Category added.', category: newCat });
+      }
+
+      // 6. MARKETPLACES
+      if (method === 'GET' && path === '/api/admin/marketplaces') {
+        return sendJSON(200, { success: true, count: marketplaces.length, data: marketplaces });
+      }
+
+      if (method === 'PUT' && path.startsWith('/api/admin/marketplaces/')) {
+        const mId = path.split('/')[4];
+        const body = await parseJsonBody(req);
+        const m = marketplaces.find(item => item.id.toLowerCase() === mId.toLowerCase());
+        if (!m) {
+          return sendJSON(404, { success: false, error: 'Marketplace not found.' });
+        }
+
+        Object.assign(m, body);
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'MARKETPLACE_UPDATE',
+          targetEntity: 'Marketplace',
+          entityId: mId,
+          details: { name: m.name, commissionRate: m.commissionRate, active: m.active },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(200, { success: true, message: 'Marketplace updated successfully.', marketplace: m });
+      }
+
+      // 7. COMMISSIONS & CONVERSIONS
+      if (method === 'GET' && path === '/api/admin/commissions') {
+        const status = reqUrl.searchParams.get('status');
+        let list = conversions;
+        if (status && status !== 'ALL') {
+          list = list.filter(c => c.status === status);
+        }
+        return sendJSON(200, { success: true, count: list.length, data: list });
+      }
+
+      if (method === 'POST' && path === '/api/admin/commissions/verify') {
+        const { conversionId, status, notes } = await parseJsonBody(req);
+        const conv = conversions.find(c => c.id === conversionId);
+        if (!conv) {
+          return sendJSON(404, { success: false, error: 'Conversion record not found.' });
+        }
+
+        const prev = conv.status;
+        conv.status = status;
+        if (notes) conv.notes = notes;
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'COMMISSION_STATUS_UPDATE',
+          targetEntity: 'AffiliateConversion',
+          entityId: conversionId,
+          details: { previousStatus: prev, newStatus: status, notes },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(200, { success: true, message: `Commission marked as ${status}.`, conversion: conv });
+      }
+
+      // 8. OUTBOUND CLICKS
+      if (method === 'GET' && path === '/api/admin/clicks') {
+        const store = reqUrl.searchParams.get('marketplace');
+        let list = outboundClicks;
+        if (store && store !== 'ALL') {
+          list = list.filter(c => (c.marketplace || '').toLowerCase() === store.toLowerCase());
+        }
+        return sendJSON(200, { success: true, count: list.length, data: list });
+      }
+
+      // 9. SEARCH ANALYTICS
+      if (method === 'GET' && path === '/api/admin/searches') {
+        return sendJSON(200, { success: true, count: searchAnalytics.length, data: searchAnalytics });
+      }
+
+      // 10. ADMIN SETTINGS
+      if (method === 'GET' && path === '/api/admin/settings') {
+        return sendJSON(200, { success: true, data: adminSettings });
+      }
+
+      if (method === 'PUT' && path === '/api/admin/settings') {
+        const body = await parseJsonBody(req);
+        Object.assign(adminSettings, body);
+
+        auditLogs.unshift({
+          id: generateId('AUDIT'),
+          adminId: session.userId,
+          adminEmail: session.email,
+          action: 'SETTINGS_UPDATE',
+          targetEntity: 'AdminSettings',
+          entityId: 'GLOBAL',
+          details: { updatedFields: Object.keys(body) },
+          timestamp: new Date().toISOString(),
+          ipAddress: req.socket.remoteAddress || '127.0.0.1'
+        });
+
+        return sendJSON(200, { success: true, message: 'Settings saved.', data: adminSettings });
+      }
+
+      // 11. AUDIT LOGS
+      if (method === 'GET' && (path === '/api/admin/audit-logs' || path === '/api/admin/activity-logs')) {
         return sendJSON(200, { success: true, count: auditLogs.length, data: auditLogs });
       }
 
+      // 12. CSV EXPORTS
       if (path.startsWith('/api/admin/export/')) {
         const type = path.replace('/api/admin/export/', '');
-        // Audit log CSV export action (Section 21.14 & 21.15)
         auditLogs.unshift({
           id: generateId('AUDIT'),
           adminId: session.userId,
@@ -1770,12 +2134,15 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
 
         let csvHeader = '';
         let csvRows = [];
-        if (type === 'conversions') {
-          csvHeader = 'ConversionID,OrderRef,Store,SaleAmount,Commission,Cashback,Status\n';
-          csvRows = conversions.map(c => `${c.id},${c.orderRef},${c.marketplace},${c.saleAmount},${c.commissionEarned},${c.userCashbackAllocation},${c.status}`);
-        } else if (type === 'cashback') {
-          csvHeader = 'TransactionID,UserID,OrderRef,Amount,Status,Type\n';
-          csvRows = cashbackTransactions.map(t => `${t.id},${t.userId},${t.orderRef},${t.amount},${t.status},${t.type}`);
+        if (type === 'users') {
+          csvHeader = 'UserID,Name,Email,Phone,Role,Status,CreatedAt\n';
+          csvRows = users.map(u => `${u.id},"${u.name}",${u.email},${u.phone || ''},${u.role},${u.status || 'ACTIVE'},${u.createdAt}`);
+        } else if (type === 'conversions' || type === 'commissions') {
+          csvHeader = 'ConversionID,OrderRef,Store,SaleAmount,Commission,Status\n';
+          csvRows = conversions.map(c => `${c.id},${c.orderRef},${c.marketplace},${c.saleAmount},${c.commissionEarned},${c.status}`);
+        } else if (type === 'clicks') {
+          csvHeader = 'ClickID,ProductID,Store,Price,UserID,GuestID,Timestamp\n';
+          csvRows = outboundClicks.map(c => `${c.clickId},${c.productId},${c.marketplace},${c.priceAtClick},${c.userId || ''},${c.guestId || ''},${c.clickedAt}`);
         } else {
           csvHeader = 'LogID,AdminEmail,Action,TargetEntity,Timestamp\n';
           csvRows = auditLogs.map(l => `${l.id},${l.adminEmail},${l.action},${l.targetEntity},${l.timestamp}`);

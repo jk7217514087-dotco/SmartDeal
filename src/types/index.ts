@@ -243,7 +243,7 @@ export interface TrackedUser {
   lastLoginAt: string;
   last_login: string; // alias
   role: 'USER' | 'ADMIN';
-  status: 'ACTIVE' | 'SUSPENDED';
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   totalSearches: number;
   totalViews: number;
   totalComparisons: number;

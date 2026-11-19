@@ -297,14 +297,18 @@ export const AdminDashboardPage: React.FC = () => {
     else if (path.includes('/admin/guest-sessions') || path.includes('/admin/guests')) setActiveTab('guests');
     else if (path.includes('/admin/product-activity') || path.includes('/admin/products')) setActiveTab('product-activity');
     else if (path.includes('/admin/comparisons')) setActiveTab('comparisons');
-    else if (path.includes('/admin/outbound-clicks')) setActiveTab('outbound-clicks');
+    else if (path.includes('/admin/outbound-clicks') || path.includes('/admin/clicks')) setActiveTab('outbound-clicks');
     else if (path.includes('/admin/conversions')) setActiveTab('conversions');
     else if (path.includes('/admin/commissions')) setActiveTab('commissions');
     else if (path.includes('/admin/cashback')) setActiveTab('cashback');
     else if (path.includes('/admin/marketplaces')) setActiveTab('marketplaces');
     else if (path.includes('/admin/reports')) setActiveTab('reports');
-    else if (path.includes('/admin/audit-logs')) setActiveTab('audit-logs');
+    else if (path.includes('/admin/audit-logs') || path.includes('/admin/activity-logs')) setActiveTab('audit-logs');
     else if (path.includes('/admin/settings')) setActiveTab('settings');
+    else if (path.includes('/admin/orders')) setActiveTab('orders');
+    else if (path.includes('/admin/sellers') || path.includes('/admin/kyc')) setActiveTab('sellers');
+    else if (path.includes('/admin/searches') || path.includes('/admin/search-analytics')) setActiveTab('product-activity');
+    else setActiveTab('overview');
   }, [location.pathname]);
 
 
