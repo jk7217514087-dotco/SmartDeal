@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Reflection;
 
 namespace SmartDeal
 {
@@ -11,27 +11,57 @@ namespace SmartDeal
         static void Main(string[] args)
         {
             string url = "https://smart-deal-m4ca.vercel.app/";
-            string iconUrl = "https://smart-deal-m4ca.vercel.app/favicon.png";
+            string edgePath = @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe";
+            string chromePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
+
+            string browserPath = File.Exists(edgePath) ? edgePath : (File.Exists(chromePath) ? chromePath : "");
 
             try
             {
-                // 1. Create Desktop shortcut
-                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                string desktopFile = Path.Combine(desktopPath, "SmartDeal.url");
-                CreateUrlShortcut(desktopFile, url, iconUrl);
+                Type shellType = Type.GetTypeFromProgID("WScript.Shell");
+                if (shellType != null)
+                {
+                    dynamic shell = Activator.CreateInstance(shellType);
+                    string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                    string startMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
+                    string exePath = Assembly.GetExecutingAssembly().Location;
 
-                // 2. Create Start Menu Programs shortcut
-                string startMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
-                string startMenuFile = Path.Combine(startMenuPath, "SmartDeal.url");
-                CreateUrlShortcut(startMenuFile, url, iconUrl);
+                    // 1. Desktop standalone .lnk shortcut
+                    string desktopLnk = Path.Combine(desktopPath, "SmartDeal.lnk");
+                    dynamic shortcut1 = shell.CreateShortcut(desktopLnk);
+                    if (!string.IsNullOrEmpty(browserPath))
+                    {
+                        shortcut1.TargetPath = browserPath;
+                        shortcut1.Arguments = "--app=" + url;
+                        shortcut1.IconLocation = exePath + ",0";
+                    }
+                    else
+                    {
+                        shortcut1.TargetPath = url;
+                    }
+                    shortcut1.Description = "SmartDeal PRO Standalone App";
+                    shortcut1.Save();
+
+                    // 2. Start Menu standalone .lnk shortcut
+                    string startMenuLnk = Path.Combine(startMenuPath, "SmartDeal.lnk");
+                    dynamic shortcut2 = shell.CreateShortcut(startMenuLnk);
+                    if (!string.IsNullOrEmpty(browserPath))
+                    {
+                        shortcut2.TargetPath = browserPath;
+                        shortcut2.Arguments = "--app=" + url;
+                        shortcut2.IconLocation = exePath + ",0";
+                    }
+                    else
+                    {
+                        shortcut2.TargetPath = url;
+                    }
+                    shortcut2.Description = "SmartDeal PRO Standalone App";
+                    shortcut2.Save();
+                }
             }
             catch { }
 
-            // 3. Launch in standalone App Window Mode
-            string edgePath = @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe";
-            string chromePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
-            string chromePathUser = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\Chrome\Application\chrome.exe");
-
+            // Launch in standalone App Window Mode
             try
             {
                 if (File.Exists(edgePath))
@@ -44,34 +74,12 @@ namespace SmartDeal
                     Process.Start(chromePath, "--app=" + url + " --window-size=1280,850");
                     return;
                 }
-                if (File.Exists(chromePathUser))
-                {
-                    Process.Start(chromePathUser, "--app=" + url + " --window-size=1280,850");
-                    return;
-                }
             }
             catch { }
 
-            // Fallback: Default browser
             try
             {
                 Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            }
-            catch { }
-        }
-
-        static void CreateUrlShortcut(string filePath, string targetUrl, string iconFile)
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(filePath, false))
-                {
-                    writer.WriteLine("[InternetShortcut]");
-                    writer.WriteLine("URL=" + targetUrl);
-                    writer.WriteLine("IconIndex=0");
-                    writer.WriteLine("IconFile=" + iconFile);
-                    writer.WriteLine("HotKey=0");
-                }
             }
             catch { }
         }

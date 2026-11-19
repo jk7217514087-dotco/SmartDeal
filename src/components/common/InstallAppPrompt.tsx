@@ -338,18 +338,19 @@ export const InstallAppPrompt: React.FC = () => {
           setShowBanner(false);
           setShowDownloadModal(false);
           setDeferredPrompt(null);
+          return;
         }
       } catch (err) {
         console.warn('Desktop install prompt error:', err);
-        setShowDesktopGuide(true);
       }
-    } else {
-      // If deferredPrompt is not ready in Edge/Chrome, show highlighted address bar guide
-      setShowDesktopGuide(true);
-      setDownloadToastMsg('Browser ke URL bar me upar right side [ 🖥️ Install ] icon par click karein!');
-      setShowDownloadToast(true);
-      setTimeout(() => setShowDownloadToast(false), 5000);
     }
+
+    // Direct 1-click fallback: Download the official installer (.exe) and show clear guide
+    downloadWindowsAppExe();
+    setShowDesktopGuide(true);
+    setDownloadToastMsg('SmartDeal-Windows-App.exe download ho gayi! Downloads me "Open file" dabayein.');
+    setShowDownloadToast(true);
+    setTimeout(() => setShowDownloadToast(false), 6000);
   };
 
   const triggerPwaInstall = async () => {
