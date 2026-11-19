@@ -203,14 +203,25 @@ export const triggerDirectAppDownload = (deferredPrompt?: BeforeInstallPromptEve
 };
 
 export const InstallAppPrompt: React.FC = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(
+    () => (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt || null
+  );
   const [showBanner, setShowBanner] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [showDownloadToast, setShowDownloadToast] = useState(false);
+  const [downloadToastMsg, setDownloadToastMsg] = useState('');
   const [isInstalled, setIsInstalled] = useState(false);
   const [activeTab, setActiveTab] = useState<'mobile' | 'desktop'>('mobile');
   const [isIosDevice, setIsIosDevice] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [showDesktopGuide, setShowDesktopGuide] = useState(false);
+
+  // Browser detection
+  const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent.toLowerCase() : '';
+  const isAndroid = /android/.test(userAgent);
+  const isEdge = /edg\//.test(userAgent);
+  const isChrome = !isEdge && /chrome|crios/.test(userAgent) && !/samsung|vivo|oppo|miui/.test(userAgent);
+  const isVivoOrNativeBrowser = isAndroid && !isChrome;
 
   useEffect(() => {
     // Check if app is already running in standalone/installed mode
@@ -224,7 +235,6 @@ export const InstallAppPrompt: React.FC = () => {
     }
 
     // Detect device type
-    const userAgent = window.navigator.userAgent.toLowerCase();
     const isMobile = /android|iphone|ipad|ipod|mobile/.test(userAgent);
     const isIos = /iphone|ipad|ipod/.test(userAgent);
     setIsIosDevice(isIos);
@@ -233,9 +243,24 @@ export const InstallAppPrompt: React.FC = () => {
     // Show banner on mobile/desktop unless already running as standalone app
     setShowBanner(true);
 
+    // Pick up early prompt if already captured in <head>
+    const earlyPrompt = (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt;
+    if (earlyPrompt) {
+      setDeferredPrompt(earlyPrompt);
+    }
+
+    const handlePromptReady = (e: Event) => {
+      const customEvt = e as CustomEvent;
+      if (customEvt.detail) {
+        setDeferredPrompt(customEvt.detail);
+      }
+    };
+    window.addEventListener('smartdeal-prompt-ready', handlePromptReady);
+
     // Listen for beforeinstallprompt event (Android / Chromium / Edge / Desktop)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt = e as BeforeInstallPromptEvent;
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowBanner(true);
     };
@@ -258,34 +283,33 @@ export const InstallAppPrompt: React.FC = () => {
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
+      window.removeEventListener('smartdeal-prompt-ready', handlePromptReady);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('trigger-app-install', handleCustomTrigger);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, []);
+  }, [userAgent]);
 
   const handleAppDownloadClick = () => {
-    // 1. Always open download modal immediately so user sees the 1-Click Install button!
+    // Open the download/install modal immediately so the user sees the primary 1-click install button!
     setShowDownloadModal(true);
     setShowBanner(false);
-
-    // 2. Also trigger direct download so file starts downloading right away
-    triggerDirectAppDownload(deferredPrompt);
-    setShowDownloadToast(true);
-    setTimeout(() => setShowDownloadToast(false), 4500);
   };
 
   const handleMobileInstallClick = async () => {
-    // 1. Direct download mobile launcher file
-    downloadMobileAppLauncher();
-    setShowDownloadToast(true);
-    setTimeout(() => setShowDownloadToast(false), 4500);
+    // If on Android but in Vivo/Native browser, Vivo blocks PWA installs:
+    // Open in Google Chrome where WebAPK phone screen install is 100% supported!
+    if (isVivoOrNativeBrowser) {
+      openInChromeIntent();
+      return;
+    }
 
-    // 2. If browser has native PWA prompt, trigger it!
-    if (deferredPrompt) {
+    // In Chrome (or browser with deferredPrompt):
+    const promptEvent = deferredPrompt || (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt;
+    if (promptEvent) {
       try {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
+        promptEvent.prompt();
+        const choice = await promptEvent.userChoice;
         if (choice.outcome === 'accepted') {
           setIsInstalled(true);
           setShowBanner(false);
@@ -296,23 +320,19 @@ export const InstallAppPrompt: React.FC = () => {
         console.warn('Install prompt error:', err);
       }
     } else {
-      // If deferredPrompt not available (e.g. Vivo browser), open in Google Chrome for 100% install
-      openInChromeIntent();
+      // In Chrome if prompt not fired yet, guide user to 3 dots -> Install app
+      setDownloadToastMsg('Chrome ke upar 3 dots (⋮) par tap karke "Install app" select karein!');
+      setShowDownloadToast(true);
+      setTimeout(() => setShowDownloadToast(false), 5000);
     }
   };
 
   const handleDesktopInstallClick = async () => {
-    // 1. Direct download Windows Standalone Executable (.exe) and shortcut (.url)
-    downloadWindowsAppExe();
-    downloadDesktopShortcut();
-    setShowDownloadToast(true);
-    setTimeout(() => setShowDownloadToast(false), 4500);
-
-    // 2. If browser supports native desktop PWA, trigger it
-    if (deferredPrompt) {
+    const promptEvent = deferredPrompt || (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt;
+    if (promptEvent) {
       try {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
+        promptEvent.prompt();
+        const choice = await promptEvent.userChoice;
         if (choice.outcome === 'accepted') {
           setIsInstalled(true);
           setShowBanner(false);
@@ -321,7 +341,14 @@ export const InstallAppPrompt: React.FC = () => {
         }
       } catch (err) {
         console.warn('Desktop install prompt error:', err);
+        setShowDesktopGuide(true);
       }
+    } else {
+      // If deferredPrompt is not ready in Edge/Chrome, show highlighted address bar guide
+      setShowDesktopGuide(true);
+      setDownloadToastMsg('Browser ke URL bar me upar right side [ 🖥️ Install ] icon par click karein!');
+      setShowDownloadToast(true);
+      setTimeout(() => setShowDownloadToast(false), 5000);
     }
   };
 
@@ -371,9 +398,9 @@ export const InstallAppPrompt: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
             </div>
             <div className="text-slate-300 text-[11px] mt-0.5">
-              {activeTab === 'desktop'
+              {downloadToastMsg || (activeTab === 'desktop'
                 ? 'Windows App (SmartDeal-Windows-App.exe) aapke Downloads folder me direct save ho rahi hai.'
-                : 'SmartDeal App file Downloads folder me direct save ho rahi hai.'}
+                : 'SmartDeal App file Downloads folder me direct save ho rahi hai.')}
             </div>
           </div>
           <button
@@ -485,36 +512,40 @@ export const InstallAppPrompt: React.FC = () => {
             {/* TAB 1: PHONE (ANDROID / VIVO / IPHONE) */}
             {activeTab === 'mobile' && (
               <div className="space-y-4">
-                {/* 1-Click Phone Screen Install Button (Circled in Red by User) - ALWAYS VISIBLE */}
-                <button
-                  onClick={handleMobileInstallClick}
-                  className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-brand-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-indigo-400/40"
-                >
-                  <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
-                  <span>1-Click Phone Screen par Install karein</span>
-                </button>
+                {/* 1-Click Phone Screen Install Button (Circled in Red by User) */}
+                {isVivoOrNativeBrowser ? (
+                  <button
+                    onClick={openInChromeIntent}
+                    className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-brand-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-blue-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-blue-400/50"
+                  >
+                    <ExternalLink className="w-5 h-5 text-amber-300 animate-pulse" />
+                    <span>🌐 Google Chrome me kholein (App Install karein)</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleMobileInstallClick}
+                    className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-brand-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-indigo-400/40"
+                  >
+                    <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+                    <span>✨ 1-Click Phone Screen par Install karein</span>
+                  </button>
+                )}
 
-                {/* Direct Download Mobile App File Button */}
-                <button
-                  onClick={() => {
-                    downloadMobileAppLauncher();
-                    setShowDownloadToast(true);
-                    setTimeout(() => setShowDownloadToast(false), 4500);
-                  }}
-                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all cursor-pointer"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>📥 Direct Download SmartDeal App File (.html)</span>
-                </button>
+                {/* Android / Vivo Notice */}
+                {isVivoOrNativeBrowser && (
+                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-semibold">
+                    💡 Vivo / Phone browser me app install support nahi hota. Upar blue button dabayein — Chrome me bina kisi download error ke 100% app install ho jayega!
+                  </div>
+                )}
 
                 {/* Android / Vivo Step-by-Step Instructions */}
                 <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-extrabold text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
-                      <span>🤖 Vivo / Android Phone par App kaise lagayein:</span>
+                      <span>🤖 Android / Vivo Phone Screen par App kaise lagayein:</span>
                     </span>
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-600 text-white">
-                      100% Guaranteed
+                      100% Working
                     </span>
                   </div>
 
@@ -524,7 +555,7 @@ export const InstallAppPrompt: React.FC = () => {
                         1
                       </div>
                       <div className="text-slate-800 dark:text-slate-200">
-                        Is website ko <strong>Google Chrome</strong> me open karein (agar Vivo Browser me hain, toh niche button se Chrome me kholein).
+                        Is website ko <strong>Google Chrome</strong> me open karein.
                       </div>
                     </div>
 
@@ -603,117 +634,78 @@ export const InstallAppPrompt: React.FC = () => {
                   <span>1-Click Laptop Window par Install karein</span>
                 </button>
 
-                {/* 1. Primary: Download Windows App (.exe) */}
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-brand-950/30 to-purple-950/30 border border-brand-500/40 shadow-xl space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-brand-400">
-                        <Laptop className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="font-extrabold text-sm text-slate-900 dark:text-white block">
-                          Windows Standalone App (.exe)
-                        </span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                          Windows 11 / 10 / 8 / 7 ke liye direct installer
-                        </span>
-                      </div>
+                {/* Direct Browser Window Install Guide for Edge / Chrome */}
+                <div className={`p-4 rounded-2xl border transition-all ${
+                  showDesktopGuide
+                    ? 'bg-amber-500/15 border-amber-400/60 ring-2 ring-amber-400/30 animate-pulse'
+                    : 'bg-blue-500/10 border-blue-500/30'
+                }`}>
+                  <div className="flex items-center gap-2 font-extrabold text-xs text-blue-300 mb-2">
+                    <Monitor className="w-4 h-4 text-blue-400" />
+                    <span>Microsoft Edge / Chrome se Direct Windows Install:</span>
+                  </div>
+                  <div className="space-y-2.5 text-xs text-slate-300">
+                    <div className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
+                      <span>Upar browser ke URL (address) bar me right side <strong>Install Icon (🖥️ / ➕)</strong> par click karein.</span>
                     </div>
-                    <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-brand-600 text-white shadow-xs">
-                      RECOMMENDED
+                    <div className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
+                      <span>Ya top-right <strong>3 dots (...) &rarr; Apps &rarr; Install SmartDeal</strong> par click karein.</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Windows Desktop Setup (.exe) Installer */}
+                <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-700/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-xs text-white flex items-center gap-1.5">
+                      <Download className="w-4 h-4 text-emerald-400" />
+                      <span>Windows Setup Installer (.exe):</span>
+                    </span>
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-600/20 text-emerald-400 border border-emerald-500/40">
+                      Desktop Shortcut
                     </span>
                   </div>
-
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Double-click karte hi automatically aapke <strong>Desktop</strong> aur <strong>Start Menu</strong> par SmartDeal ka colorful logo ban jayega aur app bina address bar ke standalone window me open hogi.
+                  <p className="text-xs text-slate-400">
+                    Niche button se download karein aur Edge Downloads bar me <strong>"Open file"</strong> dabayein — SmartDeal aapke Desktop par install ho jayegi.
                   </p>
-
                   <button
                     onClick={() => {
                       downloadWindowsAppExe();
+                      setDownloadToastMsg('SmartDeal-Windows-App.exe download ho gayi! Downloads me "Open file" dabayein.');
                       setShowDownloadToast(true);
-                      setTimeout(() => setShowDownloadToast(false), 4500);
+                      setTimeout(() => setShowDownloadToast(false), 5000);
                     }}
-                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-95 transition-all cursor-pointer"
+                    className="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>📥 Download Windows App (SmartDeal-Windows-App.exe)</span>
+                    <Download className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Download Windows Installer (SmartDeal-Windows-App.exe)</span>
                   </button>
                 </div>
 
-                {/* 2. Secondary Fast Options: 1-Click Setup Script & Shortcut */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <button
-                    onClick={() => {
-                      downloadWindowsBatchSetup();
-                      setShowDownloadToast(true);
-                      setTimeout(() => setShowDownloadToast(false), 4500);
-                    }}
-                    className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70 hover:border-brand-500 flex flex-col items-start gap-1.5 text-left transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-brand-400 transition-colors">
-                        ⚙️ 1-Click Setup (.bat)
-                      </span>
-                      <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-400" />
-                    </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Antivirus-safe instant batch setup
+                {/* 1-Click Desktop Shortcut File Download */}
+                <div className="p-3.5 rounded-2xl bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/60 flex items-center justify-between gap-3">
+                  <div className="text-xs">
+                    <span className="font-extrabold text-brand-900 dark:text-brand-200 block">
+                      Direct Windows Desktop Shortcut (.url)
                     </span>
-                  </button>
-
+                    <span className="text-[11px] text-brand-700 dark:text-brand-300">
+                      Desktop par drag & drop karne ke liye shortcut
+                    </span>
+                  </div>
                   <button
                     onClick={() => {
                       downloadDesktopShortcut();
+                      setDownloadToastMsg('SmartDeal.url shortcut download ho gaya!');
                       setShowDownloadToast(true);
                       setTimeout(() => setShowDownloadToast(false), 4500);
                     }}
-                    className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70 hover:border-brand-500 flex flex-col items-start gap-1.5 text-left transition-all cursor-pointer group"
+                    className="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer shrink-0"
                   >
-                    <div className="flex items-center justify-between w-full">
-                      <span className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-brand-400 transition-colors">
-                        🔗 Direct Shortcut (.url)
-                      </span>
-                      <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-400" />
-                    </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Desktop drag & drop shortcut file
-                    </span>
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Save Shortcut</span>
                   </button>
-                </div>
-
-                {/* 3. Browser PWA App Mode */}
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <Monitor className="w-4 h-4 text-brand-500" />
-                      <span>Chrome / Edge Browser se Install:</span>
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                      Browser PWA
-                    </span>
-                  </div>
-
-                  {deferredPrompt && (
-                    <button
-                      onClick={triggerPwaInstall}
-                      className="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                      <span>1-Click Install as Windows App</span>
-                    </button>
-                  )}
-
-                  <div className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
-                    <div className="flex items-start gap-2">
-                      <span className="w-4 h-4 rounded-full bg-brand-500 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">1</span>
-                      <span>Chrome ya Edge me URL bar ke right side <strong>Install Icon (🖥️ / ⬇️)</strong> par click karein.</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="w-4 h-4 rounded-full bg-brand-500 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">2</span>
-                      <span>Ya <strong>3 dots (⋮)</strong> &rarr; <strong>"Apps"</strong> &rarr; <strong>"Install SmartDeal"</strong> select karein.</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
