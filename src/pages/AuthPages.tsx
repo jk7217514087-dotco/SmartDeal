@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Sparkles, Lock, Mail, User, Smartphone, Eye, EyeOff, AlertCircle, Coins } from 'lucide-react';
+import { Sparkles, Lock, Mail, User, Smartphone, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const LoginPage: React.FC = () => {
@@ -149,38 +149,25 @@ export const LoginPage: React.FC = () => {
             {isLoading ? 'Signing In...' : 'Sign In Securely'}
           </button>
 
-          {/* 1-Click Test Credentials */}
+          {/* 1-Click Test Credentials - Shopper Only */}
           <div className="pt-2">
             <div className="text-[11px] font-semibold text-slate-400 mb-1.5 flex items-center justify-between">
               <span>Quick Test Fill:</span>
-              <span className="text-emerald-500 font-bold">1-Click</span>
+              <span className="text-emerald-500 font-bold">Shopper Login</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setIdentifier('admin@smartdeal.com');
-                  setPassword('admin123');
-                  setErrorMessage('');
-                  setInfoMessage('Filled Admin demo credentials (admin123)');
-                }}
-                className="py-1.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-bold transition-all text-center border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center justify-center gap-1"
-              >
-                <span>🛡️</span>
-                <span>Admin Demo</span>
-              </button>
+            <div>
               <button
                 type="button"
                 onClick={() => {
                   setIdentifier('rohit.kumar@example.com');
                   setPassword('password123');
                   setErrorMessage('');
-                  setInfoMessage('Filled User demo credentials (password123)');
+                  setInfoMessage('Filled User demo credentials (rohit.kumar@example.com)');
                 }}
-                className="py-1.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-bold transition-all text-center border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center justify-center gap-1"
+                className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-bold transition-all text-center border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <span>👤</span>
-                <span>User Demo</span>
+                <span>Fill Demo Shopper Credentials (Rohit Kumar)</span>
               </button>
             </div>
           </div>
@@ -278,7 +265,7 @@ export const RegisterPage: React.FC = () => {
           <Sparkles className="w-6 h-6 text-amber-300" />
         </div>
         <h1 className="text-2xl font-black text-slate-900 dark:text-white">Create SmartDeals Account</h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">Sign up today and earn +45 SmartCoins welcome gift!</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Join SmartDeals for authentic real-time price tracking & deals</p>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-5">
@@ -290,15 +277,15 @@ export const RegisterPage: React.FC = () => {
         )}
 
         {registered ? (
-          <div className="py-6 px-4 rounded-2xl bg-gradient-to-tr from-amber-500/10 via-brand-500/10 to-emerald-500/10 border border-amber-400/40 text-center space-y-3 animate-fadeIn">
-            <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center mx-auto">
-              <Coins className="w-6 h-6" />
+          <div className="py-6 px-4 rounded-2xl bg-gradient-to-tr from-emerald-500/10 via-brand-500/10 to-teal-500/10 border border-emerald-400/40 text-center space-y-3 animate-fadeIn">
+            <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto">
+              <Sparkles className="w-6 h-6" />
             </div>
             <h3 className="text-base font-black text-slate-900 dark:text-white">
               Welcome to SmartDeals{name ? `, ${name}` : ''}!
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-300">
-              <strong className="text-amber-500 font-bold">+45 SmartCoins</strong> welcome bonus has been credited to your wallet.
+              Your shopper account has been created successfully.
             </p>
             <div className="text-[11px] text-slate-400 pt-2 animate-pulse">
               Redirecting to smart shopping...

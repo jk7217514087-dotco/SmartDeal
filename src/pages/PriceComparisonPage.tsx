@@ -5,7 +5,6 @@ import { PriceComparisonTable } from '../components/common/PriceComparisonTable'
 import {
   Sparkles,
   CheckCircle2,
-  Coins,
   Smartphone,
   Laptop,
   Tv,
@@ -293,9 +292,9 @@ export const PriceComparisonPage: React.FC = () => {
                 ₹{(netSavings || 480).toLocaleString('en-IN')}
               </div>
             </div>
-            <div className="text-[11px] text-amber-500 font-medium flex items-center gap-1.5">
-              <Coins className="w-3.5 h-3.5 shrink-0" />
-              <span>+{lowestStore.smartCoins || 120} SmartCoins reward</span>
+            <div className="text-[11px] text-emerald-500 font-medium flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+              <span>Verified Lowest Price Across Stores</span>
             </div>
           </div>
         </div>

@@ -5,7 +5,6 @@ import { InvoiceModal } from '../components/common/InvoiceModal';
 import {
   CheckCircle2,
   Truck,
-  Coins,
   ShoppingBag,
   FileText
 } from 'lucide-react';
@@ -41,21 +40,6 @@ export const OrderConfirmationPage: React.FC = () => {
         <div className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-2xl text-xs font-mono font-bold text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700">
           <span>Order ID:</span>
           <span className="text-brand-600 dark:text-brand-400">{order.id}</span>
-        </div>
-
-        {/* SmartCoins Earned Celebration */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800/60 max-w-md mx-auto flex items-center justify-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shrink-0">
-            <Coins className="w-5 h-5" />
-          </div>
-          <div className="text-left">
-            <div className="text-xs font-black text-amber-950 dark:text-amber-300">
-              +{order.smartCoinsEarned} SmartCoins Credited!
-            </div>
-            <div className="text-[11px] text-amber-800 dark:text-amber-400">
-              Worth ₹{(order.smartCoinsEarned / 10).toFixed(0)} off your next purchase.
-            </div>
-          </div>
         </div>
 
         {/* Action Buttons */}

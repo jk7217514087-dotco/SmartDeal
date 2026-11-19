@@ -116,7 +116,7 @@ export const DealIntelligencePage: React.FC = () => {
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
             <div className="bg-purple-500 h-full rounded-full" style={{ width: `${breakdown.offerQuality}%` }} />
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">Assesses authentic coupon value, bank discounts, and SmartCoins cash rewards.</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">Assesses authentic coupon value, bank discounts, and verified cash rewards.</p>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">

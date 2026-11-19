@@ -42,7 +42,7 @@ export const ProductVsProductPage: React.FC = () => {
       return {
         winner: prodB.name,
         verdict: 'Best Overall Flagship Experience',
-        reason: `${prodB.name} delivers higher customer satisfaction rating (${prodB.rating}★) and premium specifications with ${prodB.smartCoinsEarned} SmartCoins loyalty rewards.`
+        reason: `${prodB.name} delivers higher customer satisfaction rating (${prodB.rating}★) and premium specifications with verified price protection.`
       };
     }
   };
@@ -185,8 +185,8 @@ export const ProductVsProductPage: React.FC = () => {
               <span className="font-bold text-slate-800 dark:text-slate-200">{prodA.deliveryDate} ({prodA.deliveryCharge === 0 ? 'FREE' : `₹${prodA.deliveryCharge}`})</span>
             </div>
             <div className="flex justify-between py-2 items-center">
-              <span className="text-slate-500 dark:text-slate-400">SmartCoins Reward</span>
-              <span className="font-bold text-amber-600 dark:text-amber-400">+{prodA.smartCoinsEarned} Coins (₹{(prodA.smartCoinsEarned / 10).toFixed(0)})</span>
+              <span className="text-slate-500 dark:text-slate-400">Total Savings</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400">₹{(prodA.mrp - prodA.sellingPrice).toLocaleString('en-IN')} off</span>
             </div>
             <div className="flex justify-between py-2 items-center">
               <span className="text-slate-500 dark:text-slate-400">Seller Authenticity</span>
@@ -246,8 +246,8 @@ export const ProductVsProductPage: React.FC = () => {
               <span className="font-bold text-slate-800 dark:text-slate-200">{prodB.deliveryDate} ({prodB.deliveryCharge === 0 ? 'FREE' : `₹${prodB.deliveryCharge}`})</span>
             </div>
             <div className="flex justify-between py-2 items-center">
-              <span className="text-slate-500 dark:text-slate-400">SmartCoins Reward</span>
-              <span className="font-bold text-amber-600 dark:text-amber-400">+{prodB.smartCoinsEarned} Coins (₹{(prodB.smartCoinsEarned / 10).toFixed(0)})</span>
+              <span className="text-slate-500 dark:text-slate-400">Total Savings</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400">₹{(prodB.mrp - prodB.sellingPrice).toLocaleString('en-IN')} off</span>
             </div>
             <div className="flex justify-between py-2 items-center">
               <span className="text-slate-500 dark:text-slate-400">Seller Authenticity</span>

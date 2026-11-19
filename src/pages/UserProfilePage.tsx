@@ -7,7 +7,7 @@ import {
   MapPin,
   ShoppingBag,
   Heart,
-  Coins,
+  LogOut,
   Bell,
   Store,
   ShieldAlert,
@@ -35,8 +35,6 @@ type ProfileTab = 'profile' | 'cashback' | 'timeline' | 'outbound' | 'privacy' |
 
 export const UserProfilePage: React.FC = () => {
   const {
-    setRole,
-    smartCoinsBalance,
     orders,
     wishlist,
     priceAlerts,
@@ -45,7 +43,8 @@ export const UserProfilePage: React.FC = () => {
     cashbackWallet,
     redeemCashback,
     processReturnReversal,
-    refreshCashback
+    refreshCashback,
+    logoutUser
   } = useApp();
 
   const navigate = useNavigate();
@@ -279,11 +278,11 @@ export const UserProfilePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Balance Widgets */}
+        {/* Quick Balance & Auth Actions */}
         <div className="flex flex-wrap items-center gap-4">
           {/* Cashback Wallet Widget */}
           <div className="flex items-center gap-3 bg-white/10 p-3.5 rounded-2xl border border-white/20 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-lg">
               ₹
             </div>
             <div>
@@ -293,17 +292,27 @@ export const UserProfilePage: React.FC = () => {
             </div>
           </div>
 
-          {/* SmartCoins Widget */}
-          <div className="flex items-center gap-3 bg-white/10 p-3.5 rounded-2xl border border-white/20 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold">
-              <Coins className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-[10px] text-amber-200 font-bold uppercase tracking-wider">SmartCoins</div>
-              <div className="text-lg font-black text-white">{smartCoinsBalance}</div>
-              <div className="text-[10px] text-slate-300">Worth ₹{Math.floor(smartCoinsBalance / 10)} discount</div>
-            </div>
-          </div>
+          {/* Quick Sign Out / Sign In Button */}
+          {currentUser ? (
+            <button
+              onClick={async () => {
+                await logoutUser();
+                navigate('/login');
+              }}
+              className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-rose-600/80 hover:bg-rose-600 text-white font-bold text-xs transition-all border border-rose-400/40 shadow-lg shadow-rose-600/20 cursor-pointer active:scale-95"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-all shadow-lg shadow-brand-600/30 cursor-pointer active:scale-95"
+            >
+              <User className="w-4 h-4" />
+              <span>Sign In / Register</span>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -428,20 +437,26 @@ export const UserProfilePage: React.FC = () => {
 
           <div className="pt-2 my-2 border-t border-slate-100 dark:border-slate-800" />
 
-          <div className="p-2 text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-            Switch View
-          </div>
-
-          <button
-            onClick={() => {
-              setRole('ADMIN');
-              navigate('/admin');
-            }}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-          >
-            <ShieldAlert className="w-4 h-4" />
-            <span>Open Admin Dashboard</span>
-          </button>
+          {currentUser ? (
+            <button
+              onClick={async () => {
+                await logoutUser();
+                navigate('/login');
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer font-bold"
+            >
+              <LogOut className="w-4 h-4 text-rose-500" />
+              <span>Sign Out from All Devices</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/40 transition-colors cursor-pointer font-bold"
+            >
+              <User className="w-4 h-4 text-brand-500" />
+              <span>Sign In to Account</span>
+            </Link>
+          )}
         </div>
 
         {/* Tab Content (8 cols) */}

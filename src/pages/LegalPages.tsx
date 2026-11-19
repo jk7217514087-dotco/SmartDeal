@@ -24,9 +24,9 @@ export const TermsPage: React.FC = () => {
         </section>
 
         <section className="space-y-2">
-          <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">3. SmartCoins Loyalty Program Rules</h2>
+          <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">3. Verified Cashback Program Rules</h2>
           <p>
-            SmartCoins are internal platform rewards. The redemption ratio is fixed at <strong>10 SmartCoins = ₹1</strong> discount off eligible purchase subtotals. SmartCoins are non-transferable and may not be converted to fiat cash or transferred to external bank accounts. Maximum redemption per order is capped at 500 SmartCoins (₹50 discount) to ensure program sustainability.
+            Cashback rewards are credited upon verified purchase completion and delivery through partner merchants. Confirmed balances can be withdrawn directly to the user's UPI ID or Indian Bank Account subject to standard verification.
           </p>
         </section>
 
@@ -67,7 +67,7 @@ export const PrivacyPage: React.FC = () => {
         <section className="space-y-2">
           <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">3. User Rights & Data Deletion</h2>
           <p>
-            You retain the right to download your order ledger, review your SmartCoins transaction history, and request permanent deletion of your profile data by writing to privacy@smartdeals.in.
+            You retain the right to download your order ledger, review your transaction history, and request permanent deletion of your profile data by writing to privacy@smartdeals.in.
           </p>
         </section>
       </div>

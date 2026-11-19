@@ -6,7 +6,7 @@ import {
   CheckCircle2,
   TrendingUp,
   Percent,
-  Coins,
+  Sparkles,
   ShieldCheck,
   ArrowRight,
   Upload,
@@ -65,9 +65,9 @@ export const BecomeSellerPage: React.FC = () => {
             <div className="text-xs text-slate-400">Direct visibility alongside Amazon & Flipkart with verified badges.</div>
           </div>
           <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-            <Coins className="w-5 h-5 text-amber-400" />
-            <div className="font-extrabold text-sm text-white">SmartCoins Funded</div>
-            <div className="text-xs text-slate-400">SmartDeals subsidizes loyalty coins to boost your conversion rates.</div>
+            <Sparkles className="w-5 h-5 text-amber-400" />
+            <div className="font-extrabold text-sm text-white">Cashback Funded</div>
+            <div className="text-xs text-slate-400">SmartDeals subsidizes shopper cashback to boost your conversion rates.</div>
           </div>
         </div>
       </div>

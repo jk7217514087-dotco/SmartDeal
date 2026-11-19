@@ -6,7 +6,6 @@ import {
   Layers,
   Scale,
   TrendingDown,
-  Coins,
   Truck,
   Store,
   ShieldAlert,
@@ -23,8 +22,8 @@ export const QuickDemoBar: React.FC = () => {
   const location = useLocation();
   const { role, setRole, setIsAiAssistantOpen, currentUser } = useApp();
 
-  // ONLY Owner / Admin can see this interactive demo panel
-  const isOwner = currentUser?.role === 'ADMIN' || currentUser?.email === 'jk7217514087@gmail.com' || role === 'ADMIN';
+  // ONLY Owner / Verified Admin can see this interactive demo panel
+  const isOwner = currentUser?.role === 'ADMIN' && sessionStorage.getItem('smartdeal_admin_authenticated') === 'true';
   if (!isOwner) {
     return null;
   }
@@ -81,10 +80,10 @@ export const QuickDemoBar: React.FC = () => {
       }
     },
     {
-      title: 'Cart & SmartCoins',
-      desc: '10 Coins = ₹1 discount calculation',
-      icon: Coins,
-      color: 'bg-amber-500',
+      title: 'Cart & Price Engine',
+      desc: 'Transparent store discount calculation',
+      icon: ShoppingBag,
+      color: 'bg-emerald-500',
       action: () => {
         setRole('USER');
         navigate('/cart');

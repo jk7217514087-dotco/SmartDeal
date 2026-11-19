@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   HelpCircle,
   Package,
-  Coins,
   Store,
   CreditCard,
   RotateCcw,
@@ -22,11 +21,11 @@ export const SupportPage: React.FC = () => {
   const faqs = [
     {
       q: 'How does SmartDeals guarantee the lowest price?',
-      a: 'Our crawler regularly monitors live prices across Amazon, Flipkart, Croma, Tata CLiQ, and Reliance Digital. We factor in verified coupons, delivery charges, and SmartCoins redemption to compute the true final payable amount rather than just the surface sticker price.'
+      a: 'Our crawler regularly monitors live prices across Amazon, Flipkart, Croma, Tata CLiQ, and Reliance Digital. We factor in verified coupons, delivery charges, and cashbacks to compute the true final payable amount rather than just the surface sticker price.'
     },
     {
-      q: 'What are SmartCoins and how are they redeemed?',
-      a: 'SmartCoins are internal rewards credited on verified orders. The fixed rule is 10 SmartCoins = ₹1 cash redemption discount. You can redeem up to 500 SmartCoins (₹50) directly at checkout without restrictive minimum cart hurdles.'
+      q: 'How does the Cashback Wallet work?',
+      a: 'When you purchase verified deals through SmartDeals, you earn real cash rewards directly into your Cashback Wallet, which can be withdrawn instantly to your UPI ID or Bank Account.'
     },
     {
       q: 'What is the Deal DNA / Deal Score?',
@@ -51,7 +50,7 @@ export const SupportPage: React.FC = () => {
         </div>
         <h1 className="text-3xl font-black">How Can We Help You Today?</h1>
         <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
-          Instant answers on order tracking, multi-store price matching, SmartCoins, and seller onboarding.
+          Instant answers on order tracking, multi-store price matching, cashback, and seller onboarding.
         </p>
 
         {/* Search */}
@@ -78,8 +77,8 @@ export const SupportPage: React.FC = () => {
           <div className="text-xs font-bold text-slate-900 dark:text-white">Returns & Refunds</div>
         </div>
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500 shadow-xs transition-all space-y-1.5 cursor-pointer">
-          <Coins className="w-5 h-5 text-amber-500 mx-auto" />
-          <div className="text-xs font-bold text-slate-900 dark:text-white">SmartCoins Support</div>
+          <Sparkles className="w-5 h-5 text-amber-500 mx-auto" />
+          <div className="text-xs font-bold text-slate-900 dark:text-white">Cashback Support</div>
         </div>
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500 shadow-xs transition-all space-y-1.5 cursor-pointer">
           <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400 mx-auto" />

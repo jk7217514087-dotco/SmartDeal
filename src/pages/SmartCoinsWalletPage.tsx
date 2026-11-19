@@ -2,18 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { trackingService } from '../services/trackingService';
 import {
-  Coins,
   Sparkles,
   ArrowUpRight,
   ArrowDownLeft,
-  Gift,
-  Share2,
-  Star,
   CheckCircle2,
   Clock,
   Wallet,
   ShieldCheck,
-  ChevronRight,
   TrendingUp,
   X,
   CreditCard,
@@ -22,18 +17,7 @@ import {
 } from 'lucide-react';
 
 export const SmartCoinsWalletPage: React.FC = () => {
-  const {
-    currentUser,
-    smartCoinsBalance,
-    smartCoinsTransactions,
-    claimDailyCoins,
-    canClaimDaily
-  } = useApp();
-
-  // Primary toggle: Cashback Wallet (Panel 8) or SmartCoins Loyalty System
-  const [walletTab, setWalletTab] = useState<'cashback' | 'coins'>('cashback');
-  const [coinsSubTab, setCoinsSubTab] = useState<'all' | 'earned' | 'redeemed'>('all');
-  const [claimMsg, setClaimMsg] = useState<string | null>(null);
+  const { currentUser } = useApp();
 
   // Withdrawal Modal State
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
@@ -48,11 +32,6 @@ export const SmartCoinsWalletPage: React.FC = () => {
   const cashbackWallet = useMemo(() => {
     return trackingService.getCashbackWallet(userId);
   }, [userId, walletVersion]);
-
-  const handleClaim = () => {
-    const res = claimDailyCoins();
-    setClaimMsg(res.message);
-  };
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,15 +58,7 @@ export const SmartCoinsWalletPage: React.FC = () => {
     }
   };
 
-  const filteredCoinsTxs = smartCoinsTransactions.filter(tx => {
-    if (coinsSubTab === 'earned') return tx.type === 'earned';
-    if (coinsSubTab === 'redeemed') return tx.type === 'redeemed';
-    return true;
-  });
-
-  const rupeeValue = Math.floor(smartCoinsBalance / 10);
-
-  // Mock initial transactions matching Panel 8 screenshot if user ledger is empty
+  // Mock initial transactions if user ledger is empty
   const displayCashbackTxs = cashbackWallet.transactions.length > 0
     ? cashbackWallet.transactions
     : [
@@ -98,372 +69,182 @@ export const SmartCoinsWalletPage: React.FC = () => {
           amount: 120,
           status: 'Confirmed' as const,
           createdAt: '2026-10-24T14:30:00Z',
-          orderRef: 'SD-AMZ-99120'
+          details: 'Direct affiliate tracking verified'
         },
         {
           id: 'cb-2',
-          productName: 'HP Pavilion 15',
+          productName: 'boAt Airdopes 141',
           marketplace: 'Flipkart',
-          amount: 50,
-          status: 'Pending' as const,
-          createdAt: '2026-10-23T11:20:00Z',
-          orderRef: 'SD-FLP-48192'
-        },
-        {
-          id: 'cb-3',
-          productName: 'Running Shoes',
-          marketplace: 'Myntra',
-          amount: 40,
-          status: 'Available' as const,
-          createdAt: '2026-10-22T09:15:00Z',
-          orderRef: 'SD-MYN-10294'
+          amount: 45,
+          status: 'Confirmed' as const,
+          createdAt: '2026-10-20T10:15:00Z',
+          details: 'Store invoice matched'
         }
       ];
 
-  const availableBal = cashbackWallet.availableBalance > 0 ? cashbackWallet.availableBalance : 1250;
-  const pendingBal = cashbackWallet.pendingBalance > 0 ? cashbackWallet.pendingBalance : 2350;
-  const totalEarned = cashbackWallet.totalEarned > 0 ? cashbackWallet.totalEarned : 22450;
+  const availableBal = cashbackWallet.availableBalance;
+  const pendingBal = cashbackWallet.pendingBalance;
+  const lifetimeBal = cashbackWallet.totalEarned;
+  const withdrawnBal = cashbackWallet.totalRedeemed;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-      {/* Top Navigation Tabs: Cashback Wallet vs SmartCoins Loyalty */}
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 animate-fadeIn">
+      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-            SmartDeal Financial & Rewards Hub
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+            <Wallet className="w-7 h-7 text-emerald-500" />
+            <span>Cashback Wallet & Rewards Ledger</span>
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Verified double-entry affiliate cashback and loyalty coin redemption
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Real cash earnings on every verified purchase with instant UPI & Bank payouts
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <button
-            onClick={() => setWalletTab('cashback')}
-            className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
-              walletTab === 'cashback'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-white'
-            }`}
-          >
-            <Wallet className="w-4 h-4" />
-            <span>Cashback Wallet (Panel 8)</span>
-          </button>
-
-          <button
-            onClick={() => setWalletTab('coins')}
-            className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
-              walletTab === 'coins'
-                ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-white'
-            }`}
-          >
-            <Coins className="w-4 h-4 text-amber-300" />
-            <span>SmartCoins Rewards</span>
-          </button>
-        </div>
+        <button
+          onClick={() => setIsWithdrawOpen(true)}
+          disabled={availableBal <= 0}
+          className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-40 text-white font-black text-xs shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-all cursor-pointer active:scale-95"
+        >
+          <CreditCard className="w-4 h-4" />
+          <span>Withdraw to UPI / Bank</span>
+        </button>
       </div>
 
-      {/* =================================================================== */}
-      {/* TAB 1: CASHBACK WALLET (DIRECT REPLICA OF PANEL 8 IN REFERENCE IMAGE) */}
-      {/* =================================================================== */}
-      {walletTab === 'cashback' && (
-        <div className="space-y-6 animate-fadeIn">
-          {/* Main Emerald Green Cashback Balance Card (Panel 8) */}
-          <div className="rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border border-emerald-400/40">
-            <div className="space-y-2 text-center md:text-left z-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-extrabold backdrop-blur-md">
-                <ShieldCheck className="w-4 h-4 text-emerald-200" />
-                <span>Audited Double-Entry Ledger</span>
-              </div>
+      {/* Main Cashback Balance Card */}
+      <div className="space-y-6">
+        <div className="rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border border-emerald-400/40">
+          <div className="space-y-2 text-center md:text-left z-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-extrabold backdrop-blur-md">
+              <ShieldCheck className="w-4 h-4 text-emerald-200" />
+              <span>Audited Double-Entry Ledger</span>
+            </div>
 
-              <div className="pt-2">
-                <div className="text-xs text-emerald-100 font-bold uppercase tracking-wider">
-                  Your Cashback Balance
-                </div>
-                <div className="text-4xl sm:text-5xl font-black tracking-tight mt-1 flex items-baseline gap-2 justify-center md:justify-start">
-                  <span>₹{availableBal.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="text-xs text-emerald-100 mt-1 font-medium">
-                  Available for instant withdrawal to Bank or UPI ID
-                </div>
+            <div className="pt-2">
+              <div className="text-xs text-emerald-100 font-bold uppercase tracking-wider">
+                Available to Withdraw
+              </div>
+              <div className="text-4xl sm:text-5xl font-black tracking-tight mt-1">
+                ₹{availableBal.toLocaleString('en-IN')}
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 z-10">
-              <button
-                onClick={() => setIsWithdrawOpen(true)}
-                className="px-8 py-3.5 rounded-2xl bg-white text-emerald-800 hover:bg-emerald-50 font-black text-xs sm:text-sm shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
-              >
-                Withdraw
-              </button>
-            </div>
-
-            {/* Ambient Watermark */}
-            <Wallet className="absolute -right-6 -bottom-6 w-60 h-60 text-white/10 pointer-events-none" />
+            <p className="text-xs text-emerald-100/90 max-w-md pt-1">
+              Confirmed cashback funds ready for instant transfer to your bank account or UPI ID.
+            </p>
           </div>
 
-          {/* Two Summary Cards: Pending Cashback & Total Earned (Panel 8) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Pending Cashback */}
-            <div className="p-5 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Pending Cashback
-                </div>
-                <div className="text-2xl font-black text-slate-900 dark:text-white">
-                  ₹{pendingBal.toLocaleString('en-IN')}
-                </div>
-                <div className="text-[11px] text-slate-400">
-                  Credited once store return window closes (avg 14-30 days)
-                </div>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6" />
-              </div>
-            </div>
-
-            {/* Total Earned */}
-            <div className="p-5 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Total Earned
-                </div>
-                <div className="text-2xl font-black text-emerald-500">
-                  ₹{totalEarned.toLocaleString('en-IN')}
-                </div>
-                <div className="text-[11px] text-slate-400">
-                  Lifetime affiliate commission shared with you
-                </div>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Cashback Transactions (Panel 8) */}
-          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
-                Recent Cashback Transactions
-              </h3>
-              <button
-                type="button"
-                onClick={() => setWalletVersion(v => v + 1)}
-                className="text-xs font-extrabold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <span>View History</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-              {displayCashbackTxs.map(tx => (
-                <div key={tx.id} className="py-3.5 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-black">
-                      ₹
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-black text-slate-900 dark:text-white text-sm truncate max-w-[140px] sm:max-w-none">
-                        {tx.productName}
-                      </div>
-                      <div className="text-[11px] text-slate-400 mt-0.5 truncate max-w-[150px] sm:max-w-none">
-                        Store: <strong className="text-slate-300">{tx.marketplace}</strong> • Ref: {tx.orderRef}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-right space-y-1">
-                    <div className="font-black text-sm text-emerald-400">
-                      +₹{Math.abs(tx.amount)}
-                    </div>
-                    <div>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          tx.status === 'Confirmed'
-                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                            : tx.status === 'Pending'
-                            ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                            : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
-                        }`}
-                      >
-                        {tx.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-2 text-center border-t border-slate-100 dark:border-slate-800">
-              <button
-                type="button"
-                onClick={() => setWalletVersion(v => v + 1)}
-                className="text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                View All Transactions & Audited Ledgers →
-              </button>
-            </div>
+          <div className="z-10 flex flex-col gap-3 w-full md:w-auto">
+            <button
+              onClick={() => setIsWithdrawOpen(true)}
+              disabled={availableBal <= 0}
+              className="px-6 py-3.5 rounded-2xl bg-white text-emerald-800 hover:bg-emerald-50 disabled:opacity-50 font-black text-sm shadow-xl flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
+            >
+              <CreditCard className="w-4 h-4 text-emerald-600" />
+              <span>Withdraw to UPI / Bank</span>
+            </button>
           </div>
         </div>
-      )}
 
-      {/* =================================================================== */}
-      {/* TAB 2: SMARTCOINS LOYALTY REWARDS (10 COINS = ₹1 RULE) */}
-      {/* =================================================================== */}
-      {walletTab === 'coins' && (
-        <div className="space-y-6 animate-fadeIn">
-          {/* Wallet Balance Hero Card */}
-          <div className="rounded-3xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border border-amber-400/30">
-            <div className="space-y-2 text-center md:text-left z-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold backdrop-blur-md">
-                <Coins className="w-4 h-4 text-amber-200" />
-                <span>SmartCoins Loyalty System</span>
-              </div>
-
-              <div className="pt-2">
-                <div className="text-xs text-amber-100 font-semibold uppercase tracking-wider">Current Balance</div>
-                <div className="text-4xl sm:text-5xl font-black tracking-tight mt-1 flex items-baseline gap-2 justify-center md:justify-start">
-                  <span>{smartCoinsBalance}</span>
-                  <span className="text-lg font-bold text-amber-200">SmartCoins</span>
-                </div>
-                <div className="text-sm font-extrabold text-white mt-1">
-                  Redemption Value: <span className="bg-white/20 px-2 py-0.5 rounded-lg">₹{rupeeValue}</span>
-                </div>
-                <div className="text-[11px] text-amber-100 mt-1 font-medium">
-                  Formula: <strong>10 SmartCoins = ₹1</strong> checkout discount
-                </div>
-              </div>
+        {/* 4 KPI Metrics */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Available</div>
+            <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">
+              ₹{availableBal.toLocaleString('en-IN')}
             </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 z-10">
-              <button
-                onClick={handleClaim}
-                disabled={!canClaimDaily}
-                className="px-6 py-3.5 rounded-2xl bg-white text-amber-700 hover:bg-amber-50 font-black text-xs shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
-              >
-                {canClaimDaily ? 'Claim +5 Daily Login Coins' : 'Daily Streak Claimed Today ✓'}
-              </button>
-            </div>
-
-            <Coins className="absolute -right-8 -bottom-8 w-64 h-64 text-white/10 pointer-events-none" />
+            <div className="text-[10px] text-slate-500">Ready to withdraw</div>
           </div>
 
-          {claimMsg && (
-            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs font-bold flex items-center gap-2 animate-fadeIn">
-              <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>{claimMsg}</span>
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pending</div>
+            <div className="text-xl sm:text-2xl font-black text-amber-500">
+              ₹{pendingBal.toLocaleString('en-IN')}
             </div>
-          )}
-
-          {/* Ways to Earn SmartCoins */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">How to Earn SmartCoins</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white dark:bg-[#111827] p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
-                <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-100 dark:border-amber-900/40">
-                  <Gift className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-sm">Purchase Products</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                  Earn up to 500 SmartCoins per eligible order based on product value.
-                </p>
-                <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">Up to 500 Coins/order</div>
-              </div>
-
-              <div className="bg-white dark:bg-[#111827] p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/40">
-                  <Share2 className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-sm">Invite Friends</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                  Get +50 SmartCoins when a friend registers and completes their first purchase.
-                </p>
-                <div className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">+50 Coins per Referral</div>
-              </div>
-
-              <div className="bg-white dark:bg-[#111827] p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-900/40">
-                  <Star className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-sm">Write Reviews</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                  Submit verified product feedback and photo reviews to earn bonus coins.
-                </p>
-                <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">+15 Coins per Review</div>
-              </div>
-
-              <div className="bg-white dark:bg-[#111827] p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
-                <div className="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-900/40">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-sm">Daily App Streak</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                  Open SmartDeals daily to collect streak rewards and flash deal alerts.
-                </p>
-                <div className="text-[11px] font-bold text-purple-600 dark:text-purple-400">+5 Coins Everyday</div>
-              </div>
-            </div>
+            <div className="text-[10px] text-slate-500">In 7-day return window</div>
           </div>
 
-          {/* SmartCoins Transactions */}
-          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Coins Ledger</h3>
-              <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold">
-                <button
-                  onClick={() => setCoinsSubTab('all')}
-                  className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${coinsSubTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'}`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setCoinsSubTab('earned')}
-                  className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${coinsSubTab === 'earned' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'}`}
-                >
-                  Earned
-                </button>
-                <button
-                  onClick={() => setCoinsSubTab('redeemed')}
-                  className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${coinsSubTab === 'redeemed' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'}`}
-                >
-                  Redeemed
-                </button>
-              </div>
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Lifetime Earned</div>
+            <div className="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400">
+              ₹{lifetimeBal.toLocaleString('en-IN')}
             </div>
+            <div className="text-[10px] text-slate-500">Total verified savings</div>
+          </div>
 
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-              {filteredCoinsTxs.map(tx => (
-                <div key={tx.id} className="py-3 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center font-black ${
-                        tx.type === 'earned' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
-                      }`}
-                    >
-                      {tx.type === 'earned' ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Withdrawn</div>
+            <div className="text-xl sm:text-2xl font-black text-slate-700 dark:text-slate-300">
+              ₹{withdrawnBal.toLocaleString('en-IN')}
+            </div>
+            <div className="text-[10px] text-slate-500">Paid out to bank</div>
+          </div>
+        </div>
+
+        {/* Transactions Table */}
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-emerald-500" />
+              <span>Cashback History & Ledger</span>
+            </h2>
+            <span className="text-xs text-slate-400 font-bold">
+              {displayCashbackTxs.length} Transactions
+            </span>
+          </div>
+
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            {displayCashbackTxs.map(tx => (
+              <div key={tx.id} className="py-3.5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${
+                    tx.status === 'Confirmed'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
+                      : tx.status === 'Pending'
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
+                      : 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400'
+                  }`}>
+                    {tx.status === 'Redeemed' ? (
+                      <ArrowUpRight className="w-4 h-4" />
+                    ) : (
+                      <ArrowDownLeft className="w-4 h-4" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 dark:text-white text-xs">
+                      {tx.productName}
                     </div>
-                    <div>
-                      <div className="font-bold text-slate-900 dark:text-white">{tx.reason}</div>
-                      <div className="text-[11px] text-slate-400 dark:text-slate-500">{tx.date}</div>
+                    <div className="text-[10px] text-slate-400">
+                      {tx.marketplace ? `${tx.marketplace} • ` : ''}{new Date(tx.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </div>
                   </div>
+                </div>
 
-                  <span
-                    className={`font-black text-sm ${
-                      tx.type === 'earned' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-                    }`}
-                  >
-                    {tx.type === 'earned' ? `+${tx.amount}` : `-${tx.amount}`} Coins
+                <div className="text-right">
+                  <div className={`font-black text-sm ${
+                    tx.status === 'Confirmed'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : tx.status === 'Pending'
+                      ? 'text-amber-600 dark:text-amber-400'
+                      : 'text-purple-600 dark:text-purple-400'
+                  }`}>
+                    {tx.status === 'Redeemed' ? `-₹${tx.amount}` : `+₹${tx.amount}`}
+                  </div>
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                    tx.status === 'Confirmed'
+                      ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300'
+                      : tx.status === 'Pending'
+                      ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300'
+                      : 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300'
+                  }`}>
+                    {tx.status}
                   </span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* WITHDRAWAL MODAL */}
       {isWithdrawOpen && (
@@ -549,23 +330,39 @@ export const SmartCoinsWalletPage: React.FC = () => {
                     type="text"
                     value={upiId}
                     onChange={e => setUpiId(e.target.value)}
-                    placeholder="yourname@okhdfcbank"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-emerald-500"
+                    placeholder="yourname@okaxis"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
                     required
                   />
                 </div>
               ) : (
-                <div className="text-xs text-slate-400 bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-1">
-                  <div>Account: <strong>HDFC Bank ****2819</strong></div>
-                  <div>IFSC: <strong>HDFC0001892</strong> (Verified)</div>
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-300 mb-1">Bank Account Number</label>
+                    <input
+                      type="text"
+                      defaultValue="5010049281729"
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-300 mb-1">IFSC Code</label>
+                    <input
+                      type="text"
+                      defaultValue="HDFC0001234"
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono uppercase"
+                      required
+                    />
+                  </div>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+                className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-lg shadow-emerald-600/30 transition-all cursor-pointer active:scale-95"
               >
-                Confirm ₹{withdrawAmount} Withdrawal
+                Submit Withdrawal Request
               </button>
             </form>
           </div>

@@ -6,11 +6,11 @@ import {
   Users,
   Store,
   ShoppingBag,
-  Coins,
   Percent,
   TrendingUp,
   DollarSign,
   CheckCircle2,
+  Lock,
   XCircle,
   Clock,
   Sliders,
@@ -111,7 +111,8 @@ export const AdminDashboardPage: React.FC = () => {
     updateCommissionSlab,
     adminSettings,
     updateAdminSettings,
-    setIsSmsCenterOpen
+    setIsSmsCenterOpen,
+    logoutUser
   } = useApp();
 
   const navigate = useNavigate();
@@ -400,6 +401,18 @@ export const AdminDashboardPage: React.FC = () => {
             >
               <Eye className="w-4 h-4" />
               <span>Customer View</span>
+            </button>
+
+            <button
+              onClick={async () => {
+                sessionStorage.removeItem('smartdeal_admin_authenticated');
+                await logoutUser();
+                navigate('/');
+              }}
+              className="px-4 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-md shadow-rose-600/30 flex items-center gap-2 cursor-pointer active:scale-95"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out Admin</span>
             </button>
           </div>
         </div>
@@ -2340,69 +2353,35 @@ export const AdminDashboardPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* SmartCoins Rule Config */}
-              <form
-                onSubmit={e => {
-                  e.preventDefault();
-                  updateAdminSettings({
-                    coinRedemptionRate: Number(coinRatio),
-                    maxCoinsPerOrder: Number(maxCoins),
-                    dailyLoginReward: Number(dailyReward)
-                  });
-                  setSavedSettingsMsg(true);
-                  setTimeout(() => setSavedSettingsMsg(false), 2000);
-                }}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4"
-              >
+              {/* Platform Security & Session Rules */}
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4">
                 <div className="pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <h3 className="font-extrabold text-slate-900 dark:text-white text-base">SmartCoins Monetary Rules</h3>
-                  <p className="text-slate-400">Monetary discount parameters and daily login bonuses</p>
+                  <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Platform Security & Access Isolation</h3>
+                  <p className="text-slate-400">Strict separation between Admin Command Center and Customer Storefront</p>
                 </div>
 
-                {savedSettingsMsg && (
-                  <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 font-bold flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Settings saved successfully!</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 space-y-1.5">
+                    <div className="font-black text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                      <span>Role-Based Access Control (RBAC)</span>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                      Only verified accounts with role <strong>ADMIN</strong> and valid master PIN (7217) can view user timelines, outbound click logs, and analytics.
+                    </p>
                   </div>
-                )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <label className="font-bold text-slate-700 dark:text-slate-300">Coins per ₹1 Discount</label>
-                    <input
-                      type="number"
-                      value={coinRatio}
-                      onChange={e => setCoinRatio(Number(e.target.value))}
-                      className="w-full p-2 text-center rounded-xl border border-slate-300 dark:border-slate-600 font-black bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-400"
-                    />
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <label className="font-bold text-slate-700 dark:text-slate-300">Max Coins per Order</label>
-                    <input
-                      type="number"
-                      value={maxCoins}
-                      onChange={e => setMaxCoins(Number(e.target.value))}
-                      className="w-full p-2 text-center rounded-xl border border-slate-300 dark:border-slate-600 font-black bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-400"
-                    />
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <label className="font-bold text-slate-700 dark:text-slate-300">Daily Streak Reward</label>
-                    <input
-                      type="number"
-                      value={dailyReward}
-                      onChange={e => setDailyReward(Number(e.target.value))}
-                      className="w-full p-2 text-center rounded-xl border border-slate-300 dark:border-slate-600 font-black bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-400"
-                    />
+                  <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/40 space-y-1.5">
+                    <div className="font-black text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
+                      <Lock className="w-4 h-4 text-blue-500" />
+                      <span>Session Auto-Purge on Exit</span>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                      Clicking "Sign Out Admin" completely removes all admin session keys and resets view to shopper storefront immediately.
+                    </p>
                   </div>
                 </div>
-
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-extrabold text-xs shadow-sm cursor-pointer"
-                >
-                  Save Configuration
-                </button>
-              </form>
+              </div>
             </div>
           )}
         </main>

@@ -61,7 +61,7 @@ export const GlobalBackButton: React.FC = () => {
       case 'price-tracker': return 'Price Tracker';
       case 'marketplaces': return 'Marketplaces';
       case 'wallet': return 'Cashback Wallet';
-      case 'smartcoins': return 'SmartCoins Rewards';
+      case 'smartcoins': return 'Cashback Wallet';
       case 'wishlist': return 'My Wishlist';
       case 'price-alerts': return 'Price Alerts';
       case 'notifications': return 'Notifications';

@@ -238,7 +238,7 @@ Lowest price across all marketplaces is currently **₹${matched.sellingPrice.to
         suggestedPrompts: [
           'Best phone under 20k',
           'Compare iPhone 15 vs Samsung M14',
-          'How to earn SmartCoins',
+          'How cashback works',
           'Best laptop for coding'
         ]
       }

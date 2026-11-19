@@ -682,7 +682,7 @@ export const ExternalTrackingPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">
-                User compares prices, delivery dates, and SmartCoins across stores (e.g. Amazon).
+                User compares prices, delivery dates, and verified discounts across stores (e.g. Amazon).
               </p>
 
               {/* Price Comparison Mini Table */}
@@ -1005,7 +1005,7 @@ export const ExternalTrackingPage: React.FC = () => {
                   </div>
                   <div className="p-2 rounded-xl hover:bg-slate-800/60 hover:text-white cursor-pointer transition-colors flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    <span>SmartCoins</span>
+                    <span>Cashback & Savings</span>
                   </div>
                   <div className="p-2 rounded-xl hover:bg-slate-800/60 hover:text-white cursor-pointer transition-colors flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" />

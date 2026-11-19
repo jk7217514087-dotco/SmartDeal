@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Bell,
   ShoppingCart,
-  Coins,
   TrendingDown,
   User,
   Clock,
@@ -35,7 +34,6 @@ export const WishlistPage: React.FC = () => {
   });
 
   const totalSavings = wishlistedProducts.reduce((sum, p) => sum + (p.mrp - p.sellingPrice), 0);
-  const totalCoins = wishlistedProducts.reduce((sum, p) => sum + p.smartCoinsEarned, 0);
 
   const handleMoveAllToCart = () => {
     wishlistedProducts.forEach(p => addToCart(p, 1));

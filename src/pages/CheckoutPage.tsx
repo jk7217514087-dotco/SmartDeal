@@ -6,8 +6,7 @@ import {
   Truck,
   CreditCard,
   CheckCircle2,
-  Lock,
-  Coins
+  Lock
 } from 'lucide-react';
 
 export const CheckoutPage: React.FC = () => {
@@ -301,26 +300,11 @@ export const CheckoutPage: React.FC = () => {
                 <span>-₹{cartCalculations.couponDiscount}</span>
               </div>
             )}
-            {cartCalculations.smartCoinsDiscount > 0 && (
-              <div className="flex justify-between text-amber-700 dark:text-amber-400 font-bold">
-                <span>SmartCoins Discount</span>
-                <span>-₹{cartCalculations.smartCoinsDiscount}</span>
-              </div>
-            )}
-
             <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
               <span className="text-sm font-black text-slate-900 dark:text-white">Total Payable</span>
               <span className="text-2xl font-black text-slate-950 dark:text-white">
                 ₹{cartCalculations.finalPayable.toLocaleString('en-IN')}
               </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 text-xs font-bold flex items-center justify-between border border-amber-200 dark:border-amber-800/50">
-              <span className="flex items-center gap-1">
-                <Coins className="w-3.5 h-3.5 text-amber-500" />
-                <span>SmartCoins to earn:</span>
-              </span>
-              <span>+{cartCalculations.coinsEarned} Coins</span>
             </div>
           </div>
 

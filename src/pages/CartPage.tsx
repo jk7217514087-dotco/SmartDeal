@@ -6,7 +6,6 @@ import {
   Plus,
   Minus,
   ShoppingCart,
-  Coins,
   Tag,
   ShieldCheck,
   ArrowRight,
@@ -22,10 +21,7 @@ export const CartPage: React.FC = () => {
     couponDiscount,
     applyCoupon,
     removeCoupon,
-    useSmartCoins,
-    setUseSmartCoins,
-    cartCalculations,
-    smartCoinsBalance
+    cartCalculations
   } = useApp();
 
   const [couponInput, setCouponInput] = useState('');
@@ -47,7 +43,7 @@ export const CartPage: React.FC = () => {
         </div>
         <h2 className="text-2xl font-black text-slate-900 dark:text-white">Your SmartDeals Cart is Empty</h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-          Explore multi-marketplace discounts, track real prices, and earn SmartCoins on your next order!
+          Explore multi-marketplace discounts, track real prices, and save more on your next order!
         </p>
         <Link
           to="/categories"
@@ -72,7 +68,7 @@ export const CartPage: React.FC = () => {
             </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Transparent Final Price Engine with live SmartCoins redemption
+            Transparent Final Price Engine with live marketplace coupon verification
           </p>
         </div>
         <Link to="/categories" className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1">
@@ -222,38 +218,7 @@ export const CartPage: React.FC = () => {
             )}
           </div>
 
-          {/* SmartCoins Redemption Widget (Section 11 & 12) */}
-          <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Coins className="w-4 h-4 text-amber-500" />
-                <span className="text-xs font-bold text-amber-900 dark:text-amber-300">
-                  SmartCoins Available: {smartCoinsBalance}
-                </span>
-              </div>
-              <span className="text-[11px] font-extrabold text-amber-800 dark:text-amber-400">
-                Value: ₹{Math.floor(smartCoinsBalance / 10)}
-              </span>
-            </div>
-
-            <div className="text-[11px] text-amber-700 dark:text-amber-400">
-              Rule: <strong>10 SmartCoins = ₹1</strong> redemption value. Max 500 coins per order.
-            </div>
-
-            <label className="flex items-center gap-2 cursor-pointer pt-1">
-              <input
-                type="checkbox"
-                checked={useSmartCoins}
-                onChange={e => setUseSmartCoins(e.target.checked)}
-                className="w-4 h-4 text-amber-600 rounded accent-amber-500"
-              />
-              <span className="text-xs font-bold text-amber-950 dark:text-amber-200">
-                Redeem {Math.min(smartCoinsBalance, 500)} Coins (-₹{cartCalculations.smartCoinsDiscount})
-              </span>
-            </label>
-          </div>
-
-          {/* Calculation Breakdown Lines (Section 7) */}
+          {/* Calculation Breakdown Lines */}
           <div className="space-y-2 text-xs border-t border-slate-100 dark:border-slate-800 pt-3">
             <div className="flex justify-between text-slate-600 dark:text-slate-400">
               <span>Total MRP</span>
@@ -288,13 +253,6 @@ export const CartPage: React.FC = () => {
               </div>
             )}
 
-            {cartCalculations.smartCoinsDiscount > 0 && (
-              <div className="flex justify-between text-amber-700 dark:text-amber-400 font-bold">
-                <span>SmartCoins Redeemed ({cartCalculations.smartCoinsDiscount * 10} Coins)</span>
-                <span>-₹{cartCalculations.smartCoinsDiscount}</span>
-              </div>
-            )}
-
             {/* Final Payable */}
             <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
               <div>
@@ -306,15 +264,6 @@ export const CartPage: React.FC = () => {
               <div className="text-2xl font-black text-slate-950 dark:text-white">
                 ₹{cartCalculations.finalPayable.toLocaleString('en-IN')}
               </div>
-            </div>
-
-            {/* SmartCoins earned on this order */}
-            <div className="mt-2 p-2.5 rounded-xl bg-amber-100/60 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 font-bold text-xs flex items-center justify-between border border-amber-200 dark:border-amber-800/50">
-              <span className="flex items-center gap-1.5">
-                <Coins className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <span>You will earn on this order:</span>
-              </span>
-              <span className="font-extrabold text-amber-700 dark:text-amber-400">+{cartCalculations.coinsEarned} Coins</span>
             </div>
           </div>
 

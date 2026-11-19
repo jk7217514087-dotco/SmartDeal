@@ -231,13 +231,13 @@ function AppContent() {
           </main>
           <Footer />
           <MobileNav />
-          {(role === 'ADMIN' || currentUser?.role === 'ADMIN') && (
+          {(role === 'ADMIN' && currentUser?.role === 'ADMIN' && sessionStorage.getItem('smartdeal_admin_authenticated') === 'true') && (
             <QuickDemoBar />
           )}
           <AIAssistantModal />
           <BackgroundCustomizerModal />
           <InstallAppPrompt />
-          {role === 'ADMIN' && (
+          {(role === 'ADMIN' && currentUser?.role === 'ADMIN' && sessionStorage.getItem('smartdeal_admin_authenticated') === 'true') && (
             <>
               <LiveSmsToast onOpenCenter={() => setIsSmsCenterOpen(true)} />
               <SmsAlertCenterModal isOpen={isSmsCenterOpen} onClose={() => setIsSmsCenterOpen(false)} />

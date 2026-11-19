@@ -44,9 +44,9 @@ export const AboutPage: React.FC = () => {
           <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
             <Award className="w-5 h-5" />
           </div>
-          <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Tangible SmartCoins Loyalty</h3>
+          <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Direct Cash Savings & Cashback</h3>
           <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-            Reward systems shouldn't require reading fine print. With SmartDeals, 10 SmartCoins strictly equal ₹1 redemption cash on your next cart without restrictive hurdles.
+            Shopping rewards shouldn't require reading fine print. With SmartDeals, you get verified store discounts and real INR cashback directly withdrawable to your bank or UPI.
           </p>
         </div>
 

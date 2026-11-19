@@ -168,13 +168,13 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, isOpen, onClo
           {/* Pricing Summary & Tax Breakdown */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-200">
             <div className="space-y-3">
-              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-[11px] space-y-1">
-                <div className="font-bold text-amber-900 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                  <span>SmartCoins Loyalty Ledger</span>
+              <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-[11px] space-y-1">
+                <div className="font-bold text-emerald-900 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>SmartDeals Buyer Protection</span>
                 </div>
-                <p className="text-amber-800">
-                  You earned <strong className="font-bold text-amber-900">{order.smartCoinsEarned} SmartCoins</strong> (worth ₹{Math.floor(order.smartCoinsEarned / 10)}) on this transaction! Credited to your wallet upon delivery.
+                <p className="text-emerald-800">
+                  This transaction is covered under 100% Genuine Product and Verified Invoice Guarantee.
                 </p>
               </div>
 

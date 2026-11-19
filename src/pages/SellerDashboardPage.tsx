@@ -532,8 +532,8 @@ export const SellerDashboardPage: React.FC = () => {
               </div>
 
               <div className="flex justify-between text-slate-500 dark:text-slate-400 text-[11px]">
-                <span>SmartCoins Customer Reward</span>
-                <span>+{currentCalc.smartCoinsAward} Coins (Subsidized)</span>
+                <span>Customer Cashback Reward</span>
+                <span>Subsidized by SmartDeals</span>
               </div>
 
               <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between items-baseline">

@@ -58,7 +58,7 @@ export const AIAssistantPage: React.FC = () => {
     {
       id: 'm-1',
       sender: 'ai',
-      text: 'Namaste! I am your SmartDeal Autonomous Shopping Intelligence Agent. I cross-analyze live pricing across Amazon, Flipkart, Croma, Reliance Digital and Tata CLiQ, audit artificial MRP inflation, and calculate real payable prices including coupons and SmartCoins. Ask me anything to find the best products, compare items side-by-side, or verify genuine discounts!',
+      text: 'Namaste! I am your SmartDeal Autonomous Shopping Intelligence Agent. I cross-analyze live pricing across Amazon, Flipkart, Croma, Reliance Digital and Tata CLiQ, audit artificial MRP inflation, and calculate real payable prices including verified coupons. Ask me anything to find the best products, compare items side-by-side, or verify genuine discounts!',
       suggestedPrompts: [
         'Best phone under ₹20,000?',
         'Compare iPhone 15 vs Samsung M14',

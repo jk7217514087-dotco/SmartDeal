@@ -22,7 +22,6 @@ import {
   CheckCircle2,
   Calculator,
   SlidersHorizontal,
-  Coins,
   Bot,
   Activity,
   Truck,
@@ -897,21 +896,12 @@ export const HomePage: React.FC = () => {
 
             <div className="pt-4 space-y-4 relative z-10">
               <Link
-                to="/wallet"
+                to="/deals"
                 className={`w-full py-2.5 px-4 rounded-xl font-black text-xs text-center flex items-center justify-center gap-1.5 shadow-lg transition-all cursor-pointer active:scale-95 ${heroTheme.promoButton}`}
               >
-                <span>Explore Rewards Hub</span>
+                <span>Explore Verified Deals</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-
-              {/* Gold coins visual matching Panel 1 */}
-              <div className="flex items-center justify-center pt-2">
-                <div className="flex items-center -space-x-2">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-300 to-amber-600 border-2 border-slate-900 shadow-md flex items-center justify-center text-xs font-black text-slate-950">₹</div>
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-700 border-2 border-slate-900 shadow-md flex items-center justify-center text-sm font-black text-slate-950">₹</div>
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 border-2 border-slate-900 shadow-lg flex items-center justify-center text-base font-black text-slate-950">₹</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

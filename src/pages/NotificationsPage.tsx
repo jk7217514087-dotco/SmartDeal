@@ -5,7 +5,6 @@ import {
   Bell,
   CheckCircle2,
   TrendingDown,
-  Coins,
   Truck,
   ShieldCheck,
   Trash2,
@@ -18,13 +17,11 @@ interface NotificationItem {
   title: string;
   description: string;
   time: string;
-  type: 'price' | 'coins' | 'order' | 'seller';
+  type: 'price' | 'cashback' | 'order' | 'seller';
   read: boolean;
 }
 
 export const NotificationsPage: React.FC = () => {
-  const { smartCoinsBalance } = useApp();
-
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
       id: 'notif-1',
@@ -36,10 +33,10 @@ export const NotificationsPage: React.FC = () => {
     },
     {
       id: 'notif-2',
-      title: 'SmartCoins Credited (+120 Coins)',
-      description: `Purchase reward successfully credited to your wallet. Current Balance: ${smartCoinsBalance} SmartCoins.`,
+      title: 'Cashback Credited (+₹120)',
+      description: 'Purchase cashback reward successfully credited to your wallet.',
       time: '2 hours ago',
-      type: 'coins',
+      type: 'cashback',
       read: false
     },
     {
@@ -60,7 +57,7 @@ export const NotificationsPage: React.FC = () => {
     }
   ]);
 
-  const [filter, setFilter] = useState<'all' | 'unread' | 'price' | 'coins' | 'order'>('all');
+  const [filter, setFilter] = useState<'all' | 'unread' | 'price' | 'cashback' | 'order'>('all');
   const [showToast, setShowToast] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -89,7 +86,7 @@ export const NotificationsPage: React.FC = () => {
   const filteredNotifications = notifications.filter(n => {
     if (filter === 'unread') return !n.read;
     if (filter === 'price') return n.type === 'price';
-    if (filter === 'coins') return n.type === 'coins';
+    if (filter === 'cashback') return n.type === 'cashback';
     if (filter === 'order') return n.type === 'order';
     return true;
   });
@@ -117,7 +114,7 @@ export const NotificationsPage: React.FC = () => {
             )}
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Stay updated with price drops, courier dispatch timelines, and SmartCoins cash rewards
+            Stay updated with price drops, courier dispatch timelines, and cashback rewards
           </p>
         </div>
 
@@ -138,7 +135,7 @@ export const NotificationsPage: React.FC = () => {
           { id: 'all', label: `All (${notifications.length})` },
           { id: 'unread', label: `Unread (${unreadCount})` },
           { id: 'price', label: 'Price Alerts' },
-          { id: 'coins', label: 'SmartCoins' },
+          { id: 'cashback', label: 'Cashback & Rewards' },
           { id: 'order', label: 'Orders' }
         ].map(tab => (
           <button
@@ -172,7 +169,7 @@ export const NotificationsPage: React.FC = () => {
                   className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
                     n.type === 'price'
                       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40'
-                      : n.type === 'coins'
+                      : n.type === 'cashback'
                       ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/40'
                       : n.type === 'order'
                       ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40'
@@ -180,7 +177,7 @@ export const NotificationsPage: React.FC = () => {
                   }`}
                 >
                   {n.type === 'price' && <TrendingDown className="w-5 h-5" />}
-                  {n.type === 'coins' && <Coins className="w-5 h-5" />}
+                  {n.type === 'cashback' && <Sparkles className="w-5 h-5" />}
                   {n.type === 'order' && <Truck className="w-5 h-5" />}
                   {n.type === 'seller' && <ShieldCheck className="w-5 h-5" />}
                 </div>

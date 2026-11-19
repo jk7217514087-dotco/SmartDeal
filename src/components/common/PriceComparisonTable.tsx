@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MarketplacePrice, Product } from '../../types';
 import {
   Truck,
-  Coins,
+  Sparkles,
   ExternalLink,
   ShoppingCart,
   CheckCircle2,
@@ -462,11 +462,11 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
         <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/30 shrink-0">
-            <Coins className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Earn SmartCoins</div>
-            <div className="text-[10px] text-slate-400">Get rewards on every purchase</div>
+            <div className="text-xs font-bold text-white">Best Price Guarantee</div>
+            <div className="text-[10px] text-slate-400">Verified lowest store pricing</div>
           </div>
         </div>
 
@@ -559,8 +559,8 @@ export const PriceComparisonTable: React.FC<Props> = ({
                 <span>Secure Redirect</span>
               </div>
               <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60 text-slate-300 flex flex-col items-center gap-1">
-                <Coins className="w-3.5 h-3.5 text-amber-400" />
-                <span>Affiliate Tracking</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Cashback Tracking</span>
               </div>
               <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60 text-slate-300 flex flex-col items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />

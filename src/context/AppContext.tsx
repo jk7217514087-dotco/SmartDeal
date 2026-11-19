@@ -268,8 +268,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>('SMART200');
   const [couponDiscount, setCouponDiscount] = useState<number>(200);
-  const [useSmartCoins, setUseSmartCoins] = useState<boolean>(true);
-  const [coinsToRedeem, setCoinsToRedeem] = useState<number>(230);
+  const [useSmartCoins, setUseSmartCoins] = useState<boolean>(false);
+  const [coinsToRedeem, setCoinsToRedeem] = useState<number>(0);
 
   const [wishlist, setWishlist] = useState<string[]>(() => {
     const saved = localStorage.getItem('smartdeals_wishlist');
@@ -300,10 +300,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : initialOrders;
   });
 
-  const [smartCoinsBalance, setSmartCoinsBalance] = useState<number>(() => {
-    const saved = localStorage.getItem('smartdeals_coins');
-    return saved ? Number(saved) : 230;
-  });
+  const [smartCoinsBalance, setSmartCoinsBalance] = useState<number>(0);
 
   const [smartCoinsTransactions, setSmartCoinsTransactions] = useState<SmartCoinsTransaction[]>(() => {
     const saved = localStorage.getItem('smartdeals_coin_txs');
@@ -807,28 +804,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, 0);
   const deliveryTotal = sellingPriceTotal > 999 || sellingPriceTotal === 0 ? 0 : 49;
   
-  // Dynamic SmartCoins earning:
-  const coinsEarned = cart.reduce((sum, item) => {
-    const pPrice = item.selectedSellerPrice ? item.selectedSellerPrice.finalPrice : item.product.sellingPrice;
-    let slabCoins = 10;
-    if (pPrice < 1000) slabCoins = 10;
-    else if (pPrice < 5000) slabCoins = 45;
-    else if (pPrice < 10000) slabCoins = 150;
-    else slabCoins = Math.min(500, Math.floor(pPrice * 0.015));
-    return sum + (slabCoins * item.quantity);
-  }, 0);
+  // Coins system disabled per request: zeroed out cleanly
+  const coinsEarned = 0;
+  const effectiveCoinsToRedeem = 0;
+  const smartCoinsDiscount = 0;
 
-  // Coins redemption: 10 coins = ₹1
-  const maxRedeemableCoins = Math.min(
-    smartCoinsBalance,
-    adminSettings.maxCoinsPerOrder,
-    Math.floor((sellingPriceTotal - couponDiscount) * adminSettings.coinRedemptionRate)
-  );
-
-  const effectiveCoinsToRedeem = useSmartCoins ? Math.min(coinsToRedeem, maxRedeemableCoins) : 0;
-  const smartCoinsDiscount = Math.floor(effectiveCoinsToRedeem / adminSettings.coinRedemptionRate);
-
-  const finalPayable = Math.max(0, sellingPriceTotal + deliveryTotal - couponDiscount - smartCoinsDiscount);
+  const finalPayable = Math.max(0, sellingPriceTotal + deliveryTotal - couponDiscount);
   const totalSavings = Math.max(0, mrpTotal - finalPayable);
 
   const placeOrder = (

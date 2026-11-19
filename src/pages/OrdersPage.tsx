@@ -7,7 +7,6 @@ import {
   Truck,
   ArrowRight,
   ShoppingBag,
-  Coins,
   FileText
 } from 'lucide-react';
 
@@ -35,7 +34,7 @@ export const OrdersPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center space-y-4">
           <ShoppingBag className="w-12 h-12 text-slate-400 mx-auto" />
           <h3 className="text-base font-bold text-slate-900 dark:text-white">No orders placed yet</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Shop verified deals and earn SmartCoins rewards.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Shop verified deals and enjoy guaranteed lowest prices.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -83,9 +82,10 @@ export const OrdersPage: React.FC = () => {
 
               {/* Bottom Actions Bar */}
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold">
-                  <Coins className="w-4 h-4 text-amber-500" />
-                  <span>+{order.smartCoinsEarned} SmartCoins Earned</span>
+                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-semibold text-xs">
+                  <span>Payment: <strong className="text-slate-800 dark:text-slate-200">{order.paymentMethod}</strong></span>
+                  <span>•</span>
+                  <span>Status: <strong className="text-emerald-600 dark:text-emerald-400">{order.status}</strong></span>
                 </div>
 
                 <div className="flex items-center gap-3">

@@ -629,7 +629,7 @@ Maine 5 marketplaces (Amazon, Flipkart, Croma, Reliance Digital) ke live price t
 • **Selling Price:** ₹${primary.sellingPrice.toLocaleString('en-IN')} (MRP: ₹${primary.mrp.toLocaleString('en-IN')}, **${primary.discountPercent}% OFF**)
 • **Deal Score:** ${primary.dealScore}/100 (${primary.dealScoreBreakdown?.verdict || 'Highly Recommended'})
 • **Authenticity Check:** ${primary.fakeDiscountAudit?.status || '100% Genuine Verified'}
-• **SmartCoins Earning:** +${primary.smartCoinsEarned || 100} Coins (₹${Math.floor((primary.smartCoinsEarned || 100) / 10)} Extra Discount)
+• **Cashback Eligible:** Real affiliate cash reward credited directly to your wallet
 
 Ye product currently apne **90-Day Lowest Price** par chal raha hai!`
       : `🎯 **Top AI Recommendation${budgetNotice ? ` (Budget: Up to${budgetNotice})` : ''}**:
@@ -639,7 +639,7 @@ Our live Deal DNA engine evaluated historical price stability, fake MRP inflatio
 • **Lowest Verified Price:** ₹${primary.sellingPrice.toLocaleString('en-IN')} (MRP: ₹${primary.mrp.toLocaleString('en-IN')}, **${primary.discountPercent}% Verified Discount**)
 • **Deal Score:** ${primary.dealScore}/100 (${primary.dealScoreBreakdown?.verdict || 'Super Deal'})
 • **Price Integrity Audit:** ${primary.fakeDiscountAudit?.status || '100% Genuine Verified'}
-• **SmartCoins Reward:** +${primary.smartCoinsEarned || 100} Coins on purchase
+• **Cashback Eligible:** Instant affiliate reward tracking on purchase
 
 Currently trending at its verified 90-day historic low.`;
 
@@ -712,7 +712,7 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
       suggestedPrompts: [
         'Best phone under ₹20,000?',
         'Compare stores for this deal',
-        'How to earn SmartCoins?',
+        'How to withdraw cashback to UPI?',
         'Show all genuine verified deals'
       ],
       badges: ['Anti-Fake MRP Shield', '90-Day Trend Audited', 'Deal Score Certified']
@@ -744,11 +744,7 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
 2. **Instant Withdrawal:**
    • Available balance ko aap **Direct UPI (GPay/PhonePe/Paytm)** ya **Bank Account (NEFT/IMPS)** me bina kisi deduction ke withdraw kar sakte hain.
 
-3. **SmartCoins Rewards:**
-   • **10 SmartCoins = ₹1 INR Instant Cash Discount**.
-   • Daily Login (+5 coins), reviews (+15 coins), aur orders par automatic earn hote hain.
-
-4. **Active Promo Code:**
+3. **Active Promo Code:**
    • **SMART200**: Flat ₹200 instant discount on orders above ₹1,999.`
       : `💰 **SmartDeal Cashback & Double-Entry Ledger Guide**:
 
@@ -760,11 +756,7 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
 2. **Instant Withdrawal:**
    • Transfer your available balance directly to any **UPI ID or Bank Account** with zero hidden fees.
 
-3. **SmartCoins Loyalty System:**
-   • **10 SmartCoins = ₹1 Instant Discount** at checkout.
-   • Earn coins on daily check-ins (+5), photo reviews (+15), and every verified order.
-
-4. **Active Promo Codes:**
+3. **Active Promo Codes:**
    • **SMART200**: Flat ₹200 discount on orders above ₹1,999.`;
 
     return {
@@ -772,8 +764,8 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
       intent: 'CASHBACK_INFO',
       recommendations: catalog.slice(0, 2).map(p => ({
         product: p,
-        highlightTag: `Earn +${p.smartCoinsEarned} Coins`,
-        whyRecommended: 'Eligible for both direct cashback & coin redemption'
+        highlightTag: `Verified Best Price`,
+        whyRecommended: 'Eligible for direct affiliate cashback to UPI/Bank'
       })),
       suggestedPrompts: [
         'How to withdraw cashback to UPI?',
