@@ -32,28 +32,28 @@ export type ThemeId =
   | 'cyber-emerald';
 
 export const THEME_BG_MAP: Record<string, string> = {
-  'steel-navy': '#0b1a30',
+  'pure-white': '#FFFFFF',
+  'steel-navy': '#FFFFFF',
   'matrix-lime': '#111612',
   'sunset-coral': '#1c0b29',
   'aurora-jade': '#051f15',
   'royal-gold': '#181107',
   'cyber-indigo': '#08092d',
-  'pure-white': '#f8fafd',
   'cyber-emerald': '#051f15',
 };
 
 export const THEME_CYCLE_ORDER: ThemeId[] = [
+  'pure-white',
   'steel-navy',
   'matrix-lime',
   'sunset-coral',
   'aurora-jade',
   'royal-gold',
   'cyber-indigo',
-  'pure-white',
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
-  return THEME_BG_MAP[theme] || '#0b1a30';
+  return '#FFFFFF';
 };
 
 interface AppContextType {
@@ -371,59 +371,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('smartdeals_dark_mode');
-    if (saved !== null) return saved === 'true';
-    return true;
+    return false;
   });
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
-    const saved = localStorage.getItem('smartdeals_active_theme') as ThemeId | null;
-    if (saved && (saved in THEME_BG_MAP)) {
-      return saved === 'cyber-emerald' ? 'aurora-jade' : saved;
-    }
-    return 'steel-navy';
+    return 'pure-white';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
-    const savedBg = localStorage.getItem('smartdeals_custom_bg');
-    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'steel-navy';
-    // Purge any legacy black background or white background values
-    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08' && savedBg !== '#ffffff' && savedBg !== '#FFFFFF') {
-      return savedBg;
-    }
-    return getThemeDefaultBg(savedTheme);
+    return '#FFFFFF';
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    localStorage.setItem('smartdeals_active_theme', activeTheme);
-    const bg = getThemeDefaultBg(activeTheme);
+    localStorage.setItem('smartdeals_active_theme', 'pure-white');
+    localStorage.setItem('smartdeals_custom_bg', '#FFFFFF');
+    localStorage.setItem('smartdeals_dark_mode', 'false');
+    const bg = '#FFFFFF';
     if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', activeTheme);
-      document.body.classList.remove(
-        'theme-cyber-neon',
-        'theme-royal-gold',
-        'theme-cyber-emerald',
-        'theme-steel-navy',
-        'theme-matrix-lime',
-        'theme-sunset-coral',
-        'theme-aurora-jade',
-        'theme-cyber-indigo',
-        'theme-pure-white'
-      );
-      document.body.classList.add(`theme-${activeTheme}`);
-      if (activeTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
-        document.documentElement.classList.remove('dark');
-        document.body.classList.remove('text-slate-100');
-        document.body.classList.add('text-slate-900');
-      } else {
-        document.documentElement.classList.add('dark');
-        document.body.classList.remove('text-slate-900');
-        document.body.classList.add('text-slate-100');
-      }
-      document.documentElement.style.setProperty('--smartdeal-bg', bg);
-      document.body.style.backgroundColor = bg;
-      document.documentElement.style.backgroundColor = bg;
+      document.documentElement.setAttribute('data-theme', 'pure-white');
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('text-slate-100');
+      document.body.classList.add('text-slate-900');
+      document.documentElement.style.setProperty('--smartdeal-bg', '#FFFFFF');
+      document.body.style.backgroundColor = '#FFFFFF';
+      document.documentElement.style.backgroundColor = '#FFFFFF';
     }
   }, [activeTheme]);
 

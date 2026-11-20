@@ -144,18 +144,18 @@ const THEME_STYLES: Record<string, {
   },
   'pure-white': {
     cardBg: 'bg-white',
-    cardBorder: 'border-slate-200/80',
-    badgeBg: 'bg-indigo-600',
-    badgeText: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    accentText: 'text-indigo-600',
+    cardBorder: 'border-slate-200',
+    badgeBg: 'bg-blue-600',
+    badgeText: 'bg-blue-50 text-blue-700 border-blue-200',
+    accentText: 'text-blue-600',
     pricingBg: 'bg-slate-50',
-    pricingBorder: 'border-slate-200/80',
-    thumbActiveBorder: 'border-indigo-600',
+    pricingBorder: 'border-slate-200',
+    thumbActiveBorder: 'border-blue-600',
     thumbInactiveBg: 'border-slate-200 bg-white',
-    iconText: 'text-indigo-600',
+    iconText: 'text-blue-600',
     mobileBg: 'bg-white/95',
     mobileBorder: 'border-slate-200',
-    buyButton: 'bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
+    buyButton: 'bg-blue-600 hover:bg-blue-700 text-white font-black shadow-md shadow-blue-500/20'
   }
 };
 
@@ -176,7 +176,7 @@ export const ProductDetailPage: React.FC = () => {
     }
   }, [id, navigate]);
 
-  const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['steel-navy'];
+  const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['pure-white'];
 
   const product = products.find(p => p.id === id) || products[0];
   const [activeImage, setActiveImage] = useState(product.image);
@@ -366,15 +366,15 @@ export const ProductDetailPage: React.FC = () => {
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
               {product.name}
             </h1>
 
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1 text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30">
+              <span className="flex items-center gap-1 text-amber-500 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30">
                 ★ {product.rating}
               </span>
-              <span className="text-slate-400">
+              <span className="text-slate-500 dark:text-slate-400">
                 ({product.reviewsCount.toLocaleString('en-IN')} verified reviews)
               </span>
             </div>
@@ -383,7 +383,7 @@ export const ProductDetailPage: React.FC = () => {
           {/* Pricing Engine Box matching Panel 3 */}
           <div className={`p-5 rounded-3xl border space-y-4 shadow-sm ${themeStyle.pricingBg} ${themeStyle.pricingBorder}`}>
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl sm:text-4xl font-black text-white">
+              <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
                 ₹{product.sellingPrice.toLocaleString('en-IN')}
               </span>
               <span className="text-lg text-slate-500 line-through">

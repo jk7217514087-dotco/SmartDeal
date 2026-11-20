@@ -3,7 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --smartdeal-bg: #0b1a30;
+  --smartdeal-bg: #FFFFFF;
+}
+
+html[data-theme="pure-white"],
+body.theme-pure-white,
+[data-theme="pure-white"],
+html,
+body {
+  --smartdeal-bg: #FFFFFF;
 }
 
 /* THEME 1: STEEL NAVY (Image 1: #0b1a30) */
@@ -162,7 +170,7 @@ body.theme-cyber-indigo .dark\:bg-slate-950 {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
-    background-color: var(--smartdeal-bg, #0b1a30) !important;
+    background-color: #FFFFFF !important;
   }
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -172,22 +180,40 @@ body.theme-cyber-indigo .dark\:bg-slate-950 {
     max-width: 100vw;
     margin: 0;
     padding: 0;
-    background-color: var(--smartdeal-bg, #0b1a30) !important;
+    background-color: #FFFFFF !important;
+    color: #0f172a !important;
   }
   #root {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
     min-height: 100vh;
-    background-color: var(--smartdeal-bg, transparent);
+    background-color: #FFFFFF !important;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
+    color: #0f172a;
   }
   .dark body {
-    background-color: var(--smartdeal-bg, #0b1a30) !important;
-    color: #F8FAFC;
+    background-color: #FFFFFF !important;
+    color: #0f172a !important;
   }
+}
+
+/* Primary buttons must remain BLUE (#2563EB) with white text */
+.btn-primary,
+button.btn-primary,
+.bg-blue-600 {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+.btn-primary:hover,
+button.btn-primary:hover,
+.hover\:bg-blue-700:hover,
+.bg-blue-600:hover {
+  background-color: #1d4ed8 !important;
+  color: #FFFFFF !important;
 }
 
 /* Custom scrollbars */

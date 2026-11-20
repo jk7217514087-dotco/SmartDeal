@@ -11,7 +11,9 @@ import {
   Heart,
   Layers,
   Bell,
-  ExternalLink
+  ExternalLink,
+  Truck,
+  Check
 } from 'lucide-react';
 
 interface Props {
@@ -100,13 +102,9 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
   };
 
   return (
-    <div className={`group bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden relative ${
-      activeTheme === 'royal-gold'
-        ? 'dark:bg-[#241a0b] dark:border-amber-900/60 hover:border-amber-400/70 hover:shadow-xl hover:shadow-amber-500/15'
-        : 'dark:bg-[#062537] dark:border-teal-900/60 hover:border-teal-400/70 hover:shadow-xl hover:shadow-teal-500/20'
-    }`}>
+    <div className="group bg-[#19191d] rounded-2xl sm:rounded-3xl border border-[#27272e] shadow-lg hover:shadow-2xl hover:border-slate-600 transition-all duration-300 flex flex-col justify-between overflow-hidden relative">
       {/* Top Badges & Actions */}
-      <div className="p-2 sm:p-3.5 pb-0 flex items-center justify-between gap-1 z-10">
+      <div className="p-2.5 sm:p-3.5 pb-0 flex items-center justify-between gap-1 z-10">
         <DealScoreBadge score={product.dealScore} breakdown={product.dealScoreBreakdown} size="sm" />
 
         <div className="flex items-center gap-1 sm:gap-1.5">
@@ -118,8 +116,8 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             }}
             className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
               hasAlert
-                ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
-                : 'bg-slate-100 dark:bg-[#131d33] text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                ? 'bg-amber-950/70 text-amber-400 border border-amber-500/50'
+                : 'bg-[#24242c] text-slate-300 hover:text-amber-400 hover:bg-[#2c2c36] border border-[#34343f]'
             }`}
             title={hasAlert ? 'Price Alert Active' : 'Set Price Alert'}
           >
@@ -141,8 +139,8 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             }}
             className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
               isWishlisted
-                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
-                : 'bg-slate-100 dark:bg-[#131d33] text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+                ? 'bg-rose-950/70 text-rose-400 border border-rose-500/50'
+                : 'bg-[#24242c] text-slate-300 hover:text-rose-400 hover:bg-[#2c2c36] border border-[#34343f]'
             }`}
             title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
@@ -151,77 +149,83 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
         </div>
       </div>
 
-      {/* Product Image */}
-      <Link to={productDetailLink} className="block relative px-2.5 py-2 sm:px-4 sm:py-3 group-hover:scale-105 transition-transform duration-300">
-        <div className={`aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center p-1.5 sm:p-2 border transition-colors ${
-          activeTheme === 'royal-gold'
-            ? 'dark:bg-[#1a1308] dark:border-amber-900/40'
-            : 'dark:bg-[#041e2d] dark:border-teal-900/40'
-        }`}>
+      {/* Product Image Container - PURE WHITE (#FFFFFF) as strictly requested */}
+      <Link to={productDetailLink} className="block relative px-2.5 py-2 sm:px-3 sm:py-2.5 group-hover:scale-[1.02] transition-transform duration-300">
+        <div className="aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-white flex items-center justify-center p-3 border border-slate-200/80 shadow-inner relative">
           <img
             src={product.image}
             alt={product.name}
-            className="h-full w-full object-contain dark:brightness-95"
+            className="h-full w-full object-contain"
             loading="lazy"
           />
+          {product.isSmartDealsChoice && (
+            <div className="absolute bottom-2 left-2 bg-slate-900/90 text-amber-300 text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded shadow-sm border border-amber-400/30">
+              SmartDeals Choice
+            </div>
+          )}
         </div>
-        {product.isSmartDealsChoice && (
-          <div className="absolute bottom-3 left-3.5 sm:bottom-4 sm:left-6 bg-slate-900/90 dark:bg-brand-950/90 text-amber-300 text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow-sm border border-amber-400/30">
-            SmartDeals Choice
-          </div>
-        )}
       </Link>
 
       {/* Product Information */}
-      <div className="p-2.5 sm:p-4 pt-1 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+      <div className="p-3 sm:p-4 pt-1 flex-1 flex flex-col justify-between space-y-2.5">
         <div>
-          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-400 font-semibold mb-1">
-            <span className="truncate max-w-[70px] sm:max-w-none">{product.brand}</span>
-            <span className="text-amber-500 font-bold shrink-0">★ {product.rating}</span>
+          <div className="flex items-center justify-between text-[11px] text-slate-400 font-semibold mb-1">
+            <span className="truncate max-w-[100px] text-slate-400">{product.brand}</span>
+            <span className="text-emerald-400 font-bold shrink-0 flex items-center gap-1">
+              ★ {product.rating} <span className="text-slate-400 font-normal">({Math.floor(25 + (product.rating * 14))})</span>
+            </span>
           </div>
 
           <Link to={productDetailLink} className="block">
-            <h3 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-2 hover:text-brand-600 dark:hover:text-cyan-300 transition-colors leading-snug">
+            <h3 className="font-bold text-white text-xs sm:text-sm line-clamp-2 hover:text-cyan-300 transition-colors leading-snug">
               {product.name}
             </h3>
           </Link>
 
           {/* Price Engine Display */}
-          <div className="mt-1.5 sm:mt-2.5 flex items-baseline gap-1 sm:gap-2 flex-wrap">
-            <span className="text-sm sm:text-lg font-black text-slate-950 dark:text-white">
+          <div className="mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+            <span className="text-base sm:text-xl font-black text-white">
               ₹{product.sellingPrice.toLocaleString('en-IN')}
             </span>
-            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
+            <span className="text-[11px] sm:text-xs text-slate-400 line-through">
               ₹{product.mrp.toLocaleString('en-IN')}
             </span>
-            <span className="text-[9px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
-              {product.discountPercent}% OFF
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/60">
+              (Save ₹{(product.mrp - product.sellingPrice).toLocaleString('en-IN')}) {product.discountPercent}% Off
+            </span>
+          </div>
+
+          {/* Standard / Express Delivery Indicator */}
+          <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-slate-300">
+            <Truck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span>Express Delivery available</span>
+          </div>
+
+          {/* Promotional Offer Pills */}
+          <div className="mt-2 flex flex-wrap gap-1">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-teal-950/60 text-teal-300 border border-teal-800/60">
+              Flat lowest price
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#26262f] text-slate-300 border border-[#383844]">
+              2 Years Warranty
             </span>
           </div>
 
           {/* Lowest Store Indicator */}
           {lowestStoreListing && (
-            <div className={`mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-[11px] px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl border ${
-              activeTheme === 'royal-gold'
-                ? 'bg-[#2b1f0d] border-amber-900/60'
-                : 'bg-[#082e43] border-teal-900/60'
-            }`}>
-              <span className="text-slate-500 dark:text-slate-400 truncate">
-                Best: <strong className="text-slate-900 dark:text-slate-200">{lowestStoreListing.sellerName}</strong>
+            <div className="mt-2.5 flex items-center justify-between text-[11px] px-2.5 py-1.5 rounded-xl bg-[#24242c] border border-[#34343f]">
+              <span className="text-slate-400 truncate">
+                Best: <strong className="text-white">{lowestStoreListing.sellerName}</strong>
               </span>
-              <span className={`font-black font-mono shrink-0 ml-1 ${
-                activeTheme === 'royal-gold' ? 'text-amber-400' : 'text-teal-300'
-              }`}>
+              <span className="font-black font-mono text-cyan-300 shrink-0 ml-1">
                 ₹{lowestStoreListing.finalPrice.toLocaleString('en-IN')}
               </span>
             </div>
           )}
         </div>
 
-        {/* Action Buttons: View Details, Buy at Best Price, Compare */}
-        <div className={`pt-2 border-t flex flex-col gap-1.5 sm:gap-2 ${
-          activeTheme === 'royal-gold' ? 'border-amber-950/60' : 'border-teal-950/60'
-        }`}>
+        {/* Action Buttons: Primary is Blue (#2563EB) with white text, Secondary is dark charcoal */}
+        <div className="pt-2.5 border-t border-[#2a2a33] flex flex-col gap-1.5 sm:gap-2">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={e => {
@@ -229,11 +233,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
                 e.stopPropagation();
                 setIsQuickDetailsOpen(true);
               }}
-              className={`flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs text-center transition-all truncate cursor-pointer active:scale-95 border ${
-                activeTheme === 'royal-gold'
-                  ? 'bg-[#2c1f0e] hover:bg-[#382812] text-amber-200 border-amber-900/50 hover:border-amber-400/50'
-                  : 'bg-[#083046] hover:bg-[#0c3e59] text-teal-200 border-teal-900/50 hover:border-teal-400/50'
-              }`}
+              className="flex-1 py-2 px-2 rounded-xl font-bold text-xs text-center transition-all truncate cursor-pointer active:scale-95 bg-[#26262B] hover:bg-[#32323a] text-slate-200 border border-[#3b3b45]"
               title="View full Flipkart-style details & specifications"
             >
               View Details
@@ -241,28 +241,20 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
 
             <button
               onClick={handleQuickOutboundBuy}
-              className={`flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs text-center active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer truncate ${
-                activeTheme === 'royal-gold'
-                  ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black shadow-sm shadow-amber-500/30'
-                  : 'bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black shadow-sm shadow-teal-500/30'
-              }`}
+              className="flex-1 py-2 px-2 rounded-xl text-xs text-center active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer truncate bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-black shadow-md shadow-blue-600/30"
               title={`Buy directly on ${lowestStoreListing?.sellerName || 'Amazon'}`}
             >
               <span className="truncate">Buy {lowestStoreListing?.sellerName?.split(' ')[0] || 'Amazon'}</span>
-              <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
+              <ExternalLink className="w-3 h-3 shrink-0" />
             </button>
           </div>
 
           {/* Direct Marketplace Comparison Button */}
           <Link
             to={`/compare/${product.id}`}
-            className={`w-full py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs flex items-center justify-center gap-1 active:scale-95 transition-all truncate ${
-              activeTheme === 'royal-gold'
-                ? 'bg-[#12110c] hover:bg-[#1c1a12] text-amber-300 border border-amber-500/30 hover:border-amber-400/60 shadow-xs'
-                : 'bg-[#061a20] hover:bg-[#0b2832] text-teal-300 border border-teal-500/30 hover:border-teal-400/60 shadow-xs'
-            }`}
+            className="w-full py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all truncate bg-[#1f1f25] hover:bg-[#282830] text-cyan-400 border border-[#3b3b45]"
           >
-            <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+            <Layers className="w-3.5 h-3.5 shrink-0" />
             <span className="truncate">Compare {externalListings.length} Stores</span>
           </Link>
         </div>

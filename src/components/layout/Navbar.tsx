@@ -217,29 +217,29 @@ const NAVBAR_THEMES: Record<string, NavbarThemeConfig> = {
     tooltipText: 'Active: Cyber Cosmic Indigo. Click to switch themes',
   },
   'pure-white': {
-    headerBg: 'bg-white/95 border-slate-200/90 shadow-sm text-slate-900',
-    topBannerBg: 'bg-gradient-to-r from-indigo-50 via-white to-purple-50 text-indigo-900 border-indigo-100',
-    smartGuaranteeBadge: 'bg-indigo-100/70 text-indigo-700 border-indigo-200',
-    smsButton: 'bg-indigo-50 hover:bg-indigo-100 border-indigo-300 text-indigo-700 font-bold',
-    logoIcon: 'bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25',
-    logoTextGradient: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent',
-    proBadge: 'bg-indigo-100 text-indigo-700 border-indigo-300',
-    searchInput: 'bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/15',
-    searchBtn: 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md shadow-indigo-500/25 font-black',
+    headerBg: 'bg-white border-b border-slate-200 text-slate-900 shadow-xs',
+    topBannerBg: 'bg-white border-b border-slate-200 text-slate-700',
+    smartGuaranteeBadge: 'bg-blue-50 text-blue-700 border-blue-200',
+    smsButton: 'bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700 font-bold',
+    logoIcon: 'bg-blue-600 text-white shadow-lg shadow-blue-600/25',
+    logoTextGradient: 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent',
+    proBadge: 'bg-blue-50 text-blue-700 border-blue-200',
+    searchInput: 'bg-slate-100 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15',
+    searchBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 font-black',
     searchPopup: 'bg-white border-slate-200 text-slate-900 shadow-xl',
-    aiBtn: 'bg-indigo-50 border-indigo-300 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900',
-    aiIcon: 'text-indigo-600',
-    appBtn: 'bg-indigo-50 hover:bg-indigo-100 border-indigo-200 text-indigo-700',
-    themeToggleBtn: 'bg-indigo-50 border-indigo-300 text-indigo-700 hover:bg-indigo-100 shadow-sm shadow-indigo-500/15',
-    themeIcon: 'text-indigo-600',
-    cartBtn: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black shadow-md shadow-indigo-500/25',
+    aiBtn: 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 hover:text-blue-900',
+    aiIcon: 'text-blue-600',
+    appBtn: 'bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700',
+    themeToggleBtn: 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 shadow-sm shadow-blue-500/15',
+    themeIcon: 'text-blue-600',
+    cartBtn: 'bg-blue-600 hover:bg-blue-700 text-white font-black shadow-md shadow-blue-500/20',
     cartCountBadge: 'bg-slate-900 text-white',
-    categoriesNavBg: 'border-slate-200/80 bg-white/95 text-slate-700 shadow-xs',
-    allCategoriesLink: 'text-indigo-600 hover:text-indigo-700 font-bold',
-    compareStoresLink: 'text-indigo-600 font-bold',
+    categoriesNavBg: 'border-b border-slate-200 bg-white text-slate-800 shadow-xs',
+    allCategoriesLink: 'text-blue-600 hover:text-blue-700 font-bold',
+    compareStoresLink: 'text-blue-600 font-bold',
     guestShopperCard: 'bg-slate-50 border-slate-200 text-slate-700 shadow-xs',
-    guestDot: 'bg-indigo-600',
-    tooltipText: 'Active: Pure Minimalist White (Buyhatke Style). Click to switch themes',
+    guestDot: 'bg-blue-600',
+    tooltipText: 'Active: Pure Minimalist White. Click to switch themes',
   },
 };
 
@@ -268,8 +268,8 @@ export const Navbar: React.FC = () => {
     setIsSmsCenterOpen
   } = useApp();
 
-  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
-  const navTheme = NAVBAR_THEMES[themeKey] || NAVBAR_THEMES['steel-navy'];
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'pure-white';
+  const navTheme = NAVBAR_THEMES[themeKey] || NAVBAR_THEMES['pure-white'];
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
