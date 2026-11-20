@@ -741,26 +741,29 @@ export const Navbar: React.FC = () => {
                         <span>Become a Seller</span>
                       </Link>
 
-                      {role === 'ADMIN' && currentUser?.role === 'ADMIN' && sessionStorage.getItem('smartdeal_admin_authenticated') === 'true' && (
+                      {/* Admin Command Center Link */}
+                      {(currentUser?.role === 'ADMIN' || (currentUser?.role as any) === 'SUPER_ADMIN' || currentUser?.email === 'jk7217514087@gmail.com' || currentUser?.email === 'admin@smartdeal.com' || role === 'ADMIN') && (
                         <>
                           <Link
-                            to="/admin/dashboard"
+                            to={sessionStorage.getItem('smartdeal_admin_authenticated') === 'true' ? "/admin/dashboard" : "/admin/login"}
                             onClick={() => setIsProfileMenuOpen(false)}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 font-bold transition-colors"
                           >
                             <ShieldAlert className="w-4 h-4 text-rose-500" />
                             <span>Admin Command Center</span>
                           </Link>
-                          <button
-                            onClick={() => {
-                              setIsProfileMenuOpen(false);
-                              setIsSmsCenterOpen(true);
-                            }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-bold transition-colors cursor-pointer text-left"
-                          >
-                            <Smartphone className="w-4 h-4 text-emerald-500" />
-                            <span>Live SMS & Alerts Center</span>
-                          </button>
+                          {sessionStorage.getItem('smartdeal_admin_authenticated') === 'true' && (
+                            <button
+                              onClick={() => {
+                                setIsProfileMenuOpen(false);
+                                setIsSmsCenterOpen(true);
+                              }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-bold transition-colors cursor-pointer text-left"
+                            >
+                              <Smartphone className="w-4 h-4 text-emerald-500" />
+                              <span>Live SMS & Alerts Center</span>
+                            </button>
+                          )}
                         </>
                       )}
 

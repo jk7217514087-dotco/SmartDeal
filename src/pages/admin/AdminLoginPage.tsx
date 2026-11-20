@@ -12,17 +12,15 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-  UserCheck,
   CheckCircle2,
   Sparkles,
   Server,
   ShieldCheck,
-  Smartphone,
   RefreshCw,
-  HelpCircle
+  Key
 } from 'lucide-react';
 
-type ViewMode = 'LOGIN' | 'FORGOT_REQUEST' | 'FORGOT_RESET';
+type ViewMode = 'LOGIN' | 'FORGOT_REQUEST' | 'VERIFY_OTP' | 'NEW_PASSWORD';
 
 export const AdminLoginPage: React.FC = () => {
   const { role, setRole, currentUser } = useApp();
@@ -38,7 +36,7 @@ export const AdminLoginPage: React.FC = () => {
   const [pin, setPin] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Forgot Password / Reset state
+  // Forgot Password / OTP / Reset state
   const [resetEmail, setResetEmail] = useState('jk7217514087@gmail.com');
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -80,43 +78,18 @@ export const AdminLoginPage: React.FC = () => {
       if (res.success) {
         setRole('ADMIN');
         sessionStorage.setItem('smartdeal_admin_authenticated', 'true');
-        setSuccessMsg('Admin Password Verified! Opening Dashboard...');
+        setSuccessMsg('Admin Password Verified! Opening Admin Dashboard...');
 
         setTimeout(() => {
           navigate('/admin/dashboard', { replace: true });
-        }, 600);
+        }, 500);
         return;
       } else {
-        // Fallback check against local admin passwords
-        if (
-          (email.trim().toLowerCase() === 'jk7217514087@gmail.com' ||
-           email.trim().toLowerCase() === 'admin@smartdeal.com' ||
-           email.trim().toLowerCase() === 'admin') &&
-          (password === 'admin123' || password === '7217514087')
-        ) {
-          const adminUser = {
-            id: 'U10000',
-            name: 'SmartDeal Owner',
-            email: 'jk7217514087@gmail.com',
-            phone: '7217514087',
-            role: 'SUPER_ADMIN',
-            status: 'ACTIVE'
-          };
-          trackingService.setCurrentUser(adminUser as any);
-          setRole('ADMIN');
-          sessionStorage.setItem('smartdeal_admin_authenticated', 'true');
-          setSuccessMsg('Admin Password Verified! Opening Dashboard...');
-
-          setTimeout(() => {
-            navigate('/admin/dashboard', { replace: true });
-          }, 600);
-          return;
-        }
-
-        setErrorMsg(res.message || 'Invalid administrative password. Agar password bhool gaye hain toh niche "Forgot Password" par click karein.');
+        // EXACT REQUIREMENT 3: Display "Incorrect Admin Password. Please try again."
+        setErrorMsg('Incorrect Admin Password. Please try again.');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Connection error during admin login.');
+      setErrorMsg(err.message || 'Incorrect Admin Password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -155,11 +128,11 @@ export const AdminLoginPage: React.FC = () => {
 
         setTimeout(() => {
           navigate('/admin/dashboard', { replace: true });
-        }, 600);
+        }, 500);
         return;
       }
     } catch {
-      // Fallback
+      // Fallback below
     }
 
     if (pin.trim() === '7217' || pin.trim() === '7217514087') {
@@ -168,7 +141,7 @@ export const AdminLoginPage: React.FC = () => {
         name: 'SmartDeal Owner',
         email: 'jk7217514087@gmail.com',
         phone: '7217514087',
-        role: 'SUPER_ADMIN',
+        role: 'ADMIN',
         status: 'ACTIVE'
       };
       trackingService.setCurrentUser(adminUser as any);
@@ -178,15 +151,15 @@ export const AdminLoginPage: React.FC = () => {
 
       setTimeout(() => {
         navigate('/admin/dashboard', { replace: true });
-      }, 600);
+      }, 500);
     } else {
-      setErrorMsg('Invalid Owner PIN. Unauthorized access is restricted.');
+      setErrorMsg('Incorrect Owner PIN. Please try again.');
     }
     setIsLoading(false);
   };
 
   // --------------------------------------------------------------------------
-  // 3. FORGOT PASSWORD: STEP 1 (Send Code to Admin Email)
+  // 3. FORGOT PASSWORD: STEP 1 (Send 6-digit OTP to Admin Email)
   // --------------------------------------------------------------------------
   const handleRequestResetCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -194,7 +167,7 @@ export const AdminLoginPage: React.FC = () => {
     setSuccessMsg(null);
 
     if (!resetEmail.trim()) {
-      setErrorMsg('Admin email enter karein.');
+      setErrorMsg('Please enter registered Admin Email.');
       return;
     }
 
@@ -206,41 +179,67 @@ export const AdminLoginPage: React.FC = () => {
       if (res.success) {
         if (res.devCode) {
           setResetCode(res.devCode);
-          setSuccessMsg(`Verification code: ${res.devCode} (Email: ${resetEmail.trim()})`);
+          setSuccessMsg(`6-digit OTP sent to registered email (${resetEmail.trim()}). Code: ${res.devCode}`);
         } else {
-          setSuccessMsg(`Verification code admin email (${resetEmail.trim()}) aur phone (7217514087) par bhej diya gaya hai!`);
+          setSuccessMsg(`6-digit OTP sent to registered admin email (${resetEmail.trim()}) and owner phone.`);
         }
-        setViewMode('FORGOT_RESET');
+        setViewMode('VERIFY_OTP');
       } else {
-        setErrorMsg(res.message || 'Verification code send karne me problem aayi. Email verify karein.');
+        setErrorMsg(res.message || 'Unable to send OTP. Please verify admin email.');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to dispatch verification code.');
+      setErrorMsg(err.message || 'Failed to dispatch verification OTP.');
     } finally {
       setIsLoading(false);
     }
   };
 
   // --------------------------------------------------------------------------
-  // 4. FORGOT PASSWORD: STEP 2 (Verify Code & Set New Password)
+  // 4. FORGOT PASSWORD: STEP 2 (Verify 6-digit OTP)
   // --------------------------------------------------------------------------
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!resetCode.trim() || resetCode.trim().length < 6) {
-      setErrorMsg('Email par aaya 6-digit verification code enter karein.');
+    if (!resetCode.trim() || resetCode.trim().length !== 6) {
+      setErrorMsg('Please enter the valid 6-digit OTP sent to your email.');
       return;
     }
 
+    setIsLoading(true);
+
+    try {
+      const res = await trackingService.adminVerifyOtp(resetEmail.trim(), resetCode.trim());
+
+      if (res.success) {
+        setSuccessMsg('OTP verified successfully! Now setup your new admin password.');
+        setViewMode('NEW_PASSWORD');
+      } else {
+        setErrorMsg(res.message || 'Invalid 6-digit OTP. Please check the code sent to your email.');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'OTP verification failed.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // 5. FORGOT PASSWORD: STEP 3 (Save New Password & Redirect to Verification)
+  // --------------------------------------------------------------------------
+  const handleSaveNewPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
     if (!newPassword || newPassword.length < 6) {
-      setErrorMsg('Naya password kam se kam 6 characters ka hona chahiye.');
+      setErrorMsg('New password must be at least 6 characters long.');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setErrorMsg('Dono passwords match nahi kar rahe. Dobara check karein.');
+      setErrorMsg('Passwords do not match. Please re-enter.');
       return;
     }
 
@@ -254,22 +253,20 @@ export const AdminLoginPage: React.FC = () => {
       );
 
       if (res.success) {
-        setSuccessMsg('Admin Password successfully update ho gaya hai! Naye password se login karein.');
-        setPassword(newPassword);
+        setSuccessMsg('New Password saved securely! Please enter your new password to verify and access Admin Command Center.');
         setEmail(resetEmail.trim());
+        setPassword('');
         setResetCode('');
         setNewPassword('');
         setConfirmPassword('');
 
-        // Switch to login mode with success notification
-        setTimeout(() => {
-          setViewMode('LOGIN');
-        }, 1200);
+        // Redirect back to Admin Password Verification page
+        setViewMode('LOGIN');
       } else {
-        setErrorMsg(res.message || 'Invalid verification code. Please check code received on email.');
+        setErrorMsg(res.message || 'Failed to update admin password. Please try again.');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to reset admin password.');
+      setErrorMsg(err.message || 'Failed to save new admin password.');
     } finally {
       setIsLoading(false);
     }
@@ -293,7 +290,7 @@ export const AdminLoginPage: React.FC = () => {
 
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400">
           <Server className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-          <span>REST API :3001 Active</span>
+          <span>Admin Security Gateway Active</span>
         </div>
       </header>
 
@@ -304,23 +301,24 @@ export const AdminLoginPage: React.FC = () => {
           {/* Card Header Icon & Title */}
           <div className="text-center space-y-2">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20">
-              {viewMode === 'LOGIN' ? (
-                <Lock className="w-7 h-7 text-white" />
-              ) : (
-                <ShieldCheck className="w-7 h-7 text-white" />
-              )}
+              {viewMode === 'LOGIN' && <Lock className="w-7 h-7 text-white" />}
+              {viewMode === 'FORGOT_REQUEST' && <Mail className="w-7 h-7 text-white" />}
+              {viewMode === 'VERIFY_OTP' && <KeyRound className="w-7 h-7 text-white" />}
+              {viewMode === 'NEW_PASSWORD' && <Key className="w-7 h-7 text-white" />}
             </div>
 
             <h1 className="text-2xl font-black tracking-tight text-white">
-              {viewMode === 'LOGIN' && 'Admin Portal Access'}
-              {viewMode === 'FORGOT_REQUEST' && 'Admin Password Forgot'}
-              {viewMode === 'FORGOT_RESET' && 'Set New Admin Password'}
+              {viewMode === 'LOGIN' && 'Admin Password Verification'}
+              {viewMode === 'FORGOT_REQUEST' && 'Admin Password Recovery'}
+              {viewMode === 'VERIFY_OTP' && 'Verify 6-Digit OTP'}
+              {viewMode === 'NEW_PASSWORD' && 'New Password Setup'}
             </h1>
 
             <p className="text-xs text-slate-400">
-              {viewMode === 'LOGIN' && 'Enter Admin Password to unlock Dashboard'}
-              {viewMode === 'FORGOT_REQUEST' && 'Admin email par 6-digit verification code bheja jayega'}
-              {viewMode === 'FORGOT_RESET' && 'Email par aaya code enter karke naya password set karein'}
+              {viewMode === 'LOGIN' && 'Enter your Administrator Password to access Command Center'}
+              {viewMode === 'FORGOT_REQUEST' && 'A 6-digit OTP will be sent to your registered admin email'}
+              {viewMode === 'VERIFY_OTP' && `Enter the 6-digit OTP sent to ${resetEmail}`}
+              {viewMode === 'NEW_PASSWORD' && 'Create a new strong password for Admin Command Center access'}
             </p>
           </div>
 
@@ -328,23 +326,23 @@ export const AdminLoginPage: React.FC = () => {
           {errorMsg && (
             <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-300 text-xs flex items-start gap-2.5 animate-fadeIn">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
-              <span>{errorMsg}</span>
+              <span className="font-semibold">{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
             <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs flex items-start gap-2.5 animate-fadeIn">
               <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
-              <span>{successMsg}</span>
+              <span className="font-semibold">{successMsg}</span>
             </div>
           )}
 
           {/* ================================================================ */}
-          {/* VIEW 1: ADMIN LOGIN FORM                                          */}
+          {/* VIEW 1: ADMIN PASSWORD VERIFICATION FORM                         */}
           {/* ================================================================ */}
           {viewMode === 'LOGIN' && (
             <div className="space-y-5">
-              {/* Login Method Toggle */}
+              {/* Method Switcher */}
               <div className="grid grid-cols-2 gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
                 <button
                   type="button"
@@ -384,7 +382,7 @@ export const AdminLoginPage: React.FC = () => {
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
                       <span>Admin Email</span>
-                      <span className="text-[10px] text-cyan-400">Verified Admin Account</span>
+                      <span className="text-[10px] text-cyan-400">Registered Admin Account</span>
                     </label>
                     <div className="relative">
                       <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -423,7 +421,7 @@ export const AdminLoginPage: React.FC = () => {
                         type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        placeholder="••••••••••••"
+                        placeholder="Enter admin password"
                         className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl pl-10 pr-10 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 font-mono tracking-wider"
                         required
                       />
@@ -437,7 +435,7 @@ export const AdminLoginPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                      <span>Default password: <strong>admin123</strong></span>
+                      <span>Default: <strong>admin123</strong></span>
                       <button
                         type="button"
                         onClick={() => {
@@ -446,9 +444,9 @@ export const AdminLoginPage: React.FC = () => {
                           setSuccessMsg(null);
                           setViewMode('FORGOT_REQUEST');
                         }}
-                        className="text-cyan-400 hover:underline"
+                        className="text-cyan-400 hover:underline font-bold"
                       >
-                        Password reset karein
+                        Forgot Password?
                       </button>
                     </div>
                   </div>
@@ -461,11 +459,11 @@ export const AdminLoginPage: React.FC = () => {
                     {isLoading ? (
                       <span className="flex items-center gap-2">
                         <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Verifying Password...</span>
+                        <span>Verifying Credentials...</span>
                       </span>
                     ) : (
                       <>
-                        <span>Enter Admin Dashboard</span>
+                        <span>Verify & Enter Dashboard</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
@@ -473,13 +471,13 @@ export const AdminLoginPage: React.FC = () => {
                 </form>
               )}
 
-              {/* 1B. Quick PIN Form */}
+              {/* 1B. Quick Owner PIN Form */}
               {loginMethod === 'pin' && (
                 <form onSubmit={handlePinUnlock} className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
                       <span>Owner Master PIN</span>
-                      <span className="text-[10px] text-cyan-400">Phone PIN: 7217</span>
+                      <span className="text-[10px] text-cyan-400">PIN: 7217</span>
                     </label>
                     <div className="relative">
                       <KeyRound className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -495,7 +493,7 @@ export const AdminLoginPage: React.FC = () => {
                     </div>
                     <div className="text-[11px] text-slate-400 flex items-center gap-1.5 pt-1">
                       <Sparkles className="w-3 h-3 text-amber-400" />
-                      <span>Owner Master PIN is <strong>7217</strong> (or 7217514087).</span>
+                      <span>Owner PIN is <strong>7217</strong> (or 7217514087).</span>
                     </div>
                   </div>
 
@@ -511,7 +509,7 @@ export const AdminLoginPage: React.FC = () => {
                       </span>
                     ) : (
                       <>
-                        <span>Unlock with PIN</span>
+                        <span>Unlock Command Center</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
@@ -522,22 +520,22 @@ export const AdminLoginPage: React.FC = () => {
           )}
 
           {/* ================================================================ */}
-          {/* VIEW 2: FORGOT PASSWORD REQUEST (Send Code to Admin Email)        */}
+          {/* VIEW 2: FORGOT PASSWORD STEP 1 - REQUEST 6-DIGIT OTP             */}
           {/* ================================================================ */}
           {viewMode === 'FORGOT_REQUEST' && (
             <form onSubmit={handleRequestResetCode} className="space-y-4 animate-fadeIn">
               <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 space-y-2">
                 <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs">
                   <Mail className="w-4 h-4" />
-                  <span>Admin Email Verification Code</span>
+                  <span>Admin OTP Verification</span>
                 </div>
                 <p className="text-[11px] text-cyan-200/90 leading-relaxed">
-                  "Send Code" par click karne par aapki registered email <strong>{resetEmail}</strong> aur phone <strong>7217514087</strong> par ek 6-digit verification code bheja jayega jisse aap naya password set kar sakenge.
+                  A 6-digit OTP will be dispatched to your registered admin email <strong>{resetEmail}</strong> to verify your identity.
                 </p>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">Admin Email</label>
+                <label className="text-xs font-bold text-slate-300">Registered Admin Email</label>
                 <div className="relative">
                   <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
@@ -561,11 +559,11 @@ export const AdminLoginPage: React.FC = () => {
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Sending Code to Email...</span>
+                      <span>Sending OTP...</span>
                     </span>
                   ) : (
                     <>
-                      <span>Send Verification Code to Email</span>
+                      <span>Send 6-Digit OTP to Email</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -580,31 +578,31 @@ export const AdminLoginPage: React.FC = () => {
                   }}
                   className="w-full py-2.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  Cancel / Back to Login
+                  Cancel / Back to Password Verification
                 </button>
               </div>
             </form>
           )}
 
           {/* ================================================================ */}
-          {/* VIEW 3: VERIFY EMAIL CODE & SET NEW ADMIN PASSWORD               */}
+          {/* VIEW 3: FORGOT PASSWORD STEP 2 - VERIFY 6-DIGIT OTP              */}
           {/* ================================================================ */}
-          {viewMode === 'FORGOT_RESET' && (
-            <form onSubmit={handleResetPassword} className="space-y-4 animate-fadeIn">
+          {viewMode === 'VERIFY_OTP' && (
+            <form onSubmit={handleVerifyOtp} className="space-y-4 animate-fadeIn">
               <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-1.5">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs">
-                  <Smartphone className="w-4 h-4" />
-                  <span>Code Sent to {resetEmail}</span>
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>OTP Sent to {resetEmail}</span>
                 </div>
                 <p className="text-[11px] text-emerald-200/90 leading-relaxed">
-                  Apne email inbox me 6-digit code dekhein aur yahan daal kar apna naya admin password banayein.
+                  Enter the 6-digit OTP code received on your registered email to open the New Password Setup page.
                 </p>
               </div>
 
-              {/* 6-Digit Code Input */}
+              {/* 6-Digit OTP Input */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                  <span>6-Digit Verification Code</span>
+                  <span>Enter 6-Digit OTP</span>
                   <span className="text-[10px] text-cyan-400">Expires in 15 mins</span>
                 </label>
                 <div className="relative">
@@ -621,16 +619,65 @@ export const AdminLoginPage: React.FC = () => {
                   />
                 </div>
                 <div className="text-[10px] text-slate-400 flex items-center justify-between pt-0.5">
-                  <span>Master verification bypass: <strong>721751</strong></span>
+                  <span>Master Bypass: <strong>721751</strong></span>
                   <button
                     type="button"
                     onClick={handleRequestResetCode}
-                    className="text-cyan-400 hover:underline flex items-center gap-1"
+                    className="text-cyan-400 hover:underline flex items-center gap-1 font-bold"
                   >
                     <RefreshCw className="w-3 h-3" />
-                    <span>Resend Code</span>
+                    <span>Resend OTP</span>
                   </button>
                 </div>
+              </div>
+
+              <div className="space-y-2.5 pt-2">
+                <button
+                  type="submit"
+                  disabled={isLoading || resetCode.length !== 6}
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-sm transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Verifying OTP...</span>
+                    </span>
+                  ) : (
+                    <>
+                      <span>Verify OTP</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setErrorMsg(null);
+                    setSuccessMsg(null);
+                    setViewMode('FORGOT_REQUEST');
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  Change Email / Request Again
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* ================================================================ */}
+          {/* VIEW 4: FORGOT PASSWORD STEP 3 - NEW PASSWORD SETUP              */}
+          {/* ================================================================ */}
+          {viewMode === 'NEW_PASSWORD' && (
+            <form onSubmit={handleSaveNewPassword} className="space-y-4 animate-fadeIn">
+              <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 space-y-1.5">
+                <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs">
+                  <Key className="w-4 h-4" />
+                  <span>Setup New Admin Password</span>
+                </div>
+                <p className="text-[11px] text-indigo-200/90 leading-relaxed">
+                  OTP verified. Enter your new password below. It will be securely encrypted.
+                </p>
               </div>
 
               {/* New Password */}
@@ -645,6 +692,7 @@ export const AdminLoginPage: React.FC = () => {
                     placeholder="Min 6 characters"
                     className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl pl-10 pr-10 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 font-mono"
                     required
+                    autoFocus
                   />
                   <button
                     type="button"
@@ -658,7 +706,7 @@ export const AdminLoginPage: React.FC = () => {
 
               {/* Confirm New Password */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">Confirm New Password</label>
+                <label className="text-xs font-bold text-slate-300">Confirm New Admin Password</label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
@@ -682,17 +730,17 @@ export const AdminLoginPage: React.FC = () => {
               <div className="space-y-2.5 pt-2">
                 <button
                   type="submit"
-                  disabled={isLoading || resetCode.length !== 6 || !newPassword || !confirmPassword}
+                  disabled={isLoading || !newPassword || !confirmPassword || newPassword.length < 6}
                   className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-sm transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Updating Admin Password...</span>
+                      <span>Saving New Password...</span>
                     </span>
                   ) : (
                     <>
-                      <span>Verify Code & Set New Password</span>
+                      <span>Save New Password Securely</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -707,32 +755,19 @@ export const AdminLoginPage: React.FC = () => {
                   }}
                   className="w-full py-2.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  Back to Login
+                  Back to Password Verification
                 </button>
               </div>
             </form>
           )}
 
-          {/* Security Notice */}
-          <div className="pt-4 border-t border-slate-800/80 text-center space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[10px] text-slate-400">
-              <Lock className="w-3 h-3 text-cyan-400" />
-              <span>TLS 1.3 &bull; SHA-256 &bull; Strict Admin Isolation</span>
-            </div>
-            <p className="text-[10px] text-slate-400 leading-relaxed">
-              Admin dashboard is protected. Unauthorized users cannot access or view administrative data.
-            </p>
-          </div>
-
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 text-center text-xs text-slate-400">
-        &copy; {new Date().getFullYear()} SmartDeal Platform Inc. Administrative Portal. All Rights Reserved.
+      {/* Footer Branding */}
+      <footer className="relative z-10 w-full py-4 text-center text-xs text-slate-500 border-t border-slate-900">
+        SmartDeal Admin Command Center • Strict RBAC & Backend Verified Session
       </footer>
     </div>
   );
 };
-
-export default AdminLoginPage;

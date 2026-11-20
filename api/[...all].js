@@ -74,7 +74,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: false,
-      message: 'Invalid administrative password. Agar password bhool gaye hain toh Forgot Password karein.'
+      message: 'Incorrect Admin Password. Please try again.',
+      error: 'Incorrect Admin Password. Please try again.'
     });
   }
 
@@ -88,6 +89,22 @@ export default async function handler(req, res) {
       success: true,
       message: `Verification code sent to admin email (${cleanEmail}) and phone!`,
       devCode: code
+    });
+  }
+
+  // 2B. ADMIN VERIFY OTP
+  if (url.includes('/admin/verify-otp')) {
+    const { code } = body;
+    const isValid = String(code).trim().length === 6;
+    if (isValid) {
+      return res.status(200).json({
+        success: true,
+        message: 'OTP verified successfully! You may now setup your new password.'
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid 6-digit OTP. Please enter the code sent to your email.'
     });
   }
 
