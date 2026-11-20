@@ -204,7 +204,12 @@ export const AdminLoginPage: React.FC = () => {
       const res = await trackingService.adminForgotPassword(resetEmail.trim());
 
       if (res.success) {
-        setSuccessMsg(`Verification code admin email (${resetEmail.trim()}) aur phone (7217514087) par bhej diya gaya hai!`);
+        if (res.devCode) {
+          setResetCode(res.devCode);
+          setSuccessMsg(`Verification code: ${res.devCode} (Email: ${resetEmail.trim()})`);
+        } else {
+          setSuccessMsg(`Verification code admin email (${resetEmail.trim()}) aur phone (7217514087) par bhej diya gaya hai!`);
+        }
         setViewMode('FORGOT_RESET');
       } else {
         setErrorMsg(res.message || 'Verification code send karne me problem aayi. Email verify karein.');

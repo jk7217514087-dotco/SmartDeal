@@ -83,6 +83,9 @@ export async function apiRequest<T = any>(
         errorDetail && !errorDetail.toLowerCase().includes('bad gateway')
           ? errorDetail
           : 'Backend server is offline or unreachable on port 3001 (Bad Gateway HTTP 502). Please start the backend with "npm run server" or "npm run dev:all".';
+    } else if (response.status === 405) {
+      errorDetail =
+        errorDetail || 'API endpoint method not allowed (HTTP 405). Offline fallback available.';
     } else if (response.status === 503) {
       errorDetail = 'Backend service is temporarily unavailable (HTTP 503). Please try again shortly.';
     } else if (response.status === 504) {
