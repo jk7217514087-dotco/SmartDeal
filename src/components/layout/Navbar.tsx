@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import {
+  Menu,
   Search,
   ShoppingCart,
   Heart,
@@ -272,6 +273,7 @@ export const Navbar: React.FC = () => {
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [profileTab, setProfileTab] = useState<'signin' | 'menu'>('signin');
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -282,8 +284,35 @@ export const Navbar: React.FC = () => {
   const [forgotSent, setForgotSent] = useState(false);
 
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const navDrawerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Close nav drawer on outside click or escape key
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navDrawerRef.current && !navDrawerRef.current.contains(e.target as Node)) {
+        setIsNavDrawerOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsNavDrawerOpen(false);
+      }
+    };
+    if (isNavDrawerOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [isNavDrawerOpen]);
 
   // Close profile dropdown on outside click or escape key
   useEffect(() => {
@@ -380,8 +409,19 @@ export const Navbar: React.FC = () => {
     <header className={`sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}>
       {/* Main Navbar Bar */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        {/* Left Side: Back Button & Brand Logo */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        {/* Left Side: Three-Line Menu (☰), Back Button & Brand Logo */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Three-Line (☰ Hamburger Menu) Button */}
+          <button
+            onClick={() => setIsNavDrawerOpen(true)}
+            className="p-2 sm:px-3 sm:py-2 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-2 border border-slate-200/80 dark:border-slate-700/80 group"
+            title="Open Menu & Categories (Three Lines)"
+            aria-label="Open Navigation Menu"
+          >
+            <Menu className="w-5 h-5 text-slate-800 dark:text-white group-hover:text-brand-500 transition-colors" />
+            <span className="hidden sm:inline font-extrabold text-xs text-slate-800 dark:text-white">Menu</span>
+          </button>
+
           {location.pathname !== '/' && (
             <button
               onClick={() => {
@@ -1091,76 +1131,297 @@ export const Navbar: React.FC = () => {
         </div>
       )}
 
-      {/* Categories Sub-nav */}
-      <nav className={`border-t backdrop-blur-md hidden sm:block transition-colors duration-300 ${navTheme.categoriesNavBg}`}>
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300 overflow-x-auto no-scrollbar py-2">
-          <div className="flex items-center gap-4 sm:gap-5">
-            <Link
-              to="/categories"
-              className={`flex items-center gap-1.5 font-extrabold ${navTheme.allCategoriesLink}`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>All Categories</span>
-            </Link>
-            <Link to="/deals" className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 hover:text-rose-700 font-extrabold">
-              <Flame className="w-3.5 h-3.5" />
-              <span>Deals</span>
-            </Link>
-            <Link to="/coupons" className={`flex items-center gap-1.5 font-extrabold ${navTheme.allCategoriesLink}`}>
-              <Tag className="w-3.5 h-3.5" />
-              <span>Coupons & Offers</span>
-            </Link>
-            <Link to="/compare" className={`flex items-center gap-1.5 font-extrabold ${navTheme.compareStoresLink}`}>
-              <Layers className="w-3.5 h-3.5" />
-              <span>Compare Stores</span>
-            </Link>
-            <Link to="/price-tracker" className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-extrabold">
-              <Radio className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-              <span>Price Tracker</span>
-            </Link>
-            <Link to="/marketplaces" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Marketplaces
-            </Link>
-            <Link to="/product-vs-product" className={`flex items-center gap-1.5 font-extrabold ${navTheme.allCategoriesLink}`}>
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Product vs Product AI</span>
-            </Link>
-            <Link to="/flowchart" className="flex items-center gap-1.5 text-cyan-700 dark:text-cyan-300 hover:text-cyan-900 font-extrabold bg-cyan-50 dark:bg-cyan-950/50 px-2.5 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-800/60 shadow-xs">
-              <Workflow className="w-3.5 h-3.5 text-cyan-500" />
-              <span>Flowchart</span>
-            </Link>
-            <Link to="/returns" className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 font-extrabold bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60 shadow-xs">
-              <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Returns & Refunds</span>
-            </Link>
-          </div>
+      {/* ============================================================== */}
+      {/* THREE-LINE (☰) NAVIGATION DRAWER (Slide-over)                  */}
+      {/* ============================================================== */}
+      {isNavDrawerOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden animate-fadeIn">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsNavDrawerOpen(false)}
+          />
 
-          {/* Right: Guest Shopper Card (Matches Image 1 and Image 2) + Links */}
-          <div className="flex items-center gap-3 shrink-0">
-            {!currentUser && (
-              <div className={`hidden lg:flex items-center gap-2.5 px-3 py-1 rounded-xl border text-[11px] leading-tight transition-all ${navTheme.guestShopperCard}`}>
-                <div>
-                  <div className="font-extrabold text-white text-[11px] flex items-center gap-1.5">
-                    <span>Guest Shopper</span>
-                    <span className="font-mono text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
-                      {guestSession?.guest_id ? guestSession.guest_id.slice(0, 8) : (guestSession?.sessionId ? guestSession.sessionId.slice(0, 8) : 'G-16F90Q')}
+          <div className="fixed inset-y-0 left-0 max-w-full flex">
+            <div
+              ref={navDrawerRef}
+              className="w-screen max-w-xs sm:max-w-sm md:max-w-md bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto"
+            >
+              {/* Drawer Content */}
+              <div>
+                {/* Header */}
+                <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/40">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-md shadow-brand-500/20 bg-[#00061e] flex items-center justify-center shrink-0">
+                      <img
+                        src="/smartdeal_icon_mark.png"
+                        alt="SmartDeal Logo"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white font-sans">
+                          Smart<span className={navTheme.logoTextGradient}>Deal</span>
+                        </span>
+                        <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
+                          PRO
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 font-medium">
+                        Compare • Save • Buy Smarter
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    title="Close Menu"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Session Status Banner: Guest Shopper or User */}
+                {!currentUser ? (
+                  <div className="mx-4 mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white border border-indigo-900/50 shadow-md">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-xs font-black tracking-wide">Guest Shopper</span>
+                      </div>
+                      <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/10 text-indigo-200">
+                        {guestSession?.guest_id ? guestSession.guest_id.slice(0, 8) : (guestSession?.sessionId ? guestSession.sessionId.slice(0, 8) : 'G-16F90Q')}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-300 mt-1">
+                      Anonymous browsing session active. Private & encrypted.
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mx-4 mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-brand-900/40 to-indigo-950/40 border border-brand-800/40 shadow-xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-brand-600 text-white font-black text-xs flex items-center justify-center">
+                        {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                          {currentUser.name || 'Member'}
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                          {currentUser.email}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Explore & Compare Links */}
+                <div className="p-4 space-y-1">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 py-1">
+                    Explore & Compare
+                  </div>
+
+                  {/* All Categories */}
+                  <Link
+                    to="/categories"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <SlidersHorizontal className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">All Categories</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Browse 100+ categories & products</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {/* Deals */}
+                  <Link
+                    to="/deals"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-rose-50/60 dark:hover:bg-rose-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Flame className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-rose-600 dark:text-rose-400">Deals & Offers</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Up to 70% off across marketplaces</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">
+                      HOT
                     </span>
+                  </Link>
+
+                  {/* Coupons & Offers */}
+                  <Link
+                    to="/coupons"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Tag className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Coupons & Discounts</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Verified coupon codes & vouchers</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {/* Compare Stores */}
+                  <Link
+                    to="/compare"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Layers className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Compare Stores</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Live multi-store price comparison</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {/* Price Tracker */}
+                  <Link
+                    to="/price-tracker"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Radio className="w-4 h-4 text-emerald-500 animate-pulse" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Price Tracker</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Track historical price drops & alerts</div>
+                      </div>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                  </Link>
+
+                  {/* Marketplaces */}
+                  <Link
+                    to="/marketplaces"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Store className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Marketplaces</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Amazon, Flipkart, Croma, Reliance</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {/* Product vs Product AI */}
+                  <Link
+                    to="/product-vs-product"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-violet-50 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Sparkles className="w-4 h-4 text-violet-500" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Product vs Product AI</div>
+                        <div className="text-[10px] text-slate-400 font-normal">AI head-to-head comparison engine</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {/* Flowchart */}
+                  <Link
+                    to="/flowchart"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-cyan-50/60 dark:hover:bg-cyan-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Workflow className="w-4 h-4 text-cyan-500" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400">Flowchart</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Interactive deal finding pipeline</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+
+                {/* Trust & Help Section */}
+                <div className="p-4 pt-0 space-y-1">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 py-1">
+                    Help & Assurance
                   </div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${navTheme.guestDot} animate-pulse`} />
-                    <span>Anonymous session active</span>
-                  </div>
+
+                  <Link
+                    to="/support"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <HelpCircle className="w-4 h-4 text-slate-400" />
+                      <span>24/7 Support & Help Desk</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                  </Link>
+
+                  <Link
+                    to="/about"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                      <span>Our Anti-Fake & Price Policy</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                  </Link>
                 </div>
               </div>
-            )}
 
-            <div className="hidden xl:flex items-center gap-4 text-slate-500 dark:text-slate-400 text-[11px] font-medium shrink-0">
-              <Link to="/support" className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors">24/7 Support</Link>
-              <Link to="/about" className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Our Anti-Fake Policy</Link>
+              {/* Drawer Bottom Actions */}
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 space-y-2">
+                <button
+                  onClick={() => {
+                    setIsNavDrawerOpen(false);
+                    window.dispatchEvent(new CustomEvent('trigger-app-install'));
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-600 hover:from-indigo-500 hover:to-brand-500 text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download SmartDeal App</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </nav>
+      )}
     </header>
   );
 };

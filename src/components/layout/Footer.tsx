@@ -226,7 +226,6 @@ export const Footer: React.FC = () => {
             </h5>
             <ul className="space-y-2 text-xs text-slate-400">
               <li><Link to="/orders" className={`transition-colors ${themeKey === 'pure-white' ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Track My Order & Delivery</Link></li>
-              <li><Link to="/returns" className="text-emerald-500 hover:text-emerald-600 font-semibold transition-colors">Easy Returns & Refunds</Link></li>
               <li><Link to="/price-alerts" className={`transition-colors ${themeKey === 'pure-white' ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Price Drop Alerts</Link></li>
               <li><Link to="/wishlist" className={`transition-colors ${themeKey === 'pure-white' ? 'hover:text-indigo-600' : 'hover:text-white'}`}>My Saved Wishlist</Link></li>
               <li><Link to="/compare" className={`transition-colors ${themeKey === 'pure-white' ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Live Store Price Comparison</Link></li>
