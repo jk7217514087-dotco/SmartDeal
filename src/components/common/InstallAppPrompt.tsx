@@ -240,8 +240,8 @@ export const InstallAppPrompt: React.FC = () => {
     setIsIosDevice(isIos);
     setActiveTab(isMobile ? 'mobile' : 'desktop');
 
-    // Show banner on mobile/desktop unless already running as standalone app
-    setShowBanner(true);
+    // User requested to remove the floating bottom install prompt banner completely
+    setShowBanner(false);
 
     // Pick up early prompt if already captured in <head>
     const earlyPrompt = (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt;
@@ -262,7 +262,6 @@ export const InstallAppPrompt: React.FC = () => {
       e.preventDefault();
       (window as unknown as { __smartdeal_deferred_prompt?: BeforeInstallPromptEvent }).__smartdeal_deferred_prompt = e as BeforeInstallPromptEvent;
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowBanner(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -410,44 +409,6 @@ export const InstallAppPrompt: React.FC = () => {
           >
             <X className="w-4 h-4" />
           </button>
-        </div>
-      )}
-
-      {/* Floating Bottom App Install Banner (Mobile & Desktop) */}
-      {showBanner && !showDownloadModal && (
-        <div className="fixed bottom-16 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-slideUp">
-          <div className="bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-brand-500/30 flex items-center gap-3">
-            <div className="w-12 h-12 shrink-0 rounded-2xl overflow-hidden shadow-lg shadow-brand-500/40 ring-2 ring-brand-400/30 bg-[#00061e] flex items-center justify-center">
-              <img src="/smartdeal_app_icon.png" alt="SmartDeal App" className="w-full h-full object-cover" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-black text-white">SmartDeal App</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-black bg-gradient-to-r from-brand-500 to-indigo-600 text-white rounded-md shadow-xs">OFFICIAL</span>
-              </div>
-              <p className="text-[11px] text-slate-300 truncate">
-                Phone Screen par app ki tarah lagayein
-              </p>
-            </div>
-
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                onClick={handleAppDownloadClick}
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-xs flex items-center gap-1.5 shadow-md shadow-brand-600/30 active:scale-95 transition-all cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Install</span>
-              </button>
-              <button
-                onClick={handleDismiss}
-                className="p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
-                title="Dismiss"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
         </div>
       )}
 

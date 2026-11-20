@@ -1696,6 +1696,92 @@ class TrackingService {
     }
   }
 
+  public async adminLogin(
+    email: string,
+    passwordAttempt: string
+  ): Promise<{ success: boolean; message: string; token?: string; admin?: any }> {
+    try {
+      const res = await apiRequest<any>('/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password: passwordAttempt
+        })
+      });
+
+      if (res?.success && res?.token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, res.token);
+        sessionStorage.setItem('smartdeal_admin_authenticated', 'true');
+        if (res.admin) {
+          this.setCurrentUser(normalizeUser(res.admin));
+        }
+        return {
+          success: true,
+          message: res.message || 'Admin password verified. Opening Dashboard...',
+          token: res.token,
+          admin: res.admin
+        };
+      }
+
+      return {
+        success: false,
+        message: res?.error || res?.message || 'Invalid administrative credentials.'
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Admin authentication failed.'
+      };
+    }
+  }
+
+  public async adminForgotPassword(
+    email: string
+  ): Promise<{ success: boolean; message: string; devCode?: string }> {
+    try {
+      const res = await apiRequest<any>('/admin/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim().toLowerCase() })
+      });
+      return {
+        success: Boolean(res?.success),
+        message: res?.message || 'Verification code sent to admin email.',
+        devCode: res?.devCode
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Failed to dispatch password reset code.'
+      };
+    }
+  }
+
+  public async adminResetPassword(
+    email: string,
+    code: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      const res = await apiRequest<any>('/admin/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          code: code.trim(),
+          newPassword
+        })
+      });
+      return {
+        success: Boolean(res?.success),
+        message: res?.message || 'Admin password has been reset successfully.'
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Failed to reset admin password.'
+      };
+    }
+  }
+
   // --------------------------------------------------------------------------
   // GETTERS & READ DATA
   // --------------------------------------------------------------------------
