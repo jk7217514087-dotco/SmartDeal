@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { ThemeSwitcher } from '../common/ThemeSwitcher';
 import {
   Menu,
   Search,
@@ -66,6 +67,56 @@ interface NavbarThemeConfig {
 }
 
 const NAVBAR_THEMES: Record<string, NavbarThemeConfig> = {
+  'croma': {
+    headerBg: 'bg-white dark:bg-white border-slate-200 text-[#171717]',
+    topBannerBg: 'bg-[#F4F5F7] text-[#171717] border-slate-200',
+    smartGuaranteeBadge: 'bg-[#00AEEF]/10 text-[#0095CC] border-[#00AEEF]/30',
+    smsButton: 'bg-[#00AEEF] hover:bg-[#0095CC] text-white border-transparent',
+    logoIcon: 'bg-gradient-to-tr from-[#00AEEF] to-[#0095CC] text-white shadow-md shadow-[#00AEEF]/30',
+    logoTextGradient: 'text-[#171717]',
+    proBadge: 'bg-[#E31837] text-white border-transparent font-bold',
+    searchInput: 'bg-white border-slate-300 text-[#171717] focus:bg-white focus:border-[#00AEEF] focus:ring-4 focus:ring-[#00AEEF]/20',
+    searchBtn: 'bg-[#00AEEF] hover:bg-[#0095CC] text-white font-black shadow-md shadow-[#00AEEF]/30',
+    searchPopup: 'bg-white border-slate-200 shadow-xl',
+    aiBtn: 'bg-white border-slate-200 text-[#0095CC] hover:bg-slate-50 hover:border-[#00AEEF]',
+    aiIcon: 'text-[#00AEEF]',
+    appBtn: 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-[#171717]',
+    themeToggleBtn: 'bg-[#00AEEF] border-[#0095CC] text-white hover:bg-[#0095CC] shadow-sm',
+    themeIcon: 'text-white',
+    cartBtn: 'bg-[#00AEEF] hover:bg-[#0095CC] text-white font-black shadow-md shadow-[#00AEEF]/30',
+    cartCountBadge: 'bg-[#E31837] text-white',
+    categoriesNavBg: 'border-slate-200 bg-white text-[#171717]',
+    allCategoriesLink: 'text-[#171717] hover:text-[#00AEEF]',
+    compareStoresLink: 'text-[#00AEEF]',
+    guestShopperCard: 'bg-[#F4F5F7] border-slate-200 text-[#171717]',
+    guestDot: 'bg-[#00AEEF]',
+    tooltipText: 'Active: Croma Electronics Theme (White, Cyan #00AEEF, Red #E31837)',
+  },
+  'black-white': {
+    headerBg: 'bg-black dark:bg-black border-white/30 text-white',
+    topBannerBg: 'bg-black text-white border-white/20',
+    smartGuaranteeBadge: 'bg-black text-white border-white',
+    smsButton: 'bg-black hover:bg-white hover:text-black text-white border-white',
+    logoIcon: 'bg-white text-black font-black border border-white',
+    logoTextGradient: 'text-white font-mono',
+    proBadge: 'bg-white text-black border-white font-mono font-bold',
+    searchInput: 'bg-black border-white text-white focus:bg-black focus:border-white focus:ring-2 focus:ring-white',
+    searchBtn: 'bg-white hover:bg-white/90 text-black font-black font-mono border border-white',
+    searchPopup: 'bg-black border-white shadow-2xl text-white',
+    aiBtn: 'bg-black border-white text-white hover:bg-white hover:text-black',
+    aiIcon: 'text-white',
+    appBtn: 'bg-black hover:bg-white hover:text-black border-white text-white font-mono',
+    themeToggleBtn: 'bg-white border-white text-black hover:bg-white/90 shadow-none font-mono',
+    themeIcon: 'text-black',
+    cartBtn: 'bg-white hover:bg-white/90 text-black font-black font-mono border border-white',
+    cartCountBadge: 'bg-black text-white border border-white',
+    categoriesNavBg: 'border-white/30 bg-black text-white',
+    allCategoriesLink: 'text-white hover:underline',
+    compareStoresLink: 'text-white underline',
+    guestShopperCard: 'bg-black border-white text-white',
+    guestDot: 'bg-white',
+    tooltipText: 'Active: Pure Black & White Theme (Strictly #000000 & #FFFFFF)',
+  },
   'steel-navy': {
     headerBg: 'dark:bg-[#0b1a30]/95 dark:border-sky-900/60',
     topBannerBg: 'bg-gradient-to-r from-[#0b1a30] via-[#102747] to-[#14325c] text-sky-100 border-sky-900/40',
@@ -268,8 +319,8 @@ export const Navbar: React.FC = () => {
     setIsSmsCenterOpen
   } = useApp();
 
-  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
-  const navTheme = NAVBAR_THEMES[themeKey] || NAVBAR_THEMES['steel-navy'];
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'croma';
+  const navTheme = NAVBAR_THEMES[themeKey] || NAVBAR_THEMES['croma'] || NAVBAR_THEMES['steel-navy'];
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -545,19 +596,8 @@ export const Navbar: React.FC = () => {
             <span className="sm:hidden">App</span>
           </button>
 
-          {/* 1-Click Multi-Color Theme Switcher */}
-          <button
-            onClick={toggleTheme}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              setIsBgModalOpen(true);
-            }}
-            className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border transition-all hover:scale-110 cursor-pointer shadow-md flex items-center justify-center ${navTheme.themeToggleBtn}`}
-            title={navTheme.tooltipText}
-            aria-label="Toggle Website Color Theme"
-          >
-            <Sun className={`w-4 h-4 sm:w-5 sm:h-5 ${navTheme.themeIcon} animate-pulse`} />
-          </button>
+          {/* Global 2-Mode Theme Switcher (Croma vs Black & White) */}
+          <ThemeSwitcher variant="header" />
 
           {/* Notifications */}
           <Link

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Address, CashbackStatus } from '../types';
+import { ThemeSwitcher } from '../components/common/ThemeSwitcher';
 import {
   User,
   MapPin,
@@ -501,6 +502,11 @@ export const UserProfilePage: React.FC = () => {
                   Save Profile
                 </button>
               </form>
+
+              {/* Website Theme Mode Customizer Card */}
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <ThemeSwitcher variant="full" />
+              </div>
 
               {/* Saved Addresses */}
               <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">

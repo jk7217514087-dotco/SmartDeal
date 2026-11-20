@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { ThemeSwitcher } from '../common/ThemeSwitcher';
 import {
   ShieldAlert,
   BarChart3,
@@ -261,6 +262,9 @@ export const AdminLayout: React.FC = () => {
 
             {/* Right Header Controls */}
             <div className="flex items-center gap-3">
+              {/* Theme Switcher for Admin Dashboard */}
+              <ThemeSwitcher variant="admin" />
+
               {/* Owner SMS alerts center quick button */}
               <button
                 onClick={() => setIsSmsCenterOpen(true)}

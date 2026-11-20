@@ -18,6 +18,32 @@ interface FlagshipThemeDef {
 
 const FLAGSHIP_THEMES: FlagshipThemeDef[] = [
   {
+    id: 'croma',
+    name: 'Croma Electronics Theme',
+    subtitle: 'Signature White & Cyan (#00AEEF) with Red (#E31837) Deals',
+    color: '#FFFFFF',
+    cardBg: '#FFFFFF',
+    accentBorder: 'border-[#00AEEF]',
+    tag: 'Flagship Electronics',
+    tagBg: 'bg-[#00AEEF] text-white',
+    bannerGradient: 'from-white via-[#F4F5F7] to-[#E5E7EB]',
+    iconBg: 'from-[#00AEEF] to-[#0095CC]',
+    badgeEmoji: '⚡',
+  },
+  {
+    id: 'black-white',
+    name: 'Pure Black & White Theme',
+    subtitle: 'Strictly TWO Colors: #000000 and #FFFFFF. Pure Monochrome.',
+    color: '#000000',
+    cardBg: '#000000',
+    accentBorder: 'border-white',
+    tag: 'Pure Monochrome',
+    tagBg: 'bg-white text-black font-mono',
+    bannerGradient: 'from-black via-zinc-950 to-black',
+    iconBg: 'from-white to-zinc-300 text-black',
+    badgeEmoji: '🖤',
+  },
+  {
     id: 'steel-navy',
     name: 'Steel Oceanic Navy',
     subtitle: 'Deep Navy & Luminous Sky-Blue Waves (Image 1)',
