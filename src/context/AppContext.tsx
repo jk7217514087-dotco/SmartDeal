@@ -22,8 +22,6 @@ import { mockProducts, initialCommissionSlabs } from '../data/mockProducts';
 import { trackingService } from '../services/trackingService';
 
 export type ThemeId = 
-  | 'croma'
-  | 'black-white'
   | 'steel-navy'
   | 'matrix-lime'
   | 'sunset-coral'
@@ -34,25 +32,28 @@ export type ThemeId =
   | 'cyber-emerald';
 
 export const THEME_BG_MAP: Record<string, string> = {
-  'croma': '#FFFFFF',
-  'black-white': '#000000',
   'steel-navy': '#0b1a30',
   'matrix-lime': '#111612',
   'sunset-coral': '#1c0b29',
   'aurora-jade': '#051f15',
   'royal-gold': '#181107',
   'cyber-indigo': '#08092d',
-  'pure-white': '#FFFFFF',
+  'pure-white': '#f8fafd',
   'cyber-emerald': '#051f15',
 };
 
 export const THEME_CYCLE_ORDER: ThemeId[] = [
-  'croma',
-  'black-white',
+  'steel-navy',
+  'matrix-lime',
+  'sunset-coral',
+  'aurora-jade',
+  'royal-gold',
+  'cyber-indigo',
+  'pure-white',
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
-  return THEME_BG_MAP[theme] || '#FFFFFF';
+  return THEME_BG_MAP[theme] || '#0b1a30';
 };
 
 interface AppContextType {
@@ -377,20 +378,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
     const saved = localStorage.getItem('smartdeals_active_theme') as ThemeId | null;
-    if (saved === 'black-white') return 'black-white';
-    if (saved === 'croma') return 'croma';
     if (saved && (saved in THEME_BG_MAP)) {
       return saved === 'cyber-emerald' ? 'aurora-jade' : saved;
     }
-    return 'croma';
+    return 'steel-navy';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
     const savedBg = localStorage.getItem('smartdeals_custom_bg');
-    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'croma';
-    if (savedTheme === 'black-white') return '#000000';
-    if (savedTheme === 'croma') return '#FFFFFF';
-    if (savedBg) return savedBg;
+    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'steel-navy';
+    // Purge any legacy black background or white background values
+    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08' && savedBg !== '#ffffff' && savedBg !== '#FFFFFF') {
+      return savedBg;
+    }
     return getThemeDefaultBg(savedTheme);
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
@@ -401,8 +401,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', activeTheme);
       document.body.classList.remove(
-        'theme-croma',
-        'theme-black-white',
         'theme-cyber-neon',
         'theme-royal-gold',
         'theme-cyber-emerald',
@@ -414,7 +412,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'theme-pure-white'
       );
       document.body.classList.add(`theme-${activeTheme}`);
-      if (activeTheme === 'croma' || activeTheme === 'pure-white' || bg === '#ffffff' || bg === '#FFFFFF') {
+      if (activeTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('text-slate-100');
         document.body.classList.add('text-slate-900');
@@ -439,8 +437,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', normalizedTheme);
       document.body.classList.remove(
-        'theme-croma',
-        'theme-black-white',
         'theme-cyber-neon',
         'theme-royal-gold',
         'theme-cyber-emerald',
@@ -452,7 +448,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'theme-pure-white'
       );
       document.body.classList.add(`theme-${normalizedTheme}`);
-      if (normalizedTheme === 'croma' || normalizedTheme === 'pure-white' || bg === '#ffffff' || bg === '#FFFFFF') {
+      if (normalizedTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('text-slate-100');
         document.body.classList.add('text-slate-900');
