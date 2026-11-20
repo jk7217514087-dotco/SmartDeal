@@ -1,0 +1,25 @@
+services:
+  # Backend API Server on Render
+  - type: web
+    name: smartdeal-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/server.mjs
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+
+  # Frontend Static Application on Render (Alternative / Mirror to Vercel)
+  - type: web
+    name: smartdeal-frontend
+    env: static
+    plan: free
+    buildCommand: npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
