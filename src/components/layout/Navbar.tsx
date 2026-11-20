@@ -217,29 +217,29 @@ const NAVBAR_THEMES: Record<string, NavbarThemeConfig> = {
     tooltipText: 'Active: Cyber Cosmic Indigo. Click to switch themes',
   },
   'pure-white': {
-    headerBg: 'bg-white border-b border-slate-200 text-slate-900 shadow-xs',
-    topBannerBg: 'bg-white border-b border-slate-200 text-slate-700',
-    smartGuaranteeBadge: 'bg-blue-50 text-blue-700 border-blue-200',
-    smsButton: 'bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700 font-bold',
+    headerBg: 'bg-[#374151] border-b border-[#4b5563] text-white shadow-md',
+    topBannerBg: 'bg-[#282d37] border-b border-[#3b414d] text-slate-300',
+    smartGuaranteeBadge: 'bg-white/10 text-white border-white/20',
+    smsButton: 'bg-white/10 hover:bg-white/20 border-white/20 text-white font-bold',
     logoIcon: 'bg-blue-600 text-white shadow-lg shadow-blue-600/25',
-    logoTextGradient: 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent',
-    proBadge: 'bg-blue-50 text-blue-700 border-blue-200',
-    searchInput: 'bg-slate-100 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15',
+    logoTextGradient: 'bg-gradient-to-r from-blue-400 via-sky-300 to-cyan-300 bg-clip-text text-transparent',
+    proBadge: 'bg-blue-500/20 text-blue-300 border-blue-400/40',
+    searchInput: 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-500/20',
     searchBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 font-black',
     searchPopup: 'bg-white border-slate-200 text-slate-900 shadow-xl',
-    aiBtn: 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 hover:text-blue-900',
-    aiIcon: 'text-blue-600',
-    appBtn: 'bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700',
-    themeToggleBtn: 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 shadow-sm shadow-blue-500/15',
-    themeIcon: 'text-blue-600',
+    aiBtn: 'bg-white/10 border-white/20 text-white hover:bg-white/20',
+    aiIcon: 'text-blue-300',
+    appBtn: 'bg-white/10 hover:bg-white/20 border-white/20 text-white',
+    themeToggleBtn: 'bg-white/10 border-white/20 text-white hover:bg-white/20 shadow-sm',
+    themeIcon: 'text-amber-300',
     cartBtn: 'bg-blue-600 hover:bg-blue-700 text-white font-black shadow-md shadow-blue-500/20',
-    cartCountBadge: 'bg-slate-900 text-white',
-    categoriesNavBg: 'border-b border-slate-200 bg-white text-slate-800 shadow-xs',
-    allCategoriesLink: 'text-blue-600 hover:text-blue-700 font-bold',
-    compareStoresLink: 'text-blue-600 font-bold',
-    guestShopperCard: 'bg-slate-50 border-slate-200 text-slate-700 shadow-xs',
-    guestDot: 'bg-blue-600',
-    tooltipText: 'Active: Pure Minimalist White. Click to switch themes',
+    cartCountBadge: 'bg-white text-blue-700',
+    categoriesNavBg: 'border-b border-[#4b5563] bg-[#282d37] text-slate-200 shadow-xs',
+    allCategoriesLink: 'text-blue-400 hover:text-blue-300 font-bold',
+    compareStoresLink: 'text-blue-400 font-bold',
+    guestShopperCard: 'bg-[#282d37] border-[#4b5563] text-slate-200 shadow-xs',
+    guestDot: 'bg-blue-400',
+    tooltipText: 'Active: Slate Gray Header with Pure White Content. Click to switch themes',
   },
 };
 
@@ -409,19 +409,8 @@ export const Navbar: React.FC = () => {
     <header className={`sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}>
       {/* Main Navbar Bar */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        {/* Left Side: Three-Line Menu (☰), Back Button & Brand Logo */}
+        {/* Left Side: Back Button & Brand Logo */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Three-Line (☰ Hamburger Menu) Button */}
-          <button
-            onClick={() => setIsNavDrawerOpen(true)}
-            className="p-2 sm:px-3 sm:py-2 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-2 border border-slate-200/80 dark:border-slate-700/80 group"
-            title="Open Menu & Categories (Three Lines)"
-            aria-label="Open Navigation Menu"
-          >
-            <Menu className="w-5 h-5 text-slate-800 dark:text-white group-hover:text-brand-500 transition-colors" />
-            <span className="hidden sm:inline font-extrabold text-xs text-slate-800 dark:text-white">Menu</span>
-          </button>
-
           {location.pathname !== '/' && (
             <button
               onClick={() => {
@@ -431,7 +420,7 @@ export const Navbar: React.FC = () => {
                   navigate('/');
                 }
               }}
-              className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-400 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all cursor-pointer shadow-xs active:scale-95 group"
+              className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all cursor-pointer shadow-xs active:scale-95 group border border-white/15"
               title="Go back to previous page"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -453,14 +442,14 @@ export const Navbar: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-1">
-                <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white font-sans">
+                <span className="font-black text-xl tracking-tight text-white font-sans">
                   Smart<span className={navTheme.logoTextGradient}>Deal</span>
                 </span>
                 <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
                   PRO
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
+              <p className="text-[10px] text-slate-300 font-medium hidden sm:block">
                 Compare. Save. Buy Smarter.
               </p>
             </div>
@@ -562,20 +551,20 @@ export const Navbar: React.FC = () => {
           {/* Notifications */}
           <Link
             to="/notifications"
-            className="relative p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            className="relative p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-white/10 text-white/90 hover:text-white transition-colors"
             title="Notifications"
           >
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-2 h-2 rounded-full bg-brand-600" />
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-2 h-2 rounded-full bg-blue-400" />
           </Link>
 
           {/* Wishlist */}
           <Link
             to="/wishlist"
-            className="relative p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+            className="relative p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-white/10 text-white/90 hover:text-white transition-colors"
             title="Wishlist"
           >
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
+            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             {wishlist.length > 0 && (
               <span className="absolute top-0 right-0 sm:top-1 sm:right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center shadow-sm">
                 {wishlist.length}
@@ -606,11 +595,11 @@ export const Navbar: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-              className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-white/10 text-white/90 hover:text-white transition-colors cursor-pointer"
               title="Account & Login"
               aria-label="Account Profile"
             >
-              <User className="w-4 h-4 sm:w-5 sm:h-5" />
+              <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
 
             {/* Mobile Backdrop */}

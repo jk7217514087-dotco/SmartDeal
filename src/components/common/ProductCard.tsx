@@ -102,7 +102,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
   };
 
   return (
-    <div className="group bg-[#19191d] rounded-2xl sm:rounded-3xl border border-[#27272e] shadow-lg hover:shadow-2xl hover:border-slate-600 transition-all duration-300 flex flex-col justify-between overflow-hidden relative">
+    <div className="group bg-[#374151] rounded-2xl sm:rounded-3xl border border-[#4b5563] shadow-lg hover:shadow-2xl hover:border-slate-300 transition-all duration-300 flex flex-col justify-between overflow-hidden relative">
       {/* Top Badges & Actions */}
       <div className="p-2.5 sm:p-3.5 pb-0 flex items-center justify-between gap-1 z-10">
         <DealScoreBadge score={product.dealScore} breakdown={product.dealScoreBreakdown} size="sm" />
@@ -116,8 +116,8 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             }}
             className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
               hasAlert
-                ? 'bg-amber-950/70 text-amber-400 border border-amber-500/50'
-                : 'bg-[#24242c] text-slate-300 hover:text-amber-400 hover:bg-[#2c2c36] border border-[#34343f]'
+                ? 'bg-amber-900/80 text-amber-300 border border-amber-400'
+                : 'bg-[#4b5563] text-slate-200 hover:text-amber-300 hover:bg-[#5a6578] border border-[#6b7280]'
             }`}
             title={hasAlert ? 'Price Alert Active' : 'Set Price Alert'}
           >
@@ -139,8 +139,8 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             }}
             className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
               isWishlisted
-                ? 'bg-rose-950/70 text-rose-400 border border-rose-500/50'
-                : 'bg-[#24242c] text-slate-300 hover:text-rose-400 hover:bg-[#2c2c36] border border-[#34343f]'
+                ? 'bg-rose-900/80 text-rose-300 border border-rose-400'
+                : 'bg-[#4b5563] text-slate-200 hover:text-rose-300 hover:bg-[#5a6578] border border-[#6b7280]'
             }`}
             title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
@@ -169,10 +169,10 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
       {/* Product Information */}
       <div className="p-3 sm:p-4 pt-1 flex-1 flex flex-col justify-between space-y-2.5">
         <div>
-          <div className="flex items-center justify-between text-[11px] text-slate-400 font-semibold mb-1">
-            <span className="truncate max-w-[100px] text-slate-400">{product.brand}</span>
+          <div className="flex items-center justify-between text-[11px] text-slate-300 font-semibold mb-1">
+            <span className="truncate max-w-[100px] text-slate-300">{product.brand}</span>
             <span className="text-emerald-400 font-bold shrink-0 flex items-center gap-1">
-              ★ {product.rating} <span className="text-slate-400 font-normal">({Math.floor(25 + (product.rating * 14))})</span>
+              ★ {product.rating} <span className="text-slate-300 font-normal">({Math.floor(25 + (product.rating * 14))})</span>
             </span>
           </div>
 
@@ -187,34 +187,18 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             <span className="text-base sm:text-xl font-black text-white">
               ₹{product.sellingPrice.toLocaleString('en-IN')}
             </span>
-            <span className="text-[11px] sm:text-xs text-slate-400 line-through">
+            <span className="text-[11px] sm:text-xs text-slate-300 line-through">
               ₹{product.mrp.toLocaleString('en-IN')}
             </span>
-            <span className="text-[10px] sm:text-xs font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/60">
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-300 bg-emerald-950/70 px-1.5 py-0.5 rounded border border-emerald-700/60">
               (Save ₹{(product.mrp - product.sellingPrice).toLocaleString('en-IN')}) {product.discountPercent}% Off
-            </span>
-          </div>
-
-          {/* Standard / Express Delivery Indicator */}
-          <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-slate-300">
-            <Truck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span>Express Delivery available</span>
-          </div>
-
-          {/* Promotional Offer Pills */}
-          <div className="mt-2 flex flex-wrap gap-1">
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-teal-950/60 text-teal-300 border border-teal-800/60">
-              Flat lowest price
-            </span>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#26262f] text-slate-300 border border-[#383844]">
-              2 Years Warranty
             </span>
           </div>
 
           {/* Lowest Store Indicator */}
           {lowestStoreListing && (
-            <div className="mt-2.5 flex items-center justify-between text-[11px] px-2.5 py-1.5 rounded-xl bg-[#24242c] border border-[#34343f]">
-              <span className="text-slate-400 truncate">
+            <div className="mt-2.5 flex items-center justify-between text-[11px] px-2.5 py-1.5 rounded-xl bg-[#282d37] border border-[#4b5563]">
+              <span className="text-slate-300 truncate">
                 Best: <strong className="text-white">{lowestStoreListing.sellerName}</strong>
               </span>
               <span className="font-black font-mono text-cyan-300 shrink-0 ml-1">
@@ -224,8 +208,8 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           )}
         </div>
 
-        {/* Action Buttons: Primary is Blue (#2563EB) with white text, Secondary is dark charcoal */}
-        <div className="pt-2.5 border-t border-[#2a2a33] flex flex-col gap-1.5 sm:gap-2">
+        {/* Action Buttons: Primary is Blue (#2563EB) with white text, Secondary is slate gray */}
+        <div className="pt-2.5 border-t border-[#4b5563] flex flex-col gap-1.5 sm:gap-2">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={e => {
@@ -233,7 +217,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
                 e.stopPropagation();
                 setIsQuickDetailsOpen(true);
               }}
-              className="flex-1 py-2 px-2 rounded-xl font-bold text-xs text-center transition-all truncate cursor-pointer active:scale-95 bg-[#26262B] hover:bg-[#32323a] text-slate-200 border border-[#3b3b45]"
+              className="flex-1 py-2 px-2 rounded-xl font-bold text-xs text-center transition-all truncate cursor-pointer active:scale-95 bg-[#4b5563] hover:bg-[#5a6578] text-white border border-[#6b7280]"
               title="View full Flipkart-style details & specifications"
             >
               View Details
@@ -252,7 +236,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           {/* Direct Marketplace Comparison Button */}
           <Link
             to={`/compare/${product.id}`}
-            className="w-full py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all truncate bg-[#1f1f25] hover:bg-[#282830] text-cyan-400 border border-[#3b3b45]"
+            className="w-full py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all truncate bg-[#282d37] hover:bg-[#323846] text-cyan-300 border border-[#4b5563]"
           >
             <Layers className="w-3.5 h-3.5 shrink-0" />
             <span className="truncate">Compare {externalListings.length} Stores</span>
