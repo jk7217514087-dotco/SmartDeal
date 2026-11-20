@@ -12,7 +12,13 @@ import { useApp, getThemeDefaultBg } from '../../context/AppContext';
 export const UserLayout: React.FC = () => {
   const { customBg, activeTheme } = useApp();
   const currentBg = customBg || getThemeDefaultBg(activeTheme);
-  const isWhite = activeTheme === 'pure-white' || (currentBg && (currentBg.toLowerCase() === '#ffffff' || currentBg.toLowerCase() === '#f8fafd'));
+  const isWhite = activeTheme === 'pure-white' || (currentBg && (
+    currentBg.toLowerCase() === '#ffffff' || 
+    currentBg.toLowerCase() === '#f4f6fb' || 
+    currentBg.toLowerCase() === '#f5f6ff' || 
+    currentBg.toLowerCase() === '#f8fafd' ||
+    currentBg.toLowerCase().startsWith('#f')
+  ));
 
   return (
     <div 

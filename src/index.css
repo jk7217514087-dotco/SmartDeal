@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --smartdeal-bg: #FFFFFF;
+  --smartdeal-bg: #F4F6FB;
 }
 
 html[data-theme="pure-white"],
 body.theme-pure-white,
 [data-theme="pure-white"] {
-  --smartdeal-bg: #FFFFFF;
+  --smartdeal-bg: #F4F6FB;
 }
 
 /* THEME 1: STEEL NAVY (Image 1: #0b1a30) */

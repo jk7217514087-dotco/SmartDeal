@@ -32,7 +32,7 @@ export type ThemeId =
   | 'cyber-emerald';
 
 export const THEME_BG_MAP: Record<string, string> = {
-  'pure-white': '#FFFFFF',
+  'pure-white': '#F4F6FB',
   'steel-navy': '#0b1a30',
   'matrix-lime': '#111612',
   'sunset-coral': '#1c0b29',
@@ -53,7 +53,7 @@ export const THEME_CYCLE_ORDER: ThemeId[] = [
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
-  return THEME_BG_MAP[theme] || (theme === 'pure-white' ? '#FFFFFF' : '#0b1a30');
+  return THEME_BG_MAP[theme] || (theme === 'pure-white' ? '#F4F6FB' : '#0b1a30');
 };
 
 interface AppContextType {
@@ -390,7 +390,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCustomBgState(bg);
     localStorage.setItem('smartdeals_active_theme', normalizedTheme);
     localStorage.setItem('smartdeals_custom_bg', bg);
-    const isLight = normalizedTheme === 'pure-white' || bg.toLowerCase() === '#ffffff' || bg.toLowerCase() === '#f8fafd';
+    const isLight = normalizedTheme === 'pure-white' || bg.toLowerCase() === '#ffffff' || bg.toLowerCase() === '#f4f6fb' || bg.toLowerCase() === '#f5f6ff' || bg.toLowerCase() === '#f8fafd' || bg.toLowerCase().startsWith('#f');
     localStorage.setItem('smartdeals_dark_mode', (!isLight).toString());
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', normalizedTheme);
@@ -410,9 +410,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('text-slate-100');
         document.body.classList.add('text-slate-900');
-        document.documentElement.style.setProperty('--smartdeal-bg', '#FFFFFF');
-        document.body.style.backgroundColor = '#FFFFFF';
-        document.documentElement.style.backgroundColor = '#FFFFFF';
+        document.documentElement.style.setProperty('--smartdeal-bg', '#F4F6FB');
+        document.body.style.backgroundColor = '#F4F6FB';
+        document.documentElement.style.backgroundColor = '#F4F6FB';
       } else {
         document.documentElement.classList.add('dark');
         document.body.classList.remove('text-slate-900');

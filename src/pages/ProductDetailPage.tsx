@@ -145,17 +145,17 @@ const THEME_STYLES: Record<string, {
   'pure-white': {
     cardBg: 'bg-white',
     cardBorder: 'border-slate-200',
-    badgeBg: 'bg-blue-600',
-    badgeText: 'bg-blue-50 text-blue-700 border-blue-200',
-    accentText: 'text-blue-600',
-    pricingBg: 'bg-slate-50',
+    badgeBg: 'bg-indigo-600',
+    badgeText: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    accentText: 'text-indigo-600',
+    pricingBg: 'bg-white',
     pricingBorder: 'border-slate-200',
-    thumbActiveBorder: 'border-blue-600',
+    thumbActiveBorder: 'border-indigo-600',
     thumbInactiveBg: 'border-slate-200 bg-white',
-    iconText: 'text-blue-600',
+    iconText: 'text-indigo-600',
     mobileBg: 'bg-white/95',
     mobileBorder: 'border-slate-200',
-    buyButton: 'bg-blue-600 hover:bg-blue-700 text-white font-black shadow-md shadow-blue-500/20'
+    buyButton: 'bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black shadow-md shadow-orange-500/20'
   }
 };
 
@@ -333,7 +333,7 @@ export const ProductDetailPage: React.FC = () => {
           </div>
 
           {/* Guarantee Badges */}
-          <div className="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] font-semibold text-slate-300">
+          <div className="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] font-semibold text-slate-700 dark:text-slate-300">
             <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
               <ShieldCheck className={`w-4 h-4 ${themeStyle.iconText}`} />
               <span>100% Genuine</span>
@@ -347,6 +347,24 @@ export const ProductDetailPage: React.FC = () => {
               <span>Fast Dispatch</span>
             </div>
           </div>
+
+          {/* View Details / Specifications Shortcut Button (Circled in Image 4) */}
+          <button
+            onClick={() => {
+              const el = document.getElementById('product-details-specs-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else {
+                setActiveTab('specifications');
+                const tabsEl = document.getElementById('product-tabs-section');
+                if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="w-full py-3 px-4 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800/60 bg-indigo-50/80 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-extrabold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+          >
+            <Info className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <span>View Full Details & Specifications</span>
+            <ChevronRight className="w-4 h-4 text-indigo-500" />
+          </button>
         </div>
 
         {/* Center/Right: Product Details & Price Engine (7 cols) matching Panel 3 */}
@@ -414,22 +432,39 @@ export const ProductDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Action Buttons: Compare Prices & Buy at Best Price matching Panel 3 */}
+          {/* Action Buttons: View Details, Compare Prices & Buy at Best Price matching Buyhatke */}
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+            <button
+              onClick={() => {
+                const el = document.getElementById('product-details-specs-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else {
+                  setActiveTab('specifications');
+                  const tabsEl = document.getElementById('product-tabs-section');
+                  if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="w-full sm:w-auto py-4 px-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 hover:border-indigo-400 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-800 dark:text-white font-extrabold text-sm text-center shadow-xs active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Info className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span>View Details</span>
+            </button>
+
             <button
               onClick={() => {
                 const el = document.getElementById('price-comparison-section');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                 else navigate(`/compare/${product.id}`);
               }}
-              className="w-full sm:flex-1 py-4 px-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-900 dark:text-white font-extrabold text-sm text-center shadow-sm active:scale-95 transition-all cursor-pointer"
+              className="w-full sm:flex-1 py-4 px-6 rounded-2xl border-2 border-indigo-200 dark:border-indigo-900/60 hover:border-indigo-400 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-extrabold text-sm text-center shadow-xs active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
-              Compare Prices
+              <Scale className="w-4 h-4" />
+              <span>Compare Prices</span>
             </button>
 
             <button
               onClick={handleBuyAtBestPrice}
-              className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+              className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-[#FF6A00] hover:bg-[#e65f00] text-white font-extrabold text-sm shadow-xl shadow-orange-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
               title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
             >
               <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'} (₹{product.sellingPrice.toLocaleString('en-IN')})</span>
@@ -493,7 +528,7 @@ export const ProductDetailPage: React.FC = () => {
       </section>
 
       {/* MIDDLE SECTION: Tabs Bar matching Panel 3 */}
-      <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+      <div id="product-tabs-section" className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
         {/* Navigation Tabs matching Panel 3 */}
         <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-1 text-xs font-extrabold">
           {[
@@ -669,7 +704,7 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* SECTION: FULL FLIPKART-STYLE PRODUCT SPECIFICATIONS & DETAILS */}
-      <section className="pt-2">
+      <section id="product-details-specs-section" className="pt-2">
         <ProductFullDetailsSection product={product} />
       </section>
 

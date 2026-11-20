@@ -35,11 +35,11 @@
     (function () {
       try {
         var theme = localStorage.getItem('smartdeals_active_theme') || 'pure-white';
-        var bg = localStorage.getItem('smartdeals_custom_bg') || (theme === 'pure-white' ? '#FFFFFF' : '#0b1a30');
+        var bg = localStorage.getItem('smartdeals_custom_bg') || (theme === 'pure-white' ? '#F4F6FB' : '#0b1a30');
         document.documentElement.setAttribute('data-theme', theme);
         document.documentElement.style.setProperty('--smartdeal-bg', bg);
         document.documentElement.style.backgroundColor = bg;
-        if (theme === 'pure-white' || bg.toLowerCase() === '#ffffff' || bg.toLowerCase() === '#f8fafd') {
+        if (theme === 'pure-white' || bg.toLowerCase() === '#ffffff' || bg.toLowerCase() === '#f4f6fb' || bg.toLowerCase() === '#f5f6ff' || bg.toLowerCase() === '#f8fafd' || bg.toLowerCase().startsWith('#f')) {
           document.documentElement.classList.remove('dark');
         } else {
           document.documentElement.classList.add('dark');
@@ -50,7 +50,7 @@
 </head>
 
 <body class="antialiased selection:bg-blue-600 selection:text-white min-h-screen text-slate-900"
-  style="background-color: #FFFFFF;">
+  style="background-color: #F4F6FB;">
   <!-- Standalone & Web Rotating Splash Loader Overlay (Phone Screen & Laptop Ready) -->
   <div id="smartdeal-splash-screen" style="
       position: fixed;

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import {
   Heart,
-  Layers
+  Layers,
+  Info
 } from 'lucide-react';
 
 interface Props {
@@ -21,6 +22,7 @@ interface CardThemeConfig {
   priceColor: string;
   discountColor: string;
   discountArrowBg: string;
+  detailsBtn: string;
   compareBtn: string;
   topActionBtn: string;
 }
@@ -78,7 +80,7 @@ const renderStoreBadge = (storeName: string) => {
 
 const CARD_THEMES: Record<string, CardThemeConfig> = {
   'pure-white': {
-    cardContainer: 'bg-white border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-300',
+    cardContainer: 'bg-white border-slate-200/80 shadow-xs hover:shadow-lg hover:border-indigo-300',
     imageWrapper: 'bg-slate-50/80 border-slate-100',
     brandText: 'text-slate-400',
     starText: 'text-amber-500',
@@ -87,7 +89,8 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-slate-950',
     discountColor: 'text-emerald-600',
     discountArrowBg: 'bg-emerald-100 text-emerald-700',
-    compareBtn: 'bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 border-indigo-200/80 shadow-xs font-bold',
+    detailsBtn: 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300 font-bold',
+    compareBtn: 'bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 border-indigo-200 font-bold',
     topActionBtn: 'bg-slate-100 text-slate-400 hover:text-rose-500 hover:bg-rose-50 border-slate-200/60',
   },
   'steel-navy': {
@@ -100,6 +103,7 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-white',
     discountColor: 'text-sky-400',
     discountArrowBg: 'bg-sky-950 text-sky-400 border border-sky-800/60',
+    detailsBtn: 'bg-[#0e223f] hover:bg-[#16355f] text-sky-200 border-sky-800/80 font-bold',
     compareBtn: 'bg-[#0b1a30] hover:bg-sky-500 hover:text-slate-950 text-sky-300 border-sky-900/60 shadow-xs font-bold',
     topActionBtn: 'bg-[#0e223f] text-slate-300 hover:text-rose-400 hover:bg-[#14325c] border-sky-900/50',
   },
@@ -113,6 +117,7 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-white',
     discountColor: 'text-lime-400',
     discountArrowBg: 'bg-lime-950 text-lime-400 border border-lime-800/60',
+    detailsBtn: 'bg-[#19261b] hover:bg-[#233526] text-lime-200 border-lime-800/80 font-bold',
     compareBtn: 'bg-[#111612] hover:bg-lime-400 hover:text-slate-950 text-lime-300 border-lime-900/60 shadow-xs font-bold',
     topActionBtn: 'bg-[#1f2d22] text-slate-300 hover:text-rose-400 hover:bg-[#283b2d] border-lime-900/50',
   },
@@ -126,6 +131,7 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-white',
     discountColor: 'text-rose-400',
     discountArrowBg: 'bg-pink-950 text-rose-400 border border-pink-800/60',
+    detailsBtn: 'bg-[#33154b] hover:bg-[#451b66] text-rose-200 border-pink-800/80 font-bold',
     compareBtn: 'bg-[#1c0b29] hover:bg-rose-500 hover:text-white text-pink-300 border-pink-900/60 shadow-xs font-bold',
     topActionBtn: 'bg-[#36164f] text-slate-300 hover:text-rose-400 hover:bg-[#471c67] border-pink-900/50',
   },
@@ -139,6 +145,7 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-white',
     discountColor: 'text-emerald-400',
     discountArrowBg: 'bg-emerald-950 text-emerald-400 border border-emerald-800/60',
+    detailsBtn: 'bg-[#0c3928] hover:bg-[#114f38] text-emerald-200 border-emerald-800/80 font-bold',
     compareBtn: 'bg-[#051f15] hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 border-emerald-900/60 shadow-xs font-bold',
     topActionBtn: 'bg-[#0e3d2b] text-slate-300 hover:text-rose-400 hover:bg-[#13523a] border-emerald-900/50',
   },
@@ -152,6 +159,7 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-white',
     discountColor: 'text-amber-400',
     discountArrowBg: 'bg-amber-950 text-amber-400 border border-amber-800/60',
+    detailsBtn: 'bg-[#2d200e] hover:bg-[#3d2c14] text-amber-200 border-amber-800/80 font-bold',
     compareBtn: 'bg-[#181107] hover:bg-amber-400 hover:text-slate-950 text-amber-300 border-amber-900/60 shadow-xs font-bold',
     topActionBtn: 'bg-[#2e200e] text-slate-300 hover:text-rose-400 hover:bg-[#3d2a13] border-amber-900/50',
   },
@@ -165,6 +173,7 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     priceColor: 'text-white',
     discountColor: 'text-violet-400',
     discountArrowBg: 'bg-violet-950 text-violet-400 border border-violet-800/60',
+    detailsBtn: 'bg-[#14185c] hover:bg-[#1c227e] text-violet-200 border-violet-800/80 font-bold',
     compareBtn: 'bg-[#08092d] hover:bg-violet-500 hover:text-white text-violet-300 border-violet-900/60 shadow-xs font-bold',
     topActionBtn: 'bg-[#171a63] text-slate-300 hover:text-rose-400 hover:bg-[#202484] border-violet-900/50',
   },
@@ -275,11 +284,19 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           )}
         </div>
 
-        {/* Compare Product Action Button ("ek rakhna comapare product") */}
-        <div className="pt-3 mt-2 border-t border-slate-100 dark:border-slate-800/80">
+        {/* Dual Actions: View Details and Compare Stores */}
+        <div className="pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-2 gap-1.5">
+          <Link
+            to={productDetailLink}
+            className={`py-2 px-1.5 rounded-xl text-[11px] sm:text-xs flex items-center justify-center gap-1 active:scale-95 transition-all truncate border shadow-xs ${cardTheme.detailsBtn}`}
+            title="View product details and specifications"
+          >
+            <Info className="w-3.5 h-3.5 shrink-0 opacity-80" />
+            <span className="truncate">View Details</span>
+          </Link>
           <Link
             to={`/compare/${product.id}`}
-            className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all truncate border shadow-xs ${cardTheme.compareBtn}`}
+            className={`py-2 px-1.5 rounded-xl text-[11px] sm:text-xs flex items-center justify-center gap-1 active:scale-95 transition-all truncate border shadow-xs ${cardTheme.compareBtn}`}
             title="Compare live prices across Amazon, Flipkart, Croma & more"
           >
             <Layers className="w-3.5 h-3.5 shrink-0" />
