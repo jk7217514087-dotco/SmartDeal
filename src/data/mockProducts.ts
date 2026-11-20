@@ -6,9 +6,9 @@ export const mockProducts: Product[] = [
     name: 'Noise Endeavour Pro Rugged Smart Watch (1.46" AMOLED Display, Carbon Black, BT Calling, SOS, Fast Charge)',
     brand: 'Noise',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
+    image: 'https://m.media-amazon.com/images/I/61SSVxTSs3L._SL1500_.jpg',
     images: [
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
+      'https://m.media-amazon.com/images/I/61SSVxTSs3L._SL1500_.jpg',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80'
     ],
@@ -128,9 +128,9 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy M14 5G (Smoky Teal, 6GB RAM, 128GB Storage)',
     brand: 'Samsung',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/x/z/5/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkwn2c72fu.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/x/z/5/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkwn2c72fu.jpeg',
       'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80'
     ],
@@ -281,9 +281,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 128 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 89999,
@@ -491,9 +491,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 256 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 99990,
@@ -597,9 +597,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 512 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 119990,
@@ -703,9 +703,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Revolution 6 Running Shoes for Men (Black/White)',
     brand: 'Nike',
     category: 'Shoes',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/7/w/y/11-hq2414-003-11-nike-anthracite-anthracite-black-original-imahzjfuyn3h4yef.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/7/w/y/11-hq2414-003-11-nike-anthracite-anthracite-black-original-imahzjfuyn3h4yef.jpeg',
       'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 4995,
@@ -826,9 +826,9 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy S24 5G (Onyx Black, 8GB RAM, 128GB Storage)',
     brand: 'Samsung',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/r/8/1/-original-imahfz2tenzpsd3p.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/r/8/1/-original-imahfz2tenzpsd3p.jpeg',
       'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 79999,
@@ -933,9 +933,9 @@ export const mockProducts: Product[] = [
     name: 'HP Pavilion 15 (15.6" FHD Laptop, Core i5 12th Gen, 16GB RAM, 512GB SSD)',
     brand: 'HP',
     category: 'Laptops',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/0/q/x/15-eg2009tu-thin-and-light-laptop-hp-original-imah2mwyg5e8devr.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/0/q/x/15-eg2009tu-thin-and-light-laptop-hp-original-imah2mwyg5e8devr.jpeg',
       'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 69990,
@@ -1076,9 +1076,9 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy Watch6 Bluetooth (44mm, Graphite, Advanced Sleep Coaching)',
     brand: 'Samsung',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/smartwatch/3/r/i/-original-imahcn9fykcjjhqs.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80'
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/smartwatch/3/r/i/-original-imahcn9fykcjjhqs.jpeg'
     ],
     mrp: 29999,
     sellingPrice: 21999,
@@ -1200,9 +1200,9 @@ export const mockProducts: Product[] = [
     name: 'boAt Airdopes 141 Bluetooth TWS Earbuds with 42H Playtime, ENx Tech',
     brand: 'boAt',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/l/4/q/airdopes-141-elite-anc-boat-original-imahgrrdfp5zpnwt.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/l/4/q/airdopes-141-elite-anc-boat-original-imahgrrdfp5zpnwt.jpeg',
       'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 4490,
@@ -1302,9 +1302,9 @@ export const mockProducts: Product[] = [
     name: 'Noise ColorFit Pro 5 Smart Watch (1.85" AMOLED Display, BT Calling)',
     brand: 'Noise',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+    image: 'https://m.media-amazon.com/images/I/61TapeOXotL._SL1500_.jpg',
     images: [
-      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+      'https://m.media-amazon.com/images/I/61TapeOXotL._SL1500_.jpg',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 8999,
@@ -1389,9 +1389,9 @@ export const mockProducts: Product[] = [
     name: 'ASUS Vivobook 15 Intel Core i5 12th Gen (16GB RAM / 512GB SSD, FHD)',
     brand: 'ASUS',
     category: 'Laptops',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/g/p/b/-original-imahmbf8z3s94xxt.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/g/p/b/-original-imahmbf8z3s94xxt.jpeg',
       'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 69990,
@@ -1506,9 +1506,9 @@ export const mockProducts: Product[] = [
     name: 'Pigeon by Stovekraft Cruise 3 Burner Glass Top Gas Stove',
     brand: 'Pigeon',
     category: 'Home & Kitchen',
-    image: 'https://images.unsplash.com/photo-1585837575652-267c041d77d4?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/gas-stove/x/g/j/-original-imagrzvnzcesygng.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1585837575652-267c041d77d4?w=800&auto=format&fit=crop&q=80'
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/gas-stove/x/g/j/-original-imagrzvnzcesygng.jpeg'
     ],
     mrp: 6495,
     sellingPrice: 2199,
@@ -1618,9 +1618,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Air Max SC Mens Running Shoes & Sneakers',
     brand: 'Nike',
     category: 'Fashion',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/p/4/p/13-jj1844-700-13-nike-lemon-venom-black-wolf-grey-dark-shadow-original-imahsjdz9wg7zjxs.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/p/4/p/13-jj1844-700-13-nike-lemon-venom-black-wolf-grey-dark-shadow-original-imahsjdz9wg7zjxs.jpeg',
       'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 6995,
@@ -1749,9 +1749,9 @@ export const mockProducts: Product[] = [
     name: 'Sony WH-1000XM5 Wireless Active Noise Cancelling Headphones (Black)',
     brand: 'Sony',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/v/d/g/-original-imahgr295uvptwq7.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/v/d/g/-original-imahgr295uvptwq7.jpeg',
       'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 34990,
@@ -1848,9 +1848,9 @@ export const mockProducts: Product[] = [
     name: 'Apple MacBook Air M2 (13.6-inch, 8GB RAM, 256GB SSD, Midnight)',
     brand: 'Apple',
     category: 'Laptops',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/2/v/v/-original-imagfdeqter4sj2j.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/2/v/v/-original-imagfdeqter4sj2j.jpeg',
       'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 99900,
@@ -1962,9 +1962,9 @@ export const mockProducts: Product[] = [
     name: 'Adidas Ultraboost Light Running & Training Shoes for Men (Core Black)',
     brand: 'Adidas',
     category: 'Fashion',
-    image: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=800&auto=format&fit=crop&q=80',
+    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/t/d/m/-watermarked-original-imagtbtejwfyzesb.jpeg',
     images: [
-      'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=800&auto=format&fit=crop&q=80',
+      'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/t/d/m/-watermarked-original-imagtbtejwfyzesb.jpeg',
       'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 18999,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Product } from '../../types';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { getMarketplaceComparisonStores } from '../../utils/comparisonStores';
 import {
   Heart,
   Layers,
@@ -188,14 +189,10 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
   const isWishlisted = wishlist.includes(product.id);
   const productDetailLink = product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`;
 
-  const externalListings = (product.marketplacePrices || []).filter(
-    p => !p.isSmartDealsSeller && !p.sellerName.toLowerCase().includes('smartdeal')
-  );
-  const lowestStoreListing = externalListings.length > 0
-    ? [...externalListings].sort((a, b) => a.finalPrice - b.finalPrice)[0]
-    : null;
+  const comparisonStores = getMarketplaceComparisonStores(product);
+  const lowestStoreListing = comparisonStores[0];
 
-  const storeName = lowestStoreListing?.sellerName || 'Amazon';
+  const storeName = lowestStoreListing?.sellerName || 'Meesho';
   const effectivePrice = lowestStoreListing?.finalPrice || product.sellingPrice;
   const discountAmount = product.mrp > effectivePrice ? product.mrp - effectivePrice : 0;
 
@@ -300,7 +297,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             title="Compare live prices across Amazon, Flipkart, Croma & more"
           >
             <Layers className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">Compare {externalListings.length > 0 ? `${externalListings.length} Stores` : 'Prices'}</span>
+            <span className="truncate">Compare {comparisonStores.length > 0 ? `${comparisonStores.length} Stores` : 'Prices'}</span>
           </Link>
         </div>
       </div>
