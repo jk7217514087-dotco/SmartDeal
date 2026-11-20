@@ -440,53 +440,53 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
       {/* Trust Features Bar at the bottom matching screenshot */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center border border-blue-500/30 shrink-0">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#0c1322] border border-slate-200/80 dark:border-slate-800 shadow-2xs flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30 flex items-center justify-center shrink-0">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">100% Genuine Products</div>
-            <div className="text-[10px] text-slate-400">Only verified sellers & trusted platforms</div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white">100% Genuine Products</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Only verified sellers & trusted platforms</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shrink-0">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#0c1322] border border-slate-200/80 dark:border-slate-800 shadow-2xs flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-400 dark:border-indigo-500/30 flex items-center justify-center shrink-0">
             <Truck className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Real-time Delivery Info</div>
-            <div className="text-[10px] text-slate-400">Know delivery date & charges before you buy</div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white">Real-time Delivery Info</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Know delivery date & charges before you buy</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/30 shrink-0">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#0c1322] border border-slate-200/80 dark:border-slate-800 shadow-2xs flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30 flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Best Price Guarantee</div>
-            <div className="text-[10px] text-slate-400">Verified lowest store pricing</div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white">Best Price Guarantee</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Verified lowest store pricing</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shrink-0">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#0c1322] border border-slate-200/80 dark:border-slate-800 shadow-2xs flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30 flex items-center justify-center shrink-0">
             <Lock className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Secure & Safe</div>
-            <div className="text-[10px] text-slate-400">Your data and payments are protected</div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white">Secure & Safe</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Your data and payments are protected</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5 col-span-2 sm:col-span-1">
-          <div className="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/30 shrink-0">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-[#0c1322] border border-slate-200/80 dark:border-slate-800 shadow-2xs flex items-center gap-2.5 col-span-2 sm:col-span-1">
+          <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 border border-purple-200 dark:bg-purple-500/15 dark:text-purple-400 dark:border-purple-500/30 flex items-center justify-center shrink-0">
             <Bot className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">AI Price Insights</div>
-            <div className="text-[10px] text-slate-400">Get the best deal with AI recommendations</div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white">AI Price Insights</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Get the best deal with AI recommendations</div>
           </div>
         </div>
       </div>
