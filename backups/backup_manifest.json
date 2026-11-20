@@ -1,0 +1,88 @@
+[
+  {
+    "batchId": "SMARTDEAL-BACKUP-2026-11-20T04-39-17-639Z",
+    "timestamp": "2026-11-20T04:39:17.675Z",
+    "status": "VERIFIED_SUCCESSFUL",
+    "databasesIncluded": [
+      "smartdeal_users",
+      "smartdeal_admin",
+      "smartdeal_core"
+    ],
+    "files": [
+      {
+        "fileName": "smartdeal_users_data.json",
+        "bytes": 15068,
+        "checksumSha256": "7d40f9cb44c6731cd543145924f1cda4a212032d8679aca4473f93aa05c94697"
+      },
+      {
+        "fileName": "smartdeal_core_price_history.json",
+        "bytes": 244086,
+        "checksumSha256": "0eb5b8b085f889c5cb7f5dd608a083fbedf361e4a8367cfa9542963baeda25c4"
+      },
+      {
+        "fileName": "001_smartdeal_users_schema.sql",
+        "bytes": 8143,
+        "checksumSha256": "bd2ded3bf791b1aa546037f04781723c6c4da98a52efd523c94e0d44b2c6c150"
+      },
+      {
+        "fileName": "002_smartdeal_admin_schema.sql",
+        "bytes": 6605,
+        "checksumSha256": "9ff6e6a34a0bbc10cb0a64cfac0f4e4093d342cd344b22e6cbdbbb35d9427594"
+      },
+      {
+        "fileName": "003_smartdeal_core_schema.sql",
+        "bytes": 11295,
+        "checksumSha256": "f9e67fb1ceb1d9f8796e94be9ba5cdf08cf0d58680a6d40ada0f3c7342a8ec0b"
+      },
+      {
+        "fileName": "004_production_seed.sql",
+        "bytes": 11554,
+        "checksumSha256": "b177952455726c012a1399c9e6870ae290ec3391b92f6d145e7df2a1da55cdd9"
+      }
+    ],
+    "totalSizeBytes": 296751
+  },
+  {
+    "batchId": "SMARTDEAL-BACKUP-2026-11-19T19-41-44-158Z",
+    "timestamp": "2026-11-19T19:41:44.206Z",
+    "status": "VERIFIED_SUCCESSFUL",
+    "databasesIncluded": [
+      "smartdeal_users",
+      "smartdeal_admin",
+      "smartdeal_core"
+    ],
+    "files": [
+      {
+        "fileName": "smartdeal_users_data.json",
+        "bytes": 15068,
+        "checksumSha256": "7d40f9cb44c6731cd543145924f1cda4a212032d8679aca4473f93aa05c94697"
+      },
+      {
+        "fileName": "smartdeal_core_price_history.json",
+        "bytes": 244086,
+        "checksumSha256": "0eb5b8b085f889c5cb7f5dd608a083fbedf361e4a8367cfa9542963baeda25c4"
+      },
+      {
+        "fileName": "001_smartdeal_users_schema.sql",
+        "bytes": 8143,
+        "checksumSha256": "bd2ded3bf791b1aa546037f04781723c6c4da98a52efd523c94e0d44b2c6c150"
+      },
+      {
+        "fileName": "002_smartdeal_admin_schema.sql",
+        "bytes": 6605,
+        "checksumSha256": "9ff6e6a34a0bbc10cb0a64cfac0f4e4093d342cd344b22e6cbdbbb35d9427594"
+      },
+      {
+        "fileName": "003_smartdeal_core_schema.sql",
+        "bytes": 11295,
+        "checksumSha256": "f9e67fb1ceb1d9f8796e94be9ba5cdf08cf0d58680a6d40ada0f3c7342a8ec0b"
+      },
+      {
+        "fileName": "004_production_seed.sql",
+        "bytes": 11554,
+        "checksumSha256": "b177952455726c012a1399c9e6870ae290ec3391b92f6d145e7df2a1da55cdd9"
+      }
+    ],
+    "totalSizeBytes": 296751
+  }
+]

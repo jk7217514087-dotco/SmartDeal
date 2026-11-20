@@ -11,10 +11,12 @@ export const AdminRouteGuard: React.FC<Props> = ({ children }) => {
   const location = useLocation();
 
   const sessionAuth = sessionStorage.getItem('smartdeal_admin_authenticated') === 'true';
-  const isOwnerAdmin = (role === 'ADMIN' && currentUser?.role === 'ADMIN') || (sessionAuth && currentUser?.role === 'ADMIN') || sessionAuth;
+  const userRole = currentUser?.role;
+  const isAdminRole = role === 'ADMIN' || userRole === 'ADMIN' || (userRole as any) === 'SUPER_ADMIN' || (userRole as any) === 'SUPPORT_ADMIN';
+  const isAuthorizedAdmin = sessionAuth && (isAdminRole || !currentUser);
 
-  if (!isOwnerAdmin) {
-    // Intercept unauthorized users and guests, redirect immediately to /admin/login
+  if (!isAuthorizedAdmin) {
+    // Intercept unauthorized normal users and guests, redirect immediately to /admin/login
     return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
   }
 
