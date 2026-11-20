@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import { Product } from '../../types';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { DealScoreBadge } from './DealScoreBadge';
-import { PriceAlertModal } from './PriceAlertModal';
 import { PurchaseTrackerModal } from './PurchaseTrackerModal';
 import { ProductQuickDetailsModal } from '../product/ProductQuickDetailsModal';
 import { notificationService } from '../../services/notificationService';
 import {
   Heart,
   Layers,
-  Bell,
-  ExternalLink,
-  Truck,
-  Check
+  ExternalLink
 } from 'lucide-react';
 
 interface Props {
@@ -26,7 +21,6 @@ interface CardThemeConfig {
   brandText: string;
   starText: string;
   titleHover: string;
-  saveBadge: string;
   bestStoreBox: string;
   bestStoreText: string;
   bestStoreSeller: string;
@@ -45,7 +39,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-slate-300',
     starText: 'text-emerald-400',
     titleHover: 'hover:text-cyan-300',
-    saveBadge: 'text-emerald-300 bg-emerald-950/70 border-emerald-700/60',
     bestStoreBox: 'bg-[#282d37] border-[#4b5563]',
     bestStoreText: 'text-slate-300',
     bestStoreSeller: 'text-white',
@@ -62,7 +55,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-sky-300',
     starText: 'text-sky-400',
     titleHover: 'hover:text-sky-300',
-    saveBadge: 'text-sky-300 bg-sky-950/70 border-sky-700/60',
     bestStoreBox: 'bg-[#0b1a30] border-sky-900/60',
     bestStoreText: 'text-sky-300',
     bestStoreSeller: 'text-white',
@@ -79,7 +71,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-lime-300',
     starText: 'text-lime-400',
     titleHover: 'hover:text-lime-300',
-    saveBadge: 'text-lime-300 bg-lime-950/70 border-lime-700/60',
     bestStoreBox: 'bg-[#111612] border-lime-900/60',
     bestStoreText: 'text-lime-300',
     bestStoreSeller: 'text-white',
@@ -96,7 +87,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-pink-300',
     starText: 'text-pink-400',
     titleHover: 'hover:text-pink-300',
-    saveBadge: 'text-pink-300 bg-pink-950/70 border-pink-700/60',
     bestStoreBox: 'bg-[#1c0b29] border-pink-900/60',
     bestStoreText: 'text-pink-300',
     bestStoreSeller: 'text-white',
@@ -113,7 +103,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-emerald-300',
     starText: 'text-emerald-400',
     titleHover: 'hover:text-emerald-300',
-    saveBadge: 'text-emerald-300 bg-emerald-950/70 border-emerald-700/60',
     bestStoreBox: 'bg-[#051f15] border-emerald-900/60',
     bestStoreText: 'text-emerald-300',
     bestStoreSeller: 'text-white',
@@ -130,7 +119,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-amber-300',
     starText: 'text-amber-400',
     titleHover: 'hover:text-amber-300',
-    saveBadge: 'text-amber-300 bg-amber-950/70 border-amber-700/60',
     bestStoreBox: 'bg-[#181107] border-amber-900/60',
     bestStoreText: 'text-amber-300',
     bestStoreSeller: 'text-white',
@@ -147,7 +135,6 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
     brandText: 'text-violet-300',
     starText: 'text-violet-400',
     titleHover: 'hover:text-violet-300',
-    saveBadge: 'text-violet-300 bg-violet-950/70 border-violet-700/60',
     bestStoreBox: 'bg-[#08092d] border-violet-900/60',
     bestStoreText: 'text-violet-300',
     bestStoreSeller: 'text-white',
@@ -161,9 +148,8 @@ const CARD_THEMES: Record<string, CardThemeConfig> = {
 };
 
 export const ProductCard: React.FC<Props> = ({ product }) => {
-  const { cart, addToCart, wishlist, toggleWishlist, priceAlerts, trackActivity, trackOutboundClick, activeTheme } = useApp();
+  const { cart, addToCart, wishlist, toggleWishlist, trackActivity, trackOutboundClick, activeTheme } = useApp();
   const navigate = useNavigate();
-  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [isQuickDetailsOpen, setIsQuickDetailsOpen] = useState(false);
   const [trackerStore, setTrackerStore] = useState<{
     storeName: string;
@@ -177,7 +163,6 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
 
   const isWishlisted = wishlist.includes(product.id);
   const isInCart = cart.some(item => item.product.id === product.id);
-  const hasAlert = priceAlerts.some(a => a.productId === product.id);
   const productDetailLink = product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -246,50 +231,30 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
 
   return (
     <div className={`group rounded-2xl sm:rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden relative ${cardTheme.cardContainer}`}>
-      {/* Top Badges & Actions */}
-      <div className="p-2.5 sm:p-3.5 pb-0 flex items-center justify-between gap-1 z-10">
-        <DealScoreBadge score={product.dealScore} breakdown={product.dealScoreBreakdown} size="sm" />
-
-        <div className="flex items-center gap-1 sm:gap-1.5">
-          <button
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsAlertModalOpen(true);
-            }}
-            className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
-              hasAlert
-                ? 'bg-amber-900/80 text-amber-300 border border-amber-400'
-                : cardTheme.topActionBtn
-            }`}
-            title={hasAlert ? 'Price Alert Active' : 'Set Price Alert'}
-          >
-            <Bell className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${hasAlert ? 'fill-amber-500' : ''}`} />
-          </button>
-
-          <button
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              trackActivity(
-                isWishlisted ? 'WISHLIST_REMOVE' : 'WISHLIST_ADD',
-                { price: product.sellingPrice },
-                product.id,
-                product.name,
-                product.category
-              );
-              toggleWishlist(product.id);
-            }}
-            className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
-              isWishlisted
-                ? 'bg-rose-900/80 text-rose-300 border border-rose-400'
-                : cardTheme.topActionBtn
-            }`}
-            title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
-          >
-            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
-          </button>
-        </div>
+      {/* Top Action - Wishlist */}
+      <div className="p-2.5 sm:p-3.5 pb-0 flex items-center justify-end z-10">
+        <button
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            trackActivity(
+              isWishlisted ? 'WISHLIST_REMOVE' : 'WISHLIST_ADD',
+              { price: product.sellingPrice },
+              product.id,
+              product.name,
+              product.category
+            );
+            toggleWishlist(product.id);
+          }}
+          className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
+            isWishlisted
+              ? 'bg-rose-900/80 text-rose-300 border border-rose-400'
+              : cardTheme.topActionBtn
+          }`}
+          title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+        >
+          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
+        </button>
       </div>
 
       {/* Product Image Container */}
@@ -330,12 +295,11 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             <span className="text-base sm:text-xl font-black text-white">
               ₹{product.sellingPrice.toLocaleString('en-IN')}
             </span>
-            <span className="text-[11px] sm:text-xs text-slate-400 line-through">
-              ₹{product.mrp.toLocaleString('en-IN')}
-            </span>
-            <span className={`text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded border ${cardTheme.saveBadge}`}>
-              (Save ₹{(product.mrp - product.sellingPrice).toLocaleString('en-IN')}) {product.discountPercent}% Off
-            </span>
+            {product.mrp > product.sellingPrice && (
+              <span className="text-[11px] sm:text-xs text-slate-400 line-through">
+                ₹{product.mrp.toLocaleString('en-IN')}
+              </span>
+            )}
           </div>
 
           {/* Lowest Store Indicator */}
@@ -386,15 +350,6 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
           </Link>
         </div>
       </div>
-
-      {/* Price Alert Trigger Modal */}
-      {isAlertModalOpen && (
-        <PriceAlertModal
-          product={product}
-          isOpen={isAlertModalOpen}
-          onClose={() => setIsAlertModalOpen(false)}
-        />
-      )}
 
       {/* Quick Specifications & Details Modal */}
       <ProductQuickDetailsModal
