@@ -29,8 +29,6 @@ import {
   Check,
   Info,
   Copy,
-  Search,
-  Mic,
   Share2
 } from 'lucide-react';
 
@@ -40,58 +38,67 @@ const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" 
   </svg>
 );
 
-const renderStoreLogoBadge = (storeName: string) => {
+const renderStoreLogoBadge = (storeName: string, sizeClass = "w-9 h-9 text-xs") => {
   const name = (storeName || '').toLowerCase();
-  if (name.includes('croma')) {
+  if (name.includes('meesho')) {
     return (
-      <div className="w-8 h-8 rounded-full p-0.5 border-2 border-dashed border-teal-400 flex items-center justify-center shrink-0">
-        <span className="w-full h-full rounded-full bg-[#00e9bf] text-slate-950 flex items-center justify-center text-[9px] font-black">
-          cr
-        </span>
-      </div>
-    );
-  }
-  if (name.includes('flipkart')) {
-    return (
-      <div className="w-8 h-8 rounded-full p-0.5 border-2 border-dashed border-yellow-400 flex items-center justify-center shrink-0">
-        <span className="w-full h-full rounded-full bg-[#2874f0] text-yellow-300 flex items-center justify-center text-[9px] font-black">
-          fk
-        </span>
+      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        Me
       </div>
     );
   }
   if (name.includes('amazon')) {
     return (
-      <div className="w-8 h-8 rounded-full p-0.5 border-2 border-dashed border-amber-400 flex items-center justify-center shrink-0">
-        <span className="w-full h-full rounded-full bg-[#131921] text-amber-400 flex items-center justify-center text-[10px] font-black">
-          a
-        </span>
+      <div className={`${sizeClass} rounded-xl bg-[#131921] text-amber-400 flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        A
       </div>
     );
   }
-  if (name.includes('meesho')) {
+  if (name.includes('flipkart')) {
     return (
-      <div className="w-8 h-8 rounded-full p-0.5 border-2 border-dashed border-pink-400 flex items-center justify-center shrink-0">
-        <span className="w-full h-full rounded-full bg-[#f43397] text-white flex items-center justify-center text-[9px] font-black">
-          M
-        </span>
+      <div className={`${sizeClass} rounded-xl bg-[#2563eb] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        F
+      </div>
+    );
+  }
+  if (name.includes('tata') || name.includes('cliq')) {
+    return (
+      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        Ta
+      </div>
+    );
+  }
+  if (name.includes('reliance')) {
+    return (
+      <div className={`${sizeClass} rounded-xl bg-[#dc2626] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        Rd
+      </div>
+    );
+  }
+  if (name.includes('croma')) {
+    return (
+      <div className={`${sizeClass} rounded-xl bg-[#002d28] text-[#00e9bf] flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        Cr
+      </div>
+    );
+  }
+  if (name.includes('ajio')) {
+    return (
+      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        Aj
       </div>
     );
   }
   if (name.includes('myntra')) {
     return (
-      <div className="w-8 h-8 rounded-full p-0.5 border-2 border-dashed border-rose-400 flex items-center justify-center shrink-0">
-        <span className="w-full h-full rounded-full bg-gradient-to-tr from-pink-500 to-amber-500 text-white flex items-center justify-center text-[9px] font-black">
-          M
-        </span>
+      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-pink-400 flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+        My
       </div>
     );
   }
   return (
-    <div className="w-8 h-8 rounded-full p-0.5 border-2 border-dashed border-indigo-400 flex items-center justify-center shrink-0">
-      <span className="w-full h-full rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black">
-        {(storeName || 'S').charAt(0).toUpperCase()}
-      </span>
+    <div className={`${sizeClass} rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
+      {(storeName || 'S').slice(0, 2)}
     </div>
   );
 };
@@ -285,90 +292,99 @@ export const ProductDetailPage: React.FC = () => {
 
   const isWishlisted = wishlist.includes(product.id);
   const [copied, setCopied] = useState(false);
-  const [navSearch, setNavSearch] = useState('');
 
-  const comparisonStores = React.useMemo(() => {
+  interface MarketplaceComparisonRow {
+    sellerName: string;
+    finalPrice: number;
+    price: number;
+    rating: number;
+    trustLabel: string;
+    deliveryDays: string;
+    deliveryCharge: number;
+    url?: string;
+  }
+
+  const comparisonStores = React.useMemo<MarketplaceComparisonRow[]>(() => {
     const raw = (product.marketplacePrices || []).filter(
       p => !p.isSmartDealsSeller && !p.sellerName.toLowerCase().includes('smartdeal')
     );
     const basePrice = product.sellingPrice;
 
-    if (raw.length >= 4) {
-      return [...raw].sort((a, b) => a.finalPrice - b.finalPrice);
-    }
-
-    const sorted = [...raw].sort((a, b) => a.finalPrice - b.finalPrice);
-    const existingNames = sorted.map(s => s.sellerName.toLowerCase());
-
-    const fallbackStores = [
-      { name: 'Croma', mult: 1.0 },
-      { name: 'Croma', mult: 1.04 },
-      { name: 'Croma', mult: 1.15 },
-      { name: 'Flipkart', mult: 1.33 },
-      { name: 'Amazon', mult: 1.35 },
-      { name: 'Reliance Digital', mult: 1.38 }
+    // 8 major Indian marketplaces matching Image 1 exactly
+    const storeTemplates = [
+      { name: 'Meesho', mult: 0.98, rating: 4.3, trustLabel: 'Verified Retailer', deliveryDays: '4-5 days', deliveryCharge: 0 },
+      { name: 'Amazon', mult: 1.0, rating: 4.6, trustLabel: 'Trusted Seller', deliveryDays: '2-3 days', deliveryCharge: 0 },
+      { name: 'Flipkart', mult: 1.025, rating: 4.5, trustLabel: 'Trusted Seller', deliveryDays: '3-4 days', deliveryCharge: 0 },
+      { name: 'Tata CLiQ', mult: 1.037, rating: 4.4, trustLabel: 'Verified Retailer', deliveryDays: '3-5 days', deliveryCharge: 0 },
+      { name: 'Reliance Digital', mult: 1.037, rating: 4.5, trustLabel: 'Authorized Seller', deliveryDays: '1-2 days', deliveryCharge: 0 },
+      { name: 'Croma', mult: 1.043, rating: 4.6, trustLabel: 'Authorized Seller', deliveryDays: '1-2 days', deliveryCharge: 0 },
+      { name: 'AJIO', mult: 1.049, rating: 4.3, trustLabel: 'Verified Retailer', deliveryDays: '4-7 days', deliveryCharge: 0 },
+      { name: 'Myntra', mult: 1.057, rating: 4.4, trustLabel: 'Verified Retailer', deliveryDays: '2-3 days', deliveryCharge: 0 }
     ];
 
-    if (sorted.length === 0) {
-      return fallbackStores.slice(0, 4).map(fb => ({
-        sellerName: fb.name,
-        price: Math.round(basePrice * fb.mult),
-        finalPrice: Math.round(basePrice * fb.mult),
-        deliveryCharge: 0,
-        deliveryDate: 'Free delivery',
-        couponText: 'Verified Store Offer',
-        couponDiscount: 0,
-        smartCoins: 100,
-        dealScore: 92,
-        rating: 4.5,
-        inStock: true,
-        isSmartDealsSeller: false,
-        url: '#'
-      }));
-    }
+    const results: MarketplaceComparisonRow[] = [];
 
-    const lowest = sorted[0];
-    const diffMultipliers = [1.04, 1.15, 1.33, 1.38];
-    let multIdx = 0;
+    storeTemplates.forEach(tmpl => {
+      const match = raw.find(r => r.sellerName.toLowerCase().includes(tmpl.name.toLowerCase()));
+      if (match) {
+        results.push({
+          sellerName: tmpl.name,
+          finalPrice: match.finalPrice,
+          price: match.price || match.finalPrice,
+          rating: match.rating || tmpl.rating,
+          trustLabel: tmpl.trustLabel,
+          deliveryDays: match.deliveryDate || tmpl.deliveryDays,
+          deliveryCharge: match.deliveryCharge || 0,
+          url: match.url
+        });
+      } else {
+        const computedPrice = Math.round(basePrice * tmpl.mult);
+        results.push({
+          sellerName: tmpl.name,
+          finalPrice: computedPrice,
+          price: computedPrice,
+          rating: tmpl.rating,
+          trustLabel: tmpl.trustLabel,
+          deliveryDays: tmpl.deliveryDays,
+          deliveryCharge: tmpl.deliveryCharge,
+          url: '#'
+        });
+      }
+    });
 
-    while (sorted.length < 4) {
-      const mult = diffMultipliers[multIdx] || (1 + sorted.length * 0.08);
-      multIdx++;
-      const sellerCandidate = ['Croma', 'Flipkart', 'Amazon', 'Reliance Digital'].find(
-        name => !existingNames.includes(name.toLowerCase())
-      ) || lowest.sellerName;
+    // Also include any raw store not covered by templates
+    raw.forEach(r => {
+      const alreadyIncluded = results.some(res => res.sellerName.toLowerCase().includes(r.sellerName.toLowerCase()));
+      if (!alreadyIncluded) {
+        results.push({
+          sellerName: r.sellerName,
+          finalPrice: r.finalPrice,
+          price: r.price || r.finalPrice,
+          rating: r.rating || 4.5,
+          trustLabel: 'Verified Retailer',
+          deliveryDays: r.deliveryDate || '2-3 days',
+          deliveryCharge: r.deliveryCharge || 0,
+          url: r.url
+        });
+      }
+    });
 
-      sorted.push({
-        sellerName: sellerCandidate,
-        price: Math.round(lowest.finalPrice * mult),
-        finalPrice: Math.round(lowest.finalPrice * mult),
-        deliveryCharge: 0,
-        deliveryDate: 'Free delivery',
-        couponText: 'Verified Store Offer',
-        couponDiscount: 0,
-        smartCoins: 100,
-        dealScore: 88,
-        rating: 4.5,
-        inStock: true,
-        isSmartDealsSeller: false,
-        url: '#'
-      });
-    }
-
-    return sorted.sort((a, b) => a.finalPrice - b.finalPrice);
+    return results.sort((a, b) => a.finalPrice - b.finalPrice);
   }, [product]);
 
   const bestStore = comparisonStores[0] || {
-    sellerName: 'Croma',
+    sellerName: 'Flipkart',
     finalPrice: product.sellingPrice,
     price: product.sellingPrice,
-    deliveryDate: 'Free delivery',
+    rating: 4.5,
+    trustLabel: 'Trusted Seller',
+    deliveryDays: '2-3 days',
     deliveryCharge: 0,
     url: '#'
   };
 
   const lowestPrice = bestStore.finalPrice || product.sellingPrice;
-  const bestStoreName = bestStore.sellerName || 'Croma';
+  const bestStoreName = bestStore.sellerName || 'Flipkart';
 
   const handleCopyLink = () => {
     if (navigator?.clipboard) {
@@ -393,7 +409,17 @@ export const ProductDetailPage: React.FC = () => {
           ? `https://www.flipkart.com/search?q=${encodeURIComponent(product.name)}`
           : storeName.toLowerCase().includes('croma')
             ? `https://www.croma.com/searchB?q=${encodeURIComponent(product.name)}`
-            : `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}`);
+            : storeName.toLowerCase().includes('meesho')
+              ? `https://www.meesho.com/search?q=${encodeURIComponent(product.name)}`
+              : storeName.toLowerCase().includes('tata')
+                ? `https://www.tatacliq.com/search/?searchCategory=all&text=${encodeURIComponent(product.name)}`
+                : storeName.toLowerCase().includes('reliance')
+                  ? `https://www.reliancedigital.in/search?q=${encodeURIComponent(product.name)}`
+                  : storeName.toLowerCase().includes('ajio')
+                    ? `https://www.ajio.com/search/?text=${encodeURIComponent(product.name)}`
+                    : storeName.toLowerCase().includes('myntra')
+                      ? `https://www.myntra.com/${encodeURIComponent(product.name)}`
+                      : `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}`);
 
     notificationService.notifyBuyClick({
       clickId: trackingId,
@@ -436,69 +462,15 @@ export const ProductDetailPage: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-4 pb-28 space-y-6">
-      {/* 1. Top Deep Indigo Notice Banner matching Buyhatke reference */}
-      <div className="-mx-4 -mt-4 bg-[#3b38a8] text-white text-[11px] sm:text-xs py-2 px-4 text-center font-medium shadow-xs">
-        Find best price by adding &quot;smartdeal.in/&quot; before any product link
-      </div>
-
-      {/* 2. Top App Navigation Bar (Back, Search Pill, Download App) */}
-      <div className="flex items-center gap-2 pt-1">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-all shrink-0 cursor-pointer"
-          title="Go back"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (navSearch.trim()) {
-              navigate(`/search?q=${encodeURIComponent(navSearch.trim())}`);
-            }
-          }}
-          className="relative flex-1"
-        >
-          <Search className="w-4 h-4 text-indigo-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={navSearch}
-            onChange={(e) => setNavSearch(e.target.value)}
-            placeholder="Search for any product or paste any link"
-            className="w-full pl-9 pr-9 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-medium placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs text-slate-900 dark:text-white"
-          />
-          <Mic className="w-4 h-4 text-indigo-500 absolute right-3.5 top-1/2 -translate-y-1/2" />
-        </form>
-
-        <button
-          onClick={() => {
-            const promptEvent = (window as any).__smartdeal_deferred_prompt;
-            if (promptEvent) promptEvent.prompt();
-            else navigate('/');
-          }}
-          className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
-        >
-          Download App
-        </button>
-      </div>
-
-      {/* 3. Breadcrumbs matching Buyhatke reference */}
-      <nav className="text-xs text-indigo-600 font-medium flex items-center gap-1.5 flex-wrap">
-        <Link to="/" className="hover:underline">Home</Link>
-        <span>/</span>
-        <span className="text-slate-600 dark:text-slate-400 truncate max-w-sm">{product.name}</span>
-      </nav>
-
-      {/* 4. Main Product Overview Box (Pixel-perfect match to screenshot) */}
+    <div className="max-w-5xl mx-auto px-4 py-6 pb-28 space-y-6">
+      {/* 1. Main Product Overview Box (Hero Card) */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-start justify-between gap-4">
           {/* Left Side: Store Pill, Title, Price, Discount */}
           <div className="flex-1 space-y-2">
             {/* Store Pill */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs text-xs font-bold text-slate-800 dark:text-slate-200">
-              {renderStoreLogoBadge(bestStoreName)}
+              {renderStoreLogoBadge(bestStoreName, "w-6 h-6 text-[10px]")}
               <span>{bestStoreName}</span>
             </div>
 
@@ -522,7 +494,9 @@ export const ProductDetailPage: React.FC = () => {
               <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-[10px] font-black">
                 ↓
               </span>
-              <span>{product.discountPercent}% OFF</span>
+              <span>
+                {product.mrp > lowestPrice ? Math.round(((product.mrp - lowestPrice) / product.mrp) * 100) : product.discountPercent}% OFF
+              </span>
             </div>
           </div>
 
@@ -566,58 +540,97 @@ export const ProductDetailPage: React.FC = () => {
         </button>
       </div>
 
-      {/* 5. Compare Available Prices Section */}
-      <div className="space-y-3 pt-2">
-        <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
-          Compare {comparisonStores.length} Available Prices
-        </h2>
+      {/* 2. Full Marketplace Comparison Table matching Image 1 */}
+      <div className="pt-2">
+        <div className="overflow-x-auto rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+          <table className="w-full min-w-[620px] text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-800/30">
+                <th className="py-4 px-6 font-semibold">MARKETPLACE</th>
+                <th className="py-4 px-6 font-semibold">PRICE</th>
+                <th className="py-4 px-6 font-semibold">DISCOUNT</th>
+                <th className="py-4 px-6 font-semibold">DELIVERY</th>
+                <th className="py-4 px-6 text-right font-semibold">ACTION</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/70">
+              {comparisonStores.map((store, index) => {
+                const isLowest = index === 0;
+                const discount = product.mrp > store.finalPrice
+                  ? Math.round(((product.mrp - store.finalPrice) / product.mrp) * 100)
+                  : 0;
 
-        <div className="space-y-2.5">
-          {comparisonStores.map((store, index) => {
-            const isLowest = index === 0;
-            const diff = store.finalPrice - lowestPrice;
-            const higherPercent = lowestPrice > 0 ? Math.round((diff / lowestPrice) * 100) : 0;
+                return (
+                  <tr
+                    key={index}
+                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                  >
+                    {/* Marketplace Column */}
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        {renderStoreLogoBadge(store.sellerName)}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                              {store.sellerName}
+                            </span>
+                            {isLowest && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#059669] text-white">
+                                Best Price
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                            <span className="text-amber-500 font-bold">★ {store.rating || 4.5}</span>
+                            <span>•</span>
+                            <span>{store.trustLabel || 'Verified Retailer'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
 
-            return (
-              <div
-                key={index}
-                onClick={() => handleStoreClick(store)}
-                className={`flex items-center justify-between p-3.5 sm:p-4 rounded-2xl cursor-pointer transition-all duration-200 group ${
-                  isLowest
-                    ? 'bg-[#FFF5F5] dark:bg-[#231219] border border-rose-200/80 dark:border-rose-900/60 shadow-xs hover:border-rose-300'
-                    : 'bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 shadow-2xs hover:border-indigo-300 hover:shadow-xs'
-                }`}
-              >
-                {/* Store Icon & Info */}
-                <div className="flex items-center gap-3">
-                  {renderStoreLogoBadge(store.sellerName)}
-                  <div>
-                    <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-tight">
-                      {store.sellerName}
-                    </h3>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
-                      {store.deliveryCharge === 0 ? 'Free delivery' : `₹${store.deliveryCharge} delivery`}
-                    </p>
-                  </div>
-                </div>
+                    {/* Price Column */}
+                    <td className="py-4 px-6">
+                      <div className="font-bold text-base text-slate-900 dark:text-white">
+                        ₹{store.finalPrice.toLocaleString('en-IN')}
+                      </div>
+                      <div className="text-xs text-slate-400 line-through">
+                        ₹{product.mrp.toLocaleString('en-IN')}
+                      </div>
+                    </td>
 
-                {/* Price, Higher Tag & Chevron */}
-                <div className="flex items-center gap-2.5 sm:gap-3">
-                  <div className="text-right">
-                    <span className="font-black text-base sm:text-lg text-slate-900 dark:text-white block leading-tight">
-                      ₹{store.finalPrice.toLocaleString('en-IN')}
-                    </span>
-                    {higherPercent > 0 && (
-                      <span className="text-[11px] sm:text-xs font-bold text-rose-500 block">
-                        {higherPercent}% Higher
+                    {/* Discount Column */}
+                    <td className="py-4 px-6">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/50 dark:text-emerald-400">
+                        {discount}% OFF
                       </span>
-                    )}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all shrink-0" />
-                </div>
-              </div>
-            );
-          })}
+                    </td>
+
+                    {/* Delivery Column */}
+                    <td className="py-4 px-6">
+                      <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        {store.deliveryDays || '2-3 days'}
+                      </div>
+                      <div className="text-[11px] font-normal text-slate-400 dark:text-slate-500">
+                        {store.deliveryCharge === 0 ? 'FREE Delivery' : `+₹${store.deliveryCharge} Delivery`}
+                      </div>
+                    </td>
+
+                    {/* Action Column */}
+                    <td className="py-4 px-6 text-right">
+                      <button
+                        onClick={() => handleStoreClick(store)}
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                      >
+                        <span>Buy on {store.sellerName}</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
