@@ -3,30 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --smartdeal-bg: #0b1a30;
+  --smartdeal-bg: #121212;
 }
 
-/* THEME 1: STEEL NAVY (Image 1: #0b1a30) */
+/* THEME 1: CROMA ELECTRONICS DARK THEME (Palette: #121212, #1a1a1e, #12DAA8) */
 html[data-theme="steel-navy"],
 body.theme-steel-navy,
 [data-theme="steel-navy"] {
-  --smartdeal-bg: #0b1a30;
+  --smartdeal-bg: #121212;
 }
 [data-theme="steel-navy"] .dark .dark\:bg-slate-900,
 [data-theme="steel-navy"] .dark\:bg-slate-900,
 body.theme-steel-navy .dark\:bg-slate-900 {
-  background-color: #112240 !important;
-  border-color: rgba(56, 189, 248, 0.35) !important;
+  background-color: #1a1a1e !important;
+  border-color: rgba(18, 218, 168, 0.25) !important;
 }
 [data-theme="steel-navy"] .dark .dark\:bg-slate-800,
 [data-theme="steel-navy"] .dark\:bg-slate-800,
 body.theme-steel-navy .dark\:bg-slate-800 {
-  background-color: #162d50 !important;
+  background-color: #232328 !important;
 }
 [data-theme="steel-navy"] .dark .dark\:bg-slate-950,
 [data-theme="steel-navy"] .dark\:bg-slate-950,
 body.theme-steel-navy .dark\:bg-slate-950 {
-  background-color: #0b1a30 !important;
+  background-color: #121212 !important;
 }
 
 /* THEME 2: CYBER MATRIX LIME (Image 2: #111612) */

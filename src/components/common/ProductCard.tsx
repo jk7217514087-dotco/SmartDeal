@@ -11,7 +11,9 @@ import {
   Heart,
   Layers,
   Bell,
-  ExternalLink
+  ExternalLink,
+  Truck,
+  Check
 } from 'lucide-react';
 
 interface Props {
@@ -99,129 +101,158 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
     });
   };
 
+  const savingsAmount = product.mrp > product.sellingPrice ? product.mrp - product.sellingPrice : 0;
+
   return (
-    <div className={`group bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden relative ${
-      activeTheme === 'royal-gold'
-        ? 'dark:bg-[#241a0b] dark:border-amber-900/60 hover:border-amber-400/70 hover:shadow-xl hover:shadow-amber-500/15'
-        : 'dark:bg-[#062537] dark:border-teal-900/60 hover:border-teal-400/70 hover:shadow-xl hover:shadow-teal-500/20'
-    }`}>
-      {/* Top Badges & Actions */}
-      <div className="p-2 sm:p-3.5 pb-0 flex items-center justify-between gap-1 z-10">
-        <DealScoreBadge score={product.dealScore} breakdown={product.dealScoreBreakdown} size="sm" />
+    <div className="group bg-[#19191d] dark:bg-[#19191d] rounded-2xl sm:rounded-3xl border border-[#27272e] hover:border-[#3a3a44] transition-all duration-300 flex flex-col justify-between overflow-hidden relative shadow-lg hover:shadow-2xl">
+      {/* Top Image Container with Croma-Style Actions */}
+      <div className="relative p-2.5 sm:p-3 pb-0">
+        <div className="aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#242428] dark:bg-[#242428] border border-[#2d2d33] flex items-center justify-center p-3 relative group-hover:scale-[1.02] transition-transform duration-300">
+          <Link to={productDetailLink} className="w-full h-full flex items-center justify-center">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="h-full w-full object-contain dark:brightness-100"
+              loading="lazy"
+            />
+          </Link>
 
-        <div className="flex items-center gap-1 sm:gap-1.5">
-          <button
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsAlertModalOpen(true);
-            }}
-            className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
-              hasAlert
-                ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
-                : 'bg-slate-100 dark:bg-[#131d33] text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-            }`}
-            title={hasAlert ? 'Price Alert Active' : 'Set Price Alert'}
-          >
-            <Bell className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${hasAlert ? 'fill-amber-500' : ''}`} />
-          </button>
+          {/* Top Left: Best Deal / Choice Tag */}
+          {product.dealScore >= 80 && (
+            <div className="absolute top-2 left-2 z-10">
+              <span className="bg-[#12DAA8] text-slate-950 text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded shadow-sm">
+                {product.dealScore >= 90 ? 'BEST VALUE' : 'TOP RATED'}
+              </span>
+            </div>
+          )}
 
-          <button
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              trackActivity(
-                isWishlisted ? 'WISHLIST_REMOVE' : 'WISHLIST_ADD',
-                { price: product.sellingPrice },
-                product.id,
-                product.name,
-                product.category
-              );
-              toggleWishlist(product.id);
-            }}
-            className={`p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all ${
-              isWishlisted
-                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
-                : 'bg-slate-100 dark:bg-[#131d33] text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40'
-            }`}
-            title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
-          >
-            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
-          </button>
+          {/* Top Right: Wishlist Heart + Compare Pill Checkbox (From Croma Screenshots) */}
+          <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10">
+            {/* Price Alert Quick Button */}
+            <button
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsAlertModalOpen(true);
+              }}
+              className={`p-1.5 rounded-full backdrop-blur-md transition-all border ${
+                hasAlert
+                  ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                  : 'bg-black/40 border-white/20 text-white hover:text-amber-400 hover:border-amber-400/50'
+              }`}
+              title={hasAlert ? 'Price Alert Active' : 'Set Price Alert'}
+            >
+              <Bell className={`w-3.5 h-3.5 ${hasAlert ? 'fill-amber-400 text-amber-400' : ''}`} />
+            </button>
+
+            {/* Wishlist Heart Button */}
+            <button
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                trackActivity(
+                  isWishlisted ? 'WISHLIST_REMOVE' : 'WISHLIST_ADD',
+                  { price: product.sellingPrice },
+                  product.id,
+                  product.name,
+                  product.category
+                );
+                toggleWishlist(product.id);
+              }}
+              className={`p-1.5 rounded-full backdrop-blur-md transition-all border ${
+                isWishlisted
+                  ? 'bg-rose-500/20 border-rose-500 text-rose-400'
+                  : 'bg-black/40 border-white/20 text-white hover:text-rose-400 hover:border-rose-400/50'
+              }`}
+              title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            >
+              <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-rose-500 text-rose-500' : ''}`} />
+            </button>
+
+            {/* Compare Checkbox Pill */}
+            <Link
+              to={`/compare/${product.id}`}
+              onClick={e => e.stopPropagation()}
+              className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 hover:bg-black/80 border border-white/20 text-white text-[10px] font-semibold transition-all hover:border-[#12DAA8]"
+              title="Compare Product Across Marketplaces"
+            >
+              <div className="w-2.5 h-2.5 rounded-xs border border-white/70 flex items-center justify-center text-[7px]">
+                <Check className="w-2 h-2 opacity-90" />
+              </div>
+              <span>Compare</span>
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Product Image */}
-      <Link to={productDetailLink} className="block relative px-2.5 py-2 sm:px-4 sm:py-3 group-hover:scale-105 transition-transform duration-300">
-        <div className={`aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center p-1.5 sm:p-2 border transition-colors ${
-          activeTheme === 'royal-gold'
-            ? 'dark:bg-[#1a1308] dark:border-amber-900/40'
-            : 'dark:bg-[#041e2d] dark:border-teal-900/40'
-        }`}>
-          <img
-            src={product.image}
-            alt={product.name}
-            className="h-full w-full object-contain dark:brightness-95"
-            loading="lazy"
-          />
-        </div>
-        {product.isSmartDealsChoice && (
-          <div className="absolute bottom-3 left-3.5 sm:bottom-4 sm:left-6 bg-slate-900/90 dark:bg-brand-950/90 text-amber-300 text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded shadow-sm border border-amber-400/30">
-            SmartDeals Choice
-          </div>
-        )}
-      </Link>
-
-      {/* Product Information */}
-      <div className="p-2.5 sm:p-4 pt-1 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+      {/* Product Information (Croma Typography & Layout) */}
+      <div className="p-3 sm:p-4 pt-2.5 flex-1 flex flex-col justify-between space-y-2.5">
         <div>
-          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-400 font-semibold mb-1">
-            <span className="truncate max-w-[70px] sm:max-w-none">{product.brand}</span>
-            <span className="text-amber-500 font-bold shrink-0">★ {product.rating}</span>
-          </div>
-
-          <Link to={productDetailLink} className="block">
-            <h3 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-2 hover:text-brand-600 dark:hover:text-cyan-300 transition-colors leading-snug">
+          {/* Product Title (Clean Bold White, 2 lines) */}
+          <Link to={productDetailLink} className="block mb-1">
+            <h3 className="font-bold text-white text-xs sm:text-sm line-clamp-2 hover:text-[#12DAA8] transition-colors leading-snug">
               {product.name}
             </h3>
           </Link>
 
-          {/* Price Engine Display */}
-          <div className="mt-1.5 sm:mt-2.5 flex items-baseline gap-1 sm:gap-2 flex-wrap">
-            <span className="text-sm sm:text-lg font-black text-slate-950 dark:text-white">
-              ₹{product.sellingPrice.toLocaleString('en-IN')}
+          {/* Rating & Reviews (Signature Croma Mint Teal Star & Score) */}
+          <div className="flex items-center gap-1.5 text-xs mb-1.5">
+            <span className="font-bold text-[#12DAA8] flex items-center gap-0.5">
+              <span>{product.rating.toFixed(1)}</span>
+              <span className="text-[13px] leading-none">★</span>
             </span>
-            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
-              ₹{product.mrp.toLocaleString('en-IN')}
-            </span>
-            <span className="text-[9px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
-              {product.discountPercent}% OFF
+            <span className="text-slate-400 text-[11px]">
+              ({product.reviewsCount || Math.floor(product.rating * 32 + 18)})
             </span>
           </div>
 
-          {/* Lowest Store Indicator */}
-          {lowestStoreListing && (
-            <div className={`mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-[11px] px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl border ${
-              activeTheme === 'royal-gold'
-                ? 'bg-[#2b1f0d] border-amber-900/60'
-                : 'bg-[#082e43] border-teal-900/60'
-            }`}>
-              <span className="text-slate-500 dark:text-slate-400 truncate">
-                Best: <strong className="text-slate-900 dark:text-slate-200">{lowestStoreListing.sellerName}</strong>
+          {/* Pricing Row: Current Price, MRP, Savings, Discount */}
+          <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+            <span className="text-base sm:text-lg font-black text-white">
+              ₹{product.sellingPrice.toLocaleString('en-IN')}
+            </span>
+            <span className="text-[11px] sm:text-xs text-slate-400 line-through">
+              ₹{product.mrp.toLocaleString('en-IN')}
+            </span>
+            {savingsAmount > 0 && (
+              <span className="text-[10px] sm:text-[11px] text-slate-400">
+                (Save ₹{savingsAmount.toLocaleString('en-IN')})
               </span>
-              <span className={`font-black font-mono shrink-0 ml-1 ${
-                activeTheme === 'royal-gold' ? 'text-amber-400' : 'text-teal-300'
-              }`}>
-                ₹{lowestStoreListing.finalPrice.toLocaleString('en-IN')}
-              </span>
-            </div>
-          )}
+            )}
+            <span className="text-[11px] sm:text-xs font-bold text-white">
+              {product.discountPercent}% Off
+            </span>
+          </div>
+
+          {/* Delivery Status Row with Truck Icon */}
+          <div className="mt-2 flex items-center gap-1.5 text-slate-300 text-[11px]">
+            <Truck className="w-3.5 h-3.5 text-white shrink-0" />
+            <span className="truncate">
+              {product.discountPercent > 20
+                ? 'Express Delivery within 3 hours'
+                : `Standard Delivery by ${product.deliveryDate || 'Tomorrow, by 2 PM'}`}
+            </span>
+          </div>
+
+          {/* Signature Croma Soft Mint Offer Capsules */}
+          <div className="mt-2 flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12382F] text-[#34D399] border border-[#1A5346] whitespace-nowrap shadow-xs">
+              Flat lowest price
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12382F] text-[#34D399] border border-[#1A5346] whitespace-nowrap shadow-xs">
+              {product.features?.[0] || '100% Genuine'}
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12382F] text-[#34D399] border border-[#1A5346] whitespace-nowrap shadow-xs">
+              {product.warranty || '2 Years Warranty'}
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#12382F] text-[#34D399] border border-[#1A5346] whitespace-nowrap shadow-xs">
+              Additional 5% off in cart
+            </span>
+          </div>
         </div>
 
-        {/* Action Buttons: View Details, Buy at Best Price, Compare */}
-        <div className={`pt-2 border-t flex flex-col gap-1.5 sm:gap-2 ${
-          activeTheme === 'royal-gold' ? 'border-amber-950/60' : 'border-teal-950/60'
-        }`}>
+        {/* Action Buttons: View Details, Buy at Best Price, Compare Marketplaces */}
+        <div className="pt-2.5 border-t border-[#292930] flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={e => {
@@ -229,11 +260,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
                 e.stopPropagation();
                 setIsQuickDetailsOpen(true);
               }}
-              className={`flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs text-center transition-all truncate cursor-pointer active:scale-95 border ${
-                activeTheme === 'royal-gold'
-                  ? 'bg-[#2c1f0e] hover:bg-[#382812] text-amber-200 border-amber-900/50 hover:border-amber-400/50'
-                  : 'bg-[#083046] hover:bg-[#0c3e59] text-teal-200 border-teal-900/50 hover:border-teal-400/50'
-              }`}
+              className="flex-1 py-1.5 px-2 rounded-xl font-bold text-[11px] sm:text-xs text-center transition-all bg-[#26262B] hover:bg-[#323238] text-white border border-[#383842] cursor-pointer active:scale-95 truncate"
               title="View full Flipkart-style details & specifications"
             >
               View Details
@@ -241,29 +268,20 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
 
             <button
               onClick={handleQuickOutboundBuy}
-              className={`flex-1 py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs text-center active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer truncate ${
-                activeTheme === 'royal-gold'
-                  ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black shadow-sm shadow-amber-500/30'
-                  : 'bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black shadow-sm shadow-teal-500/30'
-              }`}
+              className="flex-1 py-1.5 px-2 rounded-xl text-[11px] sm:text-xs text-center font-black active:scale-95 transition-all flex items-center justify-center gap-1 bg-[#12DAA8] hover:bg-[#00E9BF] text-slate-950 shadow-md shadow-[#12DAA8]/20 cursor-pointer truncate"
               title={`Buy directly on ${lowestStoreListing?.sellerName || 'Amazon'}`}
             >
-              <span className="truncate">Buy {lowestStoreListing?.sellerName?.split(' ')[0] || 'Amazon'}</span>
-              <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
+              <span>Buy {lowestStoreListing?.sellerName?.split(' ')[0] || 'Store'}</span>
+              <ExternalLink className="w-3 h-3 shrink-0" />
             </button>
           </div>
 
-          {/* Direct Marketplace Comparison Button */}
           <Link
             to={`/compare/${product.id}`}
-            className={`w-full py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs flex items-center justify-center gap-1 active:scale-95 transition-all truncate ${
-              activeTheme === 'royal-gold'
-                ? 'bg-[#12110c] hover:bg-[#1c1a12] text-amber-300 border border-amber-500/30 hover:border-amber-400/60 shadow-xs'
-                : 'bg-[#061a20] hover:bg-[#0b2832] text-teal-300 border border-teal-500/30 hover:border-teal-400/60 shadow-xs'
-            }`}
+            className="w-full py-1.5 rounded-xl font-bold text-[10px] sm:text-[11px] flex items-center justify-center gap-1 bg-[#141418] hover:bg-[#1d1d22] text-[#12DAA8] border border-[#12DAA8]/30 hover:border-[#12DAA8]/60 transition-all truncate"
           >
-            <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-            <span className="truncate">Compare {externalListings.length} Stores</span>
+            <Layers className="w-3 h-3 shrink-0" />
+            <span>Compare {externalListings.length || 4} Marketplaces</span>
           </Link>
         </div>
       </div>

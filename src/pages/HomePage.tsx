@@ -838,20 +838,20 @@ export const HomePage: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <span>Trending Products</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
-                Verified Best Prices
+              <span>Bestsellers</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#12DAA8]/10 text-[#12DAA8] border border-[#12DAA8]/30">
+                Verified Deals
               </span>
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Comparing live prices across Amazon, Flipkart, Croma, Myntra & partner stores
+              Comparing live prices across Croma, Amazon, Flipkart, Reliance Digital & partner stores
             </p>
           </div>
           <Link
             to="/categories"
-            className="text-xs font-extrabold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+            className="text-xs font-extrabold text-[#12DAA8] hover:text-[#00E9BF] hover:underline flex items-center gap-1"
           >
-            <span>View All</span>
+            <span>View all</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -907,6 +907,17 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* CROMA SIGNATURE TEAL COLLECTIONS BAR (From Image 3 & 4) */}
+      <section className="max-w-7xl mx-auto px-4">
+        <Link
+          to="/explore"
+          className="w-full py-3 sm:py-3.5 px-6 rounded-2xl bg-[#12DAA8] hover:bg-[#00E9BF] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#12DAA8]/20 transition-all hover:scale-[1.005] active:scale-95"
+        >
+          <span>Explore more from electronics collections</span>
+          <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+        </Link>
+      </section>
+
       {/* 3. CATEGORY FILTER CHIPS */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -932,8 +943,8 @@ export const HomePage: React.FC = () => {
               }}
               className={`px-4 py-2 rounded-2xl text-xs font-extrabold transition-all shrink-0 cursor-pointer ${
                 selectedCategory.toLowerCase() === cat.id.toLowerCase()
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-brand-300'
+                  ? 'bg-[#12DAA8] text-slate-950 font-black shadow-md shadow-[#12DAA8]/30'
+                  : 'bg-[#1a1a1e] border border-[#27272e] text-slate-300 hover:border-[#12DAA8]/50'
               }`}
             >
               {cat.name}
