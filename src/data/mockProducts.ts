@@ -6,9 +6,9 @@ export const mockProducts: Product[] = [
     name: 'Noise Endeavour Pro Rugged Smart Watch (1.46" AMOLED Display, Carbon Black, BT Calling, SOS, Fast Charge)',
     brand: 'Noise',
     category: 'Electronics',
-    image: 'https://m.media-amazon.com/images/I/61SSVxTSs3L._SL1500_.jpg',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://m.media-amazon.com/images/I/61SSVxTSs3L._SL1500_.jpg',
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80'
     ],
@@ -75,10 +75,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0F7XWCCY3',
-        product_url: 'https://www.amazon.in/dp/B0F7XWCCY3',
-        affiliate_url: 'https://www.amazon.in/dp/B0F7XWCCY3?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 9999,
         deliveryCharge: 0,
@@ -97,10 +93,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'SMWGV49ZFKQ3SZ6A',
-        product_url: 'https://www.flipkart.com/noise-endeavour-pro-rugged-smartwatch/p/itm6d27464a7c81a?pid=SMWGV49ZFKQ3SZ6A',
-        affiliate_url: 'https://www.flipkart.com/noise-endeavour-pro-rugged-smartwatch/p/itm6d27464a7c81a?pid=SMWGV49ZFKQ3SZ6A&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 10499,
         deliveryCharge: 0,
@@ -136,25 +128,23 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy M14 5G (Smoky Teal, 6GB RAM, 128GB Storage)',
     brand: 'Samsung',
     category: 'Mobiles',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/x/z/5/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkwn2c72fu.jpeg',
+    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/x/z/5/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkwn2c72fu.jpeg',
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/b/u/8/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnk7ggjzkf4.jpeg',
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/9/9/y/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkphvgp4qf.jpeg',
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/p/w/g/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkyg6fgzzq.jpeg',
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/v/8/a/galaxy-m14-5g-sm-m146b-samsung-original-imagzvnkzszr2whx.jpeg'
+      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 17999,
-    sellingPrice: 11499,
-    discountPercent: 36,
+    sellingPrice: 12490,
+    discountPercent: 31,
     rating: 4.4,
     reviewsCount: 14820,
-    seller: 'RetailNet (Flipkart Assured)',
+    seller: 'Samsung India Official (Amazon)',
     sellerRating: 4.8,
     deliveryDate: 'Tomorrow, by 2 PM',
     deliveryCharge: 0,
     smartCoinsEarned: 120,
-    dealScore: 95,
+    dealScore: 92,
     isSmartDealsChoice: true,
     stock: 45,
     returnDays: 7,
@@ -176,189 +166,97 @@ export const mockProducts: Product[] = [
       'OS': 'Android 13, One UI Core 5.1'
     },
     dealScoreBreakdown: {
-      priceAdvantage: 98,
-      historicalPrice: 94,
-      offerQuality: 92,
+      priceAdvantage: 95,
+      historicalPrice: 90,
+      offerQuality: 88,
       sellerReliability: 96,
-      delivery: 95,
-      transparency: 96,
-      overallScore: 95,
-      verdict: 'Superb Genuine Deal'
+      delivery: 94,
+      transparency: 95,
+      overallScore: 92,
+      verdict: 'Excellent Deal'
     },
     priceHistory: [
       { date: '60d ago', price: 14999 },
       { date: '45d ago', price: 13999 },
       { date: '30d ago', price: 13490, event: 'Freedom Sale' },
-      { date: '15d ago', price: 12999 },
-      { date: '7d ago', price: 11999 },
-      { date: 'Today', price: 11499, event: 'SmartDeals Lowest' }
+      { date: '15d ago', price: 13990 },
+      { date: '7d ago', price: 12999 },
+      { date: 'Today', price: 12490, event: 'SmartDeals Lowest' }
     ],
     buyNowRecommendation: {
       action: 'BUY NOW',
-      confidence: 94,
-      reason: 'Current price of ₹11,499 is the all-time lowest price recorded. High confidence buy.',
-      expectedLow: 11499
+      confidence: 89,
+      reason: 'Current price of ₹12,490 is within 2% of the all-time lowest price recorded in 90 days. Stock is fast moving.',
+      expectedLow: 12290
     },
     fakeDiscountAudit: {
       isGenuine: true,
       status: 'Genuine Deal',
-      reason: 'The MRP is legitimate (₹17,999 verified against official Samsung invoice data). Average selling price in the past 60 days was ₹13,850. Actual saving is ₹6,500 compared to highest market price.',
-      lowestPriceEver: 11499,
-      highestPriceEver: 17999
+      reason: 'The MRP is legitimate (₹17,999 verified against official Samsung invoice data). Average selling price in the past 60 days was ₹13,850. Actual saving is ₹1,360 lower than usual market average.',
+      lowestPriceEver: 12290,
+      highestPriceEver: 14999
     },
     marketplacePrices: [
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'MOBGZ8912490',
-        product_url: 'https://www.flipkart.com/samsung-galaxy-m14-5g-smoky-teal-128-gb/p/itm6d148767e7c99?pid=MOBGZ8912490',
-        affiliate_url: 'https://www.flipkart.com/samsung-galaxy-m14-5g-smoky-teal-128-gb/p/itm6d148767e7c99?pid=MOBGZ8912490&affid=smartdeal',
         isSmartDealsSeller: false,
-        price: 11499,
+        price: 12799,
         deliveryCharge: 0,
         deliveryDate: '2 Days',
         couponText: '₹150 Bank Off',
         couponDiscount: 150,
-        finalPrice: 11499,
+        finalPrice: 12799,
         smartCoins: 100,
-        dealScore: 98,
+        dealScore: 82,
         inStock: true,
         rating: 4.3,
-        tag: 'Lowest Price',
+        tag: 'Best Deal',
         url: 'https://www.flipkart.com/samsung-galaxy-m14-5g-smoky-teal-128-gb/p/itm6d148767e7c99?pid=MOBGZ8912490'
       },
       {
-        sellerName: 'Meesho',
-        marketplace_name: 'Meesho',
-        marketplace_product_id: '4v91k2',
-        product_url: 'https://www.meesho.com/samsung-galaxy-m14-5g-128-gb-smoky-teal/p/4v91k2',
-        affiliate_url: 'https://www.meesho.com/samsung-galaxy-m14-5g-128-gb-smoky-teal/p/4v91k2?ref=smartdeal',
-        isSmartDealsSeller: false,
-        price: 12240,
-        deliveryCharge: 0,
-        deliveryDate: '4-5 Days',
-        couponText: 'No Coupon',
-        couponDiscount: 0,
-        finalPrice: 12240,
-        smartCoins: 80,
-        dealScore: 90,
-        inStock: true,
-        rating: 4.3,
-        url: 'https://www.meesho.com/samsung-galaxy-m14-5g-128-gb-smoky-teal/p/4v91k2?ref=smartdeal'
-      },
-      {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0BY8MCQ9S',
-        product_url: 'https://www.amazon.in/dp/B0BY8MCQ9S',
-        affiliate_url: 'https://www.amazon.in/dp/B0BY8MCQ9S?tag=smartdeal-21',
         isSmartDealsSeller: false,
-        price: 12499,
-        deliveryCharge: 0,
-        deliveryDate: '2-3 Days',
+        price: 12999,
+        deliveryCharge: 40,
+        deliveryDate: '2 Days',
         couponText: 'No Coupon',
         couponDiscount: 0,
-        finalPrice: 12499,
+        finalPrice: 12999,
         smartCoins: 80,
-        dealScore: 88,
+        dealScore: 84,
         inStock: true,
-        rating: 4.4,
+        rating: 4.5,
         url: 'https://www.amazon.in/dp/B0BY8MCQ9S?tag=smartdeal-21'
       },
       {
-        sellerName: 'Myntra',
-        marketplace_name: 'Myntra',
-        marketplace_product_id: '24189012',
-        product_url: 'https://www.myntra.com/mobiles/samsung/samsung-galaxy-m14-5g-128gb/24189012/buy',
-        affiliate_url: 'https://www.myntra.com/mobiles/samsung/samsung-galaxy-m14-5g-128gb/24189012/buy?utm_source=smartdeal',
-        isSmartDealsSeller: false,
-        price: 12599,
-        deliveryCharge: 0,
-        deliveryDate: '2-4 Days',
-        couponText: 'No Coupon',
-        couponDiscount: 0,
-        finalPrice: 12599,
-        smartCoins: 60,
-        dealScore: 86,
-        inStock: true,
-        rating: 4.1,
-        url: 'https://www.myntra.com/mobiles/samsung/samsung-galaxy-m14-5g-128gb/24189012/buy?utm_source=smartdeal'
-      },
-      {
-        sellerName: 'Tata CLiQ',
-        marketplace_name: 'Tata CLiQ',
-        marketplace_product_id: 'mp000000018172912',
-        product_url: 'https://www.tatacliq.com/samsung-galaxy-m14-5g-128gb-smoky-teal/p-mp000000018172912',
-        affiliate_url: 'https://www.tatacliq.com/samsung-galaxy-m14-5g-128gb-smoky-teal/p-mp000000018172912?utm_source=smartdeal',
-        isSmartDealsSeller: false,
-        price: 12952,
-        deliveryCharge: 0,
-        deliveryDate: '3-5 Days',
-        couponText: 'No Coupon',
-        couponDiscount: 0,
-        finalPrice: 12952,
-        smartCoins: 50,
-        dealScore: 84,
-        inStock: true,
-        rating: 4.0,
-        url: 'https://www.tatacliq.com/samsung-galaxy-m14-5g-128gb-smoky-teal/p-mp000000018172912?utm_source=smartdeal'
-      },
-      {
         sellerName: 'Croma',
-        marketplace_name: 'Croma',
-        marketplace_product_id: '271290',
-        product_url: 'https://www.croma.com/samsung-galaxy-m14-5g-128-gb-6-gb-ram-smoky-teal-/p/271290',
-        affiliate_url: 'https://www.croma.com/samsung-galaxy-m14-5g-128-gb-6-gb-ram-smoky-teal-/p/271290?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 13499,
         deliveryCharge: 0,
-        deliveryDate: 'Today / 3 Hours Pickup',
+        deliveryDate: '3-4 Days',
         couponText: '₹250 Card Discount',
         couponDiscount: 250,
         finalPrice: 13499,
         smartCoins: 50,
         dealScore: 78,
         inStock: true,
-        rating: 4.2,
+        rating: 4.6,
         url: 'https://www.croma.com/samsung-galaxy-m14-5g-128-gb-6-gb-ram-smoky-teal-/p/271290'
       },
       {
         sellerName: 'Reliance Digital',
-        marketplace_name: 'Reliance Digital',
-        marketplace_product_id: '493829102',
-        product_url: 'https://www.reliancedigital.in/samsung-galaxy-m14-5g-128-gb-6-gb-ram-smoky-teal-/p/493829102',
-        affiliate_url: 'https://www.reliancedigital.in/samsung-galaxy-m14-5g-128-gb-6-gb-ram-smoky-teal-/p/493829102?utm_source=smartdeal',
         isSmartDealsSeller: false,
-        price: 13499,
-        deliveryCharge: 0,
-        deliveryDate: '1-2 Days',
+        price: 13999,
+        deliveryCharge: 49,
+        deliveryDate: '2-3 Days',
         couponText: 'None',
         couponDiscount: 0,
-        finalPrice: 13499,
+        finalPrice: 13999,
         smartCoins: 70,
         dealScore: 75,
-        inStock: true,
-        rating: 4.1,
+        inStock: false,
+        rating: 4.2,
         url: 'https://www.reliancedigital.in/samsung-galaxy-m14-5g-128-gb-6-gb-ram-smoky-teal-/p/493829102'
-      },
-      {
-        sellerName: 'AJIO',
-        marketplace_name: 'AJIO',
-        marketplace_product_id: '461298412_teal',
-        product_url: 'https://www.ajio.com/samsung-galaxy-m14-5g-128-gb-smoky-teal/p/461298412_teal',
-        affiliate_url: 'https://www.ajio.com/samsung-galaxy-m14-5g-128-gb-smoky-teal/p/461298412_teal?utm_source=smartdeal',
-        isSmartDealsSeller: false,
-        price: 13599,
-        deliveryCharge: 0,
-        deliveryDate: '4-7 Days',
-        couponText: 'None',
-        couponDiscount: 0,
-        finalPrice: 13599,
-        smartCoins: 50,
-        dealScore: 74,
-        inStock: true,
-        rating: 4.3,
-        url: 'https://www.ajio.com/samsung-galaxy-m14-5g-128-gb-smoky-teal/p/461298412_teal?utm_source=smartdeal'
       }
     ],
     alternatives: [
@@ -383,9 +281,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 128 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
+    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 89999,
@@ -450,10 +348,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0CHX1W1XY',
-        product_url: 'https://www.amazon.in/dp/B0CHX1W1XY',
-        affiliate_url: 'https://www.amazon.in/dp/B0CHX1W1XY?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 79999,
         deliveryCharge: 0,
@@ -472,10 +366,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'MOBGTAGPTB3VS24W',
-        product_url: 'https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm6ac6485515ae4?pid=MOBGTAGPTB3VS24W',
-        affiliate_url: 'https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm6ac6485515ae4?pid=MOBGTAGPTB3VS24W&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 81999,
         deliveryCharge: 0,
@@ -493,10 +383,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Meesho',
-        marketplace_name: 'Meesho',
-        marketplace_product_id: '571928',
-        product_url: 'https://www.meesho.com/iphone-15-128gb/p/571928',
-        affiliate_url: 'https://www.meesho.com/iphone-15-128gb/p/571928?ref=smartdeal',
         isSmartDealsSeller: false,
         price: 78499,
         deliveryCharge: 0,
@@ -515,10 +401,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Myntra',
-        marketplace_name: 'Myntra',
-        marketplace_product_id: '25191024',
-        product_url: 'https://www.myntra.com/mobiles/apple/iphone-15-128gb/25191024/buy',
-        affiliate_url: 'https://www.myntra.com/mobiles/apple/iphone-15-128gb/25191024/buy?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 84590,
         deliveryCharge: 0,
@@ -536,10 +418,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'AJIO',
-        marketplace_name: 'AJIO',
-        marketplace_product_id: '461112891_black',
-        product_url: 'https://www.ajio.com/apple-iphone-15-128-gb-black/p/461112891_black',
-        affiliate_url: 'https://www.ajio.com/apple-iphone-15-128-gb-black/p/461112891_black?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 83999,
         deliveryCharge: 0,
@@ -574,10 +452,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Croma',
-        marketplace_name: 'Croma',
-        marketplace_product_id: '300652',
-        product_url: 'https://www.croma.com/apple-iphone-15-128gb-black-/p/300652',
-        affiliate_url: 'https://www.croma.com/apple-iphone-15-128gb-black-/p/300652?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 83499,
         deliveryCharge: 0,
@@ -617,9 +491,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 256 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
+    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 99990,
@@ -683,10 +557,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0CHX2F56G',
-        product_url: 'https://www.amazon.in/dp/B0CHX2F56G',
-        affiliate_url: 'https://www.amazon.in/dp/B0CHX2F56G?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 89999,
         deliveryCharge: 0,
@@ -705,10 +575,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'MOBGTAGPTB3VS256',
-        product_url: 'https://www.flipkart.com/apple-iphone-15-black-256-gb/p/itm6ac6485515ae4?pid=MOBGTAGPTB3VS256',
-        affiliate_url: 'https://www.flipkart.com/apple-iphone-15-black-256-gb/p/itm6ac6485515ae4?pid=MOBGTAGPTB3VS256&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 91999,
         deliveryCharge: 0,
@@ -731,9 +597,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 512 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
+    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/k/l/l/-original-imagtc5fz9spysyk.jpeg',
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 119990,
@@ -797,10 +663,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0CHX512GB',
-        product_url: 'https://www.amazon.in/dp/B0CHX512GB',
-        affiliate_url: 'https://www.amazon.in/dp/B0CHX512GB?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 109999,
         deliveryCharge: 0,
@@ -819,10 +681,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'MOBGTAGPTB3VS512',
-        product_url: 'https://www.flipkart.com/apple-iphone-15-black-512-gb/p/itm6ac6485515ae4?pid=MOBGTAGPTB3VS512',
-        affiliate_url: 'https://www.flipkart.com/apple-iphone-15-black-512-gb/p/itm6ac6485515ae4?pid=MOBGTAGPTB3VS512&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 111999,
         deliveryCharge: 0,
@@ -845,9 +703,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Revolution 6 Running Shoes for Men (Black/White)',
     brand: 'Nike',
     category: 'Shoes',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/7/w/y/11-hq2414-003-11-nike-anthracite-anthracite-black-original-imahzjfuyn3h4yef.jpeg',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/7/w/y/11-hq2414-003-11-nike-anthracite-anthracite-black-original-imahzjfuyn3h4yef.jpeg',
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 4995,
@@ -911,10 +769,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Myntra',
-        marketplace_name: 'Myntra',
-        marketplace_product_id: '14920402',
-        product_url: 'https://www.myntra.com/sports-shoes/nike/nike-men-revolution-running-shoes/14920402/buy',
-        affiliate_url: 'https://www.myntra.com/sports-shoes/nike/nike-men-revolution-running-shoes/14920402/buy?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 2499,
         deliveryCharge: 0,
@@ -933,10 +787,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B09C874K1N',
-        product_url: 'https://www.amazon.in/dp/B09C874K1N',
-        affiliate_url: 'https://www.amazon.in/dp/B09C874K1N?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 2699,
         deliveryCharge: 0,
@@ -954,10 +804,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'SHOEGG7T6RGHGFE4Z',
-        product_url: 'https://www.flipkart.com/nike-revolution-6-nn-running-shoes-men/p/itm623a31c09fe41?pid=SHOEGG7T6RGHGFE4Z',
-        affiliate_url: 'https://www.flipkart.com/nike-revolution-6-nn-running-shoes-men/p/itm623a31c09fe41?pid=SHOEGG7T6RGHGFE4Z&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 2799,
         deliveryCharge: 0,
@@ -980,9 +826,9 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy S24 5G (Onyx Black, 8GB RAM, 128GB Storage)',
     brand: 'Samsung',
     category: 'Mobiles',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/r/8/1/-original-imahfz2tenzpsd3p.jpeg',
+    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/r/8/1/-original-imahfz2tenzpsd3p.jpeg',
+      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 79999,
@@ -1046,10 +892,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0CS5X6D8G',
-        product_url: 'https://www.amazon.in/dp/B0CS5X6D8G',
-        affiliate_url: 'https://www.amazon.in/dp/B0CS5X6D8G?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 64999,
         deliveryCharge: 0,
@@ -1068,10 +910,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'MOBGTAGPX24S24W',
-        product_url: 'https://www.flipkart.com/samsung-galaxy-s24-5g-onyx-black-128-gb/p/itm5e47852a4e21a?pid=MOBGTAGPX24S24W',
-        affiliate_url: 'https://www.flipkart.com/samsung-galaxy-s24-5g-onyx-black-128-gb/p/itm5e47852a4e21a?pid=MOBGTAGPX24S24W&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 66999,
         deliveryCharge: 0,
@@ -1095,9 +933,9 @@ export const mockProducts: Product[] = [
     name: 'HP Pavilion 15 (15.6" FHD Laptop, Core i5 12th Gen, 16GB RAM, 512GB SSD)',
     brand: 'HP',
     category: 'Laptops',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/0/q/x/15-eg2009tu-thin-and-light-laptop-hp-original-imah2mwyg5e8devr.jpeg',
+    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/0/q/x/15-eg2009tu-thin-and-light-laptop-hp-original-imah2mwyg5e8devr.jpeg',
+      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 69990,
@@ -1164,10 +1002,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'COMGP7PFGH5CPHZ8',
-        product_url: 'https://www.flipkart.com/hp-pavilion-intel-core-i5-12th-gen-15-eg2009tu-thin-light-laptop/p/itmd5a587428f521?pid=COMGP7PFGH5CPHZ8',
-        affiliate_url: 'https://www.flipkart.com/hp-pavilion-intel-core-i5-12th-gen-15-eg2009tu-thin-light-laptop/p/itmd5a587428f521?pid=COMGP7PFGH5CPHZ8&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 54990,
         deliveryCharge: 0,
@@ -1186,10 +1020,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B09V7N8K44',
-        product_url: 'https://www.amazon.in/dp/B09V7N8K44',
-        affiliate_url: 'https://www.amazon.in/dp/B09V7N8K44?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 56499,
         deliveryCharge: 0,
@@ -1207,10 +1037,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Croma',
-        marketplace_name: 'Croma',
-        marketplace_product_id: '257124',
-        product_url: 'https://www.croma.com/hp-pavilion-15-eg2009tu-intel-core-i5-12th-gen-laptop/p/257124',
-        affiliate_url: 'https://www.croma.com/hp-pavilion-15-eg2009tu-intel-core-i5-12th-gen-laptop/p/257124?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 57990,
         deliveryCharge: 0,
@@ -1250,9 +1076,9 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy Watch6 Bluetooth (44mm, Graphite, Advanced Sleep Coaching)',
     brand: 'Samsung',
     category: 'Electronics',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/smartwatch/3/r/i/-original-imahcn9fykcjjhqs.jpeg',
+    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/smartwatch/3/r/i/-original-imahcn9fykcjjhqs.jpeg'
+      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 29999,
     sellingPrice: 21999,
@@ -1317,10 +1143,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Myntra',
-        marketplace_name: 'Myntra',
-        marketplace_product_id: '24389012',
-        product_url: 'https://www.myntra.com/smart-watches/samsung/samsung-galaxy-watch-6-bluetooth-44mm/24389012/buy',
-        affiliate_url: 'https://www.myntra.com/smart-watches/samsung/samsung-galaxy-watch-6-bluetooth-44mm/24389012/buy?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 21999,
         deliveryCharge: 0,
@@ -1339,10 +1161,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0CC9H829M',
-        product_url: 'https://www.amazon.in/dp/B0CC9H829M',
-        affiliate_url: 'https://www.amazon.in/dp/B0CC9H829M?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 22490,
         deliveryCharge: 0,
@@ -1360,10 +1178,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'SMWGRZBGZHYGZZ8P',
-        product_url: 'https://www.flipkart.com/samsung-galaxy-watch6-bluetooth/p/itm87c5369c7821a?pid=SMWGRZBGZHYGZZ8P',
-        affiliate_url: 'https://www.flipkart.com/samsung-galaxy-watch6-bluetooth/p/itm87c5369c7821a?pid=SMWGRZBGZHYGZZ8P&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 22999,
         deliveryCharge: 0,
@@ -1386,9 +1200,9 @@ export const mockProducts: Product[] = [
     name: 'boAt Airdopes 141 Bluetooth TWS Earbuds with 42H Playtime, ENx Tech',
     brand: 'boAt',
     category: 'Electronics',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/l/4/q/airdopes-141-elite-anc-boat-original-imahgrrdfp5zpnwt.jpeg',
+    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/l/4/q/airdopes-141-elite-anc-boat-original-imahgrrdfp5zpnwt.jpeg',
+      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 4490,
@@ -1454,10 +1268,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B09N3ZNHTY',
-        product_url: 'https://www.amazon.in/dp/B09N3ZNHTY',
-        affiliate_url: 'https://www.amazon.in/dp/B09N3ZNHTY?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 1299,
         deliveryCharge: 0,
@@ -1473,10 +1283,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'ACCG7ZHYFFGGXR7Y',
-        product_url: 'https://www.flipkart.com/boat-airdopes-141-bluetooth-headset/p/itm3d26210f84a86?pid=ACCG7ZHYFFGGXR7Y',
-        affiliate_url: 'https://www.flipkart.com/boat-airdopes-141-bluetooth-headset/p/itm3d26210f84a86?pid=ACCG7ZHYFFGGXR7Y&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 1349,
         deliveryCharge: 40,
@@ -1496,9 +1302,9 @@ export const mockProducts: Product[] = [
     name: 'Noise ColorFit Pro 5 Smart Watch (1.85" AMOLED Display, BT Calling)',
     brand: 'Noise',
     category: 'Electronics',
-    image: 'https://m.media-amazon.com/images/I/61TapeOXotL._SL1500_.jpg',
+    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://m.media-amazon.com/images/I/61TapeOXotL._SL1500_.jpg',
+      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 8999,
@@ -1563,10 +1369,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0C8V3K3V6',
-        product_url: 'https://www.amazon.in/dp/B0C8V3K3V6',
-        affiliate_url: 'https://www.amazon.in/dp/B0C8V3K3V6?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 3499,
         deliveryCharge: 0,
@@ -1587,9 +1389,9 @@ export const mockProducts: Product[] = [
     name: 'ASUS Vivobook 15 Intel Core i5 12th Gen (16GB RAM / 512GB SSD, FHD)',
     brand: 'ASUS',
     category: 'Laptops',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/g/p/b/-original-imahmbf8z3s94xxt.jpeg',
+    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/g/p/b/-original-imahmbf8z3s94xxt.jpeg',
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 69990,
@@ -1656,10 +1458,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0C27TK69Z',
-        product_url: 'https://www.amazon.in/dp/B0C27TK69Z',
-        affiliate_url: 'https://www.amazon.in/dp/B0C27TK69Z?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 48990,
         deliveryCharge: 0,
@@ -1675,10 +1473,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'COMGTWKYHFHGTX21',
-        product_url: 'https://www.flipkart.com/asus-vivobook-15-intel-core-i5-12th-gen-16-gb-512-gb-ssd-windows-11-home-x1502za-ej541ws-thin-light-laptop/p/itm5341cfbc7c5b1?pid=COMGTWKYHFHGTX21',
-        affiliate_url: 'https://www.flipkart.com/asus-vivobook-15-intel-core-i5-12th-gen-16-gb-512-gb-ssd-windows-11-home-x1502za-ej541ws-thin-light-laptop/p/itm5341cfbc7c5b1?pid=COMGTWKYHFHGTX21&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 51990,
         deliveryCharge: 0,
@@ -1693,10 +1487,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Croma',
-        marketplace_name: 'Croma',
-        marketplace_product_id: '264589',
-        product_url: 'https://www.croma.com/asus-vivobook-15-intel-core-i5-12th-gen-laptop/p/264589',
-        affiliate_url: 'https://www.croma.com/asus-vivobook-15-intel-core-i5-12th-gen-laptop/p/264589?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 52990,
         deliveryCharge: 0,
@@ -1716,9 +1506,9 @@ export const mockProducts: Product[] = [
     name: 'Pigeon by Stovekraft Cruise 3 Burner Glass Top Gas Stove',
     brand: 'Pigeon',
     category: 'Home & Kitchen',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/gas-stove/x/g/j/-original-imagrzvnzcesygng.jpeg',
+    image: 'https://images.unsplash.com/photo-1585837575652-267c041d77d4?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/gas-stove/x/g/j/-original-imagrzvnzcesygng.jpeg'
+      'https://images.unsplash.com/photo-1585837575652-267c041d77d4?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 6495,
     sellingPrice: 2199,
@@ -1780,10 +1570,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B01N2H84KG',
-        product_url: 'https://www.amazon.in/dp/B01N2H84KG',
-        affiliate_url: 'https://www.amazon.in/dp/B01N2H84KG?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 2199,
         deliveryCharge: 0,
@@ -1799,10 +1585,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'GSTGG2ZGHYFFZZGA',
-        product_url: 'https://www.flipkart.com/pigeon-cruise-glass-manual-gas-stove/p/itm5b69a23c5e812?pid=GSTGG2ZGHYFFZZGA',
-        affiliate_url: 'https://www.flipkart.com/pigeon-cruise-glass-manual-gas-stove/p/itm5b69a23c5e812?pid=GSTGG2ZGHYFFZZGA&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 2299,
         deliveryCharge: 60,
@@ -1836,9 +1618,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Air Max SC Mens Running Shoes & Sneakers',
     brand: 'Nike',
     category: 'Fashion',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/p/4/p/13-jj1844-700-13-nike-lemon-venom-black-wolf-grey-dark-shadow-original-imahsjdz9wg7zjxs.jpeg',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/p/4/p/13-jj1844-700-13-nike-lemon-venom-black-wolf-grey-dark-shadow-original-imahsjdz9wg7zjxs.jpeg',
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 6995,
@@ -1901,10 +1683,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'SHOEGG7T8E87G8GGH',
-        product_url: 'https://www.flipkart.com/nike-air-max-sc-sneakers-men/p/itm87a41ef584c2a?pid=SHOEGG7T8E87G8GGH',
-        affiliate_url: 'https://www.flipkart.com/nike-air-max-sc-sneakers-men/p/itm87a41ef584c2a?pid=SHOEGG7T8E87G8GGH&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 4899,
         deliveryCharge: 0,
@@ -1921,10 +1699,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B08N5N4K9L',
-        product_url: 'https://www.amazon.in/dp/B08N5N4K9L',
-        affiliate_url: 'https://www.amazon.in/dp/B08N5N4K9L?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 4995,
         deliveryCharge: 0,
@@ -1940,10 +1714,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Myntra',
-        marketplace_name: 'Myntra',
-        marketplace_product_id: '15890214',
-        product_url: 'https://www.myntra.com/casual-shoes/nike/nike-men-air-max-sc-sneakers/15890214/buy',
-        affiliate_url: 'https://www.myntra.com/casual-shoes/nike/nike-men-air-max-sc-sneakers/15890214/buy?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 5249,
         deliveryCharge: 0,
@@ -1959,10 +1729,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Ajio',
-        marketplace_name: 'AJIO',
-        marketplace_product_id: '461389021_white',
-        product_url: 'https://www.ajio.com/nike-air-max-sc-lace-up-sneakers/p/461389021_white',
-        affiliate_url: 'https://www.ajio.com/nike-air-max-sc-lace-up-sneakers/p/461389021_white?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 5499,
         deliveryCharge: 0,
@@ -1983,9 +1749,9 @@ export const mockProducts: Product[] = [
     name: 'Sony WH-1000XM5 Wireless Active Noise Cancelling Headphones (Black)',
     brand: 'Sony',
     category: 'Electronics',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/v/d/g/-original-imahgr295uvptwq7.jpeg',
+    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/headphone/v/d/g/-original-imahgr295uvptwq7.jpeg',
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 34990,
@@ -2048,10 +1814,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B09XS7JWHH',
-        product_url: 'https://www.amazon.in/dp/B09XS7JWHH',
-        affiliate_url: 'https://www.amazon.in/dp/B09XS7JWHH?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 28990,
         deliveryCharge: 0,
@@ -2067,10 +1829,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Croma',
-        marketplace_name: 'Croma',
-        marketplace_product_id: '262334',
-        product_url: 'https://www.croma.com/sony-wh-1000xm5-over-ear-active-noise-cancellation-wireless-headphone-black-/p/262334',
-        affiliate_url: 'https://www.croma.com/sony-wh-1000xm5-over-ear-active-noise-cancellation-wireless-headphone-black-/p/262334?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 31990,
         deliveryCharge: 0,
@@ -2090,9 +1848,9 @@ export const mockProducts: Product[] = [
     name: 'Apple MacBook Air M2 (13.6-inch, 8GB RAM, 256GB SSD, Midnight)',
     brand: 'Apple',
     category: 'Laptops',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/2/v/v/-original-imagfdeqter4sj2j.jpeg',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/computer/2/v/v/-original-imagfdeqter4sj2j.jpeg',
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 99900,
@@ -2156,10 +1914,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Amazon India',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0B3BPHXFY',
-        product_url: 'https://www.amazon.in/dp/B0B3BPHXFY',
-        affiliate_url: 'https://www.amazon.in/dp/B0B3BPHXFY?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 84990,
         deliveryCharge: 0,
@@ -2175,10 +1929,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'COMGFDEQTER4SJ2J',
-        product_url: 'https://www.flipkart.com/apple-2022-macbook-air-m2-8-gb-256-gb-ssd-mac-os-monterey-mly33hn-a/p/itm6ae826cf7fb89?pid=COMGFDEQTER4SJ2J',
-        affiliate_url: 'https://www.flipkart.com/apple-2022-macbook-air-m2-8-gb-256-gb-ssd-mac-os-monterey-mly33hn-a/p/itm6ae826cf7fb89?pid=COMGFDEQTER4SJ2J&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 86990,
         deliveryCharge: 0,
@@ -2212,9 +1962,9 @@ export const mockProducts: Product[] = [
     name: 'Adidas Ultraboost Light Running & Training Shoes for Men (Core Black)',
     brand: 'Adidas',
     category: 'Fashion',
-    image: 'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/t/d/m/-watermarked-original-imagtbtejwfyzesb.jpeg',
+    image: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://rukminim2.flixcart.com/image/832/832/xif0q/shoe/t/d/m/-watermarked-original-imagtbtejwfyzesb.jpeg',
+      'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 18999,
@@ -2279,10 +2029,6 @@ export const mockProducts: Product[] = [
     marketplacePrices: [
       {
         sellerName: 'Flipkart',
-        marketplace_name: 'Flipkart',
-        marketplace_product_id: 'SHOEGG7T6ZHYFFGGG',
-        product_url: 'https://www.flipkart.com/adidas-ultraboost-light-running-shoes-men/p/itm7a8581bc6784a?pid=SHOEGG7T6ZHYFFGGG',
-        affiliate_url: 'https://www.flipkart.com/adidas-ultraboost-light-running-shoes-men/p/itm7a8581bc6784a?pid=SHOEGG7T6ZHYFFGGG&affid=smartdeal',
         isSmartDealsSeller: false,
         price: 11999,
         deliveryCharge: 0,
@@ -2299,10 +2045,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Amazon',
-        marketplace_name: 'Amazon',
-        marketplace_product_id: 'B0BS2N9XKP',
-        product_url: 'https://www.amazon.in/dp/B0BS2N9XKP',
-        affiliate_url: 'https://www.amazon.in/dp/B0BS2N9XKP?tag=smartdeal-21',
         isSmartDealsSeller: false,
         price: 12499,
         deliveryCharge: 0,
@@ -2318,10 +2060,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Myntra',
-        marketplace_name: 'Myntra',
-        marketplace_product_id: '22389012',
-        product_url: 'https://www.myntra.com/sports-shoes/adidas/adidas-men-black-ultraboost-light-running-shoes/22389012/buy',
-        affiliate_url: 'https://www.myntra.com/sports-shoes/adidas/adidas-men-black-ultraboost-light-running-shoes/22389012/buy?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 13299,
         deliveryCharge: 0,
@@ -2337,10 +2075,6 @@ export const mockProducts: Product[] = [
       },
       {
         sellerName: 'Ajio',
-        marketplace_name: 'AJIO',
-        marketplace_product_id: '461478201_black',
-        product_url: 'https://www.ajio.com/adidas-ultraboost-light-running-shoes/p/461478201_black',
-        affiliate_url: 'https://www.ajio.com/adidas-ultraboost-light-running-shoes/p/461478201_black?utm_source=smartdeal',
         isSmartDealsSeller: false,
         price: 14249,
         deliveryCharge: 0,

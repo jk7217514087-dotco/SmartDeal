@@ -91,20 +91,20 @@ const FOOTER_THEMES: Record<string, FooterThemeConfig> = {
   },
   'pure-white': {
     bg: 'bg-white text-slate-600',
-    border: 'border-slate-200',
+    border: 'border-slate-200/80',
     cardBg: 'bg-slate-50',
-    cardBorder: 'border-slate-200',
-    accentText: 'text-blue-600',
-    logoBadge: 'bg-blue-600 text-white shadow-md shadow-blue-500/20',
-    logoGradient: 'bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent',
-    subBorder: 'border-slate-200',
+    cardBorder: 'border-slate-200/80',
+    accentText: 'text-indigo-600',
+    logoBadge: 'bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/25',
+    logoGradient: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent',
+    subBorder: 'border-slate-200/60',
   }
 };
 
 export const Footer: React.FC = () => {
   const { activeTheme } = useApp();
-  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'pure-white';
-  const theme = FOOTER_THEMES[themeKey] || FOOTER_THEMES['pure-white'];
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
+  const theme = FOOTER_THEMES[themeKey] || FOOTER_THEMES['steel-navy'];
 
   return (
     <footer className={`pt-12 pb-24 sm:pb-12 border-t transition-colors duration-300 ${theme.bg} ${theme.border}`}>

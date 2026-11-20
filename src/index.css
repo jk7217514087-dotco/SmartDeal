@@ -3,13 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --smartdeal-bg: #F4F6FB;
-}
-
-html[data-theme="pure-white"],
-body.theme-pure-white,
-[data-theme="pure-white"] {
-  --smartdeal-bg: #F4F6FB;
+  --smartdeal-bg: #0b1a30;
 }
 
 /* THEME 1: STEEL NAVY (Image 1: #0b1a30) */
@@ -18,20 +12,17 @@ body.theme-steel-navy,
 [data-theme="steel-navy"] {
   --smartdeal-bg: #0b1a30;
 }
-
 [data-theme="steel-navy"] .dark .dark\:bg-slate-900,
 [data-theme="steel-navy"] .dark\:bg-slate-900,
 body.theme-steel-navy .dark\:bg-slate-900 {
   background-color: #112240 !important;
   border-color: rgba(56, 189, 248, 0.35) !important;
 }
-
 [data-theme="steel-navy"] .dark .dark\:bg-slate-800,
 [data-theme="steel-navy"] .dark\:bg-slate-800,
 body.theme-steel-navy .dark\:bg-slate-800 {
   background-color: #162d50 !important;
 }
-
 [data-theme="steel-navy"] .dark .dark\:bg-slate-950,
 [data-theme="steel-navy"] .dark\:bg-slate-950,
 body.theme-steel-navy .dark\:bg-slate-950 {
@@ -44,20 +35,17 @@ body.theme-matrix-lime,
 [data-theme="matrix-lime"] {
   --smartdeal-bg: #111612;
 }
-
 [data-theme="matrix-lime"] .dark .dark\:bg-slate-900,
 [data-theme="matrix-lime"] .dark\:bg-slate-900,
 body.theme-matrix-lime .dark\:bg-slate-900 {
   background-color: #172219 !important;
   border-color: rgba(163, 230, 53, 0.35) !important;
 }
-
 [data-theme="matrix-lime"] .dark .dark\:bg-slate-800,
 [data-theme="matrix-lime"] .dark\:bg-slate-800,
 body.theme-matrix-lime .dark\:bg-slate-800 {
   background-color: #1f2d22 !important;
 }
-
 [data-theme="matrix-lime"] .dark .dark\:bg-slate-950,
 [data-theme="matrix-lime"] .dark\:bg-slate-950,
 body.theme-matrix-lime .dark\:bg-slate-950 {
@@ -70,20 +58,17 @@ body.theme-sunset-coral,
 [data-theme="sunset-coral"] {
   --smartdeal-bg: #1c0b29;
 }
-
 [data-theme="sunset-coral"] .dark .dark\:bg-slate-900,
 [data-theme="sunset-coral"] .dark\:bg-slate-900,
 body.theme-sunset-coral .dark\:bg-slate-900 {
   background-color: #28113b !important;
   border-color: rgba(244, 63, 94, 0.35) !important;
 }
-
 [data-theme="sunset-coral"] .dark .dark\:bg-slate-800,
 [data-theme="sunset-coral"] .dark\:bg-slate-800,
 body.theme-sunset-coral .dark\:bg-slate-800 {
   background-color: #36164f !important;
 }
-
 [data-theme="sunset-coral"] .dark .dark\:bg-slate-950,
 [data-theme="sunset-coral"] .dark\:bg-slate-950,
 body.theme-sunset-coral .dark\:bg-slate-950 {
@@ -99,7 +84,6 @@ body.theme-cyber-emerald,
 [data-theme="cyber-emerald"] {
   --smartdeal-bg: #051f15;
 }
-
 [data-theme="aurora-jade"] .dark .dark\:bg-slate-900,
 [data-theme="aurora-jade"] .dark\:bg-slate-900,
 body.theme-aurora-jade .dark\:bg-slate-900,
@@ -109,7 +93,6 @@ body.theme-cyber-emerald .dark\:bg-slate-900 {
   background-color: #092e20 !important;
   border-color: rgba(34, 197, 94, 0.35) !important;
 }
-
 [data-theme="aurora-jade"] .dark .dark\:bg-slate-800,
 [data-theme="aurora-jade"] .dark\:bg-slate-800,
 body.theme-aurora-jade .dark\:bg-slate-800,
@@ -118,7 +101,6 @@ body.theme-aurora-jade .dark\:bg-slate-800,
 body.theme-cyber-emerald .dark\:bg-slate-800 {
   background-color: #0e3d2b !important;
 }
-
 [data-theme="aurora-jade"] .dark .dark\:bg-slate-950,
 [data-theme="aurora-jade"] .dark\:bg-slate-950,
 body.theme-aurora-jade .dark\:bg-slate-950,
@@ -134,20 +116,17 @@ body.theme-royal-gold,
 [data-theme="royal-gold"] {
   --smartdeal-bg: #181107;
 }
-
 [data-theme="royal-gold"] .dark .dark\:bg-slate-900,
 [data-theme="royal-gold"] .dark\:bg-slate-900,
 body.theme-royal-gold .dark\:bg-slate-900 {
   background-color: #241a0b !important;
   border-color: rgba(245, 158, 11, 0.35) !important;
 }
-
 [data-theme="royal-gold"] .dark .dark\:bg-slate-800,
 [data-theme="royal-gold"] .dark\:bg-slate-800,
 body.theme-royal-gold .dark\:bg-slate-800 {
   background-color: #2e200e !important;
 }
-
 [data-theme="royal-gold"] .dark .dark\:bg-slate-950,
 [data-theme="royal-gold"] .dark\:bg-slate-950,
 body.theme-royal-gold .dark\:bg-slate-950 {
@@ -160,20 +139,17 @@ body.theme-cyber-indigo,
 [data-theme="cyber-indigo"] {
   --smartdeal-bg: #08092d;
 }
-
 [data-theme="cyber-indigo"] .dark .dark\:bg-slate-900,
 [data-theme="cyber-indigo"] .dark\:bg-slate-900,
 body.theme-cyber-indigo .dark\:bg-slate-900 {
   background-color: #0f1248 !important;
   border-color: rgba(139, 92, 246, 0.35) !important;
 }
-
 [data-theme="cyber-indigo"] .dark .dark\:bg-slate-800,
 [data-theme="cyber-indigo"] .dark\:bg-slate-800,
 body.theme-cyber-indigo .dark\:bg-slate-800 {
   background-color: #171a63 !important;
 }
-
 [data-theme="cyber-indigo"] .dark .dark\:bg-slate-950,
 [data-theme="cyber-indigo"] .dark\:bg-slate-950,
 body.theme-cyber-indigo .dark\:bg-slate-950 {
@@ -186,8 +162,8 @@ body.theme-cyber-indigo .dark\:bg-slate-950 {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
+    background-color: var(--smartdeal-bg, #0b1a30) !important;
   }
-
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -196,78 +172,22 @@ body.theme-cyber-indigo .dark\:bg-slate-950 {
     max-width: 100vw;
     margin: 0;
     padding: 0;
+    background-color: var(--smartdeal-bg, #0b1a30) !important;
   }
-
   #root {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
     min-height: 100vh;
+    background-color: var(--smartdeal-bg, transparent);
   }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
   }
-
-  /* When pure-white theme is active or not dark */
-  html[data-theme="pure-white"],
-  html:not(.dark) {
-    background-color: #FFFFFF !important;
-  }
-  html[data-theme="pure-white"] body,
-  html:not(.dark) body,
-  html[data-theme="pure-white"] #root,
-  html:not(.dark) #root {
-    background-color: #FFFFFF !important;
-    color: #0f172a !important;
-  }
-  html[data-theme="pure-white"] h1,
-  html[data-theme="pure-white"] h2,
-  html[data-theme="pure-white"] h3,
-  html[data-theme="pure-white"] h4,
-  html[data-theme="pure-white"] h5,
-  html[data-theme="pure-white"] h6 {
-    color: #0f172a;
-  }
-
-  /* When dark themes are active */
-  html.dark {
-    background-color: var(--smartdeal-bg) !important;
-  }
-  html.dark body,
-  html.dark #root {
-    background-color: var(--smartdeal-bg) !important;
-    color: #F8FAFC !important;
-  }
-  html.dark h1,
-  html.dark h2,
-  html.dark h3,
-  html.dark h4,
-  html.dark h5,
-  html.dark h6 {
+  .dark body {
+    background-color: var(--smartdeal-bg, #0b1a30) !important;
     color: #F8FAFC;
   }
-}
-
-/* Primary buttons must remain BLUE (#2563EB) with white text */
-.btn-primary,
-button.btn-primary,
-.bg-blue-600 {
-  background-color: #2563EB !important;
-  color: #FFFFFF !important;
-}
-
-.btn-primary:hover,
-button.btn-primary:hover,
-.hover\:bg-blue-700:hover,
-.bg-blue-600:hover {
-  background-color: #1d4ed8 !important;
-  color: #FFFFFF !important;
 }
 
 /* Custom scrollbars */
@@ -275,16 +195,13 @@ button.btn-primary:hover,
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
-
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
@@ -292,12 +209,10 @@ button.btn-primary:hover,
 .dark ::-webkit-scrollbar-track {
   background: #0f172a;
 }
-
 .dark ::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 9999px;
 }
-
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
@@ -306,7 +221,6 @@ button.btn-primary:hover,
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -347,12 +261,10 @@ button.btn-primary:hover,
   background: #0d1424;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
-
 .dark .card-obsidian {
   background: #0d1424;
   border: 1px solid rgba(99, 102, 241, 0.14);
 }
-
 .dark .card-obsidian:hover {
   border-color: rgba(99, 102, 241, 0.4);
   box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.22);
@@ -386,12 +298,9 @@ button.btn-primary:hover,
   body * {
     visibility: hidden;
   }
-
-  #printable-invoice,
-  #printable-invoice * {
+  #printable-invoice, #printable-invoice * {
     visibility: visible;
   }
-
   #printable-invoice {
     position: absolute;
     left: 0;

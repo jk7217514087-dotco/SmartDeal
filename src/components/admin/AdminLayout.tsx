@@ -103,28 +103,28 @@ export const AdminLayout: React.FC = () => {
   })();
 
   const renderSidebarContent = () => (
-    <div className="flex flex-col h-full bg-slate-50 border-r border-slate-200 text-slate-800">
+    <div className="flex flex-col h-full bg-[#0b132b] border-r border-slate-800/80 text-slate-200">
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-white">
+      <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black shadow-lg shadow-blue-600/25">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-black shadow-lg shadow-cyan-500/20">
             <ShieldAlert className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-slate-900 text-base tracking-tight">SmartDeal</span>
-              <span className="text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.2 rounded">
+              <span className="font-black text-white text-base tracking-tight">SmartDeal</span>
+              <span className="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.2 rounded">
                 ADMIN
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 font-medium">Enterprise Management</p>
+            <p className="text-[10px] text-slate-400 font-medium">Enterprise Management</p>
           </div>
         </div>
 
         {/* Mobile close button */}
         <button
           onClick={() => setMobileSidebarOpen(false)}
-          className="lg:hidden p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900"
+          className="lg:hidden p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white"
         >
           <X className="w-5 h-5" />
         </button>
@@ -148,19 +148,19 @@ export const AdminLayout: React.FC = () => {
                   onClick={() => setMobileSidebarOpen(false)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
+                      ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white shadow-md shadow-blue-600/30 font-bold'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                     <span>{item.name}</span>
                   </div>
                   {item.badge && (
                     <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
                       isActive 
-                        ? 'bg-black/20 text-white' 
-                        : 'bg-slate-200 text-slate-700 border border-slate-300'
+                        ? 'bg-black/30 text-white' 
+                        : 'bg-slate-800 text-cyan-300 border border-slate-700'
                     }`}>
                       {item.badge}
                     </span>
@@ -173,14 +173,14 @@ export const AdminLayout: React.FC = () => {
       </div>
 
       {/* Sidebar Footer with Live Connectivity & Logout */}
-      <div className="p-3 border-t border-slate-200 space-y-2 bg-white">
+      <div className="p-3 border-t border-slate-800/80 space-y-2 bg-[#090e1f]">
         {/* Live Server Indicator */}
-        <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-[11px]">
-          <div className="flex items-center gap-2 text-slate-700">
-            <Server className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+        <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px]">
+          <div className="flex items-center gap-2 text-slate-300">
+            <Server className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
             <span>Backend :3001</span>
           </div>
-          <span className="text-[10px] font-bold text-emerald-600">LIVE RBAC</span>
+          <span className="text-[10px] font-bold text-emerald-400">LIVE RBAC</span>
         </div>
 
         {/* View Customer Website Link */}
@@ -189,19 +189,19 @@ export const AdminLayout: React.FC = () => {
             setRole('USER');
             navigate('/');
           }}
-          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <ExternalLink className="w-3.5 h-3.5 text-blue-600" />
+            <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
             <span>Visit Customer Website</span>
           </div>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+          <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
         </button>
 
         {/* Admin Logout */}
         <button
           onClick={handleAdminLogout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 hover:border-transparent transition-all cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 hover:border-transparent transition-all cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
           <span>Exit Admin Portal</span>
@@ -211,12 +211,12 @@ export const AdminLayout: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#080c14] text-slate-100 flex flex-col font-sans">
       {/* Mobile Drawer Backdrop */}
       {mobileSidebarOpen && (
         <div
           onClick={() => setMobileSidebarOpen(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
         />
       )}
 
@@ -236,24 +236,24 @@ export const AdminLayout: React.FC = () => {
         </aside>
 
         {/* Main Administrative Workspace */}
-        <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Top Administrative Bar */}
-          <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4 text-slate-900 shadow-xs">
+          <header className="sticky top-0 z-30 bg-[#0b132b]/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMobileSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900"
+                className="lg:hidden p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
               <div>
-                <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                <div className="flex items-center gap-2 text-[11px] text-slate-400">
                   <span>SmartDeal Admin</span>
                   <span>/</span>
-                  <span className="text-blue-600 font-semibold">{currentTitle}</span>
+                  <span className="text-cyan-400 font-semibold">{currentTitle}</span>
                 </div>
-                <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
                   {currentTitle}
                 </h1>
               </div>
@@ -264,23 +264,23 @@ export const AdminLayout: React.FC = () => {
               {/* Owner SMS alerts center quick button */}
               <button
                 onClick={() => setIsSmsCenterOpen(true)}
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 hover:border-slate-300 text-xs text-slate-800 transition-colors"
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-200 transition-colors"
                 title="Owner Phone Dispatch"
               >
-                <Smartphone className="w-3.5 h-3.5 text-blue-600" />
+                <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="font-mono text-[11px]">7217514087</span>
               </button>
 
               {/* Admin profile pill */}
-              <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-slate-100 border border-slate-200">
-                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-xs shadow-md">
+              <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-slate-900 border border-slate-800">
+                <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-black text-xs shadow-md">
                   {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'AD'}
                 </div>
                 <div className="hidden md:block text-left">
-                  <div className="text-xs font-bold text-slate-900 leading-tight">
+                  <div className="text-xs font-bold text-white leading-tight">
                     {currentUser?.name || 'Super Admin'}
                   </div>
-                  <div className="text-[10px] text-blue-600 font-mono">OWNER &bull; RBAC Verified</div>
+                  <div className="text-[10px] text-cyan-400 font-mono">OWNER &bull; RBAC Verified</div>
                 </div>
               </div>
 
@@ -297,7 +297,7 @@ export const AdminLayout: React.FC = () => {
           </header>
 
           {/* Child View Workspace */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1700px] w-full mx-auto bg-white text-slate-900">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1700px] w-full mx-auto">
             <Outlet />
           </main>
         </div>

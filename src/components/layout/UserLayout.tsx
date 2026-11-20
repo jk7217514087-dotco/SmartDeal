@@ -12,17 +12,10 @@ import { useApp, getThemeDefaultBg } from '../../context/AppContext';
 export const UserLayout: React.FC = () => {
   const { customBg, activeTheme } = useApp();
   const currentBg = customBg || getThemeDefaultBg(activeTheme);
-  const isWhite = activeTheme === 'pure-white' || (currentBg && (
-    currentBg.toLowerCase() === '#ffffff' || 
-    currentBg.toLowerCase() === '#f4f6fb' || 
-    currentBg.toLowerCase() === '#f5f6ff' || 
-    currentBg.toLowerCase() === '#f8fafd' ||
-    currentBg.toLowerCase().startsWith('#f')
-  ));
 
   return (
     <div 
-      className={`flex flex-col min-h-screen w-full max-w-full overflow-x-hidden ${isWhite ? 'text-slate-900' : 'text-slate-100'} transition-colors duration-200`}
+      className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 transition-colors duration-200"
       style={{ backgroundColor: currentBg }}
     >
       {/* Customer Header / Navigation */}

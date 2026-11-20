@@ -24,8 +24,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { queryAiShoppingAssistant, AIQueryResult, ComparisonResult } from '../../services/aiShoppingAgent';
 import { Product } from '../../types';
-import { marketplaceRedirectionService } from '../../services/marketplaceRedirectionService';
-import { getMarketplaceComparisonStores } from '../../utils/comparisonStores';
 
 interface Message {
   id: string;
@@ -559,56 +557,33 @@ Lowest price across all marketplaces is currently **₹${matched.sellingPrice.to
                           </div>
                         </div>
 
-                        {(() => {
-                          const fullProduct = products.find(p => p.id === rec.id);
-                          const compStores = fullProduct ? getMarketplaceComparisonStores(fullProduct) : [];
-                          const bestStore = compStores.find(s => s.isAvailable && s.url) || compStores[0];
-                          const isAvailable = Boolean(bestStore && bestStore.isAvailable && bestStore.url);
+                        <div className="flex sm:flex-col gap-1.5 shrink-0">
+                          <button
+                            onClick={() => {
+                              const storeName = rec.marketplacePrices?.[0]?.marketplace || 'Amazon';
+                              const storeUrl = storeName.toLowerCase().includes('flipkart')
+                                ? `https://www.flipkart.com/search?q=${encodeURIComponent(rec.name)}`
+                                : `https://www.amazon.in/s?k=${encodeURIComponent(rec.name)}`;
+                              window.open(storeUrl, '_blank', 'noopener,noreferrer');
+                            }}
+                            className="bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl flex items-center justify-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer"
+                            title="Buy directly on official company store"
+                          >
+                            <span>Buy on {rec.marketplacePrices?.[0]?.marketplace?.split(' ')[0] || 'Store'}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </button>
 
-                          return (
-                            <div className="flex sm:flex-col gap-1.5 shrink-0">
-                              <button
-                                onClick={() => {
-                                  if (fullProduct && bestStore && isAvailable) {
-                                    marketplaceRedirectionService.executeRedirect({
-                                      product: fullProduct,
-                                      offer: {
-                                        sellerName: bestStore.marketplace_name,
-                                        marketplace_name: bestStore.marketplace_name,
-                                        marketplace_product_id: bestStore.marketplace_product_id,
-                                        product_url: bestStore.product_url,
-                                        affiliate_url: bestStore.affiliate_url,
-                                        url: bestStore.url,
-                                        finalPrice: bestStore.finalPrice
-                                      }
-                                    });
-                                  }
-                                }}
-                                disabled={!isAvailable}
-                                className={`text-xs font-bold px-3 py-1.5 rounded-xl flex items-center justify-center gap-1 shadow-sm transition-all active:scale-95 cursor-pointer ${
-                                  isAvailable
-                                    ? 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white'
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
-                                }`}
-                                title={isAvailable ? `Buy directly on ${bestStore.marketplace_name}` : 'Product link unavailable'}
-                              >
-                                <span>{isAvailable ? `Buy on ${bestStore.marketplace_name}` : 'Product link unavailable'}</span>
-                                {isAvailable && <ExternalLink className="w-3 h-3" />}
-                              </button>
-
-                              <button
-                                onClick={() => {
-                                  setIsAiAssistantOpen(false);
-                                  navigate(`/product/${rec.id}`);
-                                }}
-                                className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-bold px-3 py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer"
-                              >
-                                <span>Details</span>
-                                <ArrowRight className="w-3 h-3" />
-                              </button>
-                            </div>
-                          );
-                        })()}
+                          <button
+                            onClick={() => {
+                              setIsAiAssistantOpen(false);
+                              navigate(`/product/${rec.id}`);
+                            }}
+                            className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-bold px-3 py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer"
+                          >
+                            <span>Details</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

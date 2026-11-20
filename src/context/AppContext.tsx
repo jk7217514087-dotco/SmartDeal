@@ -32,28 +32,28 @@ export type ThemeId =
   | 'cyber-emerald';
 
 export const THEME_BG_MAP: Record<string, string> = {
-  'pure-white': '#F4F6FB',
   'steel-navy': '#0b1a30',
   'matrix-lime': '#111612',
   'sunset-coral': '#1c0b29',
   'aurora-jade': '#051f15',
   'royal-gold': '#181107',
   'cyber-indigo': '#08092d',
+  'pure-white': '#f8fafd',
   'cyber-emerald': '#051f15',
 };
 
 export const THEME_CYCLE_ORDER: ThemeId[] = [
-  'pure-white',
   'steel-navy',
   'matrix-lime',
   'sunset-coral',
   'aurora-jade',
   'royal-gold',
   'cyber-indigo',
+  'pure-white',
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
-  return THEME_BG_MAP[theme] || (theme === 'pure-white' ? '#F4F6FB' : '#0b1a30');
+  return THEME_BG_MAP[theme] || '#0b1a30';
 };
 
 interface AppContextType {
@@ -371,29 +371,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return false;
+    const saved = localStorage.getItem('smartdeals_dark_mode');
+    if (saved !== null) return saved === 'true';
+    return true;
   });
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
-    return (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'pure-white';
+    const saved = localStorage.getItem('smartdeals_active_theme') as ThemeId | null;
+    if (saved && (saved in THEME_BG_MAP)) {
+      return saved === 'cyber-emerald' ? 'aurora-jade' : saved;
+    }
+    return 'steel-navy';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
-    const saved = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'pure-white';
-    return localStorage.getItem('smartdeals_custom_bg') || getThemeDefaultBg(saved);
+    const savedBg = localStorage.getItem('smartdeals_custom_bg');
+    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'steel-navy';
+    // Purge any legacy black background or white background values
+    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08' && savedBg !== '#ffffff' && savedBg !== '#FFFFFF') {
+      return savedBg;
+    }
+    return getThemeDefaultBg(savedTheme);
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const normalizedTheme = activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme;
-    const bg = getThemeDefaultBg(normalizedTheme);
-    setCustomBgState(bg);
-    localStorage.setItem('smartdeals_active_theme', normalizedTheme);
-    localStorage.setItem('smartdeals_custom_bg', bg);
-    const isLight = normalizedTheme === 'pure-white' || bg.toLowerCase() === '#ffffff' || bg.toLowerCase() === '#f4f6fb' || bg.toLowerCase() === '#f5f6ff' || bg.toLowerCase() === '#f8fafd' || bg.toLowerCase().startsWith('#f');
-    localStorage.setItem('smartdeals_dark_mode', (!isLight).toString());
+    localStorage.setItem('smartdeals_active_theme', activeTheme);
+    const bg = getThemeDefaultBg(activeTheme);
     if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', normalizedTheme);
+      document.documentElement.setAttribute('data-theme', activeTheme);
       document.body.classList.remove(
         'theme-cyber-neon',
         'theme-royal-gold',
@@ -405,22 +411,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'theme-cyber-indigo',
         'theme-pure-white'
       );
-      document.body.classList.add(`theme-${normalizedTheme}`);
-      if (isLight) {
+      document.body.classList.add(`theme-${activeTheme}`);
+      if (activeTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('text-slate-100');
         document.body.classList.add('text-slate-900');
-        document.documentElement.style.setProperty('--smartdeal-bg', '#F4F6FB');
-        document.body.style.backgroundColor = '#F4F6FB';
-        document.documentElement.style.backgroundColor = '#F4F6FB';
       } else {
         document.documentElement.classList.add('dark');
         document.body.classList.remove('text-slate-900');
         document.body.classList.add('text-slate-100');
-        document.documentElement.style.setProperty('--smartdeal-bg', bg);
-        document.body.style.backgroundColor = bg;
-        document.documentElement.style.backgroundColor = bg;
       }
+      document.documentElement.style.setProperty('--smartdeal-bg', bg);
+      document.body.style.backgroundColor = bg;
+      document.documentElement.style.backgroundColor = bg;
     }
   }, [activeTheme]);
 

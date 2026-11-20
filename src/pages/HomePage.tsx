@@ -208,34 +208,34 @@ const HERO_THEMES: Record<string, HeroThemeConfig> = {
     promoText: 'text-violet-100/70',
   },
   'pure-white': {
-    heroSectionBg: 'bg-white border-b border-slate-200',
-    heroBorder: 'border-slate-200',
-    badgeBg: 'bg-blue-50',
-    badgeBorder: 'border-blue-200',
-    badgeText: 'text-blue-700',
-    badgeIcon: 'text-blue-600',
-    titleGradient: 'bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent',
-    searchContainer: 'bg-white border-slate-300 shadow-md focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-500/20',
-    searchBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 font-black',
-    pillBg: 'bg-slate-100 hover:bg-blue-50 border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 shadow-xs',
-    pedestalGlow: 'bg-gradient-to-tr from-blue-500/10 via-cyan-400/10 to-indigo-600/10',
-    pedestalOuter: 'border-slate-200 bg-white shadow-lg',
-    pedestalInner: 'border-slate-100 bg-white',
-    dealsBadge: 'bg-blue-600 text-white shadow-md shadow-blue-500/25 font-black',
-    savingsBadge: 'bg-white border-blue-200 text-blue-700 shadow-xs',
-    guaranteeCard: 'bg-white border-slate-200 hover:border-blue-400 shadow-xs',
-    promoCard: 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20',
-    promoButton: 'bg-white hover:bg-slate-100 text-blue-600 font-black shadow-md',
+    heroSectionBg: 'bg-gradient-to-b from-[#f8faff] via-[#ffffff] to-[#eef2f9]',
+    heroBorder: 'border-slate-200/80',
+    badgeBg: 'bg-indigo-50',
+    badgeBorder: 'border-indigo-200',
+    badgeText: 'text-indigo-700',
+    badgeIcon: 'text-indigo-600',
+    titleGradient: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent',
+    searchContainer: 'bg-white border-slate-200/90 shadow-[0_8px_35px_rgba(79,70,229,0.12)] focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20',
+    searchBtn: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:to-purple-800 text-white shadow-indigo-500/25 font-black',
+    pillBg: 'bg-white hover:bg-indigo-50 border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 shadow-xs',
+    pedestalGlow: 'bg-gradient-to-tr from-indigo-500/15 via-purple-400/10 to-indigo-600/15',
+    pedestalOuter: 'border-indigo-100 bg-white/95 shadow-[0_0_65px_rgba(79,70,229,0.18)]',
+    pedestalInner: 'border-slate-100 bg-gradient-to-b from-indigo-50/50 to-white',
+    dealsBadge: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-500/25 font-black',
+    savingsBadge: 'bg-white border-indigo-200 text-indigo-700 shadow-xs',
+    guaranteeCard: 'bg-white border-slate-200/80 hover:border-indigo-400/50 shadow-xs',
+    promoCard: 'bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 border-indigo-500 text-white shadow-lg shadow-indigo-500/20',
+    promoButton: 'bg-white hover:bg-slate-100 text-indigo-700 font-black shadow-md',
     promoBadge: 'bg-white/20 border-white/30 text-white',
     promoIcon: 'text-white',
-    promoText: 'text-blue-100',
+    promoText: 'text-indigo-100/90',
   },
 };
 
 export const HomePage: React.FC = () => {
   const { products, trackActivity, activeTheme } = useApp();
-  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'pure-white';
-  const heroTheme = HERO_THEMES[themeKey] || HERO_THEMES['pure-white'];
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
+  const heroTheme = HERO_THEMES[themeKey] || HERO_THEMES['steel-navy'];
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
@@ -914,8 +914,8 @@ export const HomePage: React.FC = () => {
             onClick={() => setSelectedCategory('All')}
             className={`px-4 py-2 rounded-2xl text-xs font-black transition-all shrink-0 cursor-pointer ${
               selectedCategory === 'All'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-400 shadow-xs'
+                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-md'
+                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400'
             }`}
           >
             All Products ({products.length})
@@ -932,8 +932,8 @@ export const HomePage: React.FC = () => {
               }}
               className={`px-4 py-2 rounded-2xl text-xs font-extrabold transition-all shrink-0 cursor-pointer ${
                 selectedCategory.toLowerCase() === cat.id.toLowerCase()
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300 shadow-xs'
+                  ? 'bg-brand-600 text-white shadow-md'
+                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-brand-300'
               }`}
             >
               {cat.name}

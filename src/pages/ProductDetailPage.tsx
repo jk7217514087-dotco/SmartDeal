@@ -9,23 +9,6 @@ import { InteractivePriceHistoryChart } from '../components/product/InteractiveP
 import { PriceAlertModal } from '../components/common/PriceAlertModal';
 import { ProductFullDetailsSection } from '../components/product/ProductFullDetailsSection';
 import { notificationService } from '../services/notificationService';
-import { getMarketplaceComparisonStores } from '../utils/comparisonStores';
-import { marketplaceRedirectionService } from '../services/marketplaceRedirectionService';
-import { ProductImageGallery } from '../components/product/ProductImageGallery';
-import { MarketplaceLogo } from '../components/common/MarketplaceLogo';
-
-const getStoreButtonClass = (storeName: string) => {
-  const name = (storeName || '').toLowerCase();
-  if (name.includes('flipkart')) return 'bg-[#2563EB] hover:bg-[#1d4ed8] text-white';
-  if (name.includes('meesho')) return 'bg-[#9B1750] hover:bg-[#801242] text-white';
-  if (name.includes('amazon')) return 'bg-[#FF9900] hover:bg-[#e68a00] text-slate-950 font-black';
-  if (name.includes('myntra')) return 'bg-[#FF3F6C] hover:bg-[#e02e5b] text-white';
-  if (name.includes('tatacliq') || name.includes('tata')) return 'bg-[#1E293B] hover:bg-[#0f172a] text-white';
-  if (name.includes('reliance')) return 'bg-[#E11900] hover:bg-[#c01500] text-white';
-  if (name.includes('croma')) return 'bg-[#002D28] hover:bg-[#001f1c] text-[#00E9BF] border border-teal-800';
-  if (name.includes('ajio')) return 'bg-[#1E293B] hover:bg-[#0f172a] text-white';
-  return 'bg-[#2563EB] hover:bg-[#1d4ed8] text-white';
-};
 import {
   Heart,
   ShoppingCart,
@@ -37,88 +20,14 @@ import {
   Bell,
   Sparkles,
   ArrowRight,
-  ArrowLeft,
   MapPin,
   ExternalLink,
   ChevronRight,
   TrendingDown,
   Scale,
   Check,
-  Info,
-  Copy,
-  Share2
+  Info
 } from 'lucide-react';
-
-const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z" />
-  </svg>
-);
-
-const renderStoreLogoBadge = (storeName: string, sizeClass = "w-9 h-9 text-xs") => {
-  const name = (storeName || '').toLowerCase();
-  if (name.includes('meesho')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        Me
-      </div>
-    );
-  }
-  if (name.includes('amazon')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#131921] text-amber-400 flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        A
-      </div>
-    );
-  }
-  if (name.includes('flipkart')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#2563eb] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        F
-      </div>
-    );
-  }
-  if (name.includes('tata') || name.includes('cliq')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        Ta
-      </div>
-    );
-  }
-  if (name.includes('reliance')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#dc2626] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        Rd
-      </div>
-    );
-  }
-  if (name.includes('croma')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#002d28] text-[#00e9bf] flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        Cr
-      </div>
-    );
-  }
-  if (name.includes('ajio')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        Aj
-      </div>
-    );
-  }
-  if (name.includes('myntra')) {
-    return (
-      <div className={`${sizeClass} rounded-xl bg-[#1e293b] text-pink-400 flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-        My
-      </div>
-    );
-  }
-  return (
-    <div className={`${sizeClass} rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold shrink-0 shadow-xs`}>
-      {(storeName || 'S').slice(0, 2)}
-    </div>
-  );
-};
 import {
   ResponsiveContainer,
   LineChart,
@@ -235,18 +144,18 @@ const THEME_STYLES: Record<string, {
   },
   'pure-white': {
     cardBg: 'bg-white',
-    cardBorder: 'border-slate-200',
+    cardBorder: 'border-slate-200/80',
     badgeBg: 'bg-indigo-600',
     badgeText: 'bg-indigo-50 text-indigo-700 border-indigo-200',
     accentText: 'text-indigo-600',
-    pricingBg: 'bg-white',
-    pricingBorder: 'border-slate-200',
+    pricingBg: 'bg-slate-50',
+    pricingBorder: 'border-slate-200/80',
     thumbActiveBorder: 'border-indigo-600',
     thumbInactiveBg: 'border-slate-200 bg-white',
     iconText: 'text-indigo-600',
     mobileBg: 'bg-white/95',
     mobileBorder: 'border-slate-200',
-    buyButton: 'bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black shadow-md shadow-orange-500/20'
+    buyButton: 'bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
   }
 };
 
@@ -267,7 +176,7 @@ export const ProductDetailPage: React.FC = () => {
     }
   }, [id, navigate]);
 
-  const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['pure-white'];
+  const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['steel-navy'];
 
   const product = products.find(p => p.id === id) || products[0];
   const [activeImage, setActiveImage] = useState(product.image);
@@ -308,81 +217,59 @@ export const ProductDetailPage: React.FC = () => {
   }, [product?.id]);
 
   const isWishlisted = wishlist.includes(product.id);
-  const [copied, setCopied] = useState(false);
-  const [redirectingStoreName, setRedirectingStoreName] = useState<string | null>(null);
 
-  const comparisonStores = React.useMemo(() => {
-    return getMarketplaceComparisonStores(product);
-  }, [product]);
-
-  const bestStore = comparisonStores[0] || {
-    sellerName: 'Flipkart',
-    marketplace_name: 'Flipkart',
-    finalPrice: product.sellingPrice,
+  const fallbackCashback = Math.round(product.sellingPrice * 0.015);
+  const bestMarketplace = product.marketplacePrices[0] || {
+    sellerName: 'Amazon',
     price: product.sellingPrice,
-    rating: 4.3,
-    trustLabel: 'Trusted Seller',
-    deliveryDays: '2 Days',
-    deliveryCharge: 0,
-    url: '',
-    isAvailable: false,
-    inStock: false,
-    isBestPrice: false
+    finalPrice: Math.max(0, product.sellingPrice - fallbackCashback),
+    url: '#',
+    cashbackAmount: fallbackCashback,
   };
 
-  const lowestPrice = bestStore.finalPrice || product.sellingPrice;
-  const bestStoreName = bestStore.sellerName || 'Flipkart';
-  const highestPrice = comparisonStores.length > 0
-    ? Math.max(...comparisonStores.map(s => s.finalPrice))
-    : product.mrp;
-  const maxSavings = Math.max(0, highestPrice - lowestPrice);
-  const savingsPercent = product.mrp > lowestPrice ? Math.round(((product.mrp - lowestPrice) / product.mrp) * 100) : product.discountPercent;
-
-  const handleCopyLink = () => {
-    if (navigator?.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  const handleWhatsAppShare = () => {
-    const text = `Check out ${product.name} at the lowest verified price (₹${lowestPrice.toLocaleString('en-IN')}) on SmartDeal: ${window.location.href}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-  };
-
-  const handleStoreClick = async (store: {
-    sellerName: string;
-    marketplace_name?: string;
-    marketplace_product_id?: string;
-    product_url?: string;
-    affiliate_url?: string;
-    finalPrice: number;
-    price?: number;
-    url?: string;
-    isAvailable?: boolean;
-  }) => {
-    if (store.isAvailable === false) return;
-    setRedirectingStoreName(store.sellerName);
-    await marketplaceRedirectionService.executeRedirect({
-      product,
-      offer: store,
-      onComplete: () => {
-        setTimeout(() => setRedirectingStoreName(null), 1200);
-      },
-      onError: (err) => {
-        setRedirectingStoreName(null);
-        console.warn('Redirect error:', err);
-      }
-    });
-  };
+  const cashbackAmount =
+    bestMarketplace.cashbackAmount ??
+    fallbackCashback;
 
   const handleBuyAtBestPrice = (e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
-    handleStoreClick(bestStore);
+    const targetStore = bestMarketplace;
+    const storeName = targetStore.sellerName || 'Amazon';
+    const storePrice = targetStore.finalPrice || targetStore.price || product.sellingPrice;
+    const trackingId = `SD-AFF-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const targetUrl = (targetStore.url && targetStore.url !== '#')
+      ? targetStore.url
+      : (storeName.toLowerCase().includes('flipkart')
+          ? `https://www.flipkart.com/search?q=${encodeURIComponent(product.name)}`
+          : `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}`);
+
+    // 1. Dispatch real-time SMS to owner 7217514087
+    notificationService.notifyBuyClick({
+      clickId: trackingId,
+      productId: product.id,
+      productName: product.name,
+      marketplace: storeName,
+      price: storePrice,
+      targetUrl,
+      userName: 'Website Visitor',
+      userContact: 'Product Detail Page Direct Buy'
+    });
+
+    // 2. Track outbound click
+    trackOutboundClick(
+      product.id,
+      product.name,
+      product.category,
+      storeName,
+      storePrice,
+      targetUrl
+    );
+
+    // 3. Open official product page on that company directly
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Sparkline price history points for Panel 3
@@ -395,365 +282,218 @@ export const ProductDetailPage: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 pb-28 space-y-6">
-      {/* 1. Main Product Overview Box (Hero Card matching Reference Image 2) */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Interactive Product Image Gallery with Zoom Controls */}
-          <div className="lg:col-span-5 w-full">
-            <ProductImageGallery
-              images={product.images && product.images.length > 0 ? product.images : [product.image]}
-              productName={product.name}
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-32 sm:pb-12 space-y-10">
+      {/* Breadcrumbs matching Panel 3: Home > Mobiles > iPhone 15 */}
+      <nav className="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-2 font-medium">
+        <Link to="/" className="hover:text-slate-800 dark:hover:text-white transition-colors">Home</Link>
+        <span>&gt;</span>
+        <Link to={`/categories?cat=${product.category}`} className="hover:text-slate-800 dark:hover:text-white transition-colors">
+          {product.category}
+        </Link>
+        <span>&gt;</span>
+        <span className="text-slate-900 dark:text-white font-bold truncate max-w-sm">{product.name}</span>
+      </nav>
+
+      {/* Main Product Hero & Purchase Block */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Left: Gallery (5 cols) matching Panel 3 */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className={`relative aspect-square rounded-3xl p-8 flex items-center justify-center overflow-hidden shadow-sm border ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+            <img
+              src={activeImage}
+              alt={product.name}
+              className="h-full w-full object-contain dark:brightness-95"
             />
+            <button
+              onClick={() => toggleWishlist(product.id)}
+              className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md shadow-sm transition-all ${isWishlisted
+                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
+                : 'bg-white/90 dark:bg-slate-800/90 text-slate-400 hover:text-rose-600'
+                }`}
+            >
+              <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-rose-500' : ''}`} />
+            </button>
           </div>
 
-          {/* Right Column: Store Badge, Title, Ratings, Pricing, CTA & Savings */}
-          <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
-            {/* Top Row: Store Badge + Action Buttons (Share, Copy, Wishlist) */}
-            <div className="flex items-center justify-between gap-3">
-              {/* Active Best Store Pill */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs text-xs font-bold text-slate-800 dark:text-slate-200">
-                <MarketplaceLogo storeName={bestStoreName} sizeClass="w-5 h-5" />
-                <span>{bestStoreName}</span>
-              </div>
+          {/* Thumbnails row matching Panel 3 */}
+          <div className="flex items-center gap-3 overflow-x-auto pb-2">
+            {product.images.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveImage(img)}
+                className={`w-16 h-16 rounded-2xl border-2 p-1.5 overflow-hidden shrink-0 transition-all cursor-pointer ${
+                  activeImage === img 
+                    ? `${themeStyle.thumbActiveBorder} shadow-md scale-105` 
+                    : themeStyle.thumbInactiveBg
+                }`}
+              >
+                <img src={img} alt="" className="w-full h-full object-contain" />
+              </button>
+            ))}
+          </div>
 
-              {/* Action Buttons: WhatsApp Share, Copy Link, Wishlist Heart */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleWhatsAppShare}
-                  className="w-8 h-8 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
-                  title="Share on WhatsApp"
-                >
-                  <WhatsAppIcon className="w-4 h-4" />
-                </button>
+          {/* Guarantee Badges */}
+          <div className="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] font-semibold text-slate-300">
+            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+              <ShieldCheck className={`w-4 h-4 ${themeStyle.iconText}`} />
+              <span>100% Genuine</span>
+            </div>
+            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+              <RotateCcw className={`w-4 h-4 ${themeStyle.iconText}`} />
+              <span>{product.returnDays} Days Return</span>
+            </div>
+            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
+              <Truck className={`w-4 h-4 ${themeStyle.iconText}`} />
+              <span>Fast Dispatch</span>
+            </div>
+          </div>
+        </div>
 
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
-                  title="Copy Link"
-                >
-                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => toggleWishlist(product.id)}
-                  className={`w-8 h-8 rounded-full border flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer ${
-                    isWishlisted
-                      ? 'bg-rose-50 border-rose-200 text-rose-500'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300'
-                  }`}
-                  title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-                >
-                  <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
-                </button>
-              </div>
+        {/* Center/Right: Product Details & Price Engine (7 cols) matching Panel 3 */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Brand & Title */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className={`text-xs font-bold uppercase tracking-wider ${themeStyle.accentText}`}>
+                {product.brand}
+              </span>
+              <span className="text-slate-700">•</span>
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white">
+                Best Seller
+              </span>
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider text-slate-950 ${themeStyle.badgeBg}`}>
+                {product.discountPercent}% OFF
+              </span>
             </div>
 
-            {/* Product Title in Navy Bold */}
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-snug">
+            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
               {product.name}
             </h1>
 
-            {/* Rating & Trusted Seller Line matching Reference Image 2 */}
-            <div className="flex items-center flex-wrap gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
-              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-extrabold">
-                ★ {product.rating} ({product.reviewsCount?.toLocaleString('en-IN') || '12.8K'} Reviews)
+            <div className="flex items-center gap-3 text-xs">
+              <span className="flex items-center gap-1 text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30">
+                ★ {product.rating}
               </span>
-              <span className="text-slate-300 dark:text-slate-700">|</span>
-              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-bold">
-                <Check className="w-3.5 h-3.5 stroke-[3]" /> Trusted Seller
+              <span className="text-slate-400">
+                ({product.reviewsCount.toLocaleString('en-IN')} verified reviews)
               </span>
             </div>
+          </div>
 
-            {/* Price Row: Large Navy Price, Strikethrough MRP, Green Discount Pill */}
-            <div className="flex items-baseline gap-3 pt-1">
-              <span className="text-3xl sm:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
-                ₹{lowestPrice.toLocaleString('en-IN')}
+          {/* Pricing Engine Box matching Panel 3 */}
+          <div className={`p-5 rounded-3xl border space-y-4 shadow-sm ${themeStyle.pricingBg} ${themeStyle.pricingBorder}`}>
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl sm:text-4xl font-black text-white">
+                ₹{product.sellingPrice.toLocaleString('en-IN')}
               </span>
-              <span className="text-base text-slate-400 dark:text-slate-500 line-through">
+              <span className="text-lg text-slate-500 line-through">
                 ₹{product.mrp.toLocaleString('en-IN')}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
-                {savingsPercent}% OFF
+              <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg border ${themeStyle.badgeText}`}>
+                {product.discountPercent}% OFF
               </span>
             </div>
 
-            {/* Delivery Line */}
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
-              <Truck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Free Delivery • {bestStore.deliveryDays || '2-4 Days'}</span>
-            </div>
-
-            {/* Floating Best Price Pill placed above Main CTA button on the right */}
-            <div className="flex justify-end -mb-2 z-10">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-[#16A34A] text-white shadow-xs">
-                <Check className="w-3.5 h-3.5 stroke-[3]" /> Best Price
-              </span>
-            </div>
-
-            {/* DYNAMIC MAIN BUY BUTTON: Always represents cheapest eligible store */}
-            {bestStore.isAvailable ? (
+            {/* Wishlist & Compare actions row */}
+            <div className="flex items-center gap-4 text-xs font-bold text-slate-600 dark:text-slate-300 pt-1">
               <button
-                type="button"
-                onClick={handleBuyAtBestPrice}
-                disabled={redirectingStoreName === bestStoreName}
-                className="w-full py-4 px-6 rounded-2xl bg-[#2563EB] hover:bg-[#1d4ed8] active:scale-[0.99] text-white font-black text-base sm:text-lg shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer disabled:opacity-75"
-                title={`Buy directly on ${bestStoreName}`}
+                onClick={() => toggleWishlist(product.id)}
+                className="flex items-center gap-1.5 hover:text-rose-600 transition-colors cursor-pointer"
               >
-                <MarketplaceLogo storeName={bestStoreName} sizeClass="w-7 h-7" />
-                <span>
-                  {redirectingStoreName === bestStoreName
-                    ? `Opening ${bestStoreName}...`
-                    : `Buy on ${bestStoreName} • ₹${lowestPrice.toLocaleString('en-IN')}`}
-                </span>
-                <ExternalLink className="w-4 h-4 ml-1" />
+                <Heart className={`w-4 h-4 ${isWishlisted ? 'text-rose-500 fill-rose-500' : ''}`} />
+                <span>{isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}</span>
               </button>
-            ) : (
-              <button
-                type="button"
-                disabled
-                className="w-full py-4 px-6 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-base flex items-center justify-center gap-2 cursor-not-allowed opacity-75"
+              <span>•</span>
+              <Link
+                to={`/compare/${product.id}`}
+                className="flex items-center gap-1.5 hover:text-brand-500 transition-colors cursor-pointer"
               >
-                <span>Product link unavailable</span>
-              </button>
-            )}
+                <Scale className="w-4 h-4" />
+                <span>Compare Stores</span>
+              </Link>
+            </div>
+          </div>
 
-            {/* Savings Comparison & Last Synced Timestamp */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-bold pt-1 text-slate-600 dark:text-slate-400">
-              <div className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200/60 dark:border-emerald-800/40">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Save ₹{maxSavings.toLocaleString('en-IN')} compared with the highest listed price.</span>
-              </div>
-              <div className="inline-flex items-center gap-1 text-slate-400 text-[11px]">
-                <span>🕒 Last updated: 2 min ago</span>
-              </div>
+          {/* Action Buttons: Compare Prices & Buy at Best Price matching Panel 3 */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+            <button
+              onClick={() => {
+                const el = document.getElementById('price-comparison-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else navigate(`/compare/${product.id}`);
+              }}
+              className="w-full sm:flex-1 py-4 px-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-900 dark:text-white font-extrabold text-sm text-center shadow-sm active:scale-95 transition-all cursor-pointer"
+            >
+              Compare Prices
+            </button>
+
+            <button
+              onClick={handleBuyAtBestPrice}
+              className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+              title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
+            >
+              <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'} (₹{product.sellingPrice.toLocaleString('en-IN')})</span>
+              <ExternalLink className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Fast Delivery & Pincode Checker */}
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs font-semibold">
+            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <Truck className="w-4 h-4 text-emerald-500" />
+              <span>FREE Delivery • {product.deliveryDate}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="text"
+                value={pincode}
+                onChange={e => setPincode(e.target.value)}
+                className="w-16 px-1.5 py-0.5 text-xs font-bold border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-md text-center"
+                maxLength={6}
+              />
+              <button className="text-[11px] font-bold text-brand-600 dark:text-brand-400">Apply</button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Full Marketplace Comparison (Desktop Table matching Image 2 & Mobile Cards matching Image 1) */}
-      <div className="pt-2">
-        {/* Desktop Table View (screens >= 768px) */}
-        <div className="hidden md:block overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-800/30">
-                <th className="py-4 px-6 font-semibold">MARKETPLACE</th>
-                <th className="py-4 px-6 font-semibold">PRICE</th>
-                <th className="py-4 px-6 font-semibold">DISCOUNT</th>
-                <th className="py-4 px-6 font-semibold">DELIVERY</th>
-                <th className="py-4 px-6 text-right font-semibold">ACTION</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/70">
-              {comparisonStores.map((store, index) => {
-                const isLowest = index === 0;
-                const discount = product.mrp > store.finalPrice
-                  ? Math.round(((product.mrp - store.finalPrice) / product.mrp) * 100)
-                  : 0;
-
-                return (
-                  <tr
-                    key={index}
-                    className={`transition-colors ${
-                      isLowest
-                        ? 'border-l-4 border-blue-600 bg-blue-50/20 dark:bg-blue-950/10'
-                        : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40'
-                    }`}
-                  >
-                    {/* Marketplace Column with Squircle Logo */}
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <MarketplaceLogo storeName={store.sellerName} sizeClass="w-10 h-10" />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-extrabold text-base text-slate-900 dark:text-white">
-                              {store.sellerName}
-                            </span>
-                            {isLowest && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-[#16A34A] text-white shadow-2xs">
-                                Best Price
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
-                            <span className="text-amber-500 font-bold">★ {store.rating || 4.5}</span>
-                            <span>|</span>
-                            <span>{store.trustLabel || 'Verified Retailer'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Price Column */}
-                    <td className="py-4 px-6">
-                      <div className="font-black text-lg text-slate-900 dark:text-white">
-                        ₹{store.finalPrice.toLocaleString('en-IN')}
-                      </div>
-                      <div className="text-xs text-slate-400 line-through">
-                        ₹{product.mrp.toLocaleString('en-IN')}
-                      </div>
-                    </td>
-
-                    {/* Discount Column */}
-                    <td className="py-4 px-6">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:border-emerald-800/50 dark:text-emerald-400">
-                        {discount}% OFF
-                      </span>
-                    </td>
-
-                    {/* Delivery Column */}
-                    <td className="py-4 px-6">
-                      <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                        {store.deliveryDays || '2-3 Days'}
-                      </div>
-                      <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
-                        {store.deliveryCharge === 0 ? 'FREE Delivery' : `+₹${store.deliveryCharge} Delivery`}
-                      </div>
-                    </td>
-
-                    {/* Action Column with Store Color Theme */}
-                    <td className="py-4 px-6 text-right">
-                      {store.isAvailable ? (
-                        <button
-                          type="button"
-                          onClick={() => handleStoreClick(store)}
-                          disabled={redirectingStoreName === store.sellerName}
-                          className={`inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap disabled:opacity-75 ${getStoreButtonClass(
-                            store.sellerName
-                          )}`}
-                          title={`Buy on ${store.sellerName}`}
-                        >
-                          <span>
-                            {redirectingStoreName === store.sellerName
-                              ? 'Opening...'
-                              : `Buy on ${store.sellerName}`}
-                          </span>
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </button>
-                      ) : (
-                        <span className="inline-block px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-semibold">
-                          Product link unavailable
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile View matching Reference Image 1 (screens < 768px) */}
-        <div className="block md:hidden bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
-            <h3 className="text-lg font-black text-slate-900 dark:text-white">Compare Prices</h3>
-            <p className="text-xs font-medium text-slate-400">Find the best deal across marketplaces</p>
+      {/* SECTION: SMART PRICE COMPARISON TABLE (Compare Prices Across Marketplaces) */}
+      <section id="price-comparison-section" className="space-y-6 pt-6 pb-6 border-t border-slate-100 dark:border-slate-800 my-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+              Compare Prices Across Marketplaces
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Live pricing, delivery estimates, and verified store discounts compared side-by-side.
+            </p>
           </div>
-
-          <div className="space-y-3">
-            {comparisonStores.map((store, index) => {
-              const isLowest = index === 0;
-              const discount = product.mrp > store.finalPrice
-                ? Math.round(((product.mrp - store.finalPrice) / product.mrp) * 100)
-                : 0;
-
-              return (
-                <div
-                  key={index}
-                  className={`p-3.5 rounded-2xl border transition-all ${
-                    isLowest
-                      ? 'border-blue-500/80 bg-blue-50/20 dark:bg-blue-950/20 shadow-xs'
-                      : 'border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-850'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <MarketplaceLogo storeName={store.sellerName} sizeClass="w-9 h-9" />
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-extrabold text-sm text-slate-900 dark:text-white">
-                            {store.sellerName}
-                          </span>
-                          {isLowest && (
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-[#EAB308] text-slate-950 uppercase tracking-wider">
-                              Best Price
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[11px] text-slate-400">
-                          ★ {store.rating || 4.3} • {store.deliveryDays || 'Free Delivery'}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="font-black text-base text-slate-950 dark:text-white">
-                        ₹{store.finalPrice.toLocaleString('en-IN')}
-                      </div>
-                      <span className="inline-block text-[10px] font-black text-emerald-600 dark:text-emerald-400">
-                        -{discount}%
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                    <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                      <span>✓ {store.deliveryCharge === 0 ? 'Free Delivery' : `+₹${store.deliveryCharge}`}</span>
-                    </div>
-
-                    {store.isAvailable ? (
-                      <button
-                        type="button"
-                        onClick={() => handleStoreClick(store)}
-                        disabled={redirectingStoreName === store.sellerName}
-                        className={`px-4 py-1.5 rounded-xl text-xs font-black shadow-xs active:scale-95 transition-all flex items-center gap-1 ${getStoreButtonClass(
-                          store.sellerName
-                        )}`}
-                      >
-                        <span>Buy Now</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </button>
-                    ) : (
-                      <span className="text-[11px] font-semibold text-slate-400">Link unavailable</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="pt-2">
-            <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/40 flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Save ₹{maxSavings.toLocaleString('en-IN')} compared with the highest listed price.</span>
-            </div>
-          </div>
+          <Link
+            to={`/compare/${product.id}`}
+            className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1 self-start sm:self-auto"
+          >
+            <span>Full Comparison View</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
         </div>
-      </div>
 
-      {/* Guarantee Badges */}
-      <div className="grid grid-cols-3 gap-2 pt-1 text-center text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-        <div className="p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col items-center gap-1 shadow-xs">
-          <ShieldCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-          <span>100% Genuine</span>
+        <div className="pt-1">
+          <PriceComparisonTable product={product} />
         </div>
-        <div className="p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col items-center gap-1 shadow-xs">
-          <RotateCcw className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-          <span>{product.returnDays} Days Return</span>
+
+        {/* FEATURE 1: AI SMART BUY RECOMMENDATION SYSTEM */}
+        <div className="pt-4">
+          <SmartBuyRecommendation
+            product={product}
+            selectedMarketplace={selectedMarketplace}
+            onMarketplaceChange={setSelectedMarketplace}
+          />
         </div>
-        <div className="p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col items-center gap-1 shadow-xs">
-          <Truck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-          <span>Fast Dispatch</span>
-        </div>
-      </div>
+      </section>
 
       {/* MIDDLE SECTION: Tabs Bar matching Panel 3 */}
-      <div id="product-tabs-section" className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+      <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
         {/* Navigation Tabs matching Panel 3 */}
         <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-1 text-xs font-extrabold">
           {[
@@ -929,46 +669,34 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* SECTION: FULL FLIPKART-STYLE PRODUCT SPECIFICATIONS & DETAILS */}
-      <section id="product-details-specs-section" className="pt-2">
+      <section className="pt-2">
         <ProductFullDetailsSection product={product} />
       </section>
 
-      {/* Mobile-Only Sticky Purchase Bar */}
+      {/* Mobile-Only Sticky Purchase Bar (Panel 10 Screen 3) */}
       <div className={`sm:hidden fixed bottom-14 left-0 right-0 z-30 p-3 backdrop-blur-md border-t flex items-center justify-between gap-3 shadow-2xl bg-white/95 ${themeStyle.mobileBg} border-slate-200 ${themeStyle.mobileBorder}`}>
         <div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-black text-slate-950 dark:text-white">
-              ₹{lowestPrice.toLocaleString('en-IN')}
+              ₹{product.sellingPrice.toLocaleString('en-IN')}
             </span>
             <span className="text-[11px] text-slate-400 line-through">
               ₹{product.mrp.toLocaleString('en-IN')}
             </span>
           </div>
           <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-            {savingsPercent}% OFF • {bestStoreName}
+            {product.discountPercent}% OFF • {bestMarketplace.sellerName}
           </div>
         </div>
 
-        {bestStore.isAvailable ? (
-          <button
-            onClick={handleBuyAtBestPrice}
-            disabled={redirectingStoreName === bestStoreName}
-            className={`px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-75 ${getStoreButtonClass(
-              bestStoreName
-            )}`}
-            title={`Buy directly on ${bestStoreName}`}
-          >
-            <span>{redirectingStoreName === bestStoreName ? 'Opening...' : `Buy on ${bestStoreName.split(' ')[0] || 'Store'}`}</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </button>
-        ) : (
-          <button
-            disabled
-            className="px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
-          >
-            <span>Link unavailable</span>
-          </button>
-        )}
+        <button
+          onClick={handleBuyAtBestPrice}
+          className={`px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 ${themeStyle.buyButton}`}
+          title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
+        >
+          <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'}</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
