@@ -222,9 +222,9 @@ export const PriceComparisonTable: React.FC<Props> = ({
   return (
     <div className="space-y-6">
       {/* Table Container in dark theme matching screenshot */}
-      <div className="rounded-3xl border border-[#27272e] bg-[#19191d] shadow-2xl overflow-hidden backdrop-blur-md">
+      <div className="rounded-3xl border border-slate-800 bg-[#0c1322] shadow-2xl overflow-hidden backdrop-blur-md">
         {/* Header Bar */}
-        <div className="p-3 sm:p-5 border-b border-[#27272e] bg-[#141417]">
+        <div className="p-3 sm:p-5 border-b border-slate-800/80 bg-gradient-to-r from-[#0d1627] via-[#0e192e] to-[#0d1627]">
           {/* Desktop Header (md and up) */}
           <div className="hidden md:flex items-center justify-between gap-4">
             <div>
@@ -415,11 +415,11 @@ export const PriceComparisonTable: React.FC<Props> = ({
                       {item.inStock ? (
                         <button
                           onClick={() => initiateStoreRedirect(item, store.cleanName)}
-                          className="px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl bg-[#12DAA8] hover:bg-[#00E9BF] text-slate-950 font-black text-[11px] sm:text-xs shadow-md shadow-[#12DAA8]/20 hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1 sm:gap-1.5"
+                          className="px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] sm:text-xs shadow-md shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1 sm:gap-1.5"
                           title={`Buy directly on ${store.cleanName} for ₹${item.finalPrice.toLocaleString('en-IN')}`}
                         >
                           <span>Buy on {store.cleanName}</span>
-                          <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
+                          <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         </button>
                       ) : (
                         <button

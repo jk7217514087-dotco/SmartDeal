@@ -53,19 +53,19 @@ const THEME_STYLES: Record<string, {
   buyButton: string;
 }> = {
   'steel-navy': {
-    cardBg: 'bg-[#19191d]',
-    cardBorder: 'border-[#27272e]',
-    badgeBg: 'bg-[#12DAA8]',
-    badgeText: 'bg-[#12DAA8]/20 text-[#12DAA8] border-[#12DAA8]/40',
-    accentText: 'text-[#12DAA8]',
-    pricingBg: 'bg-[#141417]',
-    pricingBorder: 'border-[#27272e]',
-    thumbActiveBorder: 'border-[#12DAA8]',
-    thumbInactiveBg: 'border-[#27272e] bg-[#222227]',
-    iconText: 'text-[#12DAA8]',
-    mobileBg: 'dark:bg-[#121212]/95',
-    mobileBorder: 'dark:border-[#27272e]',
-    buyButton: 'bg-[#12DAA8] hover:bg-[#00E9BF] text-slate-950 font-black shadow-[#12DAA8]/25'
+    cardBg: 'bg-[#112240]',
+    cardBorder: 'border-sky-800/60',
+    badgeBg: 'bg-sky-400',
+    badgeText: 'bg-sky-500/20 text-sky-300 border-sky-400/40',
+    accentText: 'text-sky-400',
+    pricingBg: 'bg-[#0c182b]',
+    pricingBorder: 'border-sky-900/60',
+    thumbActiveBorder: 'border-sky-400',
+    thumbInactiveBg: 'border-sky-900 bg-[#0f1d35]',
+    iconText: 'text-sky-400',
+    mobileBg: 'dark:bg-[#0b1a30]/95',
+    mobileBorder: 'dark:border-sky-800/80',
+    buyButton: 'bg-gradient-to-r from-sky-500 via-blue-500 to-sky-600 text-white shadow-sky-500/20'
   },
   'matrix-lime': {
     cardBg: 'bg-[#172219]',
@@ -429,11 +429,11 @@ export const ProductDetailPage: React.FC = () => {
 
             <button
               onClick={handleBuyAtBestPrice}
-              className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-[#12DAA8] hover:bg-[#00E9BF] text-slate-950 font-black text-sm shadow-xl shadow-[#12DAA8]/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+              className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
               title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
             >
               <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'} (₹{product.sellingPrice.toLocaleString('en-IN')})</span>
-              <ExternalLink className="w-4 h-4 stroke-[2.5]" />
+              <ExternalLink className="w-4 h-4" />
             </button>
           </div>
 

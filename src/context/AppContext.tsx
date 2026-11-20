@@ -32,7 +32,7 @@ export type ThemeId =
   | 'cyber-emerald';
 
 export const THEME_BG_MAP: Record<string, string> = {
-  'steel-navy': '#121212',
+  'steel-navy': '#0b1a30',
   'matrix-lime': '#111612',
   'sunset-coral': '#1c0b29',
   'aurora-jade': '#051f15',
