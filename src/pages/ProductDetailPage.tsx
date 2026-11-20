@@ -11,6 +11,21 @@ import { ProductFullDetailsSection } from '../components/product/ProductFullDeta
 import { notificationService } from '../services/notificationService';
 import { getMarketplaceComparisonStores } from '../utils/comparisonStores';
 import { marketplaceRedirectionService } from '../services/marketplaceRedirectionService';
+import { ProductImageGallery } from '../components/product/ProductImageGallery';
+import { MarketplaceLogo } from '../components/common/MarketplaceLogo';
+
+const getStoreButtonClass = (storeName: string) => {
+  const name = (storeName || '').toLowerCase();
+  if (name.includes('flipkart')) return 'bg-[#2563EB] hover:bg-[#1d4ed8] text-white';
+  if (name.includes('meesho')) return 'bg-[#9B1750] hover:bg-[#801242] text-white';
+  if (name.includes('amazon')) return 'bg-[#FF9900] hover:bg-[#e68a00] text-slate-950 font-black';
+  if (name.includes('myntra')) return 'bg-[#FF3F6C] hover:bg-[#e02e5b] text-white';
+  if (name.includes('tatacliq') || name.includes('tata')) return 'bg-[#1E293B] hover:bg-[#0f172a] text-white';
+  if (name.includes('reliance')) return 'bg-[#E11900] hover:bg-[#c01500] text-white';
+  if (name.includes('croma')) return 'bg-[#002D28] hover:bg-[#001f1c] text-[#00E9BF] border border-teal-800';
+  if (name.includes('ajio')) return 'bg-[#1E293B] hover:bg-[#0f172a] text-white';
+  return 'bg-[#2563EB] hover:bg-[#1d4ed8] text-white';
+};
 import {
   Heart,
   ShoppingCart,
@@ -301,20 +316,27 @@ export const ProductDetailPage: React.FC = () => {
   }, [product]);
 
   const bestStore = comparisonStores[0] || {
-    sellerName: 'Meesho',
-    marketplace_name: 'Meesho',
+    sellerName: 'Flipkart',
+    marketplace_name: 'Flipkart',
     finalPrice: product.sellingPrice,
     price: product.sellingPrice,
     rating: 4.3,
-    trustLabel: 'Verified Retailer',
-    deliveryDays: '4-5 days',
+    trustLabel: 'Trusted Seller',
+    deliveryDays: '2 Days',
     deliveryCharge: 0,
     url: '',
-    isAvailable: false
+    isAvailable: false,
+    inStock: false,
+    isBestPrice: false
   };
 
   const lowestPrice = bestStore.finalPrice || product.sellingPrice;
-  const bestStoreName = bestStore.sellerName || 'Meesho';
+  const bestStoreName = bestStore.sellerName || 'Flipkart';
+  const highestPrice = comparisonStores.length > 0
+    ? Math.max(...comparisonStores.map(s => s.finalPrice))
+    : product.mrp;
+  const maxSavings = Math.max(0, highestPrice - lowestPrice);
+  const savingsPercent = product.mrp > lowestPrice ? Math.round(((product.mrp - lowestPrice) / product.mrp) * 100) : product.discountPercent;
 
   const handleCopyLink = () => {
     if (navigator?.clipboard) {
@@ -373,102 +395,151 @@ export const ProductDetailPage: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 pb-28 space-y-6">
-      {/* 1. Main Product Overview Box (Hero Card) */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          {/* Left Side: Store Pill, Title, Price, Discount */}
-          <div className="flex-1 space-y-2">
-            {/* Store Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs text-xs font-bold text-slate-800 dark:text-slate-200">
-              {renderStoreLogoBadge(bestStoreName, "w-6 h-6 text-[10px]")}
-              <span>{bestStoreName}</span>
+    <div className="max-w-6xl mx-auto px-4 py-6 pb-28 space-y-6">
+      {/* 1. Main Product Overview Box (Hero Card matching Reference Image 2) */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Interactive Product Image Gallery with Zoom Controls */}
+          <div className="lg:col-span-5 w-full">
+            <ProductImageGallery
+              images={product.images && product.images.length > 0 ? product.images : [product.image]}
+              productName={product.name}
+            />
+          </div>
+
+          {/* Right Column: Store Badge, Title, Ratings, Pricing, CTA & Savings */}
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+            {/* Top Row: Store Badge + Action Buttons (Share, Copy, Wishlist) */}
+            <div className="flex items-center justify-between gap-3">
+              {/* Active Best Store Pill */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs text-xs font-bold text-slate-800 dark:text-slate-200">
+                <MarketplaceLogo storeName={bestStoreName} sizeClass="w-5 h-5" />
+                <span>{bestStoreName}</span>
+              </div>
+
+              {/* Action Buttons: WhatsApp Share, Copy Link, Wishlist Heart */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleWhatsAppShare}
+                  className="w-8 h-8 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
+                  title="Share on WhatsApp"
+                >
+                  <WhatsAppIcon className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
+                  title="Copy Link"
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => toggleWishlist(product.id)}
+                  className={`w-8 h-8 rounded-full border flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer ${
+                    isWishlisted
+                      ? 'bg-rose-50 border-rose-200 text-rose-500'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300'
+                  }`}
+                  title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+                >
+                  <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
+                </button>
+              </div>
             </div>
 
-            {/* Product Title */}
-            <h1 className="text-base sm:text-xl font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">
+            {/* Product Title in Navy Bold */}
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-snug">
               {product.name}
             </h1>
 
-            {/* Price Line */}
-            <div className="flex items-baseline gap-2.5 pt-1">
-              <span className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white">
+            {/* Rating & Trusted Seller Line matching Reference Image 2 */}
+            <div className="flex items-center flex-wrap gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
+              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-extrabold">
+                ★ {product.rating} ({product.reviewsCount?.toLocaleString('en-IN') || '12.8K'} Reviews)
+              </span>
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-bold">
+                <Check className="w-3.5 h-3.5 stroke-[3]" /> Trusted Seller
+              </span>
+            </div>
+
+            {/* Price Row: Large Navy Price, Strikethrough MRP, Green Discount Pill */}
+            <div className="flex items-baseline gap-3 pt-1">
+              <span className="text-3xl sm:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
                 ₹{lowestPrice.toLocaleString('en-IN')}
               </span>
-              <span className="text-sm text-slate-400 dark:text-slate-500 line-through">
+              <span className="text-base text-slate-400 dark:text-slate-500 line-through">
                 ₹{product.mrp.toLocaleString('en-IN')}
               </span>
-            </div>
-
-            {/* Green Discount */}
-            <div className="flex items-center gap-1.5 text-xs font-black text-emerald-600 dark:text-emerald-400">
-              <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-[10px] font-black">
-                ↓
-              </span>
-              <span>
-                {product.mrp > lowestPrice ? Math.round(((product.mrp - lowestPrice) / product.mrp) * 100) : product.discountPercent}% OFF
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                {savingsPercent}% OFF
               </span>
             </div>
-          </div>
 
-          {/* Right Side: Product Image & WhatsApp / Copy Link Actions */}
-          <div className="flex flex-col items-center shrink-0">
-            <div className="w-24 h-28 sm:w-32 sm:h-36 rounded-2xl bg-white border border-slate-200/80 p-2 flex items-center justify-center shadow-xs">
-              <img
-                src={activeImage}
-                alt={product.name}
-                className="h-full w-full object-contain"
-              />
+            {/* Delivery Line */}
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
+              <Truck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Free Delivery • {bestStore.deliveryDays || '2-4 Days'}</span>
             </div>
 
-            {/* WhatsApp & Copy Link Buttons */}
-            <div className="flex items-center gap-2 mt-2.5">
-              <button
-                onClick={handleWhatsAppShare}
-                className="w-8 h-8 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
-                title="Share on WhatsApp"
-              >
-                <WhatsAppIcon className="w-4 h-4" />
-              </button>
+            {/* Floating Best Price Pill placed above Main CTA button on the right */}
+            <div className="flex justify-end -mb-2 z-10">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-[#16A34A] text-white shadow-xs">
+                <Check className="w-3.5 h-3.5 stroke-[3]" /> Best Price
+              </span>
+            </div>
 
+            {/* DYNAMIC MAIN BUY BUTTON: Always represents cheapest eligible store */}
+            {bestStore.isAvailable ? (
               <button
-                onClick={handleCopyLink}
-                className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
-                title="Copy Link"
+                type="button"
+                onClick={handleBuyAtBestPrice}
+                disabled={redirectingStoreName === bestStoreName}
+                className="w-full py-4 px-6 rounded-2xl bg-[#2563EB] hover:bg-[#1d4ed8] active:scale-[0.99] text-white font-black text-base sm:text-lg shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer disabled:opacity-75"
+                title={`Buy directly on ${bestStoreName}`}
               >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                <MarketplaceLogo storeName={bestStoreName} sizeClass="w-7 h-7" />
+                <span>
+                  {redirectingStoreName === bestStoreName
+                    ? `Opening ${bestStoreName}...`
+                    : `Buy on ${bestStoreName} • ₹${lowestPrice.toLocaleString('en-IN')}`}
+                </span>
+                <ExternalLink className="w-4 h-4 ml-1" />
               </button>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="w-full py-4 px-6 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-base flex items-center justify-center gap-2 cursor-not-allowed opacity-75"
+              >
+                <span>Product link unavailable</span>
+              </button>
+            )}
+
+            {/* Savings Comparison & Last Synced Timestamp */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-bold pt-1 text-slate-600 dark:text-slate-400">
+              <div className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200/60 dark:border-emerald-800/40">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>Save ₹{maxSavings.toLocaleString('en-IN')} compared with the highest listed price.</span>
+              </div>
+              <div className="inline-flex items-center gap-1 text-slate-400 text-[11px]">
+                <span>🕒 Last updated: 2 min ago</span>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Big Orange Full-Width CTA Button: Buy on Store or Disabled if Unavailable */}
-        {bestStore.isAvailable ? (
-          <button
-            onClick={() => handleStoreClick(bestStore)}
-            disabled={redirectingStoreName === bestStoreName}
-            className="w-full py-4 px-6 rounded-2xl bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black text-base sm:text-lg shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75"
-          >
-            {redirectingStoreName === bestStoreName ? (
-              <span>Opening {bestStoreName}...</span>
-            ) : (
-              <span>Buy on {bestStoreName}</span>
-            )}
-          </button>
-        ) : (
-          <button
-            disabled
-            className="w-full py-4 px-6 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-not-allowed opacity-75"
-          >
-            <span>Product link unavailable</span>
-          </button>
-        )}
       </div>
 
-      {/* 2. Full Marketplace Comparison Table matching Image 1 */}
+      {/* 2. Full Marketplace Comparison (Desktop Table matching Image 2 & Mobile Cards matching Image 1) */}
       <div className="pt-2">
-        <div className="overflow-x-auto rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-          <table className="w-full min-w-[620px] text-left border-collapse">
+        {/* Desktop Table View (screens >= 768px) */}
+        <div className="hidden md:block overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+          <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-800/30">
                 <th className="py-4 px-6 font-semibold">MARKETPLACE</th>
@@ -488,26 +559,30 @@ export const ProductDetailPage: React.FC = () => {
                 return (
                   <tr
                     key={index}
-                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                    className={`transition-colors ${
+                      isLowest
+                        ? 'border-l-4 border-blue-600 bg-blue-50/20 dark:bg-blue-950/10'
+                        : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40'
+                    }`}
                   >
-                    {/* Marketplace Column */}
+                    {/* Marketplace Column with Squircle Logo */}
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        {renderStoreLogoBadge(store.sellerName)}
+                        <MarketplaceLogo storeName={store.sellerName} sizeClass="w-10 h-10" />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                            <span className="font-extrabold text-base text-slate-900 dark:text-white">
                               {store.sellerName}
                             </span>
                             {isLowest && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#059669] text-white">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-[#16A34A] text-white shadow-2xs">
                                 Best Price
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                          <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
                             <span className="text-amber-500 font-bold">★ {store.rating || 4.5}</span>
-                            <span>•</span>
+                            <span>|</span>
                             <span>{store.trustLabel || 'Verified Retailer'}</span>
                           </div>
                         </div>
@@ -516,7 +591,7 @@ export const ProductDetailPage: React.FC = () => {
 
                     {/* Price Column */}
                     <td className="py-4 px-6">
-                      <div className="font-bold text-base text-slate-900 dark:text-white">
+                      <div className="font-black text-lg text-slate-900 dark:text-white">
                         ₹{store.finalPrice.toLocaleString('en-IN')}
                       </div>
                       <div className="text-xs text-slate-400 line-through">
@@ -526,30 +601,38 @@ export const ProductDetailPage: React.FC = () => {
 
                     {/* Discount Column */}
                     <td className="py-4 px-6">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/50 dark:text-emerald-400">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:border-emerald-800/50 dark:text-emerald-400">
                         {discount}% OFF
                       </span>
                     </td>
 
                     {/* Delivery Column */}
                     <td className="py-4 px-6">
-                      <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                        {store.deliveryDays || '2-3 days'}
+                      <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        {store.deliveryDays || '2-3 Days'}
                       </div>
-                      <div className="text-[11px] font-normal text-slate-400 dark:text-slate-500">
+                      <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
                         {store.deliveryCharge === 0 ? 'FREE Delivery' : `+₹${store.deliveryCharge} Delivery`}
                       </div>
                     </td>
 
-                    {/* Action Column */}
+                    {/* Action Column with Store Color Theme */}
                     <td className="py-4 px-6 text-right">
                       {store.isAvailable ? (
                         <button
+                          type="button"
                           onClick={() => handleStoreClick(store)}
                           disabled={redirectingStoreName === store.sellerName}
-                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap disabled:opacity-75"
+                          className={`inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap disabled:opacity-75 ${getStoreButtonClass(
+                            store.sellerName
+                          )}`}
+                          title={`Buy on ${store.sellerName}`}
                         >
-                          <span>{redirectingStoreName === store.sellerName ? 'Opening...' : `Buy on ${store.sellerName}`}</span>
+                          <span>
+                            {redirectingStoreName === store.sellerName
+                              ? 'Opening...'
+                              : `Buy on ${store.sellerName}`}
+                          </span>
                           <ExternalLink className="w-3.5 h-3.5" />
                         </button>
                       ) : (
@@ -564,26 +647,94 @@ export const ProductDetailPage: React.FC = () => {
             </tbody>
           </table>
         </div>
-      </div>
 
-      {/* Gallery Thumbnails (if multiple images) */}
-      {product.images && product.images.length > 1 && (
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-2">
-          {product.images.map((img, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveImage(img)}
-              className={`w-14 h-14 rounded-xl border-2 p-1 overflow-hidden shrink-0 transition-all cursor-pointer ${
-                activeImage === img
-                  ? 'border-indigo-600 shadow-sm scale-105'
-                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
-              }`}
-            >
-              <img src={img} alt="" className="w-full h-full object-contain" />
-            </button>
-          ))}
+        {/* Mobile View matching Reference Image 1 (screens < 768px) */}
+        <div className="block md:hidden bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 className="text-lg font-black text-slate-900 dark:text-white">Compare Prices</h3>
+            <p className="text-xs font-medium text-slate-400">Find the best deal across marketplaces</p>
+          </div>
+
+          <div className="space-y-3">
+            {comparisonStores.map((store, index) => {
+              const isLowest = index === 0;
+              const discount = product.mrp > store.finalPrice
+                ? Math.round(((product.mrp - store.finalPrice) / product.mrp) * 100)
+                : 0;
+
+              return (
+                <div
+                  key={index}
+                  className={`p-3.5 rounded-2xl border transition-all ${
+                    isLowest
+                      ? 'border-blue-500/80 bg-blue-50/20 dark:bg-blue-950/20 shadow-xs'
+                      : 'border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-850'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <MarketplaceLogo storeName={store.sellerName} sizeClass="w-9 h-9" />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-extrabold text-sm text-slate-900 dark:text-white">
+                            {store.sellerName}
+                          </span>
+                          {isLowest && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-[#EAB308] text-slate-950 uppercase tracking-wider">
+                              Best Price
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-slate-400">
+                          ★ {store.rating || 4.3} • {store.deliveryDays || 'Free Delivery'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="font-black text-base text-slate-950 dark:text-white">
+                        ₹{store.finalPrice.toLocaleString('en-IN')}
+                      </div>
+                      <span className="inline-block text-[10px] font-black text-emerald-600 dark:text-emerald-400">
+                        -{discount}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <span>✓ {store.deliveryCharge === 0 ? 'Free Delivery' : `+₹${store.deliveryCharge}`}</span>
+                    </div>
+
+                    {store.isAvailable ? (
+                      <button
+                        type="button"
+                        onClick={() => handleStoreClick(store)}
+                        disabled={redirectingStoreName === store.sellerName}
+                        className={`px-4 py-1.5 rounded-xl text-xs font-black shadow-xs active:scale-95 transition-all flex items-center gap-1 ${getStoreButtonClass(
+                          store.sellerName
+                        )}`}
+                      >
+                        <span>Buy Now</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-slate-400">Link unavailable</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="pt-2">
+            <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/40 flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Save ₹{maxSavings.toLocaleString('en-IN')} compared with the highest listed price.</span>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
 
       {/* Guarantee Badges */}
       <div className="grid grid-cols-3 gap-2 pt-1 text-center text-[11px] font-semibold text-slate-700 dark:text-slate-300">
@@ -782,19 +933,19 @@ export const ProductDetailPage: React.FC = () => {
         <ProductFullDetailsSection product={product} />
       </section>
 
-      {/* Mobile-Only Sticky Purchase Bar (Panel 10 Screen 3) */}
+      {/* Mobile-Only Sticky Purchase Bar */}
       <div className={`sm:hidden fixed bottom-14 left-0 right-0 z-30 p-3 backdrop-blur-md border-t flex items-center justify-between gap-3 shadow-2xl bg-white/95 ${themeStyle.mobileBg} border-slate-200 ${themeStyle.mobileBorder}`}>
         <div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-black text-slate-950 dark:text-white">
-              ₹{product.sellingPrice.toLocaleString('en-IN')}
+              ₹{lowestPrice.toLocaleString('en-IN')}
             </span>
             <span className="text-[11px] text-slate-400 line-through">
               ₹{product.mrp.toLocaleString('en-IN')}
             </span>
           </div>
           <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-            {product.discountPercent}% OFF • {bestStoreName}
+            {savingsPercent}% OFF • {bestStoreName}
           </div>
         </div>
 
@@ -802,7 +953,9 @@ export const ProductDetailPage: React.FC = () => {
           <button
             onClick={handleBuyAtBestPrice}
             disabled={redirectingStoreName === bestStoreName}
-            className="px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 bg-[#FF6A00] hover:bg-[#e65f00] text-white disabled:opacity-75"
+            className={`px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-75 ${getStoreButtonClass(
+              bestStoreName
+            )}`}
             title={`Buy directly on ${bestStoreName}`}
           >
             <span>{redirectingStoreName === bestStoreName ? 'Opening...' : `Buy on ${bestStoreName.split(' ')[0] || 'Store'}`}</span>

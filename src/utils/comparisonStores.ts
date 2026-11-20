@@ -16,6 +16,8 @@ export interface MarketplaceComparisonRow {
   deliveryCharge: number;
   url: string;
   isAvailable: boolean;
+  inStock: boolean;
+  isBestPrice?: boolean;
 }
 
 export const getMarketplaceComparisonStores = (product: Product): MarketplaceComparisonRow[] => {
@@ -64,6 +66,7 @@ export const getMarketplaceComparisonStores = (product: Product): MarketplaceCom
 
     const price = rawMatch ? (rawMatch.price || rawMatch.finalPrice) : Math.round(basePrice * tmpl.mult);
     const finalPrice = rawMatch ? rawMatch.finalPrice : Math.round(basePrice * tmpl.mult);
+    const inStock = rawMatch ? (rawMatch.inStock !== false) : true;
 
     results.push({
       sellerName: tmpl.name,
@@ -78,7 +81,8 @@ export const getMarketplaceComparisonStores = (product: Product): MarketplaceCom
       deliveryDays: rawMatch?.deliveryDate || tmpl.deliveryDays,
       deliveryCharge: rawMatch?.deliveryCharge ?? tmpl.deliveryCharge,
       url: resolution.targetUrl || '',
-      isAvailable: resolution.isAvailable
+      isAvailable: resolution.isAvailable,
+      inStock
     });
   });
 
@@ -100,13 +104,48 @@ export const getMarketplaceComparisonStores = (product: Product): MarketplaceCom
         deliveryDays: r.deliveryDate || '2-3 days',
         deliveryCharge: r.deliveryCharge || 0,
         url: resolution.targetUrl || '',
-        isAvailable: resolution.isAvailable
+        isAvailable: resolution.isAvailable,
+        inStock: r.inStock !== false
       });
     }
   });
 
-  // Strictly sort ascending by finalPrice (Lowest price 1st, then increasing prices)
-  return results.sort((a, b) => a.finalPrice - b.finalPrice);
+  // Dynamic Marketplace Price Sorting:
+  // 1. Available and in-stock offers first.
+  // 2. Lowest finalPrice first (Position 1 = Cheapest, Position 2 = Second-cheapest, etc.).
+  // 3. Consistent tie-breaker: higher rating, then alphabetical name.
+  // 4. Unavailable offers go to the bottom.
+  const sorted = results.sort((a, b) => {
+    // Availability & In-Stock priority
+    const aEligible = a.isAvailable && a.inStock;
+    const bEligible = b.isAvailable && b.inStock;
+    if (aEligible && !bEligible) return -1;
+    if (!aEligible && bEligible) return 1;
+
+    // Partial availability
+    if (a.isAvailable && !b.isAvailable) return -1;
+    if (!a.isAvailable && b.isAvailable) return 1;
+
+    // Lowest final price strictly first
+    if (a.finalPrice !== b.finalPrice) {
+      return a.finalPrice - b.finalPrice;
+    }
+
+    // Tie-breaker 1: Higher rating
+    if (b.rating !== a.rating) {
+      return b.rating - a.rating;
+    }
+
+    // Tie-breaker 2: Consistent alphabetical
+    return a.sellerName.localeCompare(b.sellerName);
+  });
+
+  // Assign Best Price badge ONLY to position 1 if eligible
+  if (sorted.length > 0 && sorted[0].isAvailable && sorted[0].inStock) {
+    sorted[0].isBestPrice = true;
+  }
+
+  return sorted;
 };
 
 export const getStoreTargetUrl = (storeName: string, _productName: string, customUrl?: string): string => {
