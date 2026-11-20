@@ -33,7 +33,7 @@ export type ThemeId =
 
 export const THEME_BG_MAP: Record<string, string> = {
   'pure-white': '#FFFFFF',
-  'steel-navy': '#FFFFFF',
+  'steel-navy': '#0b1a30',
   'matrix-lime': '#111612',
   'sunset-coral': '#1c0b29',
   'aurora-jade': '#051f15',
@@ -53,7 +53,7 @@ export const THEME_CYCLE_ORDER: ThemeId[] = [
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
-  return '#FFFFFF';
+  return THEME_BG_MAP[theme] || (theme === 'pure-white' ? '#FFFFFF' : '#0b1a30');
 };
 
 interface AppContextType {
@@ -375,27 +375,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
-    return 'pure-white';
+    return (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'pure-white';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
-    return '#FFFFFF';
+    const saved = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'pure-white';
+    return localStorage.getItem('smartdeals_custom_bg') || getThemeDefaultBg(saved);
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    localStorage.setItem('smartdeals_active_theme', 'pure-white');
-    localStorage.setItem('smartdeals_custom_bg', '#FFFFFF');
-    localStorage.setItem('smartdeals_dark_mode', 'false');
-    const bg = '#FFFFFF';
+    const normalizedTheme = activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme;
+    const bg = getThemeDefaultBg(normalizedTheme);
+    setCustomBgState(bg);
+    localStorage.setItem('smartdeals_active_theme', normalizedTheme);
+    localStorage.setItem('smartdeals_custom_bg', bg);
+    const isLight = normalizedTheme === 'pure-white' || bg.toLowerCase() === '#ffffff' || bg.toLowerCase() === '#f8fafd';
+    localStorage.setItem('smartdeals_dark_mode', (!isLight).toString());
     if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', 'pure-white');
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('text-slate-100');
-      document.body.classList.add('text-slate-900');
-      document.documentElement.style.setProperty('--smartdeal-bg', '#FFFFFF');
-      document.body.style.backgroundColor = '#FFFFFF';
-      document.documentElement.style.backgroundColor = '#FFFFFF';
+      document.documentElement.setAttribute('data-theme', normalizedTheme);
+      document.body.classList.remove(
+        'theme-cyber-neon',
+        'theme-royal-gold',
+        'theme-cyber-emerald',
+        'theme-steel-navy',
+        'theme-matrix-lime',
+        'theme-sunset-coral',
+        'theme-aurora-jade',
+        'theme-cyber-indigo',
+        'theme-pure-white'
+      );
+      document.body.classList.add(`theme-${normalizedTheme}`);
+      if (isLight) {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('text-slate-100');
+        document.body.classList.add('text-slate-900');
+        document.documentElement.style.setProperty('--smartdeal-bg', '#FFFFFF');
+        document.body.style.backgroundColor = '#FFFFFF';
+        document.documentElement.style.backgroundColor = '#FFFFFF';
+      } else {
+        document.documentElement.classList.add('dark');
+        document.body.classList.remove('text-slate-900');
+        document.body.classList.add('text-slate-100');
+        document.documentElement.style.setProperty('--smartdeal-bg', bg);
+        document.body.style.backgroundColor = bg;
+        document.documentElement.style.backgroundColor = bg;
+      }
     }
   }, [activeTheme]);
 
