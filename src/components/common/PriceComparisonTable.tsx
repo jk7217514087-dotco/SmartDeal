@@ -82,6 +82,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
     }
     const trackingId = 'sd_clk_' + Math.random().toString(36).substring(2, 9);
     const targetUrl = getStoreBuyUrl(item, product);
+    if (!targetUrl) return;
 
     // Track Step 1: SELECT_MARKETPLACE
     trackActivity(
@@ -412,7 +413,21 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
                     {/* Action */}
                     <td className="py-2.5 sm:py-4 px-3 sm:px-5 text-center">
-                      {item.inStock ? (
+                      {!item.inStock ? (
+                        <button
+                          disabled
+                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold text-[11px] sm:text-xs text-slate-500 bg-slate-800/50 border border-slate-800 cursor-not-allowed"
+                        >
+                          Out of Stock
+                        </button>
+                      ) : !getStoreBuyUrl(item, product) ? (
+                        <button
+                          disabled
+                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-[11px] sm:text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-75"
+                        >
+                          Product link unavailable
+                        </button>
+                      ) : (
                         <button
                           onClick={() => initiateStoreRedirect(item, store.cleanName)}
                           className="px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] sm:text-xs shadow-md shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1 sm:gap-1.5"
@@ -420,13 +435,6 @@ export const PriceComparisonTable: React.FC<Props> = ({
                         >
                           <span>Buy on {store.cleanName}</span>
                           <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold text-[11px] sm:text-xs text-slate-500 bg-slate-800/50 border border-slate-800 cursor-not-allowed"
-                        >
-                          Out of Stock
                         </button>
                       )}
                     </td>

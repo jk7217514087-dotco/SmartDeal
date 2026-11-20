@@ -1017,6 +1017,69 @@ export const server = http.createServer(async (req, res) => {
       });
     }
 
+    // ------------------------------------------------------------------------
+    // MARKETPLACE DIRECT PRODUCT REDIRECTION & SECURITY VALIDATOR
+    // ------------------------------------------------------------------------
+    if (method === 'POST' && (path === '/api/marketplace/validate-redirect' || normalizedPath === '/api/marketplace/validate-redirect')) {
+      const body = await parseJsonBody(req);
+      const { url, marketplace } = body || {};
+
+      const APPROVED_DOMAINS = {
+        amazon: ['amazon.in', 'www.amazon.in', 'amzn.to', 'amzn.in'],
+        flipkart: ['flipkart.com', 'www.flipkart.com', 'dl.flipkart.com', 'fkrt.it'],
+        meesho: ['meesho.com', 'www.meesho.com'],
+        myntra: ['myntra.com', 'www.myntra.com'],
+        ajio: ['ajio.com', 'www.ajio.com'],
+        tatacliq: ['tatacliq.com', 'www.tatacliq.com'],
+        croma: ['croma.com', 'www.croma.com'],
+        reliancedigital: ['reliancedigital.in', 'www.reliancedigital.in']
+      };
+
+      const mKey = (marketplace || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      let canonicalKey = mKey;
+      if (mKey.includes('amazon')) canonicalKey = 'amazon';
+      else if (mKey.includes('flipkart')) canonicalKey = 'flipkart';
+      else if (mKey.includes('meesho')) canonicalKey = 'meesho';
+      else if (mKey.includes('myntra')) canonicalKey = 'myntra';
+      else if (mKey.includes('ajio')) canonicalKey = 'ajio';
+      else if (mKey.includes('tata') || mKey.includes('cliq')) canonicalKey = 'tatacliq';
+      else if (mKey.includes('croma')) canonicalKey = 'croma';
+      else if (mKey.includes('reliance')) canonicalKey = 'reliancedigital';
+
+      const allowed = APPROVED_DOMAINS[canonicalKey];
+      if (!url || typeof url !== 'string' || !allowed) {
+        return sendJSON(400, { valid: false, error: 'Product link unavailable or unauthorized marketplace' });
+      }
+
+      try {
+        const parsed = new URL(url.trim());
+        if (parsed.protocol !== 'https:') {
+          return sendJSON(400, { valid: false, error: 'Only secure HTTPS marketplace URLs are permitted' });
+        }
+        const hostname = parsed.hostname.toLowerCase();
+        const isApproved = allowed.some(d => hostname === d || hostname.endsWith('.' + d));
+        if (!isApproved) {
+          return sendJSON(400, { valid: false, error: 'Open redirect blocked: Unauthorized destination domain' });
+        }
+        const pathname = parsed.pathname.toLowerCase();
+        if (pathname === '/' || pathname === '') {
+          return sendJSON(400, { valid: false, error: 'Direct homepage redirects are prohibited' });
+        }
+        if (/^\/s(\/|\?|$)|^\/search(\/|\?|$)|^\/searchb/i.test(pathname)) {
+          return sendJSON(400, { valid: false, error: 'Generic search results pages are prohibited' });
+        }
+
+        return sendJSON(200, {
+          valid: true,
+          targetUrl: parsed.toString(),
+          marketplace: canonicalKey,
+          timestamp: new Date().toISOString()
+        });
+      } catch {
+        return sendJSON(400, { valid: false, error: 'Malformed URL' });
+      }
+    }
+
     if (method === 'GET' && (path === '/SmartDeal.apk' || path === '/download/smartdeal.apk' || normalizedPath === '/smartdeal.apk' || path === '/api/download/apk')) {
       const apkPath = nodePath.resolve(process.cwd(), 'public', 'SmartDeal.apk');
       if (fs.existsSync(apkPath)) {

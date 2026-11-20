@@ -13,6 +13,10 @@ export interface DealScoreBreakdown {
 
 export interface MarketplacePrice {
   sellerName: string;
+  marketplace_name?: string;
+  marketplace_product_id?: string;
+  product_url?: string;
+  affiliate_url?: string;
   isSmartDealsSeller: boolean;
   isSmartDealsDirect?: boolean;
   logo?: string;

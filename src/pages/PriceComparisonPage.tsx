@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import { SmartBuyRecommendation } from '../components/product/SmartBuyRecommendation';
 import { InteractivePriceHistoryChart } from '../components/product/InteractivePriceHistoryChart';
 import { getMarketplaceComparisonStores, getStoreTargetUrl } from '../utils/comparisonStores';
+import { marketplaceRedirectionService } from '../services/marketplaceRedirectionService';
 import { notificationService } from '../services/notificationService';
 import {
   Sparkles,
@@ -165,6 +166,7 @@ export const PriceComparisonPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedMarketplace, setSelectedMarketplace] = useState<string>('flipkart');
   const [copied, setCopied] = useState<boolean>(false);
+  const [redirectingStoreName, setRedirectingStoreName] = useState<string | null>(null);
 
   const currentProduct = products.find(p => p.id === selectedId) || products[0];
 
@@ -175,13 +177,15 @@ export const PriceComparisonPage: React.FC = () => {
 
   const bestStore = comparisonStores[0] || {
     sellerName: 'Meesho',
+    marketplace_name: 'Meesho',
     finalPrice: currentProduct?.sellingPrice || 0,
     price: currentProduct?.sellingPrice || 0,
     rating: 4.3,
     trustLabel: 'Verified Retailer',
     deliveryDays: '4-5 days',
     deliveryCharge: 0,
-    url: '#'
+    url: '',
+    isAvailable: false
   };
 
   const bestStoreName = bestStore.sellerName || 'Meesho';
@@ -203,33 +207,30 @@ export const PriceComparisonPage: React.FC = () => {
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  const handleStoreClick = (store: { sellerName: string; finalPrice: number; price?: number; url?: string }) => {
-    const storeName = store.sellerName || 'Store';
-    const storePrice = store.finalPrice || store.price || currentProduct.sellingPrice;
-    const trackingId = `SD-AFF-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
-    const targetUrl = getStoreTargetUrl(storeName, currentProduct.name, store.url);
-
-    notificationService.notifyBuyClick({
-      clickId: trackingId,
-      productId: currentProduct.id,
-      productName: currentProduct.name,
-      marketplace: storeName,
-      price: storePrice,
-      targetUrl,
-      userName: 'Website Visitor',
-      userContact: 'Price Comparison Page Store Compare'
+  const handleStoreClick = async (store: {
+    sellerName: string;
+    marketplace_name?: string;
+    marketplace_product_id?: string;
+    product_url?: string;
+    affiliate_url?: string;
+    finalPrice: number;
+    price?: number;
+    url?: string;
+    isAvailable?: boolean;
+  }) => {
+    if (store.isAvailable === false) return;
+    setRedirectingStoreName(store.sellerName);
+    await marketplaceRedirectionService.executeRedirect({
+      product: currentProduct,
+      offer: store,
+      onComplete: () => {
+        setTimeout(() => setRedirectingStoreName(null), 1200);
+      },
+      onError: (err) => {
+        setRedirectingStoreName(null);
+        console.warn('Redirect error:', err);
+      }
     });
-
-    trackOutboundClick(
-      currentProduct.id,
-      currentProduct.name,
-      currentProduct.category,
-      storeName,
-      storePrice,
-      targetUrl
-    );
-
-    window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   const categories = [
@@ -316,13 +317,27 @@ export const PriceComparisonPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Big Orange Full-Width CTA Button: Buy on Store */}
-          <button
-            onClick={() => handleStoreClick(bestStore)}
-            className="w-full py-4 px-6 rounded-2xl bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black text-base sm:text-lg shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer"
-          >
-            <span>Buy on {bestStoreName}</span>
-          </button>
+          {/* Big Orange Full-Width CTA Button: Buy on Store or Disabled if Unavailable */}
+          {bestStore.isAvailable ? (
+            <button
+              onClick={() => handleStoreClick(bestStore)}
+              disabled={redirectingStoreName === bestStoreName}
+              className="w-full py-4 px-6 rounded-2xl bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black text-base sm:text-lg shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75"
+            >
+              {redirectingStoreName === bestStoreName ? (
+                <span>Opening {bestStoreName}...</span>
+              ) : (
+                <span>Buy on {bestStoreName}</span>
+              )}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="w-full py-4 px-6 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-not-allowed opacity-75"
+            >
+              <span>Product link unavailable</span>
+            </button>
+          )}
         </div>
 
         {/* Product Switcher & Category Filter Bar */}
@@ -457,13 +472,20 @@ export const PriceComparisonPage: React.FC = () => {
 
                       {/* Action Column */}
                       <td className="py-4 px-6 text-right">
-                        <button
-                          onClick={() => handleStoreClick(store)}
-                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                        >
-                          <span>Buy on {store.sellerName}</span>
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </button>
+                        {store.isAvailable ? (
+                          <button
+                            onClick={() => handleStoreClick(store)}
+                            disabled={redirectingStoreName === store.sellerName}
+                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap disabled:opacity-75"
+                          >
+                            <span>{redirectingStoreName === store.sellerName ? 'Opening...' : `Buy on ${store.sellerName}`}</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </button>
+                        ) : (
+                          <span className="inline-block px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-semibold">
+                            Product link unavailable
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );

@@ -29,6 +29,7 @@ import {
 import { getProductFullDetails } from '../../utils/productSpecifications';
 import { getProductLiveMarketplaceDetails, MarketplaceLiveStoreData } from '../../utils/marketplaceLiveService';
 import { notificationService } from '../../services/notificationService';
+import { marketplaceRedirectionService } from '../../services/marketplaceRedirectionService';
 
 interface Props {
   product: Product;
@@ -75,33 +76,30 @@ export const ProductFullDetailsSection: React.FC<Props> = ({ product, onClose, i
     handleOpenLiveCompanyStore(e);
   };
 
+  const [redirectingStore, setRedirectingStore] = useState<string | null>(null);
+
   const handleOpenLiveCompanyStore = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
-    const trackingId = `SD-AFF-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
-    const storeUrl = activeStore.liveUrl || `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}`;
+    if (!activeStore.isAvailable || !activeStore.liveUrl) return;
 
-    // Dispatch real-time SMS to owner 7217514087
-    notificationService.notifyBuyClick({
-      clickId: trackingId,
-      productId: product.id,
-      productName: product.name,
-      marketplace: activeStore.marketplace,
-      price: activeStore.finalPrice,
-      targetUrl: storeUrl,
-      userName: 'Live Store Shopper',
-      userContact: `${activeStore.marketplace} Direct Link`
+    setRedirectingStore(activeStore.marketplace);
+
+    marketplaceRedirectionService.executeRedirect({
+      product,
+      offer: {
+        sellerName: activeStore.marketplace,
+        marketplace_name: activeStore.marketplace,
+        marketplace_product_id: activeStore.marketplace_product_id,
+        product_url: activeStore.product_url,
+        affiliate_url: activeStore.affiliate_url,
+        url: activeStore.liveUrl,
+        finalPrice: activeStore.finalPrice
+      }
     });
 
-    trackOutboundClick(
-      product.id,
-      product.name,
-      product.category,
-      activeStore.marketplace,
-      activeStore.finalPrice,
-      storeUrl
-    );
-
-    window.open(storeUrl, '_blank', 'noopener,noreferrer');
+    setTimeout(() => {
+      setRedirectingStore(null);
+    }, 1200);
   };
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image];
@@ -675,28 +673,56 @@ export const ProductFullDetailsSection: React.FC<Props> = ({ product, onClose, i
               {/* Direct Store Buy Outbound */}
               <button
                 onClick={handleOpenLiveCompanyStore}
-                className="flex-1 py-3 sm:py-3.5 px-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm text-center shadow-md transition-all active:scale-95 cursor-pointer truncate flex items-center justify-center gap-1.5"
-                title={`Buy directly on ${activeStore.marketplace}`}
+                disabled={!activeStore.isAvailable || !activeStore.liveUrl}
+                className={`flex-1 py-3 sm:py-3.5 px-3 rounded-2xl font-black text-xs sm:text-sm text-center shadow-md transition-all active:scale-95 cursor-pointer truncate flex items-center justify-center gap-1.5 ${
+                  !activeStore.isAvailable || !activeStore.liveUrl
+                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
+                    : 'bg-slate-900 hover:bg-slate-800 text-white'
+                }`}
+                title={activeStore.isAvailable && activeStore.liveUrl ? `Buy directly on ${activeStore.marketplace}` : 'Product link unavailable on this marketplace'}
               >
-                <span className="truncate">Buy on {activeStore.marketplace}</span>
-                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                {redirectingStore === activeStore.marketplace ? (
+                  <span className="truncate animate-pulse">Opening {activeStore.marketplace}...</span>
+                ) : activeStore.isAvailable && activeStore.liveUrl ? (
+                  <>
+                    <span className="truncate">Buy on {activeStore.marketplace}</span>
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  </>
+                ) : (
+                  <span className="truncate">Product link unavailable</span>
+                )}
               </button>
 
               {/* Instant Buy on Selected Store (Yellow Flipkart-style) */}
               <button
                 onClick={handleBuyNow}
-                className="flex-1 py-3 sm:py-3.5 px-4 rounded-2xl bg-[#FFD814] hover:bg-[#F7CA00] active:scale-95 text-slate-950 font-black text-xs sm:text-sm text-center shadow-md transition-all cursor-pointer truncate flex items-center justify-center gap-1.5"
-                title={`Buy now on ${activeStore.marketplace} at ₹${activeStore.price.toLocaleString('en-IN')}`}
+                disabled={!activeStore.isAvailable || !activeStore.liveUrl}
+                className={`flex-1 py-3 sm:py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm text-center shadow-md transition-all cursor-pointer truncate flex items-center justify-center gap-1.5 ${
+                  !activeStore.isAvailable || !activeStore.liveUrl
+                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
+                    : 'bg-[#FFD814] hover:bg-[#F7CA00] active:scale-95 text-slate-950'
+                }`}
+                title={
+                  activeStore.isAvailable && activeStore.liveUrl
+                    ? `Buy now on ${activeStore.marketplace} at ₹${activeStore.price.toLocaleString('en-IN')}`
+                    : 'Product link unavailable on this marketplace'
+                }
               >
-                <div className="leading-tight">
-                  <div className="flex items-center justify-center gap-1">
-                    <span>Buy on {activeStore.marketplace}</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                {redirectingStore === activeStore.marketplace ? (
+                  <span className="truncate animate-pulse">Opening {activeStore.marketplace}...</span>
+                ) : activeStore.isAvailable && activeStore.liveUrl ? (
+                  <div className="leading-tight">
+                    <div className="flex items-center justify-center gap-1">
+                      <span>Buy on {activeStore.marketplace}</span>
+                      <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                    </div>
+                    <div className="text-[11px] font-extrabold text-slate-900">
+                      at ₹${activeStore.price.toLocaleString('en-IN')}
+                    </div>
                   </div>
-                  <div className="text-[11px] font-extrabold text-slate-900">
-                    at ₹{activeStore.price.toLocaleString('en-IN')}
-                  </div>
-                </div>
+                ) : (
+                  <span className="truncate">Product link unavailable</span>
+                )}
               </button>
             </div>
           </div>

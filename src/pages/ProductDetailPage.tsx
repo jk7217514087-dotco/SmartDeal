@@ -9,6 +9,8 @@ import { InteractivePriceHistoryChart } from '../components/product/InteractiveP
 import { PriceAlertModal } from '../components/common/PriceAlertModal';
 import { ProductFullDetailsSection } from '../components/product/ProductFullDetailsSection';
 import { notificationService } from '../services/notificationService';
+import { getMarketplaceComparisonStores } from '../utils/comparisonStores';
+import { marketplaceRedirectionService } from '../services/marketplaceRedirectionService';
 import {
   Heart,
   ShoppingCart,
@@ -292,99 +294,27 @@ export const ProductDetailPage: React.FC = () => {
 
   const isWishlisted = wishlist.includes(product.id);
   const [copied, setCopied] = useState(false);
+  const [redirectingStoreName, setRedirectingStoreName] = useState<string | null>(null);
 
-  interface MarketplaceComparisonRow {
-    sellerName: string;
-    finalPrice: number;
-    price: number;
-    rating: number;
-    trustLabel: string;
-    deliveryDays: string;
-    deliveryCharge: number;
-    url?: string;
-  }
-
-  const comparisonStores = React.useMemo<MarketplaceComparisonRow[]>(() => {
-    const raw = (product.marketplacePrices || []).filter(
-      p => !p.isSmartDealsSeller && !p.sellerName.toLowerCase().includes('smartdeal')
-    );
-    const basePrice = product.sellingPrice;
-
-    // 8 major Indian marketplaces matching Image 1 exactly
-    const storeTemplates = [
-      { name: 'Meesho', mult: 0.98, rating: 4.3, trustLabel: 'Verified Retailer', deliveryDays: '4-5 days', deliveryCharge: 0 },
-      { name: 'Amazon', mult: 1.0, rating: 4.6, trustLabel: 'Trusted Seller', deliveryDays: '2-3 days', deliveryCharge: 0 },
-      { name: 'Flipkart', mult: 1.025, rating: 4.5, trustLabel: 'Trusted Seller', deliveryDays: '3-4 days', deliveryCharge: 0 },
-      { name: 'Tata CLiQ', mult: 1.037, rating: 4.4, trustLabel: 'Verified Retailer', deliveryDays: '3-5 days', deliveryCharge: 0 },
-      { name: 'Reliance Digital', mult: 1.037, rating: 4.5, trustLabel: 'Authorized Seller', deliveryDays: '1-2 days', deliveryCharge: 0 },
-      { name: 'Croma', mult: 1.043, rating: 4.6, trustLabel: 'Authorized Seller', deliveryDays: '1-2 days', deliveryCharge: 0 },
-      { name: 'AJIO', mult: 1.049, rating: 4.3, trustLabel: 'Verified Retailer', deliveryDays: '4-7 days', deliveryCharge: 0 },
-      { name: 'Myntra', mult: 1.057, rating: 4.4, trustLabel: 'Verified Retailer', deliveryDays: '2-3 days', deliveryCharge: 0 }
-    ];
-
-    const results: MarketplaceComparisonRow[] = [];
-
-    storeTemplates.forEach(tmpl => {
-      const match = raw.find(r => r.sellerName.toLowerCase().includes(tmpl.name.toLowerCase()));
-      if (match) {
-        results.push({
-          sellerName: tmpl.name,
-          finalPrice: match.finalPrice,
-          price: match.price || match.finalPrice,
-          rating: match.rating || tmpl.rating,
-          trustLabel: tmpl.trustLabel,
-          deliveryDays: match.deliveryDate || tmpl.deliveryDays,
-          deliveryCharge: match.deliveryCharge || 0,
-          url: match.url
-        });
-      } else {
-        const computedPrice = Math.round(basePrice * tmpl.mult);
-        results.push({
-          sellerName: tmpl.name,
-          finalPrice: computedPrice,
-          price: computedPrice,
-          rating: tmpl.rating,
-          trustLabel: tmpl.trustLabel,
-          deliveryDays: tmpl.deliveryDays,
-          deliveryCharge: tmpl.deliveryCharge,
-          url: '#'
-        });
-      }
-    });
-
-    // Also include any raw store not covered by templates
-    raw.forEach(r => {
-      const alreadyIncluded = results.some(res => res.sellerName.toLowerCase().includes(r.sellerName.toLowerCase()));
-      if (!alreadyIncluded) {
-        results.push({
-          sellerName: r.sellerName,
-          finalPrice: r.finalPrice,
-          price: r.price || r.finalPrice,
-          rating: r.rating || 4.5,
-          trustLabel: 'Verified Retailer',
-          deliveryDays: r.deliveryDate || '2-3 days',
-          deliveryCharge: r.deliveryCharge || 0,
-          url: r.url
-        });
-      }
-    });
-
-    return results.sort((a, b) => a.finalPrice - b.finalPrice);
+  const comparisonStores = React.useMemo(() => {
+    return getMarketplaceComparisonStores(product);
   }, [product]);
 
   const bestStore = comparisonStores[0] || {
-    sellerName: 'Flipkart',
+    sellerName: 'Meesho',
+    marketplace_name: 'Meesho',
     finalPrice: product.sellingPrice,
     price: product.sellingPrice,
-    rating: 4.5,
-    trustLabel: 'Trusted Seller',
-    deliveryDays: '2-3 days',
+    rating: 4.3,
+    trustLabel: 'Verified Retailer',
+    deliveryDays: '4-5 days',
     deliveryCharge: 0,
-    url: '#'
+    url: '',
+    isAvailable: false
   };
 
   const lowestPrice = bestStore.finalPrice || product.sellingPrice;
-  const bestStoreName = bestStore.sellerName || 'Flipkart';
+  const bestStoreName = bestStore.sellerName || 'Meesho';
 
   const handleCopyLink = () => {
     if (navigator?.clipboard) {
@@ -399,49 +329,30 @@ export const ProductDetailPage: React.FC = () => {
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  const handleStoreClick = (store: { sellerName: string; finalPrice: number; price?: number; url?: string }) => {
-    const storeName = store.sellerName || 'Store';
-    const storePrice = store.finalPrice || store.price || product.sellingPrice;
-    const trackingId = `SD-AFF-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
-    const targetUrl = (store.url && store.url !== '#')
-      ? store.url
-      : (storeName.toLowerCase().includes('flipkart')
-          ? `https://www.flipkart.com/search?q=${encodeURIComponent(product.name)}`
-          : storeName.toLowerCase().includes('croma')
-            ? `https://www.croma.com/searchB?q=${encodeURIComponent(product.name)}`
-            : storeName.toLowerCase().includes('meesho')
-              ? `https://www.meesho.com/search?q=${encodeURIComponent(product.name)}`
-              : storeName.toLowerCase().includes('tata')
-                ? `https://www.tatacliq.com/search/?searchCategory=all&text=${encodeURIComponent(product.name)}`
-                : storeName.toLowerCase().includes('reliance')
-                  ? `https://www.reliancedigital.in/search?q=${encodeURIComponent(product.name)}`
-                  : storeName.toLowerCase().includes('ajio')
-                    ? `https://www.ajio.com/search/?text=${encodeURIComponent(product.name)}`
-                    : storeName.toLowerCase().includes('myntra')
-                      ? `https://www.myntra.com/${encodeURIComponent(product.name)}`
-                      : `https://www.amazon.in/s?k=${encodeURIComponent(product.name)}`);
-
-    notificationService.notifyBuyClick({
-      clickId: trackingId,
-      productId: product.id,
-      productName: product.name,
-      marketplace: storeName,
-      price: storePrice,
-      targetUrl,
-      userName: 'Website Visitor',
-      userContact: 'Product Detail Page Store Compare'
+  const handleStoreClick = async (store: {
+    sellerName: string;
+    marketplace_name?: string;
+    marketplace_product_id?: string;
+    product_url?: string;
+    affiliate_url?: string;
+    finalPrice: number;
+    price?: number;
+    url?: string;
+    isAvailable?: boolean;
+  }) => {
+    if (store.isAvailable === false) return;
+    setRedirectingStoreName(store.sellerName);
+    await marketplaceRedirectionService.executeRedirect({
+      product,
+      offer: store,
+      onComplete: () => {
+        setTimeout(() => setRedirectingStoreName(null), 1200);
+      },
+      onError: (err) => {
+        setRedirectingStoreName(null);
+        console.warn('Redirect error:', err);
+      }
     });
-
-    trackOutboundClick(
-      product.id,
-      product.name,
-      product.category,
-      storeName,
-      storePrice,
-      targetUrl
-    );
-
-    window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleBuyAtBestPrice = (e?: React.MouseEvent) => {
@@ -531,13 +442,27 @@ export const ProductDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Big Orange Full-Width CTA Button: Buy on Store */}
-        <button
-          onClick={() => handleStoreClick(bestStore)}
-          className="w-full py-4 px-6 rounded-2xl bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black text-base sm:text-lg shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer"
-        >
-          <span>Buy on {bestStoreName}</span>
-        </button>
+        {/* Big Orange Full-Width CTA Button: Buy on Store or Disabled if Unavailable */}
+        {bestStore.isAvailable ? (
+          <button
+            onClick={() => handleStoreClick(bestStore)}
+            disabled={redirectingStoreName === bestStoreName}
+            className="w-full py-4 px-6 rounded-2xl bg-[#FF6A00] hover:bg-[#e65f00] text-white font-black text-base sm:text-lg shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75"
+          >
+            {redirectingStoreName === bestStoreName ? (
+              <span>Opening {bestStoreName}...</span>
+            ) : (
+              <span>Buy on {bestStoreName}</span>
+            )}
+          </button>
+        ) : (
+          <button
+            disabled
+            className="w-full py-4 px-6 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-not-allowed opacity-75"
+          >
+            <span>Product link unavailable</span>
+          </button>
+        )}
       </div>
 
       {/* 2. Full Marketplace Comparison Table matching Image 1 */}
@@ -618,13 +543,20 @@ export const ProductDetailPage: React.FC = () => {
 
                     {/* Action Column */}
                     <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() => handleStoreClick(store)}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                      >
-                        <span>Buy on {store.sellerName}</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </button>
+                      {store.isAvailable ? (
+                        <button
+                          onClick={() => handleStoreClick(store)}
+                          disabled={redirectingStoreName === store.sellerName}
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold text-xs sm:text-sm shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap disabled:opacity-75"
+                        >
+                          <span>{redirectingStoreName === store.sellerName ? 'Opening...' : `Buy on ${store.sellerName}`}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </button>
+                      ) : (
+                        <span className="inline-block px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-semibold">
+                          Product link unavailable
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );
@@ -866,14 +798,24 @@ export const ProductDetailPage: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={handleBuyAtBestPrice}
-          className="px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 bg-[#FF6A00] hover:bg-[#e65f00] text-white"
-          title={`Buy directly on ${bestStoreName}`}
-        >
-          <span>Buy on {bestStoreName.split(' ')[0] || 'Store'}</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </button>
+        {bestStore.isAvailable ? (
+          <button
+            onClick={handleBuyAtBestPrice}
+            disabled={redirectingStoreName === bestStoreName}
+            className="px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 bg-[#FF6A00] hover:bg-[#e65f00] text-white disabled:opacity-75"
+            title={`Buy directly on ${bestStoreName}`}
+          >
+            <span>{redirectingStoreName === bestStoreName ? 'Opening...' : `Buy on ${bestStoreName.split(' ')[0] || 'Store'}`}</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </button>
+        ) : (
+          <button
+            disabled
+            className="px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+          >
+            <span>Link unavailable</span>
+          </button>
+        )}
       </div>
     </div>
   );
