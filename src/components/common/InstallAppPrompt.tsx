@@ -290,7 +290,9 @@ export const InstallAppPrompt: React.FC = () => {
   }, [userAgent]);
 
   const handleAppDownloadClick = () => {
-    // Open the download/install modal immediately so the user sees the primary 1-click install button!
+    // Automatically focus the correct device tab (Phone or Laptop) based on device & screen width
+    const isMobile = /android|iphone|ipad|ipod|mobile/.test(window.navigator.userAgent.toLowerCase()) || window.innerWidth < 768;
+    setActiveTab(isMobile ? 'mobile' : 'desktop');
     setShowDownloadModal(true);
     setShowBanner(false);
   };

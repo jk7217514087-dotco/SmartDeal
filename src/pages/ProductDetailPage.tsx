@@ -414,26 +414,32 @@ export const ProductDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Action Buttons: Compare Prices & Buy at Best Price matching Panel 3 */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-            <button
-              onClick={() => {
-                const el = document.getElementById('price-comparison-section');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-                else navigate(`/compare/${product.id}`);
-              }}
-              className="w-full sm:flex-1 py-4 px-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-900 dark:text-white font-extrabold text-sm text-center shadow-sm active:scale-95 transition-all cursor-pointer"
-            >
-              Compare Prices
-            </button>
-
+          {/* Action Buttons: Buy on Store & View Details on BOTH Phone & Laptop matching reference */}
+          <div className="space-y-3 w-full">
             <button
               onClick={handleBuyAtBestPrice}
-              className="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+              className="w-full py-4 px-6 rounded-2xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-extrabold text-base shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
               title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
             >
               <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'} (₹{product.sellingPrice.toLocaleString('en-IN')})</span>
               <ExternalLink className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => {
+                const el = document.getElementById('product-details-specs-section') || document.getElementById('product-tabs-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else {
+                  setActiveTab('specifications');
+                  const tabsEl = document.getElementById('product-tabs-section');
+                  if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="w-full py-3.5 px-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-800 dark:text-white font-extrabold text-sm text-center shadow-xs active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+              title="View full specifications and product details"
+            >
+              <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>View Details</span>
             </button>
           </div>
 
@@ -463,7 +469,7 @@ export const ProductDetailPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
             <h2 className="text-xl font-black text-slate-900 dark:text-white">
-              Compare Prices Across Marketplaces
+              Compare Available Prices
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Live pricing, delivery estimates, and verified store discounts compared side-by-side.
@@ -669,7 +675,7 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* SECTION: FULL FLIPKART-STYLE PRODUCT SPECIFICATIONS & DETAILS */}
-      <section className="pt-2">
+      <section id="product-details-specs-section" className="pt-2">
         <ProductFullDetailsSection product={product} />
       </section>
 

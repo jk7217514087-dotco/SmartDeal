@@ -532,17 +532,16 @@ export const Navbar: React.FC = () => {
             <span>Ask AI</span>
           </button>
 
-          {/* Download & Install SmartDeal App Button */}
+          {/* Download & Install SmartDeal App Button (Circled in User Image on Phone & Laptop) */}
           <button
             onClick={() => {
               window.dispatchEvent(new CustomEvent('trigger-app-install'));
             }}
-            className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl sm:rounded-2xl border font-extrabold text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
             title="Direct Download SmartDeal App on Phone or Laptop"
           >
             <Download className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="hidden sm:inline">Download App</span>
-            <span className="sm:hidden">App</span>
+            <span>App</span>
           </button>
 
           {/* 1-Click Multi-Color Theme Switcher */}
