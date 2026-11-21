@@ -31,7 +31,8 @@ export const PriceComparisonTable: React.FC<Props> = ({
   prices = product.marketplacePrices,
   onSelectSeller
 }) => {
-  const { trackActivity, trackOutboundClick } = useApp();
+  const { trackActivity, trackOutboundClick, activeTheme } = useApp();
+  const isWhite = activeTheme === 'pure-white';
   const [sortBy, setSortBy] = useState<'best' | 'price' | 'delivery' | 'score'>('best');
   const [redirectingStore, setRedirectingStore] = useState<{
     item: MarketplacePrice;
@@ -221,34 +222,42 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
   return (
     <div className="space-y-6">
-      {/* Table Container in dark theme matching screenshot */}
-      <div className="rounded-3xl border border-slate-800 bg-[#0c1322] shadow-2xl overflow-hidden backdrop-blur-md">
+      {/* Table Container in responsive theme matching screenshot */}
+      <div className={`rounded-3xl border overflow-hidden backdrop-blur-md ${
+        isWhite
+          ? 'border-slate-200/90 bg-white shadow-sm'
+          : 'border-slate-800 bg-[#0c1322] shadow-2xl'
+      }`}>
         {/* Header Bar */}
-        <div className="p-3 sm:p-5 border-b border-slate-800/80 bg-gradient-to-r from-[#0d1627] via-[#0e192e] to-[#0d1627]">
+        <div className={`p-3 sm:p-5 border-b ${
+          isWhite
+            ? 'border-slate-200/80 bg-gradient-to-r from-slate-50 via-white to-slate-50'
+            : 'border-slate-800/80 bg-gradient-to-r from-[#0d1627] via-[#0e192e] to-[#0d1627]'
+        }`}>
           {/* Desktop Header (md and up) */}
           <div className="hidden md:flex items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-lg font-black text-white">
+                <h2 className={`text-lg font-black ${isWhite ? 'text-slate-900' : 'text-white'}`}>
                   Price Comparison Across {rawFiltered.length} Marketplaces
                 </h2>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Real-time Verified
                 </span>
               </div>
 
-              <div className="flex items-center gap-4 text-xs text-slate-400 mt-2 flex-wrap">
+              <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mt-2 flex-wrap">
                 <span className="flex items-center gap-1 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-500" />
                   Best Price Guarantee
                 </span>
                 <span className="flex items-center gap-1 font-medium">
-                  <TrendingDown className="w-3.5 h-3.5 text-emerald-400" />
+                  <TrendingDown className="w-3.5 h-3.5 text-emerald-500" />
                   Live price tracking
                 </span>
                 <span className="flex items-center gap-1 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-purple-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-purple-500" />
                   100% Verified Deals
                 </span>
               </div>
@@ -256,12 +265,16 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
             {/* Sort By Dropdown (Desktop) */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 font-medium">Sort by:</span>
+              <span className={`text-xs font-medium ${isWhite ? 'text-slate-600' : 'text-slate-400'}`}>Sort by:</span>
               <div className="relative">
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as any)}
-                  className="appearance-none bg-[#141e33] border border-slate-700 text-xs font-bold text-slate-200 py-1.5 pl-3 pr-8 rounded-xl focus:outline-none focus:border-brand-400 cursor-pointer"
+                  className={`appearance-none text-xs font-bold py-1.5 pl-3 pr-8 rounded-xl focus:outline-none cursor-pointer ${
+                    isWhite
+                      ? 'bg-slate-50 border border-slate-300 text-slate-800 focus:border-blue-500'
+                      : 'bg-[#141e33] border border-slate-700 text-slate-200 focus:border-brand-400'
+                  }`}
                 >
                   <option value="best">Best Deal</option>
                   <option value="price">Lowest Price</option>
@@ -276,11 +289,11 @@ export const PriceComparisonTable: React.FC<Props> = ({
           {/* Compact Mobile Header (md:hidden) - Streamlined to elevate price comparison */}
           <div className="md:hidden space-y-2">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-sm font-black text-white leading-tight truncate">
+              <h2 className={`text-sm font-black leading-tight truncate ${isWhite ? 'text-slate-900' : 'text-white'}`}>
                 Price Comparison ({rawFiltered.length} Marketplaces)
               </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Verified
               </span>
             </div>
@@ -336,7 +349,11 @@ export const PriceComparisonTable: React.FC<Props> = ({
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 pt-1 pb-1">
           <table className="w-full min-w-[540px] text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-[#080d18]/70">
+              <tr className={`border-b text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${
+                isWhite
+                  ? 'border-slate-200 text-slate-500 bg-slate-50/80'
+                  : 'border-slate-800 text-slate-400 bg-[#080d18]/70'
+              }`}>
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-5">Marketplace</th>
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-4">Price</th>
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-4">Discount</th>
@@ -344,7 +361,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-5 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className={`divide-y ${isWhite ? 'divide-slate-100' : 'divide-slate-800/60'}`}>
               {sortedPrices.map((item, idx) => {
                 const store = getStoreDetails(item.sellerName);
                 const isLowest = item.finalPrice === lowestFinalPrice;
@@ -353,31 +370,37 @@ export const PriceComparisonTable: React.FC<Props> = ({
                 return (
                   <tr
                     key={idx}
-                    className="hover:bg-[#121c30]/70 transition-colors group"
+                    className={`transition-colors group ${
+                      isWhite ? 'hover:bg-slate-50/90' : 'hover:bg-[#121c30]/70'
+                    }`}
                   >
                     {/* Marketplace */}
                     <td className="py-2.5 sm:py-4 px-3 sm:px-5">
                       <div className="flex items-center gap-2.5 sm:gap-3">
                         <div
-                          className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-xs sm:text-sm shadow-md border border-white/10 shrink-0 ${store.logoBg}`}
+                          className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-xs sm:text-sm shadow-md border ${
+                            isWhite ? 'border-slate-200' : 'border-white/10'
+                          } shrink-0 ${store.logoBg}`}
                         >
                           <span className="capitalize">{store.letter}</span>
                         </div>
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-1.5 sm:gap-2 font-bold text-white text-xs sm:text-sm">
+                          <div className={`flex items-center gap-1.5 sm:gap-2 font-bold text-xs sm:text-sm ${
+                            isWhite ? 'text-slate-900' : 'text-white'
+                          }`}>
                             <span>{store.cleanName}</span>
                             {isLowest && (
-                              <span className="bg-emerald-500 text-slate-950 font-black text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full shadow-sm">
+                              <span className="bg-emerald-600 text-white font-black text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full shadow-sm">
                                 Best Price
                               </span>
                             )}
                           </div>
                           <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px]">
-                            <span className="text-amber-400 font-bold">
+                            <span className="text-amber-500 font-bold">
                               ★ {item.rating || 4.5}
                             </span>
-                            <span className="text-slate-600">•</span>
-                            <span className="text-slate-400">{store.badge}</span>
+                            <span className={isWhite ? 'text-slate-300' : 'text-slate-600'}>•</span>
+                            <span className={isWhite ? 'text-slate-500' : 'text-slate-400'}>{store.badge}</span>
                           </div>
                         </div>
                       </div>
@@ -385,27 +408,31 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
                     {/* Price */}
                     <td className="py-2.5 sm:py-4 px-3 sm:px-4">
-                      <div className="text-xs sm:text-sm font-black text-white">
+                      <div className={`text-xs sm:text-sm font-black ${isWhite ? 'text-slate-950' : 'text-white'}`}>
                         ₹{item.finalPrice.toLocaleString('en-IN')}
                       </div>
-                      <div className="text-[10px] sm:text-[11px] text-slate-500 line-through">
+                      <div className="text-[10px] sm:text-[11px] text-slate-400 line-through">
                         ₹{product.mrp.toLocaleString('en-IN')}
                       </div>
                     </td>
 
                     {/* Discount */}
                     <td className="py-2.5 sm:py-4 px-3 sm:px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] sm:text-[11px]">
+                      <span className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-bold text-[10px] sm:text-[11px] ${
+                        isWhite
+                          ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+                          : 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400'
+                      }`}>
                         {discountPercent}% OFF
                       </span>
                     </td>
 
                     {/* Delivery */}
                     <td className="py-2.5 sm:py-4 px-3 sm:px-4">
-                      <div className="font-semibold text-slate-200 text-[11px] sm:text-xs">
+                      <div className={`font-semibold text-[11px] sm:text-xs ${isWhite ? 'text-slate-800' : 'text-slate-200'}`}>
                         {item.deliveryDate}
                       </div>
-                      <div className="text-[9px] sm:text-[10px] text-slate-400">
+                      <div className={`text-[9px] sm:text-[10px] ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
                         {item.deliveryCharge === 0 ? 'FREE Delivery' : `₹${item.deliveryCharge} delivery`}
                       </div>
                     </td>
@@ -415,7 +442,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
                       {item.inStock ? (
                         <button
                           onClick={() => initiateStoreRedirect(item, store.cleanName)}
-                          className="px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] sm:text-xs shadow-md shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1 sm:gap-1.5"
+                          className="px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-[11px] sm:text-xs shadow-sm hover:scale-105 transition-all cursor-pointer inline-flex items-center gap-1 sm:gap-1.5"
                           title={`Buy directly on ${store.cleanName} for ₹${item.finalPrice.toLocaleString('en-IN')}`}
                         >
                           <span>Buy on {store.cleanName}</span>
@@ -424,7 +451,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
                       ) : (
                         <button
                           disabled
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold text-[11px] sm:text-xs text-slate-500 bg-slate-800/50 border border-slate-800 cursor-not-allowed"
+                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold text-[11px] sm:text-xs text-slate-400 bg-slate-100 border border-slate-200 cursor-not-allowed"
                         >
                           Out of Stock
                         </button>

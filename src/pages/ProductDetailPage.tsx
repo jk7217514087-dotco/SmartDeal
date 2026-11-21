@@ -145,17 +145,17 @@ const THEME_STYLES: Record<string, {
   'pure-white': {
     cardBg: 'bg-white',
     cardBorder: 'border-slate-200/80',
-    badgeBg: 'bg-indigo-600',
-    badgeText: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    accentText: 'text-indigo-600',
+    badgeBg: 'bg-blue-600',
+    badgeText: 'bg-blue-50 text-blue-700 border-blue-200',
+    accentText: 'text-blue-600',
     pricingBg: 'bg-slate-50',
     pricingBorder: 'border-slate-200/80',
-    thumbActiveBorder: 'border-indigo-600',
+    thumbActiveBorder: 'border-blue-600',
     thumbInactiveBg: 'border-slate-200 bg-white',
-    iconText: 'text-indigo-600',
+    iconText: 'text-blue-600',
     mobileBg: 'bg-white/95',
     mobileBorder: 'border-slate-200',
-    buyButton: 'bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
+    buyButton: 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20 font-extrabold'
   }
 };
 

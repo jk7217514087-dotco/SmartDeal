@@ -208,27 +208,27 @@ const HERO_THEMES: Record<string, HeroThemeConfig> = {
     promoText: 'text-violet-100/70',
   },
   'pure-white': {
-    heroSectionBg: 'bg-gradient-to-b from-[#f8faff] via-[#ffffff] to-[#eef2f9]',
+    heroSectionBg: 'bg-gradient-to-b from-[#f8fafd] via-[#ffffff] to-[#f1f5f9]',
     heroBorder: 'border-slate-200/80',
-    badgeBg: 'bg-indigo-50',
-    badgeBorder: 'border-indigo-200',
-    badgeText: 'text-indigo-700',
-    badgeIcon: 'text-indigo-600',
-    titleGradient: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent',
-    searchContainer: 'bg-white border-slate-200/90 shadow-[0_8px_35px_rgba(79,70,229,0.12)] focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20',
-    searchBtn: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:to-purple-800 text-white shadow-indigo-500/25 font-black',
-    pillBg: 'bg-white hover:bg-indigo-50 border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 shadow-xs',
-    pedestalGlow: 'bg-gradient-to-tr from-indigo-500/15 via-purple-400/10 to-indigo-600/15',
-    pedestalOuter: 'border-indigo-100 bg-white/95 shadow-[0_0_65px_rgba(79,70,229,0.18)]',
-    pedestalInner: 'border-slate-100 bg-gradient-to-b from-indigo-50/50 to-white',
-    dealsBadge: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-500/25 font-black',
-    savingsBadge: 'bg-white border-indigo-200 text-indigo-700 shadow-xs',
-    guaranteeCard: 'bg-white border-slate-200/80 hover:border-indigo-400/50 shadow-xs',
-    promoCard: 'bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 border-indigo-500 text-white shadow-lg shadow-indigo-500/20',
-    promoButton: 'bg-white hover:bg-slate-100 text-indigo-700 font-black shadow-md',
+    badgeBg: 'bg-blue-50',
+    badgeBorder: 'border-blue-200',
+    badgeText: 'text-blue-700',
+    badgeIcon: 'text-blue-600',
+    titleGradient: 'text-blue-600 font-extrabold',
+    searchContainer: 'bg-white border-slate-200/90 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20',
+    searchBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-extrabold',
+    pillBg: 'bg-white hover:bg-blue-50 border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 shadow-xs',
+    pedestalGlow: 'bg-blue-500/10',
+    pedestalOuter: 'border-blue-200/80 bg-blue-50/50 shadow-sm',
+    pedestalInner: 'border-blue-100 bg-white',
+    dealsBadge: 'bg-blue-600 text-white font-extrabold shadow-sm',
+    savingsBadge: 'bg-white border-blue-200 text-blue-700 shadow-xs',
+    guaranteeCard: 'bg-white border-slate-200/80 hover:border-blue-400/50 shadow-xs',
+    promoCard: 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 border-blue-500',
+    promoButton: 'bg-white hover:bg-slate-50 text-blue-700 font-extrabold shadow-md',
     promoBadge: 'bg-white/20 border-white/30 text-white',
     promoIcon: 'text-white',
-    promoText: 'text-indigo-100/90',
+    promoText: 'text-blue-100',
   },
 };
 
@@ -249,6 +249,16 @@ export const HomePage: React.FC = () => {
       navigate(`/search?q=${encodeURIComponent(heroSearch.trim())}`);
     }
   };
+
+  // Top Deals for You: 6 Featured Items exactly matching reference image
+  const topDealsProducts = [
+    products.find(p => p.id === 'prod-apple-iphone15') || products[0],
+    products.find(p => p.id === 'prod-lenovo-ideapad-slim3') || products.find(p => p.id === 'prod-hp-pavilion-15') || products[1],
+    products.find(p => p.id === 'prod-boat-rockerz-450') || products.find(p => p.id === 'prod-boat-airdopes') || products[2],
+    products.find(p => p.id === 'prod-nike-court-vision') || products.find(p => p.id === 'prod-nike-running-shoes') || products[3],
+    products.find(p => p.id === 'prod-noise-colorfit-pro5') || products.find(p => p.id === 'prod-noise-colorfit') || products[4],
+    products.find(p => p.id === 'prod-samsung-refrigerator-253l') || products[5],
+  ].filter(Boolean);
 
   // Promotional Ad Banners for the Top Carousel
   const promoAds: PromoAd[] = [
@@ -531,21 +541,22 @@ export const HomePage: React.FC = () => {
               {/* Category pill shortcuts directly under search */}
               <div className={`flex flex-wrap items-center gap-2 pt-1 text-xs ${themeKey === 'pure-white' ? 'text-slate-600' : 'text-slate-300'}`}>
                 {[
-                  { name: 'iPhone', query: 'iPhone 15' },
-                  { name: 'Laptop', query: 'Laptop' },
-                  { name: 'Headphones', query: 'Headphones' },
-                  { name: 'Shoes', query: 'Shoes' },
-                  { name: 'TV', query: 'TV' },
-                  { name: 'Smartwatch', query: 'Smartwatch' },
-                  { name: 'Refrigerator', query: 'Refrigerator' }
+                  { name: 'iPhone', emoji: '📱', query: 'iPhone 15' },
+                  { name: 'Laptop', emoji: '💻', query: 'Laptop' },
+                  { name: 'Headphones', emoji: '🎧', query: 'Headphones' },
+                  { name: 'Shoes', emoji: '👟', query: 'Shoes' },
+                  { name: 'TV', emoji: '📺', query: 'TV' },
+                  { name: 'Smartwatch', emoji: '⌚', query: 'Smartwatch' },
+                  { name: 'Refrigerator', emoji: '❄', query: 'Refrigerator' }
                 ].map(item => (
                   <button
                     key={item.name}
                     type="button"
                     onClick={() => navigate(`/search?q=${encodeURIComponent(item.query)}`)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-95 border ${heroTheme.pillBg}`}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-95 border flex items-center gap-1.5 ${heroTheme.pillBg}`}
                   >
-                    {item.name}
+                    <span>{item.emoji}</span>
+                    <span>{item.name}</span>
                   </button>
                 ))}
               </div>
@@ -606,122 +617,69 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* MARKETPLACE RIBBON CARD */}
-          <div className={`mt-10 p-4 rounded-2xl border shadow-2xl backdrop-blur-md transition-colors ${heroTheme.guaranteeCard}`}>
-            <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-              <span className={`${themeKey === 'pure-white' ? 'text-slate-700' : 'text-slate-300'} font-bold flex items-center gap-2`}>
-                <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                <span>Supported Marketplaces:</span>
-              </span>
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 font-black">
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/25 hover:bg-amber-500/20 transition-all cursor-pointer"
-                >
-                  amazon
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-hp-pavilion-15')}
-                  className="px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/25 hover:bg-blue-500/20 transition-all cursor-pointer"
-                >
-                  Flipkart
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/25 hover:bg-pink-500/20 transition-all cursor-pointer"
-                >
-                  meesho
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-samsung-watch-6')}
-                  className="px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/25 hover:bg-rose-500/20 transition-all cursor-pointer"
-                >
-                  Myntra
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/25 hover:bg-teal-500/20 transition-all cursor-pointer"
-                >
-                  AJIO
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/25 hover:bg-purple-500/20 transition-all cursor-pointer"
-                >
-                  TATA CLIQ
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-500/20 transition-all cursor-pointer"
-                >
-                  croma
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/compare/prod-apple-iphone15')}
-                  className="px-3 py-1.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/25 hover:bg-red-500/20 transition-all cursor-pointer"
-                >
-                  reliance digital
-                </button>
-                <Link
-                  to="/marketplaces"
-                  className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
-                >
-                  + More
-                </Link>
-              </div>
+          {/* FEATURE & VALUE PROPOSITION TICKER RIBBON */}
+          <div className={`mt-8 py-3.5 px-4 sm:px-6 rounded-2xl border flex items-center justify-between overflow-x-auto no-scrollbar gap-5 text-xs font-bold transition-colors ${
+            themeKey === 'pure-white'
+              ? 'bg-white/95 border-slate-200/90 text-slate-700 shadow-xs'
+              : 'bg-white/5 border-white/10 text-slate-300'
+          }`}>
+            <div className="flex items-center gap-2 shrink-0">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>Live Price Drops & Hot Deals</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-700 select-none">•</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <Activity className="w-4 h-4 text-blue-500" />
+              <span>Real-Time Price Comparison</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-700 select-none">•</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span>100% Secure & Offline</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-700 select-none">•</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <Tag className="w-4 h-4 text-purple-500" />
+              <span>Best Deals & Offers</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-700 select-none">•</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <Zap className="w-4 h-4 text-yellow-500" />
+              <span>One-Click Redirect</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-700 select-none">•</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <Headphones className="w-4 h-4 text-rose-500" />
+              <span>24/7 Support</span>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* 4 VALUE GUARANTEES STRIP */}
-          <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-cyan-400 flex items-center justify-center shrink-0">
-                <Truck className="w-5 h-5" />
-              </div>
-              <div>
-                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>Free Shipping</div>
-                <div className="text-[11px] text-slate-400">On orders over ₹499</div>
-              </div>
+      {/* TOP DEALS FOR YOU SECTION (6-card row on laptop, 2 columns on phone) */}
+      <section className="max-w-7xl mx-auto px-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <Flame className="w-4 h-4 fill-blue-600 text-blue-600" />
             </div>
-
-            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>Secure Payments</div>
-                <div className="text-[11px] text-slate-400">100% secure & trusted</div>
-              </div>
-            </div>
-
-            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
-                <RotateCcw className="w-5 h-5" />
-              </div>
-              <div>
-                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>Easy Returns</div>
-                <div className="text-[11px] text-slate-400">Hassle-free process</div>
-              </div>
-            </div>
-
-            <div className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${heroTheme.guaranteeCard}`}>
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                <Headphones className="w-5 h-5" />
-              </div>
-              <div>
-                <div className={`text-xs font-bold ${themeKey === 'pure-white' ? 'text-slate-900' : 'text-white'}`}>24/7 Support</div>
-                <div className="text-[11px] text-slate-400">We're here to help</div>
-              </div>
-            </div>
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+              Top Deals for You
+            </h2>
           </div>
+          <Link
+            to="/deals"
+            className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+          >
+            <span>View all</span>
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          {topDealsProducts.map(p => (
+            <ProductCard key={p.id} product={p} variant="top-deals" />
+          ))}
         </div>
       </section>
 

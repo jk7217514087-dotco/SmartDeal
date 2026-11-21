@@ -3,7 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --smartdeal-bg: #0b1a30;
+  --smartdeal-bg: #f8fafd;
+}
+
+/* THEME 0: PURE WHITE / CLEAN LIGHT SLATE (Primary Default Theme) */
+html[data-theme="pure-white"],
+body.theme-pure-white,
+[data-theme="pure-white"] {
+  --smartdeal-bg: #f8fafd;
+  color: #0f172a;
+}
+html[data-theme="pure-white"] body {
+  background-color: #f8fafd !important;
+  color: #0f172a !important;
 }
 
 /* THEME 1: STEEL NAVY (Image 1: #0b1a30) */

@@ -43,13 +43,13 @@ export const THEME_BG_MAP: Record<string, string> = {
 };
 
 export const THEME_CYCLE_ORDER: ThemeId[] = [
+  'pure-white',
   'steel-navy',
   'matrix-lime',
   'sunset-coral',
   'aurora-jade',
   'royal-gold',
   'cyber-indigo',
-  'pure-white',
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
@@ -381,14 +381,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved && (saved in THEME_BG_MAP)) {
       return saved === 'cyber-emerald' ? 'aurora-jade' : saved;
     }
-    return 'steel-navy';
+    return 'pure-white';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
     const savedBg = localStorage.getItem('smartdeals_custom_bg');
-    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'steel-navy';
-    // Purge any legacy black background or white background values
-    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08' && savedBg !== '#ffffff' && savedBg !== '#FFFFFF') {
+    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'pure-white';
+    // Purge any legacy black background values
+    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08') {
       return savedBg;
     }
     return getThemeDefaultBg(savedTheme);

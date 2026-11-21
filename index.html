@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark" data-theme="royal-gold">
+<html lang="en" data-theme="pure-white">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/smartdeal.ico" />
@@ -8,10 +8,10 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/smartdeal_app_icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#181107" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="SmartDeal" />
     <meta name="application-name" content="SmartDeal" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
@@ -30,7 +30,7 @@
       });
       (function() {
         try {
-          var theme = localStorage.getItem('smartdeals_active_theme') || 'steel-navy';
+          var theme = localStorage.getItem('smartdeals_active_theme') || 'pure-white';
           var bgMap = {
             'steel-navy': '#0b1a30',
             'matrix-lime': '#111612',
@@ -41,8 +41,8 @@
             'pure-white': '#f8fafd',
             'cyber-emerald': '#051f15'
           };
-          var bg = localStorage.getItem('smartdeals_custom_bg') || bgMap[theme] || '#0b1a30';
-          if (bg === '#000000' || bg === '#070709' || bg === '#030a0d') bg = bgMap[theme] || '#0b1a30';
+          var bg = localStorage.getItem('smartdeals_custom_bg') || bgMap[theme] || '#f8fafd';
+          if (bg === '#000000' || bg === '#070709' || bg === '#030a0d') bg = bgMap[theme] || '#f8fafd';
           document.documentElement.setAttribute('data-theme', theme);
           document.documentElement.style.setProperty('--smartdeal-bg', bg);
           document.documentElement.style.backgroundColor = bg;
@@ -55,7 +55,7 @@
       })();
     </script>
   </head>
-  <body class="antialiased selection:bg-brand-500 selection:text-white min-h-screen text-slate-100" style="background-color: #0b1a30;">
+  <body class="antialiased selection:bg-blue-600 selection:text-white min-h-screen text-slate-900" style="background-color: #f8fafd;">
     <!-- Standalone & Web Rotating Splash Loader Overlay (Phone Screen & Laptop Ready) -->
     <div id="smartdeal-splash-screen" style="
       position: fixed;
@@ -64,8 +64,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--smartdeal-bg, #0b1a30);
-      color: #ffffff;
+      background: var(--smartdeal-bg, #f8fafd);
+      color: #0f172a;
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       z-index: 999999;
       padding: 24px;
