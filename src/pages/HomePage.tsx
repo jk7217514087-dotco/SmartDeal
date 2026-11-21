@@ -683,13 +683,13 @@ export const HomePage: React.FC = () => {
 
                   {/* Product Title & Price Details */}
                   <div className="w-full text-left pt-2 space-y-1">
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-1 hover:text-blue-600 transition-colors">
+                    <h3 className="font-extrabold text-black text-xs sm:text-sm line-clamp-1 hover:text-blue-600 transition-colors">
                       {heroDiscountAds[heroSlide].productTitle}
                     </h3>
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-base sm:text-lg font-black text-slate-950 dark:text-white">
+                        <span className="text-base sm:text-lg font-black text-black">
                           {heroDiscountAds[heroSlide].sellingPrice}
                         </span>
                         <span className="text-xs text-slate-400 line-through">
@@ -704,23 +704,6 @@ export const HomePage: React.FC = () => {
                         2s Deal
                       </span>
                     </div>
-                  </div>
-
-                  {/* Dual Action Buttons: View Details & Buy on Store */}
-                  <div className="w-full grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800">
-                    <Link
-                      to={heroDiscountAds[heroSlide].targetUrl}
-                      className="py-2 px-2.5 rounded-xl border border-slate-200 hover:border-blue-400 bg-slate-50 hover:bg-slate-100 text-slate-800 font-extrabold text-[11px] sm:text-xs text-center transition-all cursor-pointer active:scale-95 truncate shadow-xs"
-                    >
-                      View Details
-                    </Link>
-                    <Link
-                      to={heroDiscountAds[heroSlide].targetUrl}
-                      className="py-2 px-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-sm transition-all cursor-pointer active:scale-95 truncate"
-                    >
-                      <span className="truncate">Buy on {heroDiscountAds[heroSlide].storeName.split(' ')[0]}</span>
-                      <ExternalLink className="w-3 h-3 shrink-0" />
-                    </Link>
                   </div>
 
                   {/* 2-Second Rotating Progress Pagination Dots */}
@@ -784,10 +767,10 @@ export const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
               <Flame className="w-4 h-4 fill-blue-600 text-blue-600" />
             </div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+            <h2 className="text-lg sm:text-xl font-black text-black">
               Top Deals for You
             </h2>
           </div>
@@ -919,19 +902,19 @@ export const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
               <span>Trending Products</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                 Verified Best Prices
               </span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-700 font-semibold mt-0.5">
               Comparing live prices across Amazon, Flipkart, Croma, Myntra & partner stores
             </p>
           </div>
           <Link
             to="/categories"
-            className="text-xs font-extrabold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+            className="text-xs font-extrabold text-blue-600 hover:text-blue-700 flex items-center gap-1"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -1032,10 +1015,10 @@ export const HomePage: React.FC = () => {
               <Flame className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl font-black text-black">
                 Trending Deals & Best Prices
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-700 font-semibold mt-0.5">
                 Comparing live prices across Amazon, Flipkart, Croma & top verified stores
               </p>
             </div>
@@ -1151,42 +1134,42 @@ export const HomePage: React.FC = () => {
               <Tag className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white">Bank Offers & Active Store Coupons</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Verified bank discounts stackable with marketplace deals</p>
+              <h2 className="text-xl font-black text-black">Bank Offers & Active Store Coupons</h2>
+              <p className="text-xs text-slate-700 font-semibold mt-0.5">Verified bank discounts stackable with marketplace deals</p>
             </div>
           </div>
-          <Link to="/coupons" className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+          <Link to="/coupons" className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1">
             <span>View All Coupons</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/15 text-blue-400">HDFC BANK</span>
-              <span className="text-xs font-black text-emerald-500">Flat 10% Instant Discount</span>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">HDFC BANK</span>
+              <span className="text-xs font-black text-emerald-700">Flat 10% Instant Discount</span>
             </div>
-            <div className="font-extrabold text-sm text-slate-900 dark:text-white">Up to ₹1,500 Off on Credit Cards</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">Min. order ₹7,500 on Mobiles, Laptops & Electronics. Valid on Amazon & Flipkart.</div>
+            <div className="font-black text-sm text-black">Up to ₹1,500 Off on Credit Cards</div>
+            <div className="text-[11px] text-slate-700 font-medium">Min. order ₹7,500 on Mobiles, Laptops & Electronics. Valid on Amazon & Flipkart.</div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-500/15 text-rose-400">ICICI BANK</span>
-              <span className="text-xs font-black text-emerald-500">Flat ₹2,000 Off</span>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200">ICICI BANK</span>
+              <span className="text-xs font-black text-emerald-700">Flat ₹2,000 Off</span>
             </div>
-            <div className="font-extrabold text-sm text-slate-900 dark:text-white">Instant Discount on Laptops & Smart TVs</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">Valid on Croma & Reliance Digital purchases above ₹25,000.</div>
+            <div className="font-black text-sm text-black">Instant Discount on Laptops & Smart TVs</div>
+            <div className="text-[11px] text-slate-700 font-medium">Valid on Croma & Reliance Digital purchases above ₹25,000.</div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">SMARTDEAL GUARANTEE</span>
-              <span className="text-xs font-black text-emerald-500">Live Across Stores</span>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">SMARTDEAL GUARANTEE</span>
+              <span className="text-xs font-black text-emerald-700">Live Across Stores</span>
             </div>
-            <div className="font-extrabold text-sm text-slate-900 dark:text-white">Verified Lowest Prices Across Stores</div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">Real-time multi-store price monitoring ensures you never overpay on any order.</div>
+            <div className="font-black text-sm text-black">Verified Lowest Prices Across Stores</div>
+            <div className="text-[11px] text-slate-700 font-medium">Real-time multi-store price monitoring ensures you never overpay on any order.</div>
           </div>
         </div>
       </section>
@@ -1194,75 +1177,75 @@ export const HomePage: React.FC = () => {
       {/* SECTION 4.10 & 14: SMARTDEAL DEAL INTELLIGENCE FEATURES */}
       <section className="max-w-7xl mx-auto px-4 space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-xs font-black">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black">
             <Bot className="w-3.5 h-3.5" />
             <span>AI Product Intelligence Engine</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <h2 className="text-2xl sm:text-3xl font-black text-black">
             Smart Deal Intelligence System
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-700 font-semibold">
             Explainable AI decision algorithms helping you save money with confidence and zero deceptive practices.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-2xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
               <Sparkles className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Deal DNA & Smart Score (0-100)</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="font-black text-sm text-black">Deal DNA & Smart Score (0-100)</h3>
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Multi-factor algorithmic rating analyzing price advantage across stores, 90-day pricing trends, seller reliability, and verified coupon quality.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Fake Discount Detector</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="font-black text-sm text-black">Fake Discount Detector</h3>
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Identifies artificially inflated MRPs and fake discount banners by cross-referencing actual manufacturer reference prices and historical lows.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
               <Clock className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Buy Now or Wait Estimator</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="font-black text-sm text-black">Buy Now or Wait Estimator</h3>
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Predictive volatility analysis estimating whether the price is currently at its bottom cycle or expected to drop in upcoming festival sales.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
               <Layers className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Better Alternative Finder</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="font-black text-sm text-black">Better Alternative Finder</h3>
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Discovers products with superior specifications, better reviews, or higher value-for-money in the same price bracket.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold">
               <Activity className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Personal Deal Radar</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="font-black text-sm text-black">Personal Deal Radar</h3>
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Define your budget and desired product. Receive instant alerts via email or push notifications when your target price is reached.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
               <Calculator className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Smart Savings Calculator</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="font-black text-sm text-black">Smart Savings Calculator</h3>
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Calculates real final effective cost = Listed Price - Bank Discount - Promo Coupons + Delivery Fee.
             </p>
           </div>

@@ -17,6 +17,14 @@ html[data-theme="pure-white"] body {
   background-color: #f8fafd !important;
   color: #0f172a !important;
 }
+html[data-theme="pure-white"] h1,
+html[data-theme="pure-white"] h2,
+html[data-theme="pure-white"] h3,
+html[data-theme="pure-white"] h4,
+html[data-theme="pure-white"] h5,
+html[data-theme="pure-white"] h6 {
+  color: #090d16 !important;
+}
 
 /* THEME 1: STEEL NAVY (Image 1: #0b1a30) */
 html[data-theme="steel-navy"],

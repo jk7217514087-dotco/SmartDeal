@@ -373,7 +373,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('smartdeals_dark_mode');
     if (saved !== null) return saved === 'true';
-    return true;
+    return false;
   });
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
@@ -539,13 +539,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('smartdeals_dark_mode', isDarkMode.toString());
     if (typeof document !== 'undefined') {
-      if (isDarkMode) {
+      if (isDarkMode && activeTheme !== 'pure-white' && customBg !== '#f8fafd' && customBg !== '#ffffff') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
     }
-  }, [isDarkMode]);
+  }, [isDarkMode, activeTheme, customBg]);
 
   const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
