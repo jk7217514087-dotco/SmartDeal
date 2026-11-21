@@ -6,6 +6,7 @@ import { DealScoreBadge } from './DealScoreBadge';
 import { PriceAlertModal } from './PriceAlertModal';
 import { PurchaseTrackerModal } from './PurchaseTrackerModal';
 import { ProductQuickDetailsModal } from '../product/ProductQuickDetailsModal';
+import { MarketplaceBadge } from './MarketplaceBadge';
 import { notificationService } from '../../services/notificationService';
 import {
   Heart,
@@ -144,30 +145,56 @@ export const ProductCard: React.FC<Props> = ({ product, variant = 'standard' }) 
               </h3>
             </Link>
 
-            {/* Price Line */}
-            <div className="mt-2 flex items-baseline gap-1.5 flex-wrap">
-              <span className="text-sm sm:text-base font-black text-slate-950">
-                ₹{product.sellingPrice.toLocaleString('en-IN')}
-              </span>
-              <span className="text-[10px] sm:text-xs text-slate-400 line-through">
-                ₹{product.mrp.toLocaleString('en-IN')}
-              </span>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
-                {product.discountPercent}% OFF
-              </span>
+            {/* Price Line with Store Logo on Right (matching reference image) */}
+            <div className="mt-2 flex items-center justify-between gap-1 flex-wrap">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="text-sm sm:text-base font-black text-slate-950">
+                  ₹{product.sellingPrice.toLocaleString('en-IN')}
+                </span>
+                <span className="text-[10px] sm:text-xs text-slate-400 line-through">
+                  ₹{product.mrp.toLocaleString('en-IN')}
+                </span>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                  {product.discountPercent}% OFF
+                </span>
+              </div>
+              <MarketplaceBadge storeName={lowestStoreListing?.sellerName || 'Amazon'} size="sm" />
             </div>
           </div>
 
-          {/* Action Button: Royal Blue Buy on Store */}
-          <button
-            onClick={handleQuickOutboundBuy}
-            className="mt-3 w-full py-2 px-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
-            title={`Buy directly on ${lowestStoreListing?.sellerName || 'Store'}`}
-          >
-            <span className="truncate">Buy on {lowestStoreListing?.sellerName?.split(' ')[0] || 'Store'}</span>
-            <ExternalLink className="w-3 h-3 shrink-0" />
-          </button>
+          {/* Action Buttons: View Details & Buy on Store */}
+          <div className="mt-3 flex flex-col gap-1.5 w-full">
+            <div className="flex items-center gap-1.5 w-full">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsQuickDetailsOpen(true);
+                }}
+                className="flex-1 py-1.5 sm:py-2 px-1 sm:px-2 rounded-xl border border-slate-200 hover:border-blue-400 bg-slate-50 hover:bg-slate-100 text-slate-800 font-extrabold text-[11px] sm:text-xs text-center transition-all cursor-pointer active:scale-95 truncate shadow-xs"
+                title="View product details & specifications"
+              >
+                View Details
+              </button>
+
+              <button
+                onClick={handleQuickOutboundBuy}
+                className="flex-1 py-1.5 sm:py-2 px-1 sm:px-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-xs transition-all cursor-pointer truncate"
+                title={`Buy directly on ${lowestStoreListing?.sellerName || 'Store'}`}
+              >
+                <span className="truncate">Buy on {lowestStoreListing?.sellerName?.split(' ')[0] || 'Store'}</span>
+                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Quick Specifications & Details Modal */}
+        <ProductQuickDetailsModal
+          product={product}
+          isOpen={isQuickDetailsOpen}
+          onClose={() => setIsQuickDetailsOpen(false)}
+        />
 
         {/* Purchase Tracker & Verification Modal */}
         {trackerStore && (
@@ -275,17 +302,20 @@ export const ProductCard: React.FC<Props> = ({ product, variant = 'standard' }) 
             </h3>
           </Link>
 
-          {/* Price Engine Display */}
-          <div className="mt-1.5 sm:mt-2.5 flex items-baseline gap-1 sm:gap-2 flex-wrap">
-            <span className="text-sm sm:text-lg font-black text-slate-950 dark:text-white">
-              ₹{product.sellingPrice.toLocaleString('en-IN')}
-            </span>
-            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
-              ₹{product.mrp.toLocaleString('en-IN')}
-            </span>
-            <span className="text-[9px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
-              {product.discountPercent}% OFF
-            </span>
+          {/* Price Engine Display with Store Logo on Right */}
+          <div className="mt-1.5 sm:mt-2.5 flex items-center justify-between gap-1 flex-wrap">
+            <div className="flex items-baseline gap-1 sm:gap-2 flex-wrap">
+              <span className="text-sm sm:text-lg font-black text-slate-950 dark:text-white">
+                ₹{product.sellingPrice.toLocaleString('en-IN')}
+              </span>
+              <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
+                ₹{product.mrp.toLocaleString('en-IN')}
+              </span>
+              <span className="text-[9px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
+                {product.discountPercent}% OFF
+              </span>
+            </div>
+            <MarketplaceBadge storeName={lowestStoreListing?.sellerName || 'Amazon'} size="sm" />
           </div>
 
           {/* Lowest Store Indicator */}

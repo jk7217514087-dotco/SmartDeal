@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from '../components/common/ProductCard';
+import { MarketplaceBadge } from '../components/common/MarketplaceBadge';
 import { mockCategories } from '../data/mockProducts';
 import {
   Sparkles,
@@ -234,13 +235,98 @@ const HERO_THEMES: Record<string, HeroThemeConfig> = {
 
 export const HomePage: React.FC = () => {
   const { products, trackActivity, activeTheme } = useApp();
-  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
-  const heroTheme = HERO_THEMES[themeKey] || HERO_THEMES['steel-navy'];
+  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'pure-white';
+  const heroTheme = HERO_THEMES[themeKey] || HERO_THEMES['pure-white'];
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
+  const [heroSlide, setHeroSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [flashTime, setFlashTime] = useState({ hours: 7, minutes: 24, seconds: 15 });
+
+  // High-converting 2-Second Rotating Hero Discount Ads (matching user request)
+  const heroDiscountAds = [
+    {
+      id: 'h-ad-apple',
+      productTitle: 'Apple iPhone 15 (Blue, 128 GB)',
+      category: 'Smartphones',
+      discountBadge: 'MEGA DEAL • SAVE ₹10,000',
+      discountPercent: '11% OFF',
+      sellingPrice: '₹79,999',
+      mrp: '₹89,999',
+      storeName: 'Meesho',
+      image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80',
+      targetUrl: '/product/prod-apple-iphone15',
+    },
+    {
+      id: 'h-ad-hp',
+      productTitle: 'HP Pavilion 15 (Core i5 12th Gen, 16GB)',
+      category: 'Laptops',
+      discountBadge: 'SUPER VALUE • SAVE ₹15,000',
+      discountPercent: '21% OFF',
+      sellingPrice: '₹54,990',
+      mrp: '₹69,990',
+      storeName: 'Flipkart',
+      image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&auto=format&fit=crop&q=80',
+      targetUrl: '/product/prod-hp-pavilion-15',
+    },
+    {
+      id: 'h-ad-boat',
+      productTitle: 'boAt Airdopes 141 Bluetooth TWS Earbuds',
+      category: 'Audio',
+      discountBadge: 'LIGHTNING DEAL • 71% OFF',
+      discountPercent: '71% OFF',
+      sellingPrice: '₹1,299',
+      mrp: '₹4,490',
+      storeName: 'Amazon',
+      image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&auto=format&fit=crop&q=80',
+      targetUrl: '/product/prod-boat-airdopes',
+    },
+    {
+      id: 'h-ad-nike',
+      productTitle: 'Nike Revolution 6 Running Shoes',
+      category: 'Footwear',
+      discountBadge: 'FASHION GALA • 50% OFF',
+      discountPercent: '50% OFF',
+      sellingPrice: '₹2,499',
+      mrp: '₹4,995',
+      storeName: 'Myntra',
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80',
+      targetUrl: '/product/prod-nike-running-shoes',
+    },
+    {
+      id: 'h-ad-noise',
+      productTitle: 'Noise ColorFit Pro 5 Smartwatch',
+      category: 'Wearables',
+      discountBadge: 'BESTSELLER • 60% OFF',
+      discountPercent: '60% OFF',
+      sellingPrice: '₹2,999',
+      mrp: '₹7,499',
+      storeName: 'Flipkart',
+      image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&auto=format&fit=crop&q=80',
+      targetUrl: '/product/prod-noise-colorfit',
+    },
+    {
+      id: 'h-ad-samsung',
+      productTitle: 'Samsung 253L Smart Frost Free Refrigerator',
+      category: 'Appliances',
+      discountBadge: 'HOME APPLIANCES • 38% OFF',
+      discountPercent: '38% OFF',
+      sellingPrice: '₹22,990',
+      mrp: '₹36,990',
+      storeName: 'Croma',
+      image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=600&auto=format&fit=crop&q=80',
+      targetUrl: '/product/prod-samsung-refrigerator-253l',
+    }
+  ];
+
+  // Auto-scroll discount ad image showcase every 2 seconds (2000ms) as requested: "2 har second me scroll hoti rahe"
+  useEffect(() => {
+    const heroTimer = setInterval(() => {
+      setHeroSlide(prev => (prev + 1) % heroDiscountAds.length);
+    }, 2000);
+    return () => clearInterval(heroTimer);
+  }, [heroDiscountAds.length]);
 
   const handleHeroSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -250,13 +336,13 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  // Top Deals for You: 6 Featured Items exactly matching reference image
+  // Top Deals for You: 6 Featured Items exactly matching user reference image
   const topDealsProducts = [
     products.find(p => p.id === 'prod-apple-iphone15') || products[0],
-    products.find(p => p.id === 'prod-lenovo-ideapad-slim3') || products.find(p => p.id === 'prod-hp-pavilion-15') || products[1],
-    products.find(p => p.id === 'prod-boat-rockerz-450') || products.find(p => p.id === 'prod-boat-airdopes') || products[2],
-    products.find(p => p.id === 'prod-nike-court-vision') || products.find(p => p.id === 'prod-nike-running-shoes') || products[3],
-    products.find(p => p.id === 'prod-noise-colorfit-pro5') || products.find(p => p.id === 'prod-noise-colorfit') || products[4],
+    products.find(p => p.id === 'prod-hp-pavilion-15') || products.find(p => p.id === 'prod-lenovo-ideapad-slim3') || products[1],
+    products.find(p => p.id === 'prod-boat-airdopes') || products.find(p => p.id === 'prod-boat-rockerz-450') || products[2],
+    products.find(p => p.id === 'prod-nike-running-shoes') || products.find(p => p.id === 'prod-nike-court-vision') || products[3],
+    products.find(p => p.id === 'prod-noise-colorfit') || products.find(p => p.id === 'prod-noise-colorfit-pro5') || products[4],
     products.find(p => p.id === 'prod-samsung-refrigerator-253l') || products[5],
   ].filter(Boolean);
 
@@ -316,11 +402,11 @@ export const HomePage: React.FC = () => {
     }
   ];
 
-  // Auto-slide advertisement carousel every 5 seconds
+  // Auto-slide advertisement carousel every 2 seconds
   useEffect(() => {
     const slideTimer = setInterval(() => {
       setActiveSlide(prev => (prev + 1) % promoAds.length);
-    }, 5000);
+    }, 2000);
     return () => clearInterval(slideTimer);
   }, [promoAds.length]);
 
@@ -562,56 +648,94 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Composite Multi-Device Glowing Showcase */}
-            <div className="lg:col-span-5 flex justify-center relative w-full overflow-hidden sm:overflow-visible">
-              <div className="relative w-full max-w-[320px] sm:max-w-[420px] aspect-square flex items-center justify-center">
-                {/* Glowing neon circular pedestal */}
-                <div className={`absolute inset-0 rounded-full blur-2xl animate-pulse ${heroTheme.pedestalGlow}`} />
-
-                {/* Outer Ring */}
-                <div className={`absolute w-72 h-72 rounded-full border-2 flex items-center justify-center transition-all ${heroTheme.pedestalOuter}`}>
-                  {/* Inner Ring */}
-                  <div className={`w-56 h-56 rounded-full border ${heroTheme.pedestalInner}`} />
-                </div>
-
+            {/* Right Column: Dynamic Auto-Scrolling 2-Second Discount Ad Showcase (matching user red mark) */}
+            <div className="lg:col-span-5 flex justify-center relative w-full">
+              <div className="relative w-full max-w-[360px] sm:max-w-[430px] rounded-3xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-xl overflow-hidden p-4 sm:p-5 flex flex-col justify-between transition-all duration-300">
                 {/* Floating % BEST DEALS Badge */}
-                <div className={`absolute top-2 right-2 z-20 px-4 py-2 rounded-2xl font-black text-xs shadow-xl flex items-center gap-1.5 rotate-6 hover:rotate-0 transition-transform ${heroTheme.dealsBadge}`}>
-                  <span className="text-sm font-black">%</span>
+                <div className="absolute top-3.5 right-3.5 z-20 px-3 py-1 rounded-xl font-black text-[11px] shadow-md flex items-center gap-1.5 bg-blue-600 text-white">
+                  <span className="text-xs font-black">%</span>
                   <span>BEST DEALS</span>
                 </div>
 
-                {/* Floating Up to 50% Savings Badge */}
-                <div className={`absolute bottom-4 right-2 z-20 px-4 py-2 rounded-2xl backdrop-blur-md font-black text-xs shadow-xl flex items-center gap-2 border ${heroTheme.savingsBadge}`}>
-                  <span className="text-emerald-400">↗</span>
-                  <span>Up to 50% Savings</span>
-                </div>
+                {/* Rotating Ad Content with 2-Second Transition */}
+                <div className="relative z-10 w-full flex flex-col items-center">
+                  {/* Top Store Badge & Discount Tag Row */}
+                  <div className="w-full flex items-center justify-between gap-2 pr-28 mb-2">
+                    <MarketplaceBadge storeName={heroDiscountAds[heroSlide].storeName} size="sm" />
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 truncate">
+                      {heroDiscountAds[heroSlide].discountBadge}
+                    </span>
+                  </div>
 
-                {/* Tech Devices Composition: Phone, Smartwatch, AirPods, Sneaker */}
-                <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-                  {/* iPhone */}
-                  <img
-                    src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80"
-                    alt="iPhone"
-                    className="absolute w-32 h-52 object-cover rounded-3xl shadow-2xl border border-white/20 -translate-x-12 -translate-y-2 rotate-2 z-10"
-                  />
-                  {/* Earbuds / AirPods Case */}
-                  <img
-                    src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&auto=format&fit=crop&q=80"
-                    alt="Earbuds"
-                    className="absolute w-24 h-24 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)] -translate-x-28 translate-y-12 z-20"
-                  />
-                  {/* Smartwatch */}
-                  <img
-                    src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&auto=format&fit=crop&q=80"
-                    alt="Smartwatch"
-                    className="absolute w-24 h-24 object-contain drop-shadow-xl translate-x-12 translate-y-12 z-20"
-                  />
-                  {/* Nike Sneaker */}
-                  <img
-                    src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80"
-                    alt="Sneaker"
-                    className="absolute w-36 h-28 object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)] translate-x-28 translate-y-16 rotate-12 z-20"
-                  />
+                  {/* Product Image Stage with Glow Background */}
+                  <Link
+                    to={heroDiscountAds[heroSlide].targetUrl}
+                    className="relative w-full h-40 sm:h-48 flex items-center justify-center my-1 group cursor-pointer"
+                  >
+                    <div className="absolute w-36 h-36 rounded-full bg-blue-500/10 blur-xl pointer-events-none" />
+                    <img
+                      key={heroDiscountAds[heroSlide].id}
+                      src={heroDiscountAds[heroSlide].image}
+                      alt={heroDiscountAds[heroSlide].productTitle}
+                      className="h-full max-h-40 sm:max-h-48 w-auto object-contain drop-shadow-xl transition-all duration-300 animate-fadeIn group-hover:scale-105"
+                    />
+                  </Link>
+
+                  {/* Product Title & Price Details */}
+                  <div className="w-full text-left pt-2 space-y-1">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-1 hover:text-blue-600 transition-colors">
+                      {heroDiscountAds[heroSlide].productTitle}
+                    </h3>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-base sm:text-lg font-black text-slate-950 dark:text-white">
+                          {heroDiscountAds[heroSlide].sellingPrice}
+                        </span>
+                        <span className="text-xs text-slate-400 line-through">
+                          {heroDiscountAds[heroSlide].mrp}
+                        </span>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                          {heroDiscountAds[heroSlide].discountPercent}
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-black text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping" />
+                        2s Deal
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Dual Action Buttons: View Details & Buy on Store */}
+                  <div className="w-full grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                    <Link
+                      to={heroDiscountAds[heroSlide].targetUrl}
+                      className="py-2 px-2.5 rounded-xl border border-slate-200 hover:border-blue-400 bg-slate-50 hover:bg-slate-100 text-slate-800 font-extrabold text-[11px] sm:text-xs text-center transition-all cursor-pointer active:scale-95 truncate shadow-xs"
+                    >
+                      View Details
+                    </Link>
+                    <Link
+                      to={heroDiscountAds[heroSlide].targetUrl}
+                      className="py-2 px-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-sm transition-all cursor-pointer active:scale-95 truncate"
+                    >
+                      <span className="truncate">Buy on {heroDiscountAds[heroSlide].storeName.split(' ')[0]}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0" />
+                    </Link>
+                  </div>
+
+                  {/* 2-Second Rotating Progress Pagination Dots */}
+                  <div className="flex items-center gap-1.5 pt-3">
+                    {heroDiscountAds.map((ad, idx) => (
+                      <button
+                        key={ad.id}
+                        onClick={() => setHeroSlide(idx)}
+                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                          heroSlide === idx ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
+                        }`}
+                        title={`Slide ${idx + 1}: ${ad.productTitle}`}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
