@@ -22,38 +22,23 @@ import { mockProducts, initialCommissionSlabs } from '../data/mockProducts';
 import { trackingService } from '../services/trackingService';
 
 export type ThemeId = 
-  | 'steel-navy'
-  | 'matrix-lime'
-  | 'sunset-coral'
-  | 'aurora-jade'
-  | 'royal-gold'
-  | 'cyber-indigo'
-  | 'pure-white'
-  | 'cyber-emerald';
+  | 'light'
+  | 'dark'
+  | 'pure-white';
 
 export const THEME_BG_MAP: Record<string, string> = {
-  'steel-navy': '#0b1a30',
-  'matrix-lime': '#111612',
-  'sunset-coral': '#1c0b29',
-  'aurora-jade': '#051f15',
-  'royal-gold': '#181107',
-  'cyber-indigo': '#08092d',
+  'light': '#f8fafd',
   'pure-white': '#f8fafd',
-  'cyber-emerald': '#051f15',
+  'dark': '#0b1329',
 };
 
 export const THEME_CYCLE_ORDER: ThemeId[] = [
-  'pure-white',
-  'steel-navy',
-  'matrix-lime',
-  'sunset-coral',
-  'aurora-jade',
-  'royal-gold',
-  'cyber-indigo',
+  'light',
+  'dark',
 ];
 
 export const getThemeDefaultBg = (theme: ThemeId): string => {
-  return THEME_BG_MAP[theme] || '#0b1a30';
+  return THEME_BG_MAP[theme] || '#f8fafd';
 };
 
 interface AppContextType {
@@ -372,47 +357,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('smartdeals_dark_mode');
+    const savedTheme = localStorage.getItem('smartdeals_active_theme');
+    if (savedTheme === 'dark') return true;
+    if (savedTheme === 'light' || savedTheme === 'pure-white') return false;
     if (saved !== null) return saved === 'true';
     return false;
   });
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
     const saved = localStorage.getItem('smartdeals_active_theme') as ThemeId | null;
-    if (saved && (saved in THEME_BG_MAP)) {
-      return saved === 'cyber-emerald' ? 'aurora-jade' : saved;
-    }
-    return 'pure-white';
+    if (saved === 'dark') return 'dark';
+    return 'light';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
-    const savedBg = localStorage.getItem('smartdeals_custom_bg');
-    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'pure-white';
-    // Purge any legacy black background values
-    if (savedBg && savedBg !== '#070709' && savedBg !== '#030a0d' && savedBg !== '#000000' && savedBg !== '#0d0d08') {
-      return savedBg;
-    }
-    return getThemeDefaultBg(savedTheme);
+    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'light';
+    return getThemeDefaultBg(savedTheme === 'dark' ? 'dark' : 'light');
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    localStorage.setItem('smartdeals_active_theme', activeTheme);
-    const bg = getThemeDefaultBg(activeTheme);
+    const themeToApply = activeTheme === 'dark' ? 'dark' : 'light';
+    localStorage.setItem('smartdeals_active_theme', themeToApply);
+    localStorage.setItem('smartdeals_dark_mode', (themeToApply === 'dark').toString());
+    const bg = getThemeDefaultBg(themeToApply);
     if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', activeTheme);
-      document.body.classList.remove(
-        'theme-cyber-neon',
-        'theme-royal-gold',
-        'theme-cyber-emerald',
-        'theme-steel-navy',
-        'theme-matrix-lime',
-        'theme-sunset-coral',
-        'theme-aurora-jade',
-        'theme-cyber-indigo',
-        'theme-pure-white'
-      );
-      document.body.classList.add(`theme-${activeTheme}`);
-      if (activeTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
+      document.documentElement.setAttribute('data-theme', themeToApply);
+      document.body.classList.remove('theme-dark', 'theme-light', 'theme-pure-white');
+      document.body.classList.add(`theme-${themeToApply}`);
+      if (themeToApply === 'light') {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('text-slate-100');
         document.body.classList.add('text-slate-900');
@@ -428,27 +401,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [activeTheme]);
 
   const setActiveTheme = (theme: ThemeId) => {
-    const normalizedTheme = theme === 'cyber-emerald' ? 'aurora-jade' : theme;
+    const normalizedTheme: ThemeId = theme === 'dark' ? 'dark' : 'light';
     setActiveThemeState(normalizedTheme);
+    setIsDarkMode(normalizedTheme === 'dark');
     const bg = getThemeDefaultBg(normalizedTheme);
     setCustomBgState(bg);
     localStorage.setItem('smartdeals_active_theme', normalizedTheme);
+    localStorage.setItem('smartdeals_dark_mode', (normalizedTheme === 'dark').toString());
     localStorage.setItem('smartdeals_custom_bg', bg);
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', normalizedTheme);
-      document.body.classList.remove(
-        'theme-cyber-neon',
-        'theme-royal-gold',
-        'theme-cyber-emerald',
-        'theme-steel-navy',
-        'theme-matrix-lime',
-        'theme-sunset-coral',
-        'theme-aurora-jade',
-        'theme-cyber-indigo',
-        'theme-pure-white'
-      );
+      document.body.classList.remove('theme-dark', 'theme-light', 'theme-pure-white');
       document.body.classList.add(`theme-${normalizedTheme}`);
-      if (normalizedTheme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
+      if (normalizedTheme === 'light') {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('text-slate-100');
         document.body.classList.add('text-slate-900');
@@ -464,9 +429,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const toggleTheme = () => {
-    const currentIndex = THEME_CYCLE_ORDER.indexOf(activeTheme);
-    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % THEME_CYCLE_ORDER.length;
-    setActiveTheme(THEME_CYCLE_ORDER[nextIndex]);
+    const nextTheme: ThemeId = (activeTheme === 'dark') ? 'light' : 'dark';
+    setActiveTheme(nextTheme);
   };
 
   useEffect(() => {
@@ -476,12 +440,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         document.documentElement.style.setProperty('--smartdeal-bg', customBg);
         document.body.style.backgroundColor = customBg;
         document.documentElement.style.backgroundColor = customBg;
-        const lower = customBg.toLowerCase();
-        if (lower === '#ffffff' || lower === '#f8fafd' || lower === '#f8fafc' || lower === '#faf7f2') {
-          document.documentElement.classList.remove('dark');
-          document.body.classList.remove('text-slate-100');
-          document.body.classList.add('text-slate-900');
-        }
       }
     }
   }, [customBg]);
@@ -495,39 +453,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       document.documentElement.style.backgroundColor = color;
     }
     const lower = color.toLowerCase();
-    if (lower === '#0b1a30' || lower === '#112240') {
-      setActiveThemeState('steel-navy');
-      localStorage.setItem('smartdeals_active_theme', 'steel-navy');
-      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'steel-navy');
-    } else if (lower === '#111612' || lower === '#172219') {
-      setActiveThemeState('matrix-lime');
-      localStorage.setItem('smartdeals_active_theme', 'matrix-lime');
-      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'matrix-lime');
-    } else if (lower === '#1c0b29' || lower === '#28113b') {
-      setActiveThemeState('sunset-coral');
-      localStorage.setItem('smartdeals_active_theme', 'sunset-coral');
-      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'sunset-coral');
-    } else if (lower === '#051f15' || lower === '#092e20' || lower === '#031926') {
-      setActiveThemeState('aurora-jade');
-      localStorage.setItem('smartdeals_active_theme', 'aurora-jade');
-      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'aurora-jade');
-    } else if (lower === '#181107' || lower === '#241a0b' || lower === '#070709') {
-      setActiveThemeState('royal-gold');
-      localStorage.setItem('smartdeals_active_theme', 'royal-gold');
-      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'royal-gold');
-    } else if (lower === '#08092d' || lower === '#0f1248') {
-      setActiveThemeState('cyber-indigo');
-      localStorage.setItem('smartdeals_active_theme', 'cyber-indigo');
-      if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', 'cyber-indigo');
-    } else if (lower === '#f8fafd' || lower === '#ffffff' || lower === '#f8fafc' || lower === '#faf7f2') {
-      setActiveThemeState('pure-white');
-      localStorage.setItem('smartdeals_active_theme', 'pure-white');
-      if (typeof document !== 'undefined') {
-        document.documentElement.setAttribute('data-theme', 'pure-white');
-        document.documentElement.classList.remove('dark');
-        document.body.classList.remove('text-slate-100');
-        document.body.classList.add('text-slate-900');
-      }
+    if (lower === '#0b1329' || lower === '#0b1a30' || lower === '#112240') {
+      setActiveTheme('dark');
+    } else {
+      setActiveTheme('light');
     }
   };
 
@@ -536,18 +465,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCustomBgState(defaultColor);
   };
 
-  useEffect(() => {
-    localStorage.setItem('smartdeals_dark_mode', isDarkMode.toString());
-    if (typeof document !== 'undefined') {
-      if (isDarkMode && activeTheme !== 'pure-white' && customBg !== '#f8fafd' && customBg !== '#ffffff') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-  }, [isDarkMode, activeTheme, customBg]);
-
-  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
+  const toggleDarkMode = () => {
+    toggleTheme();
+  };
 
   // Sync to localStorage
   useEffect(() => {

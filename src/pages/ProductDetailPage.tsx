@@ -37,127 +37,21 @@ import {
   Tooltip
 } from 'recharts';
 
-const THEME_STYLES: Record<string, {
-  cardBg: string;
-  cardBorder: string;
-  badgeBg: string;
-  badgeText: string;
-  accentText: string;
-  pricingBg: string;
-  pricingBorder: string;
-  thumbActiveBorder: string;
-  thumbInactiveBg: string;
-  iconText: string;
-  mobileBg: string;
-  mobileBorder: string;
-  buyButton: string;
-}> = {
-  'steel-navy': {
-    cardBg: 'bg-[#112240]',
-    cardBorder: 'border-sky-800/60',
-    badgeBg: 'bg-sky-400',
-    badgeText: 'bg-sky-500/20 text-sky-300 border-sky-400/40',
-    accentText: 'text-sky-400',
-    pricingBg: 'bg-[#0c182b]',
-    pricingBorder: 'border-sky-900/60',
-    thumbActiveBorder: 'border-sky-400',
-    thumbInactiveBg: 'border-sky-900 bg-[#0f1d35]',
-    iconText: 'text-sky-400',
-    mobileBg: 'dark:bg-[#0b1a30]/95',
-    mobileBorder: 'dark:border-sky-800/80',
-    buyButton: 'bg-gradient-to-r from-sky-500 via-blue-500 to-sky-600 text-white shadow-sky-500/20'
-  },
-  'matrix-lime': {
-    cardBg: 'bg-[#172219]',
-    cardBorder: 'border-lime-800/60',
-    badgeBg: 'bg-lime-400',
-    badgeText: 'bg-lime-500/20 text-lime-300 border-lime-400/40',
-    accentText: 'text-lime-400',
-    pricingBg: 'bg-[#0e140f]',
-    pricingBorder: 'border-lime-900/60',
-    thumbActiveBorder: 'border-lime-400',
-    thumbInactiveBg: 'border-lime-900 bg-[#141d16]',
-    iconText: 'text-lime-400',
-    mobileBg: 'dark:bg-[#111612]/95',
-    mobileBorder: 'dark:border-lime-800/80',
-    buyButton: 'bg-gradient-to-r from-lime-400 via-lime-500 to-emerald-500 text-slate-950 shadow-lime-500/20'
-  },
-  'sunset-coral': {
-    cardBg: 'bg-[#28113b]',
-    cardBorder: 'border-rose-900/60',
-    badgeBg: 'bg-rose-400',
-    badgeText: 'bg-rose-500/20 text-rose-300 border-rose-400/40',
-    accentText: 'text-rose-400',
-    pricingBg: 'bg-[#160822]',
-    pricingBorder: 'border-rose-950/70',
-    thumbActiveBorder: 'border-rose-400',
-    thumbInactiveBg: 'border-rose-900 bg-[#200d30]',
-    iconText: 'text-rose-400',
-    mobileBg: 'dark:bg-[#1c0b29]/95',
-    mobileBorder: 'dark:border-rose-900/80',
-    buyButton: 'bg-gradient-to-r from-orange-500 via-rose-500 to-pink-600 text-white shadow-rose-500/20'
-  },
-  'aurora-jade': {
-    cardBg: 'bg-[#092e20]',
-    cardBorder: 'border-emerald-800/60',
-    badgeBg: 'bg-emerald-400',
-    badgeText: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40',
-    accentText: 'text-emerald-400',
-    pricingBg: 'bg-[#041710]',
-    pricingBorder: 'border-emerald-950/70',
-    thumbActiveBorder: 'border-emerald-400',
-    thumbInactiveBg: 'border-emerald-900 bg-[#072419]',
-    iconText: 'text-emerald-400',
-    mobileBg: 'dark:bg-[#051f15]/95',
-    mobileBorder: 'dark:border-emerald-800/80',
-    buyButton: 'bg-gradient-to-r from-emerald-500 via-green-400 to-teal-500 text-slate-950 shadow-emerald-500/20'
-  },
-  'royal-gold': {
-    cardBg: 'bg-[#241a0b]',
-    cardBorder: 'border-amber-900/60',
-    badgeBg: 'bg-amber-400',
-    badgeText: 'bg-amber-400/20 text-amber-300 border-amber-400/40',
-    accentText: 'text-amber-400',
-    pricingBg: 'bg-[#0c0c09]',
-    pricingBorder: 'border-amber-950/70',
-    thumbActiveBorder: 'border-amber-400',
-    thumbInactiveBg: 'border-amber-900 bg-[#1c1408]',
-    iconText: 'text-amber-400',
-    mobileBg: 'dark:bg-[#181107]/95',
-    mobileBorder: 'dark:border-amber-900/80',
-    buyButton: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-amber-500/20'
-  },
-  'cyber-indigo': {
-    cardBg: 'bg-[#0f1248]',
-    cardBorder: 'border-indigo-800/60',
-    badgeBg: 'bg-violet-400',
-    badgeText: 'bg-violet-500/20 text-violet-300 border-violet-400/40',
-    accentText: 'text-violet-400',
-    pricingBg: 'bg-[#060721]',
-    pricingBorder: 'border-indigo-950/70',
-    thumbActiveBorder: 'border-violet-400',
-    thumbInactiveBg: 'border-indigo-900 bg-[#0d103d]',
-    iconText: 'text-violet-400',
-    mobileBg: 'dark:bg-[#08092d]/95',
-    mobileBorder: 'dark:border-indigo-900/80',
-    buyButton: 'bg-gradient-to-r from-violet-600 via-indigo-500 to-purple-600 text-white shadow-indigo-500/20'
-  },
-  'pure-white': {
-    cardBg: 'bg-white',
-    cardBorder: 'border-slate-200/80',
-    badgeBg: 'bg-blue-600',
-    badgeText: 'bg-blue-50 text-blue-700 border-blue-200',
-    accentText: 'text-blue-600',
-    pricingBg: 'bg-slate-50',
-    pricingBorder: 'border-slate-200/80',
-    thumbActiveBorder: 'border-blue-600',
-    thumbInactiveBg: 'border-slate-200 bg-white',
-    iconText: 'text-blue-600',
-    mobileBg: 'bg-white/95',
-    mobileBorder: 'border-slate-200',
-    buyButton: 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20 font-extrabold'
-  }
-};
+const getProductDetailTheme = (isDarkMode: boolean) => ({
+  cardBg: isDarkMode ? 'bg-[#111d38]' : 'bg-white',
+  cardBorder: isDarkMode ? 'border-slate-800' : 'border-slate-200/80',
+  badgeBg: 'bg-blue-600',
+  badgeText: isDarkMode ? 'bg-blue-950/60 text-blue-300 border-blue-800' : 'bg-blue-50 text-blue-700 border-blue-200',
+  accentText: isDarkMode ? 'text-blue-400' : 'text-blue-600',
+  pricingBg: isDarkMode ? 'bg-[#0f172a]' : 'bg-slate-50',
+  pricingBorder: isDarkMode ? 'border-slate-800' : 'border-slate-200/80',
+  thumbActiveBorder: 'border-blue-600',
+  thumbInactiveBg: isDarkMode ? 'border-slate-800 bg-[#162544]' : 'border-slate-200 bg-white',
+  iconText: isDarkMode ? 'text-blue-400' : 'text-blue-600',
+  mobileBg: isDarkMode ? 'bg-[#0b1329]/95' : 'bg-white/95',
+  mobileBorder: isDarkMode ? 'border-slate-800' : 'border-slate-200',
+  buyButton: 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20 font-extrabold'
+});
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -167,7 +61,7 @@ export const ProductDetailPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const { products, addToCart, wishlist, toggleWishlist, trackActivity, trackOutboundClick, activeTheme } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist, trackActivity, trackOutboundClick, activeTheme, isDarkMode } = useApp();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -176,7 +70,7 @@ export const ProductDetailPage: React.FC = () => {
     }
   }, [id, navigate]);
 
-  const themeStyle = THEME_STYLES[activeTheme] || THEME_STYLES['steel-navy'];
+  const themeStyle = getProductDetailTheme(isDarkMode);
 
   const product = products.find(p => p.id === id) || products[0];
   const [activeImage, setActiveImage] = useState(product.image);

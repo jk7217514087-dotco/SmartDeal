@@ -107,11 +107,7 @@ export const ProductFullDetailsSection: React.FC<Props> = ({ product, onClose, i
   const images = product.images && product.images.length > 0 ? product.images : [product.image];
 
   return (
-    <div id="all-details" className={`w-full rounded-3xl border shadow-sm overflow-hidden transition-all ${
-      activeTheme === 'royal-gold'
-        ? 'bg-white dark:bg-[#241a0b] border-slate-200 dark:border-amber-900/60'
-        : 'bg-white dark:bg-[#062537] border-slate-200 dark:border-teal-900/60'
-    }`}>
+    <div id="all-details" className="w-full rounded-3xl border shadow-sm overflow-hidden transition-all bg-white dark:bg-[#111d38] border-slate-200/90 dark:border-slate-800">
       {/* Header matching Flipkart screenshot: 'All details' with collapse/expand arrow */}
       <div 
         onClick={() => setIsExpanded(!isExpanded)}
@@ -144,11 +140,7 @@ export const ProductFullDetailsSection: React.FC<Props> = ({ product, onClose, i
           {/* =================================================================== */}
           {/* 1. LIVE COMPANY / STORE SELECTOR HEADER (Flipkart, Amazon, Croma...) */}
           {/* =================================================================== */}
-          <div className={`p-4 rounded-2xl border space-y-3 ${
-            activeTheme === 'royal-gold'
-              ? 'bg-slate-50 dark:bg-[#1f1609] border-slate-200 dark:border-amber-900/50'
-              : 'bg-slate-50 dark:bg-[#052233] border-slate-200 dark:border-teal-900/50'
-          }`}>
+          <div className="p-4 rounded-2xl border space-y-3 bg-slate-50 dark:bg-[#162544] border-slate-200 dark:border-slate-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Store className="w-4 h-4 text-brand-600 dark:text-brand-400" />
@@ -216,11 +208,7 @@ export const ProductFullDetailsSection: React.FC<Props> = ({ product, onClose, i
           {/* =================================================================== */}
           {/* 2. DYNAMIC LIVE STORE PROFILE BANNER (Seller, Bank Offers, Delivery) */}
           {/* =================================================================== */}
-          <div className={`p-4 rounded-2xl border shadow-xs space-y-3.5 ${
-            activeTheme === 'royal-gold'
-              ? 'bg-white dark:bg-[#2b1f0d] border-slate-200 dark:border-amber-900/40'
-              : 'bg-white dark:bg-[#082e44] border-slate-200 dark:border-teal-900/40'
-          }`}>
+          <div className="p-4 rounded-2xl border shadow-xs space-y-3.5 bg-white dark:bg-[#162544] border-slate-200 dark:border-slate-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-3">
               <div className="flex items-center gap-2.5">
                 <span className="text-xl">{activeStore.storeLogo}</span>

@@ -36,212 +36,10 @@ import {
   LogOut,
   CheckCircle2,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Home,
+  TrendingDown
 } from 'lucide-react';
-
-interface NavbarThemeConfig {
-  headerBg: string;
-  topBannerBg: string;
-  smartGuaranteeBadge: string;
-  smsButton: string;
-  logoIcon: string;
-  logoTextGradient: string;
-  proBadge: string;
-  searchInput: string;
-  searchBtn: string;
-  searchPopup: string;
-  aiBtn: string;
-  aiIcon: string;
-  appBtn: string;
-  themeToggleBtn: string;
-  themeIcon: string;
-  cartBtn: string;
-  cartCountBadge: string;
-  categoriesNavBg: string;
-  allCategoriesLink: string;
-  compareStoresLink: string;
-  guestShopperCard: string;
-  guestDot: string;
-  tooltipText: string;
-}
-
-const NAVBAR_THEMES: Record<string, NavbarThemeConfig> = {
-  'steel-navy': {
-    headerBg: 'dark:bg-[#0b1a30]/95 dark:border-sky-900/60',
-    topBannerBg: 'bg-gradient-to-r from-[#0b1a30] via-[#102747] to-[#14325c] text-sky-100 border-sky-900/40',
-    smartGuaranteeBadge: 'bg-sky-500/20 text-sky-300 border-sky-500/40',
-    smsButton: 'bg-gradient-to-r from-sky-600/30 via-blue-600/30 to-sky-700/30 hover:from-sky-600 hover:to-blue-600 border-sky-400/50 text-sky-200',
-    logoIcon: 'bg-gradient-to-tr from-sky-400 via-sky-500 to-blue-600 text-slate-950 shadow-lg shadow-sky-500/30',
-    logoTextGradient: 'bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent',
-    proBadge: 'bg-sky-400/20 text-sky-300 border-sky-400/50',
-    searchInput: 'bg-slate-100/90 dark:bg-[#071324] border-slate-200/80 dark:border-sky-950/80 focus:bg-white dark:focus:bg-[#0d1d36] focus:border-sky-400 focus:ring-4 focus:ring-sky-400/20',
-    searchBtn: 'bg-gradient-to-r from-sky-400 via-sky-300 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-slate-950 shadow-sky-500/30 font-black',
-    searchPopup: 'bg-white dark:bg-[#0b1a30] border-sky-950/80',
-    aiBtn: 'bg-sky-950/60 border-sky-500/50 text-sky-300 hover:border-sky-400 hover:text-white hover:shadow-sky-500/25',
-    aiIcon: 'text-sky-400',
-    appBtn: 'bg-sky-950/50 hover:bg-sky-900/50 border-sky-800/80 text-sky-300',
-    themeToggleBtn: 'bg-sky-950/70 border-sky-400/70 text-sky-300 hover:bg-sky-900/70 shadow-sky-500/30',
-    themeIcon: 'text-sky-300',
-    cartBtn: 'bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500 text-slate-950 font-black shadow-sky-500/30',
-    cartCountBadge: 'bg-slate-950 text-sky-300',
-    categoriesNavBg: 'border-sky-900/60 bg-slate-50/80 dark:bg-[#0e223f]/95',
-    allCategoriesLink: 'text-sky-300 hover:text-sky-200',
-    compareStoresLink: 'text-sky-300',
-    guestShopperCard: 'bg-[#112240] border-sky-500/40 text-sky-200 shadow-xs',
-    guestDot: 'bg-sky-400',
-    tooltipText: 'Active: Steel Oceanic Navy. Click to switch themes',
-  },
-  'matrix-lime': {
-    headerBg: 'dark:bg-[#111612]/95 dark:border-lime-900/60',
-    topBannerBg: 'bg-gradient-to-r from-[#111612] via-[#18241b] to-[#213325] text-lime-100 border-lime-900/40',
-    smartGuaranteeBadge: 'bg-lime-500/20 text-lime-300 border-lime-500/40',
-    smsButton: 'bg-gradient-to-r from-lime-600/30 via-green-600/30 to-lime-700/30 hover:from-lime-600 hover:to-green-600 border-lime-400/50 text-lime-200',
-    logoIcon: 'bg-gradient-to-tr from-[#bef264] via-[#a3e635] to-[#84cc16] text-slate-950 shadow-lg shadow-lime-500/30',
-    logoTextGradient: 'bg-gradient-to-r from-lime-300 via-lime-400 to-green-400 bg-clip-text text-transparent',
-    proBadge: 'bg-lime-400/20 text-lime-300 border-lime-400/50',
-    searchInput: 'bg-slate-100/90 dark:bg-[#0b0e0c] border-slate-200/80 dark:border-lime-950/80 focus:bg-white dark:focus:bg-[#151c16] focus:border-lime-400 focus:ring-4 focus:ring-lime-400/20',
-    searchBtn: 'bg-gradient-to-r from-[#bef264] via-[#a3e635] to-[#84cc16] hover:from-[#d9f99d] hover:to-[#a3e635] text-slate-950 shadow-lime-500/30 font-black',
-    searchPopup: 'bg-white dark:bg-[#111612] border-lime-950/80',
-    aiBtn: 'bg-lime-950/60 border-lime-500/50 text-lime-300 hover:border-lime-400 hover:text-white hover:shadow-lime-500/25',
-    aiIcon: 'text-lime-400',
-    appBtn: 'bg-lime-950/50 hover:bg-lime-900/50 border-lime-800/80 text-lime-300',
-    themeToggleBtn: 'bg-lime-950/70 border-lime-400/70 text-lime-300 hover:bg-lime-900/70 shadow-lime-500/30',
-    themeIcon: 'text-lime-300',
-    cartBtn: 'bg-gradient-to-r from-[#bef264] via-[#a3e635] to-[#84cc16] text-slate-950 font-black shadow-lime-500/30',
-    cartCountBadge: 'bg-slate-950 text-lime-300',
-    categoriesNavBg: 'border-lime-900/60 bg-slate-50/80 dark:bg-[#18241b]/95',
-    allCategoriesLink: 'text-lime-300 hover:text-lime-200',
-    compareStoresLink: 'text-lime-300',
-    guestShopperCard: 'bg-[#172219] border-lime-500/40 text-lime-200 shadow-xs',
-    guestDot: 'bg-lime-400',
-    tooltipText: 'Active: Cyber Matrix Lime. Click to switch themes',
-  },
-  'sunset-coral': {
-    headerBg: 'dark:bg-[#1c0b29]/95 dark:border-rose-900/60',
-    topBannerBg: 'bg-gradient-to-r from-[#1c0b29] via-[#29103c] to-[#3a1555] text-rose-100 border-rose-900/40',
-    smartGuaranteeBadge: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
-    smsButton: 'bg-gradient-to-r from-orange-600/30 via-rose-600/30 to-pink-700/30 hover:from-orange-600 hover:to-rose-600 border-rose-400/50 text-rose-200',
-    logoIcon: 'bg-gradient-to-tr from-orange-400 via-rose-500 to-pink-600 text-white shadow-lg shadow-rose-500/30',
-    logoTextGradient: 'bg-gradient-to-r from-rose-400 via-pink-300 to-orange-400 bg-clip-text text-transparent',
-    proBadge: 'bg-rose-400/20 text-rose-300 border-rose-400/50',
-    searchInput: 'bg-slate-100/90 dark:bg-[#14061e] border-slate-200/80 dark:border-rose-950/80 focus:bg-white dark:focus:bg-[#250d37] focus:border-rose-400 focus:ring-4 focus:ring-rose-400/20',
-    searchBtn: 'bg-gradient-to-r from-orange-400 via-rose-400 to-pink-500 hover:from-orange-300 hover:to-pink-400 text-white shadow-rose-500/30 font-black',
-    searchPopup: 'bg-white dark:bg-[#1c0b29] border-rose-950/80',
-    aiBtn: 'bg-rose-950/60 border-rose-500/50 text-rose-300 hover:border-rose-400 hover:text-white hover:shadow-rose-500/25',
-    aiIcon: 'text-rose-400',
-    appBtn: 'bg-rose-950/50 hover:bg-rose-900/50 border-rose-800/80 text-rose-300',
-    themeToggleBtn: 'bg-rose-950/70 border-rose-400/70 text-rose-300 hover:bg-rose-900/70 shadow-rose-500/30',
-    themeIcon: 'text-rose-300',
-    cartBtn: 'bg-gradient-to-r from-orange-400 via-rose-500 to-pink-500 text-white font-black shadow-rose-500/30',
-    cartCountBadge: 'bg-slate-950 text-rose-300',
-    categoriesNavBg: 'border-rose-900/60 bg-slate-50/80 dark:bg-[#28113b]/95',
-    allCategoriesLink: 'text-rose-300 hover:text-rose-200',
-    compareStoresLink: 'text-rose-300',
-    guestShopperCard: 'bg-[#28113b] border-rose-500/40 text-rose-200 shadow-xs',
-    guestDot: 'bg-rose-400',
-    tooltipText: 'Active: Cosmic Sunset Coral. Click to switch themes',
-  },
-  'aurora-jade': {
-    headerBg: 'dark:bg-[#051f15]/95 dark:border-emerald-900/60',
-    topBannerBg: 'bg-gradient-to-r from-[#051f15] via-[#082d1f] to-[#0c3e2b] text-emerald-100 border-emerald-900/40',
-    smartGuaranteeBadge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-    smsButton: 'bg-gradient-to-r from-emerald-600/30 via-green-600/30 to-teal-700/30 hover:from-emerald-600 hover:to-teal-600 border-emerald-400/50 text-emerald-200',
-    logoIcon: 'bg-gradient-to-tr from-emerald-400 via-green-400 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/30',
-    logoTextGradient: 'bg-gradient-to-r from-emerald-300 via-teal-300 to-green-400 bg-clip-text text-transparent',
-    proBadge: 'bg-emerald-400/20 text-emerald-300 border-emerald-400/50',
-    searchInput: 'bg-slate-100/90 dark:bg-[#03150e] border-slate-200/80 dark:border-emerald-950/80 focus:bg-white dark:focus:bg-[#082c1e] focus:border-emerald-400 focus:ring-4 focus:ring-emerald-400/20',
-    searchBtn: 'bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 shadow-emerald-500/30 font-black',
-    searchPopup: 'bg-white dark:bg-[#051f15] border-emerald-950/80',
-    aiBtn: 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300 hover:border-emerald-400 hover:text-white hover:shadow-emerald-500/25',
-    aiIcon: 'text-emerald-400',
-    appBtn: 'bg-emerald-950/50 hover:bg-emerald-900/50 border-emerald-800/80 text-emerald-300',
-    themeToggleBtn: 'bg-emerald-950/70 border-emerald-400/70 text-emerald-300 hover:bg-emerald-900/70 shadow-emerald-500/30',
-    themeIcon: 'text-emerald-300',
-    cartBtn: 'bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 text-slate-950 font-black shadow-emerald-500/30',
-    cartCountBadge: 'bg-slate-950 text-emerald-300',
-    categoriesNavBg: 'border-emerald-900/60 bg-slate-50/80 dark:bg-[#092e20]/95',
-    allCategoriesLink: 'text-emerald-300 hover:text-emerald-200',
-    compareStoresLink: 'text-emerald-300',
-    guestShopperCard: 'bg-[#092e20] border-emerald-500/40 text-emerald-200 shadow-xs',
-    guestDot: 'bg-emerald-400',
-    tooltipText: 'Active: Aurora Emerald Jade. Click to switch themes',
-  },
-  'royal-gold': {
-    headerBg: 'dark:bg-[#181107]/95 dark:border-amber-900/60',
-    topBannerBg: 'bg-gradient-to-r from-[#181107] via-[#241a0b] to-[#2c1f0d] text-amber-100 border-amber-900/40',
-    smartGuaranteeBadge: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
-    smsButton: 'bg-gradient-to-r from-amber-600/30 via-yellow-600/30 to-amber-700/30 hover:from-amber-600 hover:to-yellow-600 border-amber-400/50 text-amber-200',
-    logoIcon: 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/30',
-    logoTextGradient: 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent',
-    proBadge: 'bg-amber-400/20 text-amber-300 border-amber-400/50',
-    searchInput: 'bg-slate-100/90 dark:bg-[#0d0d08] border-slate-200/80 dark:border-amber-950/80 focus:bg-white dark:focus:bg-[#141208] focus:border-amber-400 focus:ring-4 focus:ring-amber-400/20',
-    searchBtn: 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-slate-950 shadow-amber-500/30 font-black',
-    searchPopup: 'bg-white dark:bg-[#181107] border-amber-950/80',
-    aiBtn: 'bg-amber-400/15 border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/25',
-    aiIcon: 'text-amber-400',
-    appBtn: 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-400/40 text-amber-200',
-    themeToggleBtn: 'bg-amber-400/20 border-amber-400 text-amber-300 hover:bg-amber-400/30 shadow-amber-500/25',
-    themeIcon: 'text-amber-400',
-    cartBtn: 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 font-black shadow-amber-500/30',
-    cartCountBadge: 'bg-slate-950 text-amber-300',
-    categoriesNavBg: 'border-amber-900/60 bg-slate-50/80 dark:bg-[#1f1609]/95',
-    allCategoriesLink: 'text-amber-400 hover:text-amber-300',
-    compareStoresLink: 'text-amber-300',
-    guestShopperCard: 'bg-[#241a0b] border-amber-500/40 text-amber-200 shadow-xs',
-    guestDot: 'bg-amber-400',
-    tooltipText: 'Active: Royal Obsidian Gold. Click to switch themes',
-  },
-  'cyber-indigo': {
-    headerBg: 'dark:bg-[#08092d]/95 dark:border-violet-900/60',
-    topBannerBg: 'bg-gradient-to-r from-[#08092d] via-[#101348] to-[#161a60] text-violet-100 border-violet-900/40',
-    smartGuaranteeBadge: 'bg-violet-500/20 text-violet-300 border-violet-500/40',
-    smsButton: 'bg-gradient-to-r from-violet-600/30 via-purple-600/30 to-indigo-700/30 hover:from-violet-600 hover:to-indigo-600 border-violet-400/50 text-violet-200',
-    logoIcon: 'bg-gradient-to-tr from-violet-500 via-purple-400 to-indigo-600 text-white shadow-lg shadow-violet-500/30',
-    logoTextGradient: 'bg-gradient-to-r from-violet-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent',
-    proBadge: 'bg-violet-400/20 text-violet-300 border-violet-400/50',
-    searchInput: 'bg-slate-100/90 dark:bg-[#070826] border-slate-200/80 dark:border-violet-950/80 focus:bg-white dark:focus:bg-[#0e1044] focus:border-violet-400 focus:ring-4 focus:ring-violet-400/20',
-    searchBtn: 'bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 hover:from-violet-400 hover:to-indigo-400 text-white shadow-violet-500/30 font-black',
-    searchPopup: 'bg-white dark:bg-[#08092d] border-violet-950/80',
-    aiBtn: 'bg-violet-950/60 border-violet-500/50 text-violet-300 hover:border-violet-400 hover:text-white hover:shadow-violet-500/25',
-    aiIcon: 'text-violet-400',
-    appBtn: 'bg-violet-950/50 hover:bg-violet-900/50 border-violet-800/80 text-violet-300',
-    themeToggleBtn: 'bg-violet-950/70 border-violet-400/70 text-violet-300 hover:bg-violet-900/70 shadow-violet-500/30',
-    themeIcon: 'text-violet-300',
-    cartBtn: 'bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 text-white font-black shadow-violet-500/30',
-    cartCountBadge: 'bg-slate-950 text-violet-300',
-    categoriesNavBg: 'border-violet-900/60 bg-slate-50/80 dark:bg-[#0f1248]/95',
-    allCategoriesLink: 'text-violet-300 hover:text-violet-200',
-    compareStoresLink: 'text-violet-300',
-    guestShopperCard: 'bg-[#0f1248] border-violet-500/40 text-violet-200 shadow-xs',
-    guestDot: 'bg-violet-400',
-    tooltipText: 'Active: Cyber Cosmic Indigo. Click to switch themes',
-  },
-  'pure-white': {
-    headerBg: 'bg-white/95 border-slate-200/90 shadow-xs text-slate-900',
-    topBannerBg: 'bg-gradient-to-r from-blue-50 via-white to-sky-50 text-blue-900 border-blue-100',
-    smartGuaranteeBadge: 'bg-blue-100/70 text-blue-700 border-blue-200',
-    smsButton: 'bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700 font-bold',
-    logoIcon: 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25',
-    logoTextGradient: 'bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent',
-    proBadge: 'bg-blue-100 text-blue-700 border-blue-300',
-    searchInput: 'bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15',
-    searchBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-extrabold',
-    searchPopup: 'bg-white border-slate-200 text-slate-900 shadow-xl',
-    aiBtn: 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100',
-    aiIcon: 'text-blue-600',
-    appBtn: 'bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 font-bold',
-    themeToggleBtn: 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 shadow-xs',
-    themeIcon: 'text-blue-600',
-    cartBtn: 'bg-blue-600 hover:bg-blue-700 text-white font-extrabold shadow-sm',
-    cartCountBadge: 'bg-slate-900 text-white',
-    categoriesNavBg: 'border-slate-200/80 bg-white/95 text-slate-700 shadow-xs',
-    allCategoriesLink: 'text-blue-600 hover:text-blue-700 font-bold',
-    compareStoresLink: 'text-blue-600 font-bold',
-    guestShopperCard: 'bg-slate-50 border-slate-200 text-slate-700 shadow-xs',
-    guestDot: 'bg-blue-600',
-    tooltipText: 'Active: Pure White & Royal Blue. Click to switch themes',
-  },
-};
 
 export const Navbar: React.FC = () => {
   const {
@@ -268,8 +66,26 @@ export const Navbar: React.FC = () => {
     setIsSmsCenterOpen
   } = useApp();
 
-  const themeKey = (activeTheme === 'cyber-emerald' ? 'aurora-jade' : activeTheme) || 'steel-navy';
-  const navTheme = NAVBAR_THEMES[themeKey] || NAVBAR_THEMES['steel-navy'];
+  const navTheme = {
+    headerBg: isDarkMode 
+      ? 'bg-[#0b1329]/95 border-b border-slate-800 text-white' 
+      : 'bg-white/95 border-b border-slate-200/90 text-slate-900 shadow-xs',
+    searchInput: isDarkMode 
+      ? 'bg-slate-800/90 border-slate-700 text-white placeholder:text-slate-400 focus:bg-slate-900 focus:border-blue-500' 
+      : 'bg-slate-100/90 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15',
+    searchBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-extrabold',
+    searchPopup: isDarkMode ? 'bg-[#111d38] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900 shadow-xl',
+    aiBtn: isDarkMode ? 'bg-slate-800 border-slate-700 text-blue-300' : 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100',
+    aiIcon: isDarkMode ? 'text-blue-400' : 'text-blue-600',
+    appBtn: isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200' : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 font-bold',
+    themeToggleBtn: isDarkMode ? 'bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200',
+    themeIcon: isDarkMode ? 'text-amber-400' : 'text-slate-700',
+    cartBtn: 'bg-blue-600 hover:bg-blue-700 text-white font-extrabold shadow-sm',
+    cartCountBadge: 'bg-slate-900 text-white',
+    logoTextGradient: 'text-blue-600',
+    proBadge: isDarkMode ? 'bg-blue-950/80 text-blue-300 border-blue-800' : 'bg-blue-50 text-blue-700 border-blue-200',
+    tooltipText: isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+  };
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -441,7 +257,7 @@ export const Navbar: React.FC = () => {
 
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-lg shadow-brand-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform bg-[#00061e] flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-md shadow-blue-500/20 ring-1 ring-blue-500/20 group-hover:scale-105 transition-transform bg-[#00061e] flex items-center justify-center shrink-0">
               <img
                 src="/smartdeal_icon_mark.png"
                 alt="SmartDeal Logo"
@@ -453,22 +269,88 @@ export const Navbar: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-1">
-                <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white font-sans">
+                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white font-sans">
                   Smart<span className={navTheme.logoTextGradient}>Deal</span>
                 </span>
                 <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
                   PRO
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium hidden sm:block">
                 Compare. Save. Buy Smarter.
               </p>
             </div>
           </Link>
         </div>
 
-        {/* Global Search Bar */}
-        <div className="relative flex-1 max-w-xl mx-2 hidden md:block">
+        {/* Center-Left Navigation Links (Reference Design Section 0) */}
+        <nav className="hidden lg:flex items-center gap-1 shrink-0 text-xs font-bold">
+          <Link
+            to="/"
+            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors ${
+              location.pathname === '/'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-950/60 font-black'
+                : 'text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Home className="w-3.5 h-3.5" />
+            <span>Home</span>
+          </Link>
+          <Link
+            to="/deals"
+            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors ${
+              location.pathname === '/deals'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-950/60 font-black'
+                : 'text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Tag className="w-3.5 h-3.5" />
+            <span>Deals</span>
+          </Link>
+          <Link
+            to="/compare"
+            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors ${
+              location.pathname === '/compare'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-950/60 font-black'
+                : 'text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Compare</span>
+          </Link>
+          <Link
+            to="/price-tracker"
+            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors ${
+              location.pathname === '/price-tracker'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-950/60 font-black'
+                : 'text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <TrendingDown className="w-3.5 h-3.5" />
+            <span>Track Price</span>
+          </Link>
+          <Link
+            to="/wishlist"
+            className={`px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors ${
+              location.pathname === '/wishlist'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-950/60 font-black'
+                : 'text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Heart className="w-3.5 h-3.5" />
+            <span>Wishlist</span>
+          </Link>
+          <button
+            onClick={() => setIsNavDrawerOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl flex items-center gap-1 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+          >
+            <span>More</span>
+            <ChevronDown className="w-3.5 h-3.5" />
+          </button>
+        </nav>
+
+        {/* Global Search Bar (Pill design matching Section 0) */}
+        <div className="relative flex-1 max-w-sm sm:max-w-md mx-2 hidden md:block">
           <form onSubmit={handleSearchSubmit}>
             <div className="relative flex items-center">
               <input
@@ -477,13 +359,13 @@ export const Navbar: React.FC = () => {
                 onChange={e => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                placeholder="Search products, brands, compare prices, or ask AI..."
-                className={`w-full pl-11 pr-24 py-2.5 rounded-2xl border text-sm text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all shadow-inner ${navTheme.searchInput}`}
+                placeholder="Search for products, brands or categories..."
+                className={`w-full pl-10 pr-20 py-2 rounded-full border text-xs sm:text-sm text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all shadow-inner ${navTheme.searchInput}`}
               />
-              <Search className="w-4 h-4 text-slate-400 absolute left-4" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5" />
               <button
                 type="submit"
-                className={`absolute right-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all shadow-md cursor-pointer ${navTheme.searchBtn}`}
+                className={`absolute right-1 px-3 py-1 rounded-full text-xs font-black transition-all shadow-sm cursor-pointer ${navTheme.searchBtn}`}
               >
                 Search
               </button>
@@ -508,7 +390,7 @@ export const Navbar: React.FC = () => {
                       <div>
                         <div className="text-xs font-bold text-slate-800 dark:text-white line-clamp-1">{item.name}</div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                          Lowest: <span className="font-extrabold text-brand-600 dark:text-brand-400">₹{item.sellingPrice.toLocaleString('en-IN')}</span>
+                          Lowest: <span className="font-extrabold text-blue-600 dark:text-blue-400">₹{item.sellingPrice.toLocaleString('en-IN')}</span>
                           {' • '}Deal Score: <span className="font-bold text-emerald-600 dark:text-emerald-400">{item.dealScore}/100</span>
                         </div>
                       </div>
@@ -522,94 +404,78 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* AI Assistant Button */}
           <button
             onClick={() => setIsAiAssistantOpen(true)}
-            className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border font-extrabold text-xs shadow-xs transition-all hover:scale-105 cursor-pointer ${navTheme.aiBtn}`}
+            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border font-extrabold text-xs shadow-xs transition-all hover:scale-105 cursor-pointer ${navTheme.aiBtn}`}
           >
             <Sparkles className={`w-3.5 h-3.5 ${navTheme.aiIcon}`} />
             <span>Ask AI</span>
           </button>
 
-          {/* Download & Install SmartDeal App Button (Circled in User Image on Phone & Laptop) */}
+          {/* Download & Install SmartDeal App Button */}
           <button
             onClick={() => {
               window.dispatchEvent(new CustomEvent('trigger-app-install'));
             }}
-            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl sm:rounded-2xl border font-extrabold text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border font-extrabold text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
             title="Direct Download SmartDeal App on Phone or Laptop"
           >
-            <Download className="w-3.5 h-3.5 text-indigo-400" />
+            <Download className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>App</span>
           </button>
 
-          {/* 1-Click Multi-Color Theme Switcher */}
+          {/* 2-Mode Theme Toggle (Sun / Moon) */}
           <button
             onClick={toggleTheme}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              setIsBgModalOpen(true);
-            }}
-            className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border transition-all hover:scale-110 cursor-pointer shadow-md flex items-center justify-center ${navTheme.themeToggleBtn}`}
+            className={`p-2 rounded-full border transition-all hover:scale-105 cursor-pointer shadow-xs flex items-center justify-center ${navTheme.themeToggleBtn}`}
             title={navTheme.tooltipText}
-            aria-label="Toggle Website Color Theme"
+            aria-label="Toggle Theme Mode (Light / Dark)"
           >
-            <Sun className={`w-4 h-4 sm:w-5 sm:h-5 ${navTheme.themeIcon} animate-pulse`} />
+            {isDarkMode ? (
+              <Sun className="w-4 h-4 text-amber-400 animate-pulse" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700" />
+            )}
           </button>
 
-          {/* Notifications */}
+          {/* Notifications with Red Badge */}
           <Link
             to="/notifications"
-            className="relative p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
             title="Notifications"
           >
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-2 h-2 rounded-full bg-brand-600" />
-          </Link>
-
-          {/* Wishlist */}
-          <Link
-            to="/wishlist"
-            className="relative p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
-            title="Wishlist"
-          >
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
-            {wishlist.length > 0 && (
-              <span className="absolute top-0 right-0 sm:top-1 sm:right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center shadow-sm">
-                {wishlist.length}
-              </span>
-            )}
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700 dark:text-slate-200" />
+            <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center shadow-xs">
+              3
+            </span>
           </Link>
 
           {/* Cart Button */}
           <Link
             to="/cart"
-            className={`hidden sm:flex relative p-2 px-3 rounded-2xl transition-all shadow-md items-center gap-1.5 active:scale-95 ${navTheme.cartBtn}`}
+            className={`hidden xl:flex relative p-2 px-3 rounded-full transition-all shadow-sm items-center gap-1.5 active:scale-95 ${navTheme.cartBtn}`}
             title="Cart"
           >
             <ShoppingCart className="w-4 h-4" />
             <span className="text-xs font-black">Cart</span>
             {cartItemCount > 0 ? (
-              <span className={`w-5 h-5 rounded-full text-[11px] font-black flex items-center justify-center ${navTheme.cartCountBadge}`}>
+              <span className={`w-4 h-4 rounded-full text-[10px] font-black flex items-center justify-center ${navTheme.cartCountBadge}`}>
                 {cartItemCount}
               </span>
-            ) : (
-              <span className={`w-4 h-4 rounded-full text-[10px] font-black flex items-center justify-center ${navTheme.cartCountBadge}`}>
-                1
-              </span>
-            )}
+            ) : null}
           </Link>
 
-          {/* Account Profile Dropdown */}
+          {/* User Profile Avatar / Initial Badge (Circle badge with 'J' or user initial) */}
           <div className="relative">
             <button
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-              className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full bg-slate-900 dark:bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform"
               title="Account & Login"
               aria-label="Account Profile"
             >
-              <User className="w-4 h-4 sm:w-5 sm:h-5" />
+              {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'J'}
             </button>
 
             {/* Mobile Backdrop */}

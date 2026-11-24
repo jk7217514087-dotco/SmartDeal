@@ -106,14 +106,10 @@ export const SmsAlertCenterModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className={`relative w-full max-w-4xl max-h-[92vh] border rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-100 ${
-        activeTheme === 'royal-gold' ? 'bg-[#241a0b] border-amber-900/80' : 'bg-[#062537] border-teal-900/80'
-      }`}>
+      <div className="relative w-full max-w-4xl max-h-[92vh] border rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-100 bg-[#0f172a] border-slate-800">
         
         {/* Top Header */}
-        <div className={`p-4 sm:p-5 border-b flex items-center justify-between gap-4 ${
-          activeTheme === 'royal-gold' ? 'bg-[#2c1f0e] border-amber-900/60' : 'bg-[#082e43] border-teal-900/60'
-        }`}>
+        <div className="p-4 sm:p-5 border-b flex items-center justify-between gap-4 bg-[#1e293b] border-slate-700">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white shadow-md shadow-blue-500/30 flex items-center gap-1">
               <Smartphone className="w-5 h-5 animate-pulse" />
@@ -369,9 +365,7 @@ export const SmsAlertCenterModal: React.FC<Props> = ({ isOpen, onClose }) => {
         )}
 
         {/* Counter Summary Bar */}
-        <div className={`px-5 py-3.5 border-b flex flex-wrap items-center justify-between gap-3 ${
-          activeTheme === 'royal-gold' ? 'bg-[#281c0c] border-amber-900/60' : 'bg-[#062638] border-teal-900/60'
-        }`}>
+        <div className="px-5 py-3.5 border-b flex flex-wrap items-center justify-between gap-3 bg-[#1e293b] border-slate-700">
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <button
               onClick={() => setFilter('ALL')}
@@ -587,9 +581,7 @@ export const SmsAlertCenterModal: React.FC<Props> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Bottom Status Bar */}
-        <div className={`p-3 border-t text-[11px] flex flex-wrap items-center justify-between gap-2 px-5 ${
-          activeTheme === 'royal-gold' ? 'bg-[#281c0c] border-amber-900/60 text-amber-200/80' : 'bg-[#062638] border-teal-900/60 text-teal-200/80'
-        }`}>
+        <div className="p-3 border-t text-[11px] flex flex-wrap items-center justify-between gap-2 px-5 bg-[#0f172a] border-slate-800 text-slate-400">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span>Real-time delivery active: SMS target <strong>+91 {config.ownerPhone || OWNER_PHONE}</strong> & Email target <strong>{config.ownerEmail || OWNER_EMAIL}</strong></span>

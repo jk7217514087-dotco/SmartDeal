@@ -6,174 +6,55 @@
   --smartdeal-bg: #f8fafd;
 }
 
-/* THEME 0: PURE WHITE / CLEAN LIGHT SLATE (Primary Default Theme) */
+/* THEME 1: LIGHT MODE (Clean Modern Aesthetic - "ye wala" Reference Design) */
+html[data-theme="light"],
 html[data-theme="pure-white"],
+body.theme-light,
 body.theme-pure-white,
+[data-theme="light"],
 [data-theme="pure-white"] {
   --smartdeal-bg: #f8fafd;
   color: #0f172a;
 }
+html[data-theme="light"] body,
 html[data-theme="pure-white"] body {
   background-color: #f8fafd !important;
   color: #0f172a !important;
 }
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
 html[data-theme="pure-white"] h1,
 html[data-theme="pure-white"] h2,
-html[data-theme="pure-white"] h3,
-html[data-theme="pure-white"] h4,
-html[data-theme="pure-white"] h5,
-html[data-theme="pure-white"] h6 {
+html[data-theme="pure-white"] h3 {
   color: #090d16 !important;
 }
 
-/* THEME 1: STEEL NAVY (Image 1: #0b1a30) */
-html[data-theme="steel-navy"],
-body.theme-steel-navy,
-[data-theme="steel-navy"] {
-  --smartdeal-bg: #0b1a30;
+/* THEME 2: DARK MODE (Deep Midnight Slate) */
+html[data-theme="dark"],
+html.dark,
+body.theme-dark,
+[data-theme="dark"] {
+  --smartdeal-bg: #0b1329;
+  color: #f8fafc;
 }
-[data-theme="steel-navy"] .dark .dark\:bg-slate-900,
-[data-theme="steel-navy"] .dark\:bg-slate-900,
-body.theme-steel-navy .dark\:bg-slate-900 {
-  background-color: #112240 !important;
-  border-color: rgba(56, 189, 248, 0.35) !important;
+html[data-theme="dark"] body,
+html.dark body {
+  background-color: #0b1329 !important;
+  color: #f8fafc !important;
 }
-[data-theme="steel-navy"] .dark .dark\:bg-slate-800,
-[data-theme="steel-navy"] .dark\:bg-slate-800,
-body.theme-steel-navy .dark\:bg-slate-800 {
-  background-color: #162d50 !important;
+.dark .dark\:bg-slate-900,
+[data-theme="dark"] .dark\:bg-slate-900 {
+  background-color: #111d38 !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
 }
-[data-theme="steel-navy"] .dark .dark\:bg-slate-950,
-[data-theme="steel-navy"] .dark\:bg-slate-950,
-body.theme-steel-navy .dark\:bg-slate-950 {
-  background-color: #0b1a30 !important;
+.dark .dark\:bg-slate-800,
+[data-theme="dark"] .dark\:bg-slate-800 {
+  background-color: #162544 !important;
 }
-
-/* THEME 2: CYBER MATRIX LIME (Image 2: #111612) */
-html[data-theme="matrix-lime"],
-body.theme-matrix-lime,
-[data-theme="matrix-lime"] {
-  --smartdeal-bg: #111612;
-}
-[data-theme="matrix-lime"] .dark .dark\:bg-slate-900,
-[data-theme="matrix-lime"] .dark\:bg-slate-900,
-body.theme-matrix-lime .dark\:bg-slate-900 {
-  background-color: #172219 !important;
-  border-color: rgba(163, 230, 53, 0.35) !important;
-}
-[data-theme="matrix-lime"] .dark .dark\:bg-slate-800,
-[data-theme="matrix-lime"] .dark\:bg-slate-800,
-body.theme-matrix-lime .dark\:bg-slate-800 {
-  background-color: #1f2d22 !important;
-}
-[data-theme="matrix-lime"] .dark .dark\:bg-slate-950,
-[data-theme="matrix-lime"] .dark\:bg-slate-950,
-body.theme-matrix-lime .dark\:bg-slate-950 {
-  background-color: #111612 !important;
-}
-
-/* THEME 3: COSMIC SUNSET CORAL (Image 3: #1c0b29) */
-html[data-theme="sunset-coral"],
-body.theme-sunset-coral,
-[data-theme="sunset-coral"] {
-  --smartdeal-bg: #1c0b29;
-}
-[data-theme="sunset-coral"] .dark .dark\:bg-slate-900,
-[data-theme="sunset-coral"] .dark\:bg-slate-900,
-body.theme-sunset-coral .dark\:bg-slate-900 {
-  background-color: #28113b !important;
-  border-color: rgba(244, 63, 94, 0.35) !important;
-}
-[data-theme="sunset-coral"] .dark .dark\:bg-slate-800,
-[data-theme="sunset-coral"] .dark\:bg-slate-800,
-body.theme-sunset-coral .dark\:bg-slate-800 {
-  background-color: #36164f !important;
-}
-[data-theme="sunset-coral"] .dark .dark\:bg-slate-950,
-[data-theme="sunset-coral"] .dark\:bg-slate-950,
-body.theme-sunset-coral .dark\:bg-slate-950 {
-  background-color: #1c0b29 !important;
-}
-
-/* THEME 4: AURORA EMERALD JADE (Image 4: #051f15) */
-html[data-theme="aurora-jade"],
-body.theme-aurora-jade,
-[data-theme="aurora-jade"],
-html[data-theme="cyber-emerald"],
-body.theme-cyber-emerald,
-[data-theme="cyber-emerald"] {
-  --smartdeal-bg: #051f15;
-}
-[data-theme="aurora-jade"] .dark .dark\:bg-slate-900,
-[data-theme="aurora-jade"] .dark\:bg-slate-900,
-body.theme-aurora-jade .dark\:bg-slate-900,
-[data-theme="cyber-emerald"] .dark .dark\:bg-slate-900,
-[data-theme="cyber-emerald"] .dark\:bg-slate-900,
-body.theme-cyber-emerald .dark\:bg-slate-900 {
-  background-color: #092e20 !important;
-  border-color: rgba(34, 197, 94, 0.35) !important;
-}
-[data-theme="aurora-jade"] .dark .dark\:bg-slate-800,
-[data-theme="aurora-jade"] .dark\:bg-slate-800,
-body.theme-aurora-jade .dark\:bg-slate-800,
-[data-theme="cyber-emerald"] .dark .dark\:bg-slate-800,
-[data-theme="cyber-emerald"] .dark\:bg-slate-800,
-body.theme-cyber-emerald .dark\:bg-slate-800 {
-  background-color: #0e3d2b !important;
-}
-[data-theme="aurora-jade"] .dark .dark\:bg-slate-950,
-[data-theme="aurora-jade"] .dark\:bg-slate-950,
-body.theme-aurora-jade .dark\:bg-slate-950,
-[data-theme="cyber-emerald"] .dark .dark\:bg-slate-950,
-[data-theme="cyber-emerald"] .dark\:bg-slate-950,
-body.theme-cyber-emerald .dark\:bg-slate-950 {
-  background-color: #051f15 !important;
-}
-
-/* THEME 5: ROYAL OBSIDIAN GOLD (Image 5: #181107) */
-html[data-theme="royal-gold"],
-body.theme-royal-gold,
-[data-theme="royal-gold"] {
-  --smartdeal-bg: #181107;
-}
-[data-theme="royal-gold"] .dark .dark\:bg-slate-900,
-[data-theme="royal-gold"] .dark\:bg-slate-900,
-body.theme-royal-gold .dark\:bg-slate-900 {
-  background-color: #241a0b !important;
-  border-color: rgba(245, 158, 11, 0.35) !important;
-}
-[data-theme="royal-gold"] .dark .dark\:bg-slate-800,
-[data-theme="royal-gold"] .dark\:bg-slate-800,
-body.theme-royal-gold .dark\:bg-slate-800 {
-  background-color: #2e200e !important;
-}
-[data-theme="royal-gold"] .dark .dark\:bg-slate-950,
-[data-theme="royal-gold"] .dark\:bg-slate-950,
-body.theme-royal-gold .dark\:bg-slate-950 {
-  background-color: #181107 !important;
-}
-
-/* THEME 6: CYBER COSMIC INDIGO (Image 6: #08092d) */
-html[data-theme="cyber-indigo"],
-body.theme-cyber-indigo,
-[data-theme="cyber-indigo"] {
-  --smartdeal-bg: #08092d;
-}
-[data-theme="cyber-indigo"] .dark .dark\:bg-slate-900,
-[data-theme="cyber-indigo"] .dark\:bg-slate-900,
-body.theme-cyber-indigo .dark\:bg-slate-900 {
-  background-color: #0f1248 !important;
-  border-color: rgba(139, 92, 246, 0.35) !important;
-}
-[data-theme="cyber-indigo"] .dark .dark\:bg-slate-800,
-[data-theme="cyber-indigo"] .dark\:bg-slate-800,
-body.theme-cyber-indigo .dark\:bg-slate-800 {
-  background-color: #171a63 !important;
-}
-[data-theme="cyber-indigo"] .dark .dark\:bg-slate-950,
-[data-theme="cyber-indigo"] .dark\:bg-slate-950,
-body.theme-cyber-indigo .dark\:bg-slate-950 {
-  background-color: #08092d !important;
+.dark .dark\:bg-slate-950,
+[data-theme="dark"] .dark\:bg-slate-950 {
+  background-color: #0b1329 !important;
 }
 
 @layer base {

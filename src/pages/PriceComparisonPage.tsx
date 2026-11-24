@@ -19,166 +19,32 @@ import {
   Layers
 } from 'lucide-react';
 
-const COMPARE_THEMES: Record<string, {
-  cardBg: string;
-  cardBorder: string;
-  bestPriceBg: string;
-  bestPriceBorder: string;
-  bestPriceBadge: string;
-  bestPriceText: string;
-  outsidePriceBg: string;
-  outsidePriceBorder: string;
-  outsidePriceText: string;
-  savingsBg: string;
-  savingsBorder: string;
-  savingsText: string;
-  switcherBg: string;
-  switcherBorder: string;
-  searchIcon: string;
-  selectBg: string;
-  selectBorder: string;
-}> = {
-  'steel-navy': {
-    cardBg: 'bg-[#112240]',
-    cardBorder: 'border-sky-800/60',
-    bestPriceBg: 'bg-gradient-to-br from-sky-950/60 via-[#112240] to-[#112240]',
-    bestPriceBorder: 'border-sky-500/50',
-    bestPriceBadge: 'bg-sky-400 text-slate-950',
-    bestPriceText: 'text-sky-400',
-    outsidePriceBg: 'bg-gradient-to-br from-blue-950/40 via-[#112240] to-[#112240]',
-    outsidePriceBorder: 'border-blue-800/60',
-    outsidePriceText: 'text-sky-300',
-    savingsBg: 'bg-gradient-to-br from-sky-950/40 via-[#112240] to-[#112240]',
-    savingsBorder: 'border-sky-500/40',
-    savingsText: 'text-sky-400',
-    switcherBg: 'bg-[#112240]',
-    switcherBorder: 'border-sky-800/60',
-    searchIcon: 'text-sky-400',
-    selectBg: 'bg-[#0f1d35]',
-    selectBorder: 'border-sky-800/60 focus:border-sky-400'
-  },
-  'matrix-lime': {
-    cardBg: 'bg-[#172219]',
-    cardBorder: 'border-lime-800/60',
-    bestPriceBg: 'bg-gradient-to-br from-lime-950/60 via-[#172219] to-[#172219]',
-    bestPriceBorder: 'border-lime-500/50',
-    bestPriceBadge: 'bg-lime-400 text-slate-950',
-    bestPriceText: 'text-lime-400',
-    outsidePriceBg: 'bg-gradient-to-br from-emerald-950/40 via-[#172219] to-[#172219]',
-    outsidePriceBorder: 'border-lime-800/60',
-    outsidePriceText: 'text-lime-300',
-    savingsBg: 'bg-gradient-to-br from-lime-950/40 via-[#172219] to-[#172219]',
-    savingsBorder: 'border-lime-500/40',
-    savingsText: 'text-lime-400',
-    switcherBg: 'bg-[#172219]',
-    switcherBorder: 'border-lime-800/60',
-    searchIcon: 'text-lime-400',
-    selectBg: 'bg-[#141d16]',
-    selectBorder: 'border-lime-800/60 focus:border-lime-400'
-  },
-  'sunset-coral': {
-    cardBg: 'bg-[#28113b]',
-    cardBorder: 'border-rose-900/60',
-    bestPriceBg: 'bg-gradient-to-br from-rose-950/60 via-[#28113b] to-[#28113b]',
-    bestPriceBorder: 'border-rose-500/50',
-    bestPriceBadge: 'bg-rose-400 text-slate-950',
-    bestPriceText: 'text-rose-400',
-    outsidePriceBg: 'bg-gradient-to-br from-pink-950/40 via-[#28113b] to-[#28113b]',
-    outsidePriceBorder: 'border-rose-800/60',
-    outsidePriceText: 'text-rose-300',
-    savingsBg: 'bg-gradient-to-br from-rose-950/40 via-[#28113b] to-[#28113b]',
-    savingsBorder: 'border-rose-500/40',
-    savingsText: 'text-rose-400',
-    switcherBg: 'bg-[#28113b]',
-    switcherBorder: 'border-rose-900/60',
-    searchIcon: 'text-rose-400',
-    selectBg: 'bg-[#200d30]',
-    selectBorder: 'border-rose-900/60 focus:border-rose-400'
-  },
-  'aurora-jade': {
-    cardBg: 'bg-[#092e20]',
-    cardBorder: 'border-emerald-800/60',
-    bestPriceBg: 'bg-gradient-to-br from-emerald-950/60 via-[#092e20] to-[#092e20]',
-    bestPriceBorder: 'border-emerald-500/50',
-    bestPriceBadge: 'bg-emerald-400 text-slate-950',
-    bestPriceText: 'text-emerald-400',
-    outsidePriceBg: 'bg-gradient-to-br from-teal-950/40 via-[#092e20] to-[#092e20]',
-    outsidePriceBorder: 'border-emerald-800/60',
-    outsidePriceText: 'text-emerald-300',
-    savingsBg: 'bg-gradient-to-br from-emerald-950/40 via-[#092e20] to-[#092e20]',
-    savingsBorder: 'border-emerald-500/40',
-    savingsText: 'text-emerald-400',
-    switcherBg: 'bg-[#092e20]',
-    switcherBorder: 'border-emerald-800/60',
-    searchIcon: 'text-emerald-400',
-    selectBg: 'bg-[#072419]',
-    selectBorder: 'border-emerald-800/60 focus:border-emerald-400'
-  },
-  'royal-gold': {
-    cardBg: 'bg-[#241a0b]',
-    cardBorder: 'border-amber-900/60',
-    bestPriceBg: 'bg-gradient-to-br from-amber-950/60 via-[#241a0b] to-[#241a0b]',
-    bestPriceBorder: 'border-amber-500/50',
-    bestPriceBadge: 'bg-amber-400 text-slate-950',
-    bestPriceText: 'text-amber-400',
-    outsidePriceBg: 'bg-gradient-to-br from-yellow-950/40 via-[#241a0b] to-[#241a0b]',
-    outsidePriceBorder: 'border-amber-900/60',
-    outsidePriceText: 'text-amber-300',
-    savingsBg: 'bg-gradient-to-br from-amber-950/40 via-[#241a0b] to-[#241a0b]',
-    savingsBorder: 'border-amber-500/40',
-    savingsText: 'text-amber-400',
-    switcherBg: 'bg-[#241a0b]',
-    switcherBorder: 'border-amber-900/60',
-    searchIcon: 'text-amber-400',
-    selectBg: 'bg-[#2c1f0e]',
-    selectBorder: 'border-amber-900/60 focus:border-amber-400'
-  },
-  'cyber-indigo': {
-    cardBg: 'bg-[#0f1248]',
-    cardBorder: 'border-indigo-800/60',
-    bestPriceBg: 'bg-gradient-to-br from-indigo-950/60 via-[#0f1248] to-[#0f1248]',
-    bestPriceBorder: 'border-violet-500/50',
-    bestPriceBadge: 'bg-violet-400 text-slate-950',
-    bestPriceText: 'text-violet-400',
-    outsidePriceBg: 'bg-gradient-to-br from-purple-950/40 via-[#0f1248] to-[#0f1248]',
-    outsidePriceBorder: 'border-indigo-800/60',
-    outsidePriceText: 'text-violet-300',
-    savingsBg: 'bg-gradient-to-br from-indigo-950/40 via-[#0f1248] to-[#0f1248]',
-    savingsBorder: 'border-violet-500/40',
-    savingsText: 'text-violet-400',
-    switcherBg: 'bg-[#0f1248]',
-    switcherBorder: 'border-indigo-800/60',
-    searchIcon: 'text-violet-400',
-    selectBg: 'bg-[#0d103d]',
-    selectBorder: 'border-indigo-800/60 focus:border-violet-400'
-  },
-  'pure-white': {
-    cardBg: 'bg-white',
-    cardBorder: 'border-slate-200/80',
-    bestPriceBg: 'bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/50',
-    bestPriceBorder: 'border-indigo-300',
-    bestPriceBadge: 'bg-indigo-600 text-white',
-    bestPriceText: 'text-indigo-600',
-    outsidePriceBg: 'bg-white',
-    outsidePriceBorder: 'border-slate-200/80',
-    outsidePriceText: 'text-slate-600',
-    savingsBg: 'bg-gradient-to-br from-indigo-50/50 via-white to-white',
-    savingsBorder: 'border-indigo-200',
-    savingsText: 'text-indigo-600',
-    switcherBg: 'bg-white',
-    switcherBorder: 'border-slate-200/80',
-    searchIcon: 'text-indigo-600',
-    selectBg: 'bg-slate-50',
-    selectBorder: 'border-slate-200 focus:border-indigo-500'
-  }
-};
+const getCompareTheme = (isDarkMode: boolean) => ({
+  cardBg: isDarkMode ? 'bg-[#111d38]' : 'bg-white',
+  cardBorder: isDarkMode ? 'border-slate-800' : 'border-slate-200/90',
+  bestPriceBg: isDarkMode ? 'bg-gradient-to-br from-blue-950/60 via-[#111d38] to-[#111d38]' : 'bg-gradient-to-br from-blue-50/70 via-white to-indigo-50/50',
+  bestPriceBorder: isDarkMode ? 'border-blue-500/50' : 'border-blue-200',
+  bestPriceBadge: 'bg-blue-600 text-white',
+  bestPriceText: isDarkMode ? 'text-blue-400' : 'text-blue-600',
+  outsidePriceBg: isDarkMode ? 'bg-[#162544]' : 'bg-white',
+  outsidePriceBorder: isDarkMode ? 'border-slate-800' : 'border-slate-200/80',
+  outsidePriceText: isDarkMode ? 'text-slate-300' : 'text-slate-600',
+  savingsBg: isDarkMode ? 'bg-gradient-to-br from-emerald-950/40 via-[#111d38] to-[#111d38]' : 'bg-gradient-to-br from-emerald-50/50 via-white to-white',
+  savingsBorder: isDarkMode ? 'border-emerald-500/40' : 'border-emerald-200',
+  savingsText: isDarkMode ? 'text-emerald-400' : 'text-emerald-600',
+  switcherBg: isDarkMode ? 'bg-[#111d38]' : 'bg-white',
+  switcherBorder: isDarkMode ? 'border-slate-800' : 'border-slate-200/80',
+  searchIcon: isDarkMode ? 'text-blue-400' : 'text-blue-600',
+  selectBg: isDarkMode ? 'bg-slate-900' : 'bg-slate-50',
+  selectBorder: isDarkMode ? 'border-slate-700 focus:border-blue-500' : 'border-slate-200 focus:border-blue-500'
+});
 
 export const PriceComparisonPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { products, activeTheme } = useApp();
+  const { products, activeTheme, isDarkMode } = useApp();
   const navigate = useNavigate();
 
-  const themeStyle = COMPARE_THEMES[activeTheme] || COMPARE_THEMES['steel-navy'];
+  const themeStyle = getCompareTheme(isDarkMode);
 
   const [selectedId, setSelectedId] = useState<string>(id || products[0]?.id || '');
   const [activeCategory, setActiveCategory] = useState<string>('All');

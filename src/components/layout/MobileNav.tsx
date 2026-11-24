@@ -13,22 +13,16 @@ import {
 
 export const MobileNav: React.FC = () => {
   const location = useLocation();
-  const { cart, setIsAiAssistantOpen, activeTheme } = useApp();
+  const { cart, setIsAiAssistantOpen } = useApp();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const isActive = (path: string) => location.pathname === path;
 
-  const activeColorClass = activeTheme === 'royal-gold'
-    ? 'text-amber-400'
-    : 'text-teal-300';
+  const activeColorClass = 'text-blue-600 dark:text-blue-400';
 
   return (
-    <div className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t px-2 py-2 flex items-center justify-around shadow-2xl transition-colors ${
-      activeTheme === 'royal-gold'
-        ? 'dark:bg-[#181107]/95 dark:border-amber-900/80'
-        : 'dark:bg-[#031926]/95 dark:border-teal-900/80'
-    }`}>
+    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0b1329]/95 backdrop-blur-xl border-t border-slate-200/90 dark:border-slate-800 px-2 py-2 flex items-center justify-around shadow-2xl transition-colors">
       <Link
         to="/"
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold ${
@@ -63,14 +57,10 @@ export const MobileNav: React.FC = () => {
         onClick={() => setIsAiAssistantOpen(true)}
         className="flex flex-col items-center gap-0.5 text-[10px] font-bold cursor-pointer -mt-3"
       >
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 ${
-          activeTheme === 'royal-gold'
-            ? 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 shadow-amber-500/30'
-            : 'bg-gradient-to-tr from-teal-400 via-cyan-400 to-emerald-400 text-slate-950 shadow-teal-500/30'
-        }`}>
-          <Sparkles className={`w-5 h-5 ${activeTheme === 'royal-gold' ? 'text-slate-950' : 'text-slate-950'}`} />
+        <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30">
+          <Sparkles className="w-5 h-5 text-white" />
         </div>
-        <span className={activeTheme === 'royal-gold' ? 'text-amber-400' : 'text-teal-300'}>AI Deal</span>
+        <span className="text-blue-600 dark:text-blue-400">AI Deal</span>
       </button>
 
       <Link
@@ -82,11 +72,7 @@ export const MobileNav: React.FC = () => {
         <ShoppingCart className="w-5 h-5" />
         <span>Cart</span>
         {cartCount > 0 && (
-          <span className={`absolute -top-1 right-1 w-4 h-4 rounded-full text-[9px] font-extrabold flex items-center justify-center ${
-            activeTheme === 'royal-gold'
-              ? 'bg-amber-400 text-slate-950'
-              : 'bg-teal-400 text-slate-950'
-          }`}>
+          <span className="absolute -top-1 right-1 w-4 h-4 rounded-full text-[9px] font-extrabold flex items-center justify-center bg-blue-600 text-white">
             {cartCount}
           </span>
         )}
