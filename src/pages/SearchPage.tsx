@@ -7,6 +7,7 @@ import {
   SlidersHorizontal,
   X,
   ArrowUpDown,
+  ArrowRight,
   Flame,
   Sparkles,
   ShieldCheck,
@@ -619,7 +620,13 @@ export const SearchPage: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* Cashback Banner matching Panel 2 */}
+                        {/* In Stock & Free Delivery matching Panel 4 */}
+                        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>In Stock • Free Delivery</span>
+                        </div>
+
+                        {/* Cashback Banner */}
                         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
                           <span className="text-emerald-500">🪙</span>
                           <span>Cashback: ₹{cashbackAmount.toLocaleString('en-IN')}</span>
@@ -627,7 +634,7 @@ export const SearchPage: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Right Action Block matching Panel 2 */}
+                      {/* Right Action Block matching Panel 4 */}
                       <div className="flex flex-col sm:items-end justify-center gap-2.5 w-full sm:w-auto shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
                         <button
                           onClick={() => toggleWishlist(product.id)}
@@ -643,15 +650,17 @@ export const SearchPage: React.FC = () => {
                         <div className="flex sm:flex-col gap-2 w-full">
                           <Link
                             to={`/compare/${product.id}`}
-                            className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-800 dark:text-slate-200 font-bold text-xs text-center transition-all cursor-pointer"
+                            className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-800 dark:text-slate-200 font-bold text-xs text-center transition-all cursor-pointer flex items-center justify-center gap-1.5"
                           >
-                            Compare Prices
+                            <span>⇄</span>
+                            <span>Compare</span>
                           </Link>
                           <Link
                             to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                            className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs text-center shadow-md shadow-brand-500/20 transition-all cursor-pointer"
+                            className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs text-center shadow-md transition-all cursor-pointer flex items-center justify-center gap-1"
                           >
-                            View Details
+                            <span>View Details</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
                         </div>
                       </div>
