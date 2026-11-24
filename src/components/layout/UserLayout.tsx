@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { MobileNav } from './MobileNav';
-import { GlobalBackButton } from '../common/GlobalBackButton';
 import { AIAssistantModal } from '../common/AIAssistantModal';
 import { BackgroundCustomizerModal } from '../common/BackgroundCustomizerModal';
 import { InstallAppPrompt } from '../common/InstallAppPrompt';
@@ -15,15 +14,12 @@ export const UserLayout: React.FC = () => {
 
   return (
     <div 
-      className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 transition-colors duration-200"
+      className={`flex flex-col min-h-screen w-full max-w-full overflow-x-hidden ${activeTheme === 'dark' ? 'text-slate-100' : 'text-slate-900'} transition-colors duration-200`}
       style={{ backgroundColor: currentBg }}
     >
       {/* Customer Header / Navigation */}
       <Navbar />
       
-      {/* Universal back button */}
-      <GlobalBackButton />
-
       {/* Main Customer Page Content */}
       <main className="flex-1 w-full max-w-full overflow-x-hidden pb-16 sm:pb-0">
         <Outlet />

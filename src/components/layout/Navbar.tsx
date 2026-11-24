@@ -401,14 +401,20 @@ export const Navbar: React.FC = () => {
           {/* 2-Mode Theme Toggle (Sun / Moon) */}
           <button
             onClick={toggleTheme}
-            className={`p-2 rounded-full border transition-all hover:scale-105 cursor-pointer shadow-xs flex items-center justify-center ${navTheme.themeToggleBtn}`}
+            className={`p-2 sm:px-2.5 sm:py-1.5 rounded-full border transition-all hover:scale-105 cursor-pointer shadow-xs flex items-center gap-1.5 ${navTheme.themeToggleBtn}`}
             title={navTheme.tooltipText}
             aria-label="Toggle Theme Mode (Light / Dark)"
           >
             {isDarkMode ? (
-              <Sun className="w-4 h-4 text-amber-400 animate-pulse" />
+              <>
+                <Sun className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span className="hidden sm:inline text-xs font-bold text-amber-400">Dark</span>
+              </>
             ) : (
-              <Moon className="w-4 h-4 text-slate-700" />
+              <>
+                <Moon className="w-4 h-4 text-slate-700" />
+                <span className="hidden sm:inline text-xs font-bold text-slate-700">Light</span>
+              </>
             )}
           </button>
 

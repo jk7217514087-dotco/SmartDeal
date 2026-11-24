@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="pure-white">
+<html lang="en" data-theme="dark" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/smartdeal.ico" />
@@ -8,10 +8,10 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/smartdeal_app_icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#0b1329" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="SmartDeal" />
     <meta name="application-name" content="SmartDeal" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
@@ -30,32 +30,29 @@
       });
       (function() {
         try {
-          var theme = localStorage.getItem('smartdeals_active_theme') || 'pure-white';
-          var bgMap = {
-            'steel-navy': '#0b1a30',
-            'matrix-lime': '#111612',
-            'sunset-coral': '#1c0b29',
-            'aurora-jade': '#051f15',
-            'royal-gold': '#181107',
-            'cyber-indigo': '#08092d',
-            'pure-white': '#f8fafd',
-            'cyber-emerald': '#051f15'
-          };
-          var bg = localStorage.getItem('smartdeals_custom_bg') || bgMap[theme] || '#f8fafd';
-          if (bg === '#000000' || bg === '#070709' || bg === '#030a0d') bg = bgMap[theme] || '#f8fafd';
+          var v = localStorage.getItem('smartdeals_theme_version');
+          if (v !== '2.0') {
+            localStorage.setItem('smartdeals_theme_version', '2.0');
+            localStorage.setItem('smartdeals_active_theme', 'dark');
+            localStorage.setItem('smartdeals_dark_mode', 'true');
+            localStorage.setItem('smartdeals_custom_bg', '#0b1329');
+          }
+          var saved = localStorage.getItem('smartdeals_active_theme') || 'dark';
+          var theme = (saved === 'light' || saved === 'pure-white') ? 'light' : 'dark';
+          var bg = theme === 'dark' ? '#0b1329' : '#f8fafd';
           document.documentElement.setAttribute('data-theme', theme);
           document.documentElement.style.setProperty('--smartdeal-bg', bg);
           document.documentElement.style.backgroundColor = bg;
-          if (theme === 'pure-white' || bg === '#f8fafd' || bg === '#ffffff') {
-            document.documentElement.classList.remove('dark');
-          } else {
+          if (theme === 'dark') {
             document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
           }
         } catch (e) {}
       })();
     </script>
   </head>
-  <body class="antialiased selection:bg-blue-600 selection:text-white min-h-screen text-slate-900" style="background-color: #f8fafd;">
+  <body class="antialiased selection:bg-blue-600 selection:text-white min-h-screen text-slate-100" style="background-color: #0b1329;">
     <!-- Standalone & Web Rotating Splash Loader Overlay (Phone Screen & Laptop Ready) -->
     <div id="smartdeal-splash-screen" style="
       position: fixed;

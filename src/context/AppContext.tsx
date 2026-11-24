@@ -356,23 +356,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const v = localStorage.getItem('smartdeals_theme_version');
+    if (v !== '2.0') {
+      localStorage.setItem('smartdeals_theme_version', '2.0');
+      localStorage.setItem('smartdeals_active_theme', 'dark');
+      localStorage.setItem('smartdeals_dark_mode', 'true');
+      localStorage.setItem('smartdeals_custom_bg', '#0b1329');
+      return true;
+    }
     const saved = localStorage.getItem('smartdeals_dark_mode');
     const savedTheme = localStorage.getItem('smartdeals_active_theme');
-    if (savedTheme === 'dark') return true;
     if (savedTheme === 'light' || savedTheme === 'pure-white') return false;
+    if (savedTheme === 'dark') return true;
     if (saved !== null) return saved === 'true';
-    return false;
+    return true;
   });
 
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(() => {
+    const v = localStorage.getItem('smartdeals_theme_version');
+    if (v !== '2.0') return 'dark';
     const saved = localStorage.getItem('smartdeals_active_theme') as ThemeId | null;
-    if (saved === 'dark') return 'dark';
-    return 'light';
+    if (saved === 'light' || saved === 'pure-white') return 'light';
+    return 'dark';
   });
 
   const [customBg, setCustomBgState] = useState<string>(() => {
-    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'light';
-    return getThemeDefaultBg(savedTheme === 'dark' ? 'dark' : 'light');
+    const v = localStorage.getItem('smartdeals_theme_version');
+    if (v !== '2.0') return '#0b1329';
+    const savedTheme = (localStorage.getItem('smartdeals_active_theme') as ThemeId) || 'dark';
+    return getThemeDefaultBg(savedTheme === 'light' || savedTheme === 'pure-white' ? 'light' : 'dark');
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
 
