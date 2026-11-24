@@ -23,7 +23,8 @@ import {
   Truck,
   RotateCcw,
   Check,
-  ArrowRight
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
 
 export const PriceComparisonPage: React.FC = () => {
@@ -197,14 +198,33 @@ export const PriceComparisonPage: React.FC = () => {
   return (
     <div className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Breadcrumb matching Reference Panel 5 (e.g. Croma > iPhone > iPhone 15) */}
-        <nav className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2 font-medium">
-          <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
-          <span>&gt;</span>
-          <span className="hover:text-blue-600 cursor-pointer">{currentProduct.category}</span>
-          <span>&gt;</span>
-          <span className="text-slate-900 dark:text-white font-bold truncate max-w-xs">{currentProduct.name}</span>
-        </nav>
+        {/* Top Header with Back Arrow matching Reference Screen 4 */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (window.history.length > 2) navigate(-1);
+                else navigate('/');
+              }}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all cursor-pointer"
+              title="Go Back"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+              Compare Prices
+            </h1>
+          </div>
+
+          {/* Breadcrumb */}
+          <nav className="hidden sm:flex text-xs text-slate-500 dark:text-slate-400 items-center gap-2 font-medium">
+            <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <span>&gt;</span>
+            <span className="hover:text-blue-600 cursor-pointer">{currentProduct.category}</span>
+            <span>&gt;</span>
+            <span className="text-slate-900 dark:text-white font-bold truncate max-w-xs">{currentProduct.name}</span>
+          </nav>
+        </div>
 
         {/* Product Switcher Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
@@ -477,13 +497,12 @@ export const PriceComparisonPage: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Right: Buy Now Button */}
+                    {/* Right: Buy Button matching Screen 4 */}
                     <button
                       onClick={() => executeStoreRedirect(item)}
                       className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
                     >
-                      <span>Buy Now</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Buy →</span>
                     </button>
                   </div>
                 );

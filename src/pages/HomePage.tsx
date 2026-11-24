@@ -357,8 +357,8 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* 4 FEATURE / VALUE PROPOSITION CARDS MATCHING REFERENCE SECTION 1 */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* 4 FEATURE / VALUE PROPOSITION CARDS MATCHING REFERENCE SCREEN 1 */}
+          <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-900">
