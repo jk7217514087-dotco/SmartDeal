@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useApp } from '../../context/AppContext';
 import {
   SmartBuyRecommendationResult,
   Product
@@ -30,6 +31,8 @@ export const SmartBuyRecommendation: React.FC<Props> = ({
   onMarketplaceChange,
   className = ''
 }) => {
+  const { isDarkMode, activeTheme } = useApp();
+  const isWhite = !isDarkMode && (activeTheme === 'light' || activeTheme === 'pure-white');
   const [data, setData] = useState<SmartBuyRecommendationResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -124,35 +127,39 @@ export const SmartBuyRecommendation: React.FC<Props> = ({
 
   return (
     <div
-      className={`rounded-3xl border border-slate-800 bg-[#0b1329] p-5 sm:p-7 shadow-2xl relative overflow-hidden text-slate-100 ${className}`}
+      className={`rounded-3xl border p-5 sm:p-7 shadow-xl relative overflow-hidden transition-colors ${
+        isWhite
+          ? 'border-slate-200/90 bg-white text-slate-900 shadow-sm'
+          : 'border-slate-800 bg-[#0b1329] text-slate-100 shadow-2xl'
+      } ${className}`}
     >
       {/* Decorative ambient glowing backdrops */}
       <div className="absolute -top-24 -right-24 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800/80 relative z-10">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b relative z-10 ${isWhite ? 'border-slate-200' : 'border-slate-800/80'}`}>
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
-            <h3 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
+            <h3 className={`text-lg sm:text-xl font-black tracking-tight flex items-center gap-2 ${isWhite ? 'text-slate-900' : 'text-white'}`}>
               <span>AI Smart Buy Recommendation</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+              <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
                 Live Intelligence
               </span>
             </h3>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className={`text-xs ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
             Real-time algorithmic price intelligence analyzing volatility, discounts, and historical deal cycles.
           </p>
         </div>
 
         {/* Selected Store / Tag */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className="text-xs font-semibold text-slate-400">Store:</span>
-          <span className="text-xs font-bold text-white px-3 py-1 rounded-xl bg-slate-800/90 border border-slate-700 capitalize">
+          <span className={`text-xs font-semibold ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Store:</span>
+          <span className={`text-xs font-bold px-3 py-1 rounded-xl border capitalize ${isWhite ? 'bg-slate-100 border-slate-200 text-slate-800' : 'bg-slate-800/90 border-slate-700 text-white'}`}>
             {selectedMarketplace}
           </span>
         </div>
@@ -286,70 +293,70 @@ export const SmartBuyRecommendation: React.FC<Props> = ({
           {/* Bottom Grid: 8 Recommendation Details Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
             {/* 1. Current Price */}
-            <div className="bg-[#0f1b38]/70 border border-slate-800/80 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Current Price</div>
-              <div className="text-base font-black text-white">{formatInr(data.currentPrice)}</div>
-              <div className="text-[10px] font-bold text-cyan-400 truncate">Verified Best</div>
+            <div className={`border rounded-2xl p-3 space-y-1 ${isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0f1b38]/70 border-slate-800/80'}`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Current Price</div>
+              <div className={`text-base font-black ${isWhite ? 'text-slate-900' : 'text-white'}`}>{formatInr(data.currentPrice)}</div>
+              <div className="text-[10px] font-bold text-cyan-500 dark:text-cyan-400 truncate">Verified Best</div>
             </div>
 
             {/* 2. Average Price */}
-            <div className="bg-[#0f1b38]/70 border border-slate-800/80 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Average Price</div>
-              <div className="text-base font-black text-slate-300">{formatInr(data.averagePrice)}</div>
-              <div className="text-[10px] font-medium text-slate-400 truncate">Historical Mean</div>
+            <div className={`border rounded-2xl p-3 space-y-1 ${isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0f1b38]/70 border-slate-800/80'}`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Average Price</div>
+              <div className={`text-base font-black ${isWhite ? 'text-slate-800' : 'text-slate-300'}`}>{formatInr(data.averagePrice)}</div>
+              <div className={`text-[10px] font-medium truncate ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Historical Mean</div>
             </div>
 
             {/* 3. Lowest Price */}
             <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Lowest Price</div>
-              <div className="text-base font-black text-emerald-300">{formatInr(data.lowestPrice)}</div>
-              <div className="text-[10px] font-medium text-emerald-400/80 truncate">Record low</div>
+              <div className="text-[10px] uppercase font-bold text-emerald-500 dark:text-emerald-400 tracking-wider">Lowest Price</div>
+              <div className="text-base font-black text-emerald-600 dark:text-emerald-300">{formatInr(data.lowestPrice)}</div>
+              <div className="text-[10px] font-medium text-emerald-600/80 dark:text-emerald-400/80 truncate">Record low</div>
             </div>
 
             {/* 4. Highest Price */}
             <div className="bg-rose-950/20 border border-rose-500/30 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-rose-400 tracking-wider">Highest Price</div>
-              <div className="text-base font-black text-rose-300">{formatInr(data.highestPrice)}</div>
-              <div className="text-[10px] font-medium text-rose-400/80 truncate">Peak level</div>
+              <div className="text-[10px] uppercase font-bold text-rose-500 dark:text-rose-400 tracking-wider">Highest Price</div>
+              <div className="text-base font-black text-rose-600 dark:text-rose-300">{formatInr(data.highestPrice)}</div>
+              <div className="text-[10px] font-medium text-rose-500/80 dark:text-rose-400/80 truncate">Peak level</div>
             </div>
 
             {/* 5. Price Change */}
-            <div className="bg-[#0f1b38]/70 border border-slate-800/80 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Price Change</div>
-              <div className="text-base font-black text-white flex items-center gap-1">
+            <div className={`border rounded-2xl p-3 space-y-1 ${isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0f1b38]/70 border-slate-800/80'}`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Price Change</div>
+              <div className={`text-base font-black flex items-center gap-1 ${isWhite ? 'text-slate-900' : 'text-white'}`}>
                 {data.priceChange <= 0 ? (
-                  <TrendingDown className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <TrendingDown className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 ) : (
-                  <TrendingUp className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                  <TrendingUp className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                 )}
-                <span className={data.priceChange <= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                <span className={data.priceChange <= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
                   {formatInr(Math.abs(data.priceChange))}
                 </span>
               </div>
-              <div className="text-[10px] font-medium text-slate-400 truncate">
+              <div className={`text-[10px] font-medium truncate ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
                 {data.priceChangePercent > 0 ? `+${data.priceChangePercent}%` : `${data.priceChangePercent}%`}
               </div>
             </div>
 
             {/* 6. Recommendation */}
             <div className={`border rounded-2xl p-3 space-y-1 ${currentLevelConfig.bgColor} ${currentLevelConfig.borderColor}`}>
-              <div className="text-[10px] uppercase font-bold text-slate-300 tracking-wider">Recommendation</div>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-700' : 'text-slate-300'}`}>Recommendation</div>
               <div className={`text-base font-black ${currentLevelConfig.color}`}>{data.recommendation}</div>
-              <div className="text-[10px] font-semibold text-slate-300 truncate">Buy Decision</div>
+              <div className={`text-[10px] font-semibold truncate ${isWhite ? 'text-slate-600' : 'text-slate-300'}`}>Buy Decision</div>
             </div>
 
             {/* 7. Confidence Level */}
-            <div className="bg-[#0f1b38]/70 border border-slate-800/80 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Confidence</div>
-              <div className="text-base font-black text-cyan-300">{data.confidence}%</div>
-              <div className="text-[10px] font-bold text-cyan-400 truncate">High Precision</div>
+            <div className={`border rounded-2xl p-3 space-y-1 ${isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0f1b38]/70 border-slate-800/80'}`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Confidence</div>
+              <div className="text-base font-black text-cyan-600 dark:text-cyan-300">{data.confidence}%</div>
+              <div className="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 truncate">High Precision</div>
             </div>
 
             {/* 8. Last Updated */}
-            <div className="bg-[#0f1b38]/70 border border-slate-800/80 rounded-2xl p-3 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Last Updated</div>
-              <div className="text-base font-black text-slate-200">Today</div>
-              <div className="text-[10px] font-medium text-slate-400 flex items-center gap-1 truncate">
+            <div className={`border rounded-2xl p-3 space-y-1 ${isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0f1b38]/70 border-slate-800/80'}`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Last Updated</div>
+              <div className={`text-base font-black ${isWhite ? 'text-slate-800' : 'text-slate-200'}`}>Today</div>
+              <div className={`text-[10px] font-medium flex items-center gap-1 truncate ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
                 <Clock className="w-3 h-3 shrink-0" />
                 <span>Live Audit</span>
               </div>

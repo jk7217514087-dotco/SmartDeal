@@ -225,22 +225,6 @@ export const ProductDetailPage: React.FC = () => {
               </button>
             ))}
           </div>
-
-          {/* Guarantee Badges */}
-          <div className="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] font-semibold text-slate-300">
-            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
-              <ShieldCheck className={`w-4 h-4 ${themeStyle.iconText}`} />
-              <span>100% Genuine</span>
-            </div>
-            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
-              <RotateCcw className={`w-4 h-4 ${themeStyle.iconText}`} />
-              <span>{product.returnDays} Days Return</span>
-            </div>
-            <div className={`p-2.5 rounded-2xl border flex flex-col items-center gap-1 shadow-xs ${themeStyle.cardBg} ${themeStyle.cardBorder}`}>
-              <Truck className={`w-4 h-4 ${themeStyle.iconText}`} />
-              <span>Fast Dispatch</span>
-            </div>
-          </div>
         </div>
 
         {/* Center/Right: Product Details & Price Engine (7 cols) matching Panel 3 */}
@@ -260,7 +244,7 @@ export const ProductDetailPage: React.FC = () => {
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">
               {product.name}
             </h1>
 
@@ -277,7 +261,7 @@ export const ProductDetailPage: React.FC = () => {
           {/* Pricing Engine Box matching Panel 3 */}
           <div className={`p-5 rounded-3xl border space-y-4 shadow-sm ${themeStyle.pricingBg} ${themeStyle.pricingBorder}`}>
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl sm:text-4xl font-black text-white">
+              <span className="text-3xl sm:text-4xl font-black text-slate-950 dark:text-white">
                 ₹{product.sellingPrice.toLocaleString('en-IN')}
               </span>
               <span className="text-lg text-slate-500 line-through">
@@ -360,21 +344,16 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* SECTION: SMART PRICE COMPARISON TABLE (Compare Prices Across Marketplaces) */}
       <section id="price-comparison-section" className="space-y-6 pt-6 pb-6 border-t border-slate-100 dark:border-slate-800 my-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">
-              Compare Available Prices
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Live pricing, delivery estimates, and verified store discounts compared side-by-side.
-            </p>
-          </div>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+            Compare price
+          </h2>
           <Link
             to={`/compare/${product.id}`}
-            className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1 self-start sm:self-auto"
+            className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1"
           >
             <span>Full Comparison View</span>
-            <ArrowRight className="w-3 h-3" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 

@@ -31,8 +31,8 @@ export const PriceComparisonTable: React.FC<Props> = ({
   prices = product.marketplacePrices,
   onSelectSeller
 }) => {
-  const { trackActivity, trackOutboundClick, activeTheme } = useApp();
-  const isWhite = activeTheme === 'pure-white';
+  const { trackActivity, trackOutboundClick, activeTheme, isDarkMode } = useApp();
+  const isWhite = !isDarkMode && (activeTheme === 'light' || activeTheme === 'pure-white');
   const [sortBy, setSortBy] = useState<'best' | 'price' | 'delivery' | 'score'>('best');
   const [redirectingStore, setRedirectingStore] = useState<{
     item: MarketplacePrice;
@@ -467,53 +467,53 @@ export const PriceComparisonTable: React.FC<Props> = ({
 
       {/* Trust Features Bar at the bottom matching screenshot */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center border border-blue-500/30 shrink-0">
+        <div className={`p-3.5 rounded-2xl border flex items-center gap-2.5 ${isWhite ? 'bg-white border-slate-200/90 shadow-xs' : 'bg-[#0c1322] border-slate-800'}`}>
+          <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-500 flex items-center justify-center border border-blue-500/30 shrink-0">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">100% Genuine Products</div>
-            <div className="text-[10px] text-slate-400">Only verified sellers & trusted platforms</div>
+            <div className={`text-xs font-bold ${isWhite ? 'text-slate-900' : 'text-white'}`}>100% Genuine Products</div>
+            <div className={`text-[10px] ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Only verified sellers & trusted platforms</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shrink-0">
+        <div className={`p-3.5 rounded-2xl border flex items-center gap-2.5 ${isWhite ? 'bg-white border-slate-200/90 shadow-xs' : 'bg-[#0c1322] border-slate-800'}`}>
+          <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-500 flex items-center justify-center border border-indigo-500/30 shrink-0">
             <Truck className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Real-time Delivery Info</div>
-            <div className="text-[10px] text-slate-400">Know delivery date & charges before you buy</div>
+            <div className={`text-xs font-bold ${isWhite ? 'text-slate-900' : 'text-white'}`}>Real-time Delivery Info</div>
+            <div className={`text-[10px] ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Know delivery date & charges before you buy</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/30 shrink-0">
+        <div className={`p-3.5 rounded-2xl border flex items-center gap-2.5 ${isWhite ? 'bg-white border-slate-200/90 shadow-xs' : 'bg-[#0c1322] border-slate-800'}`}>
+          <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center border border-amber-500/30 shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Best Price Guarantee</div>
-            <div className="text-[10px] text-slate-400">Verified lowest store pricing</div>
+            <div className={`text-xs font-bold ${isWhite ? 'text-slate-900' : 'text-white'}`}>Best Price Guarantee</div>
+            <div className={`text-[10px] ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Verified lowest store pricing</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shrink-0">
+        <div className={`p-3.5 rounded-2xl border flex items-center gap-2.5 ${isWhite ? 'bg-white border-slate-200/90 shadow-xs' : 'bg-[#0c1322] border-slate-800'}`}>
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center border border-emerald-500/30 shrink-0">
             <Lock className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">Secure & Safe</div>
-            <div className="text-[10px] text-slate-400">Your data and payments are protected</div>
+            <div className={`text-xs font-bold ${isWhite ? 'text-slate-900' : 'text-white'}`}>Secure & Safe</div>
+            <div className={`text-[10px] ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Your data and payments are protected</div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#0c1322] border border-slate-800 flex items-center gap-2.5 col-span-2 sm:col-span-1">
-          <div className="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/30 shrink-0">
+        <div className={`p-3.5 rounded-2xl border flex items-center gap-2.5 col-span-2 sm:col-span-1 ${isWhite ? 'bg-white border-slate-200/90 shadow-xs' : 'bg-[#0c1322] border-slate-800'}`}>
+          <div className="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-500 flex items-center justify-center border border-purple-500/30 shrink-0">
             <Bot className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs font-bold text-white">AI Price Insights</div>
-            <div className="text-[10px] text-slate-400">Get the best deal with AI recommendations</div>
+            <div className={`text-xs font-bold ${isWhite ? 'text-slate-900' : 'text-white'}`}>AI Price Insights</div>
+            <div className={`text-[10px] ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Get the best deal with AI recommendations</div>
           </div>
         </div>
       </div>
