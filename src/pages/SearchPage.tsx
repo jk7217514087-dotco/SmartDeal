@@ -20,7 +20,8 @@ import {
   List,
   Store,
   ChevronRight,
-  TrendingDown
+  TrendingDown,
+  Truck
 } from 'lucide-react';
 
 export const SearchPage: React.FC = () => {
@@ -352,10 +353,23 @@ export const SearchPage: React.FC = () => {
     </div>
   );
 
+  const getProductSpec = (p: typeof products[0]) => {
+    if (p.features && p.features.length > 0) {
+      const displayFeature = p.features.find(f => /display|screen|inch|\"/i.test(f));
+      if (displayFeature) {
+        const match = displayFeature.match(/(\d+(\.\d+)?["'”]\s*(Display|Screen|OLED|AMOLED|Liquid Retina|Super Retina)?)/i);
+        if (match) return `${match[1].trim()} Display`;
+        return displayFeature.split(',')[0].trim();
+      }
+      return p.features[0].split(',')[0].trim();
+    }
+    return `${p.brand} • ★ ${p.rating}`;
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-      {/* Breadcrumb matching Panel 2 */}
-      <nav className="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+    <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8 space-y-4 sm:space-y-6">
+      {/* Desktop Breadcrumb */}
+      <nav className="hidden lg:flex text-xs text-slate-400 dark:text-slate-400 items-center gap-1.5 font-medium">
         <Link to="/" className="hover:text-white transition-colors">Home</Link>
         <span>&gt;</span>
         <span className="text-white font-bold">Search</span>
@@ -367,8 +381,85 @@ export const SearchPage: React.FC = () => {
         )}
       </nav>
 
-      {/* Search Header Bar */}
-      <div className="space-y-4">
+      {/* MOBILE SEARCH BAR & SUBHEADER (< lg) - Screen 3 Reference Mockup */}
+      <div className="block lg:hidden space-y-3">
+        <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-20 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
+          />
+          <div className="absolute right-2 flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => {
+                setSortBy(prev => prev === 'price-low' ? 'price-high' : prev === 'price-high' ? 'discount' : 'price-low');
+              }}
+              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              title="Sort"
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsMobileFiltersOpen(true)}
+              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors relative cursor-pointer"
+              title="Filters"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-blue-600 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </form>
+
+        {/* Mobile Subheader Row: Title/Subtitle on Left, Reviews Pill & View Mode on Right */}
+        <div className="flex items-center justify-between gap-2 pt-0.5 px-0.5">
+          <div className="min-w-0">
+            <h1 className="text-sm sm:text-base font-black text-slate-900 dark:text-white truncate">
+              {searchTerm || (selectedCategory !== 'all' ? selectedCategory.toUpperCase() : 'iPhone 15')}
+            </h1>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium truncate">
+              Search & results for {searchTerm || (selectedCategory !== 'all' ? selectedCategory : 'iPhone')}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value as any)}
+                className="appearance-none pl-2.5 pr-6 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold border border-slate-200/60 dark:border-slate-700 cursor-pointer focus:outline-none"
+              >
+                <option value="relevance">All Reviews</option>
+                <option value="rating">Top Rated</option>
+                <option value="price-low">Price: Low</option>
+                <option value="price-high">Price: High</option>
+                <option value="discount">Discount</option>
+                <option value="score">Deal Score</option>
+              </select>
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[9px] text-slate-400">▾</span>
+            </div>
+
+            <button
+              onClick={() => setViewMode(prev => prev === 'list' ? 'grid' : 'list')}
+              className="p-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+              title="Toggle View Mode"
+            >
+              {viewMode === 'list' ? <LayoutGrid className="w-3.5 h-3.5" /> : <List className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* DESKTOP SEARCH HEADER BAR (lg:block) */}
+      <div className="hidden lg:block space-y-4">
         <form onSubmit={handleSearchSubmit} className="relative max-w-3xl">
           <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input
@@ -401,36 +492,6 @@ export const SearchPage: React.FC = () => {
               {term}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Mobile / Tablet Filter Bar (< lg) */}
-      <div className="lg:hidden flex items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm">
-        <button
-          onClick={() => setIsMobileFiltersOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs shadow-xs"
-        >
-          <SlidersHorizontal className="w-4 h-4 text-brand-500" />
-          <span>Filters</span>
-          {activeFilterCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] flex items-center justify-center font-extrabold">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
-
-        <div className="flex items-center gap-2">
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as any)}
-            className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold"
-          >
-            <option value="relevance">Relevance</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="discount">Discount (%)</option>
-            <option value="score">Deal Score</option>
-          </select>
         </div>
       </div>
 
@@ -563,9 +624,10 @@ export const SearchPage: React.FC = () => {
           {/* Results: List View (Panel 2 format) */}
           {sortedProducts.length > 0 ? (
             viewMode === 'list' ? (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {sortedProducts.map(product => {
                   const isWishlisted = wishlist.includes(product.id);
+                  const specText = getProductSpec(product);
                   const externalListings = (product.marketplacePrices || []).filter(
                     p => !p.isSmartDealsSeller && !p.sellerName.toLowerCase().includes('smartdeal')
                   );
@@ -576,102 +638,95 @@ export const SearchPage: React.FC = () => {
                   return (
                     <div
                       key={product.id}
-                      className="group relative p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/50 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center gap-3.5 sm:gap-6"
+                      className="group relative p-2.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-blue-500/50 shadow-xs hover:shadow-md transition-all duration-200"
                     >
-                      {/* MOBILE CARD LAYOUT (Screen < sm): Balanced Horizontal Top + Action Bar Bottom */}
-                      <div className="flex sm:hidden items-start gap-3 w-full">
-                        {/* Mobile Left: Enlarged Product Image Thumbnail */}
+                      {/* MOBILE CARD (sm:hidden) - Exact Match with Screen 3 Reference */}
+                      <div className="flex sm:hidden items-center gap-3">
+                        {/* Left: Product Image in dedicated light rounded box */}
                         <Link
                           to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                          className="relative w-32 h-32 rounded-xl bg-slate-50 dark:bg-slate-950 p-2 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 active:scale-95 transition-transform"
+                          className="relative w-24 h-28 rounded-xl bg-slate-50 dark:bg-slate-950 p-2 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 active:scale-95 transition-transform"
                         >
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-contain drop-shadow-sm"
+                            className="w-full h-full object-contain drop-shadow-xs"
                           />
                         </Link>
 
-                        {/* Mobile Right: Left-aligned Info Hierarchy */}
-                        <div className="flex-1 min-w-0 space-y-1.5 text-left">
-                          {/* Brand, Rating & Wishlist in Top Row */}
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800/40">
-                              {product.brand}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[11px] text-amber-500 font-bold flex items-center gap-0.5">
-                                ★ {product.rating}
-                              </span>
-                              <button
-                                onClick={() => toggleWishlist(product.id)}
-                                className={`p-1 rounded-lg transition-all cursor-pointer ${
-                                  isWishlisted
-                                    ? 'text-rose-500 bg-rose-50 dark:bg-rose-950/40'
-                                    : 'text-slate-400 hover:text-rose-500'
-                                }`}
-                                title="Save to wishlist"
-                              >
-                                <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-rose-500' : ''}`} />
-                              </button>
-                            </div>
+                        {/* Right: Info and In-Column Action Buttons */}
+                        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 space-y-1">
+                          {/* Row 1: Product Title + Wishlist Heart */}
+                          <div className="flex items-start justify-between gap-1">
+                            <Link
+                              to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                              className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 leading-tight hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            >
+                              {product.name}
+                            </Link>
+                            <button
+                              onClick={() => toggleWishlist(product.id)}
+                              className={`p-1 -mr-1 rounded-full transition-colors shrink-0 cursor-pointer ${
+                                isWishlisted
+                                  ? 'text-rose-500'
+                                  : 'text-slate-400 hover:text-rose-500'
+                              }`}
+                              title="Save to wishlist"
+                            >
+                              <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-rose-500' : ''}`} />
+                            </button>
                           </div>
 
-                          {/* Product Title */}
-                          <Link
-                            to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                            className="block text-xs font-black text-slate-900 dark:text-white line-clamp-2 leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                          >
-                            {product.name}
-                          </Link>
+                          {/* Row 2: Spec / Subtitle Line */}
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500 font-medium truncate">
+                            {specText}
+                          </div>
 
-                          {/* Price Line */}
-                          <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
-                            <span className="text-base font-black text-slate-950 dark:text-white">
+                          {/* Row 3: Price, MRP & Discount */}
+                          <div className="flex items-baseline gap-1.5 flex-wrap">
+                            <span className="text-sm font-black text-slate-950 dark:text-white">
                               ₹{product.sellingPrice.toLocaleString('en-IN')}
                             </span>
                             <span className="text-[10px] text-slate-400 line-through">
                               ₹{product.mrp.toLocaleString('en-IN')}
                             </span>
-                            <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded">
+                            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded">
                               {product.discountPercent}% OFF
                             </span>
                           </div>
 
-                          {/* Marketplace / Product Company Logo Badge */}
-                          <div className="flex items-center gap-1.5 pt-1">
-                            <MarketplaceBadge storeName={lowestStore?.sellerName || 'Amazon'} size="sm" />
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
-                              Available on <strong className="text-slate-800 dark:text-slate-200">{lowestStore?.sellerName || 'Amazon'}</strong>
-                            </span>
+                          {/* Row 4: Free Delivery Line */}
+                          <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                            <Truck className="w-3 h-3 shrink-0" />
+                            <span className="truncate">Free - Free Delivery</span>
+                          </div>
+
+                          {/* Row 5: Action Buttons side-by-side inside the column */}
+                          <div className="flex items-center gap-2 pt-0.5">
+                            <Link
+                              to={`/compare/${product.id}`}
+                              className="flex-1 py-1 px-2 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-bold text-[11px] text-center flex items-center justify-center gap-1 shadow-2xs hover:bg-blue-100 transition-colors cursor-pointer"
+                            >
+                              <span className="text-[10px]">⇄</span>
+                              <span>Compare</span>
+                            </Link>
+                            <Link
+                              to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                              className="flex-1 py-1 px-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] text-center flex items-center justify-center gap-1 shadow-xs transition-colors cursor-pointer"
+                            >
+                              <span>View Details</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </Link>
                           </div>
                         </div>
                       </div>
 
-                      {/* Mobile Bottom Action Buttons (Full width dual buttons) */}
-                      <div className="flex sm:hidden items-center gap-2 w-full pt-1 border-t border-slate-100 dark:border-slate-800">
-                        <Link
-                          to={`/compare/${product.id}`}
-                          className="flex-1 py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs text-center flex items-center justify-center gap-1 shadow-2xs hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"
-                        >
-                          <span>⇄</span>
-                          <span>Compare</span>
-                        </Link>
-                        <Link
-                          to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                          className="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs text-center shadow-md flex items-center justify-center gap-1 transition-all cursor-pointer"
-                        >
-                          <span>View Details</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                      </div>
-
-                      {/* DESKTOP CARD LAYOUT (Screen >= sm) */}
+                      {/* DESKTOP CARD (hidden sm:flex) - Matching sleek structure */}
                       <div className="hidden sm:flex sm:items-center sm:gap-6 w-full">
-                        {/* Image Thumbnail Container (Enlarged size) */}
+                        {/* Image Thumbnail Container */}
                         <Link
                           to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                          className="relative w-44 h-44 rounded-2xl bg-slate-50 dark:bg-slate-950 p-3 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 group-hover:scale-105 transition-transform"
+                          className="relative w-36 h-36 rounded-2xl bg-slate-50 dark:bg-slate-950 p-3 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 group-hover:scale-105 transition-transform"
                         >
                           <img
                             src={product.image}
@@ -681,7 +736,7 @@ export const SearchPage: React.FC = () => {
                         </Link>
 
                         {/* Center Info */}
-                        <div className="flex-1 min-w-0 space-y-2 text-left">
+                        <div className="flex-1 min-w-0 space-y-1.5 text-left">
                           <div className="flex items-center gap-2">
                             <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800/40">
                               {product.brand}
@@ -698,7 +753,11 @@ export const SearchPage: React.FC = () => {
                             {product.name}
                           </Link>
 
-                          <div className="flex items-baseline gap-2 pt-1">
+                          <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                            {specText}
+                          </div>
+
+                          <div className="flex items-baseline gap-2 pt-0.5">
                             <span className="text-xl font-black text-slate-950 dark:text-white">
                               ₹{product.sellingPrice.toLocaleString('en-IN')}
                             </span>
@@ -710,16 +769,13 @@ export const SearchPage: React.FC = () => {
                             </span>
                           </div>
 
-                          {/* Marketplace / Product Company Logo Badge */}
-                          <div className="flex items-center gap-2 pt-1">
-                            <MarketplaceBadge storeName={lowestStore?.sellerName || 'Amazon'} size="md" />
-                            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                              Available on <strong className="text-slate-800 dark:text-slate-200">{lowestStore?.sellerName || 'Amazon'}</strong>
-                            </span>
+                          <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold pt-0.5">
+                            <Truck className="w-3.5 h-3.5 shrink-0" />
+                            <span>Free Delivery • Available on {lowestStore?.sellerName || 'Amazon'}</span>
                           </div>
                         </div>
 
-                        {/* Right Action Block matching Panel 4 */}
+                        {/* Right Action Block */}
                         <div className="flex flex-col items-end justify-center gap-2.5 shrink-0">
                           <button
                             onClick={() => toggleWishlist(product.id)}
@@ -736,7 +792,7 @@ export const SearchPage: React.FC = () => {
                           <div className="flex flex-col gap-2 w-36">
                             <Link
                               to={`/compare/${product.id}`}
-                              className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-800 dark:text-slate-200 font-bold text-xs text-center transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                              className="px-4 py-2 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50/70 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 font-bold text-xs text-center transition-all cursor-pointer flex items-center justify-center gap-1.5"
                             >
                               <span>⇄</span>
                               <span>Compare</span>
