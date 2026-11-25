@@ -12,15 +12,10 @@ import { notificationService } from '../services/notificationService';
 import {
   Heart,
   ShoppingCart,
-  Truck,
   ShieldCheck,
-  RotateCcw,
-  Coins,
   CheckCircle2,
   Bell,
   Sparkles,
-  ArrowRight,
-  MapPin,
   ExternalLink,
   ChevronRight,
   TrendingDown,
@@ -74,7 +69,6 @@ export const ProductDetailPage: React.FC = () => {
 
   const product = products.find(p => p.id === id) || products[0];
   const [activeImage, setActiveImage] = useState(product.image);
-  const [pincode, setPincode] = useState('110016');
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'specifications' | 'features' | 'reviews' | 'price-history'>('overview');
   const [selectedMarketplace, setSelectedMarketplace] = useState<string>('flipkart');
@@ -320,25 +314,6 @@ export const ProductDetailPage: React.FC = () => {
               <span>View Details</span>
             </button>
           </div>
-
-          {/* Fast Delivery & Pincode Checker */}
-          <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs font-semibold">
-            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              <Truck className="w-4 h-4 text-emerald-500" />
-              <span>FREE Delivery • {product.deliveryDate}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-slate-400" />
-              <input
-                type="text"
-                value={pincode}
-                onChange={e => setPincode(e.target.value)}
-                className="w-16 px-1.5 py-0.5 text-xs font-bold border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-md text-center"
-                maxLength={6}
-              />
-              <button className="text-[11px] font-bold text-brand-600 dark:text-brand-400">Apply</button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -348,13 +323,6 @@ export const ProductDetailPage: React.FC = () => {
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             Compare price
           </h2>
-          <Link
-            to={`/compare/${product.id}`}
-            className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1"
-          >
-            <span>Full Comparison View</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
 
         <div className="pt-1">
@@ -551,32 +519,6 @@ export const ProductDetailPage: React.FC = () => {
       <section id="product-details-specs-section" className="pt-2">
         <ProductFullDetailsSection product={product} />
       </section>
-
-      {/* Mobile-Only Sticky Purchase Bar (Panel 10 Screen 3) */}
-      <div className={`sm:hidden fixed bottom-14 left-0 right-0 z-30 p-3 backdrop-blur-md border-t flex items-center justify-between gap-3 shadow-2xl bg-white/95 ${themeStyle.mobileBg} border-slate-200 ${themeStyle.mobileBorder}`}>
-        <div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-base font-black text-slate-950 dark:text-white">
-              ₹{product.sellingPrice.toLocaleString('en-IN')}
-            </span>
-            <span className="text-[11px] text-slate-400 line-through">
-              ₹{product.mrp.toLocaleString('en-IN')}
-            </span>
-          </div>
-          <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-            {product.discountPercent}% OFF • {bestMarketplace.sellerName}
-          </div>
-        </div>
-
-        <button
-          onClick={handleBuyAtBestPrice}
-          className={`px-5 py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 ${themeStyle.buyButton}`}
-          title={`Buy directly on ${bestMarketplace.sellerName || 'Official Store'}`}
-        >
-          <span>Buy on {bestMarketplace.sellerName?.split(' ')[0] || 'Store'}</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </button>
-      </div>
     </div>
   );
 };

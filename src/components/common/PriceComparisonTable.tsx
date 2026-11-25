@@ -286,63 +286,16 @@ export const PriceComparisonTable: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Compact Mobile Header (md:hidden) - Streamlined to elevate price comparison */}
-          <div className="md:hidden space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className={`text-sm font-black leading-tight truncate ${isWhite ? 'text-slate-900' : 'text-white'}`}>
-                Price Comparison ({rawFiltered.length} Marketplaces)
-              </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Verified
-              </span>
-            </div>
-
-            {/* Guarantees and Sort Row (Compact single block) */}
-            <div className="flex items-center justify-between gap-2 pt-0.5 text-[11px]">
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-slate-400">
-                <span className="inline-flex items-center gap-1 text-slate-300 font-medium shrink-0">
-                  <ShieldCheck className="w-3 h-3 text-blue-400" />
-                  Best Price
-                </span>
-                <span className="inline-flex items-center gap-1 text-slate-300 font-medium shrink-0">
-                  <TrendingDown className="w-3 h-3 text-emerald-400" />
-                  Live Tracking
-                </span>
-                <span className="inline-flex items-center gap-1 text-slate-300 font-medium shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-purple-400" />
-                  100% Deals
-                </span>
-              </div>
-
-              {/* Sort By Dropdown (Mobile) */}
-              <div className="flex items-center gap-1 shrink-0">
-                <span className="text-[10px] text-slate-400 font-medium">Sort:</span>
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={e => setSortBy(e.target.value as any)}
-                    className="appearance-none bg-[#141e33] border border-slate-700 text-[10px] font-bold text-slate-200 py-1 pl-2 pr-5 rounded-lg focus:outline-none focus:border-brand-400 cursor-pointer"
-                  >
-                    <option value="best">Best Deal</option>
-                    <option value="price">Lowest Price</option>
-                    <option value="score">Deal Score</option>
-                    <option value="delivery">Fast Delivery</option>
-                  </select>
-                  <ArrowUpDown className="w-2.5 h-2.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-              </div>
-            </div>
+          {/* Compact Mobile Header (md:hidden) */}
+          <div className="md:hidden flex items-center justify-between gap-2">
+            <h2 className={`text-sm font-black leading-tight truncate ${isWhite ? 'text-slate-900' : 'text-white'}`}>
+              Price Comparison ({rawFiltered.length} Marketplaces)
+            </h2>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Verified
+            </span>
           </div>
-        </div>
-
-        {/* Mobile Swipe Cue - Ultra slim */}
-        <div className="md:hidden px-3 py-1.5 bg-[#090e1a] text-[10px] text-slate-400 flex items-center justify-between border-b border-slate-800/80">
-          <span className="flex items-center gap-1 text-blue-400 font-semibold">
-            <span>⇄</span>
-            <span>Swipe horizontally to compare store details</span>
-          </span>
-          <span className="text-[10px] text-slate-500 font-mono">({sortedPrices.length} stores)</span>
         </div>
 
         {/* The Comparison Table */}
@@ -351,7 +304,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
             <thead>
               <tr className={`border-b text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${
                 isWhite
-                  ? 'border-slate-200 text-slate-500 bg-slate-50/80'
+                  ? 'border-slate-200 text-slate-600 bg-slate-200/50'
                   : 'border-slate-800 text-slate-400 bg-[#080d18]/70'
               }`}>
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-5">Marketplace</th>
@@ -361,7 +314,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-5 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${isWhite ? 'divide-slate-100' : 'divide-slate-800/60'}`}>
+            <tbody className={`divide-y ${isWhite ? 'divide-slate-200' : 'divide-slate-800/60'}`}>
               {sortedPrices.map((item, idx) => {
                 const store = getStoreDetails(item.sellerName);
                 const isLowest = item.finalPrice === lowestFinalPrice;
@@ -371,7 +324,9 @@ export const PriceComparisonTable: React.FC<Props> = ({
                   <tr
                     key={idx}
                     className={`transition-colors group ${
-                      isWhite ? 'hover:bg-slate-50/90' : 'hover:bg-[#121c30]/70'
+                      isWhite
+                        ? 'bg-slate-100/80 hover:bg-slate-200/80'
+                        : 'bg-[#0f172a]/70 hover:bg-[#142038]'
                     }`}
                   >
                     {/* Marketplace */}
