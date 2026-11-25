@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from '../components/common/ProductCard';
+import { MarketplaceBadge } from '../components/common/MarketplaceBadge';
 import {
   Search,
   SlidersHorizontal,
@@ -565,27 +566,25 @@ export const SearchPage: React.FC = () => {
               <div className="space-y-4">
                 {sortedProducts.map(product => {
                   const isWishlisted = wishlist.includes(product.id);
-                  const cashbackAmount =
-                    product.marketplacePrices[0]?.cashbackAmount ||
-                    Math.round(product.sellingPrice * 0.015);
+                  const externalListings = (product.marketplacePrices || []).filter(
+                    p => !p.isSmartDealsSeller && !p.sellerName.toLowerCase().includes('smartdeal')
+                  );
+                  const lowestStore = externalListings.length > 0
+                    ? [...externalListings].sort((a, b) => a.finalPrice - b.finalPrice)[0]
+                    : product.marketplacePrices[0];
 
                   return (
                     <div
                       key={product.id}
                       className="group relative p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-brand-500/50 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 sm:gap-6"
                     >
-                      {/* Image Thumbnail Container */}
-                      <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-2xl bg-slate-50 dark:bg-slate-950 p-2 sm:p-3 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 group-hover:scale-105 transition-transform">
+                      {/* Image Thumbnail Container (Slightly increased size, no Best Deal badge) */}
+                      <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-slate-50 dark:bg-slate-950 p-2.5 sm:p-3.5 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 group-hover:scale-105 transition-transform">
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain drop-shadow-sm"
                         />
-                        {product.dealScore >= 90 && (
-                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-sm">
-                            Best Deal
-                          </span>
-                        )}
                       </div>
 
                       {/* Center Info */}
@@ -620,17 +619,12 @@ export const SearchPage: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* In Stock & Free Delivery matching Panel 4 */}
-                        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                          <span>In Stock • Free Delivery</span>
-                        </div>
-
-                        {/* Cashback Banner */}
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
-                          <span className="text-emerald-500">🪙</span>
-                          <span>Cashback: ₹{cashbackAmount.toLocaleString('en-IN')}</span>
-                          <span className="text-[10px] text-emerald-500/80 hidden sm:inline">(from commission)</span>
+                        {/* Marketplace / Product Company Logo Badge (Replaced In Stock & Cashback) */}
+                        <div className="flex items-center gap-2 pt-1 flex-wrap justify-center sm:justify-start">
+                          <MarketplaceBadge storeName={lowestStore?.sellerName || 'Amazon'} size="md" />
+                          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                            Available on <strong className="text-slate-800 dark:text-slate-200">{lowestStore?.sellerName || 'Amazon'}</strong>
+                          </span>
                         </div>
                       </div>
 
