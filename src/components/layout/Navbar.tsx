@@ -222,7 +222,12 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}>
+    <header 
+      className={`sticky top-0 z-40 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}
+      style={{
+        backgroundColor: isDarkMode ? 'rgba(11, 19, 41, 0.95)' : 'rgba(255, 255, 255, 0.95)'
+      }}
+    >
       {/* Main Navbar Bar */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* Left Side: Brand Logo */}

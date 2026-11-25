@@ -275,12 +275,9 @@ export const HomePage: React.FC = () => {
 
                 {/* Rotating Ad Content with 2-Second Transition */}
                 <div className="relative z-10 w-full flex flex-col items-center">
-                  {/* Top Store Badge & Discount Tag Row */}
+                  {/* Top Store Badge Row */}
                   <div className="w-full flex items-center justify-between gap-2 pr-36 mb-2">
                     <MarketplaceBadge storeName={heroDiscountAds[heroSlide].storeName} size="sm" />
-                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 truncate">
-                      {heroDiscountAds[heroSlide].discountBadge}
-                    </span>
                   </div>
 
                   {/* Product Image Stage with Glow Background */}
@@ -311,14 +308,10 @@ export const HomePage: React.FC = () => {
                         <span className="text-xs text-slate-400 line-through">
                           {heroDiscountAds[heroSlide].mrp}
                         </span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded">
                           {heroDiscountAds[heroSlide].discountPercent}
                         </span>
                       </div>
-                      <span className="text-[9px] font-black text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping" />
-                        2s Deal
-                      </span>
                     </div>
 
                     {/* Action Buttons: View Details & Buy on Store */}
