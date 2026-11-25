@@ -18,6 +18,7 @@ import {
 } from '../../types';
 import { priceIntelligenceService } from '../../services/priceIntelligenceService';
 import { marketplaceComplianceService } from '../../services/marketplaceComplianceService';
+import { useApp } from '../../context/AppContext';
 import {
   TrendingDown,
   TrendingUp,
@@ -50,6 +51,8 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
   onMarketplaceChange,
   className = ''
 }) => {
+  const { isDarkMode, activeTheme } = useApp();
+  const isWhite = !isDarkMode && (activeTheme === 'light' || activeTheme === 'pure-white');
   const [selectedMarketplace, setSelectedMarketplace] = useState<string>(initialMarketplace);
   const [dateRange, setDateRange] = useState<DateRangeKey>('1y');
   const [dataResponse, setDataResponse] = useState<PriceHistoryResponse | null>(null);
@@ -198,11 +201,11 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
       const diffFromAvg = offer - stats.averagePrice;
 
       return (
-        <div className="bg-[#0b1329] border border-cyan-500/40 rounded-2xl p-4 shadow-2xl text-slate-100 min-w-[210px] space-y-2.5 backdrop-blur-md">
-          <div className="flex items-center justify-between pb-1.5 border-b border-slate-800">
-            <span className="text-xs font-bold text-slate-400">{label}</span>
+        <div className={`${isWhite ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-[#0b1329] border-cyan-500/40 text-slate-100 shadow-2xl'} border rounded-2xl p-4 min-w-[210px] space-y-2.5 backdrop-blur-md`}>
+          <div className={`flex items-center justify-between pb-1.5 border-b ${isWhite ? 'border-slate-100' : 'border-slate-800'}`}>
+            <span className={`text-xs font-bold ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>{label}</span>
             {event && (
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/40">
                 {event}
               </span>
             )}
@@ -210,19 +213,19 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+              <span className={`text-xs flex items-center gap-1.5 ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
+                <span className="w-2 h-2 rounded-full bg-cyan-500" />
                 <span>Offer Price:</span>
               </span>
-              <span className="text-sm font-black text-cyan-400">
+              <span className="text-sm font-black text-cyan-600 dark:text-cyan-400">
                 ₹{offer?.toLocaleString('en-IN')}
               </span>
             </div>
 
             {regular && regular > offer && (
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                <span className={`text-xs flex items-center gap-1.5 ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
+                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
                   <span>List Price:</span>
                 </span>
                 <span className="text-xs font-semibold text-slate-400 line-through">
@@ -232,15 +235,15 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
             )}
 
             {discount > 0 && (
-              <div className="flex items-center justify-between text-[11px] text-emerald-400 font-bold pt-1 border-t border-slate-800/80">
+              <div className={`flex items-center justify-between text-[11px] font-bold pt-1 border-t ${isWhite ? 'border-slate-100 text-emerald-600' : 'border-slate-800/80 text-emerald-400'}`}>
                 <span>Total Discount:</span>
                 <span>{discount}% OFF</span>
               </div>
             )}
 
-            <div className="text-[10px] text-slate-400 flex items-center justify-between pt-0.5">
+            <div className={`text-[10px] flex items-center justify-between pt-0.5 ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
               <span>Vs Historical Avg:</span>
-              <span className={diffFromAvg <= 0 ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'}>
+              <span className={diffFromAvg <= 0 ? 'text-emerald-500 font-semibold' : 'text-rose-500 font-semibold'}>
                 {diffFromAvg <= 0 ? `-₹${Math.abs(diffFromAvg).toLocaleString('en-IN')}` : `+₹${diffFromAvg.toLocaleString('en-IN')}`}
               </span>
             </div>
@@ -253,33 +256,47 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
 
   return (
     <div
-      className={`rounded-3xl border border-slate-800 bg-[#070d1e] p-5 sm:p-7 shadow-2xl text-slate-100 relative overflow-hidden ${className}`}
+      className={`rounded-3xl border p-5 sm:p-7 shadow-xl relative overflow-hidden transition-colors ${
+        isWhite
+          ? 'border-slate-200/90 bg-white text-slate-900 shadow-sm'
+          : 'border-slate-800 bg-[#070d1e] text-slate-100 shadow-2xl'
+      } ${className}`}
     >
       {/* Background glow styling */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+      {!isWhite && (
+        <>
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+        </>
+      )}
 
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-800/80 relative z-10">
+      <div className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b relative z-10 ${
+        isWhite ? 'border-slate-200' : 'border-slate-800/80'
+      }`}>
         <div>
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
               <TrendingDown className="w-4 h-4 text-white" />
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <h3 className={`text-lg sm:text-xl font-black flex items-center gap-2 ${
+              isWhite ? 'text-slate-900' : 'text-white'
+            }`}>
               <span>Interactive Price History Graph</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">
+              <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
                 Store Isolated
               </span>
             </h3>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className={`text-xs mt-1 ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
             Compare date-wise historical price movements across verified marketplace channels.
           </p>
         </div>
 
         {/* Date Filter Buttons */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0e172e] border border-slate-800 self-start lg:self-auto overflow-x-auto scrollbar-none">
+        <div className={`flex items-center gap-1 p-1 rounded-xl border self-start lg:self-auto overflow-x-auto scrollbar-none ${
+          isWhite ? 'bg-slate-100/90 border-slate-200' : 'bg-[#0e172e] border-slate-800'
+        }`}>
           {dateRanges.map(r => (
             <button
               key={r.key}
@@ -287,6 +304,8 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 dateRange === r.key
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                  : isWhite
+                  ? 'text-slate-600 hover:text-slate-900 hover:bg-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
@@ -298,9 +317,11 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
 
       {/* Marketplace Selector Bar (Do NOT combine marketplaces) */}
       <div className="py-4 relative z-10">
-        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+        <div className={`text-[11px] font-bold uppercase tracking-wider mb-2.5 flex items-center justify-between ${
+          isWhite ? 'text-slate-500' : 'text-slate-400'
+        }`}>
           <span>Select Marketplace Channel:</span>
-          <span className="text-[10px] text-slate-400 normal-case">
+          <span className={`text-[10px] normal-case ${isWhite ? 'text-slate-400' : 'text-slate-400'}`}>
             Prices tracked strictly independently per store
           </span>
         </div>
@@ -317,8 +338,12 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border shrink-0 cursor-pointer ${
                   isSelected
                     ? isStoreAjio
-                      ? 'bg-amber-500/20 border-amber-500/60 text-amber-300 ring-2 ring-amber-500/30 shadow-lg'
+                      ? 'bg-amber-500/20 border-amber-500/60 text-amber-600 dark:text-amber-300 ring-2 ring-amber-500/30 shadow-lg'
+                      : isWhite
+                      ? 'bg-blue-50 border-blue-600 text-blue-700 ring-2 ring-blue-500/30 shadow-md font-black'
                       : 'bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border-cyan-500 text-cyan-300 ring-2 ring-cyan-500/30 shadow-lg'
+                    : isWhite
+                    ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950'
                     : 'bg-[#0b1329] border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                 }`}
               >
@@ -326,10 +351,10 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
                 <span
                   className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded-md ${
                     isStoreAjio
-                      ? 'bg-amber-500/20 text-amber-400'
+                      ? 'bg-amber-500/20 text-amber-500'
                       : isSelected
-                      ? 'bg-cyan-500/20 text-cyan-300'
-                      : 'bg-slate-800 text-slate-400'
+                      ? isWhite ? 'bg-blue-200/80 text-blue-800' : 'bg-cyan-500/20 text-cyan-300'
+                      : isWhite ? 'bg-slate-200 text-slate-600' : 'bg-slate-800 text-slate-400'
                   }`}
                 >
                   {store.badge}
@@ -370,17 +395,19 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
       ) : (
         <>
           {/* Chart Controls Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 py-3 border-y border-slate-800/80 text-xs font-semibold relative z-10">
+          <div className={`flex flex-wrap items-center justify-between gap-3 py-3 border-y text-xs font-semibold relative z-10 ${
+            isWhite ? 'border-slate-200' : 'border-slate-800/80'
+          }`}>
             {/* Toggles */}
             <div className="flex flex-wrap items-center gap-4">
               {/* Show Offer Price */}
               <button
                 onClick={() => setShowOfferPrice(!showOfferPrice)}
                 className={`flex items-center gap-1.5 cursor-pointer transition-colors ${
-                  showOfferPrice ? 'text-cyan-400' : 'text-slate-500 line-through'
+                  showOfferPrice ? (isWhite ? 'text-cyan-600 font-bold' : 'text-cyan-400') : 'text-slate-400 line-through'
                 }`}
               >
-                <div className={`w-3 h-3 rounded-full ${showOfferPrice ? 'bg-cyan-400' : 'bg-slate-600'}`} />
+                <div className={`w-3 h-3 rounded-full ${showOfferPrice ? 'bg-cyan-500' : 'bg-slate-300'}`} />
                 <span>Offer Price</span>
               </button>
 
@@ -388,10 +415,10 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
               <button
                 onClick={() => setShowRegularPrice(!showRegularPrice)}
                 className={`flex items-center gap-1.5 cursor-pointer transition-colors ${
-                  showRegularPrice ? 'text-indigo-400' : 'text-slate-500 line-through'
+                  showRegularPrice ? (isWhite ? 'text-indigo-600 font-bold' : 'text-indigo-400') : 'text-slate-400 line-through'
                 }`}
               >
-                <div className={`w-3 h-3 rounded-full ${showRegularPrice ? 'bg-indigo-400' : 'bg-slate-600'}`} />
+                <div className={`w-3 h-3 rounded-full ${showRegularPrice ? 'bg-indigo-500' : 'bg-slate-300'}`} />
                 <span>Regular Price (MRP)</span>
               </button>
 
@@ -399,22 +426,26 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
               <button
                 onClick={() => setShowReferenceLines(!showReferenceLines)}
                 className={`flex items-center gap-1.5 cursor-pointer transition-colors ${
-                  showReferenceLines ? 'text-slate-300' : 'text-slate-500'
+                  showReferenceLines ? (isWhite ? 'text-slate-700' : 'text-slate-300') : 'text-slate-400'
                 }`}
               >
-                {showReferenceLines ? <Eye className="w-3.5 h-3.5 text-slate-300" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {showReferenceLines ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
                 <span>Reference Lines (Min/Avg/Max)</span>
               </button>
             </div>
 
             {/* Reset Zoom & Pan Helper */}
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-slate-400 hidden sm:inline">
+              <span className={`text-[10px] hidden sm:inline ${isWhite ? 'text-slate-400' : 'text-slate-400'}`}>
                 Drag slider below to zoom & pan
               </span>
               <button
                 onClick={handleResetZoom}
-                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                  isWhite
+                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                    : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700'
+                }`}
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset Zoom</span>
@@ -452,18 +483,18 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
                       </linearGradient>
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isWhite ? '#f1f5f9' : '#1e293b'} vertical={false} />
 
                     <XAxis
                       dataKey="date"
-                      stroke="#64748b"
+                      stroke={isWhite ? '#94a3b8' : '#64748b'}
                       fontSize={11}
                       tickLine={false}
                       dy={8}
                     />
 
                     <YAxis
-                      stroke="#64748b"
+                      stroke={isWhite ? '#94a3b8' : '#64748b'}
                       fontSize={11}
                       domain={[minDomain, maxDomain]}
                       tickLine={false}
@@ -557,7 +588,7 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
                       dataKey="date"
                       height={24}
                       stroke="#0284c7"
-                      fill="#0b1329"
+                      fill={isWhite ? "#f1f5f9" : "#0b1329"}
                       tickFormatter={() => ''}
                     />
                   </AreaChart>
@@ -567,56 +598,70 @@ export const InteractivePriceHistoryChart: React.FC<Props> = ({
           </div>
 
           {/* Historical Price Information (Summary Bar - 6 Cards) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-slate-800/80 relative z-10">
+          <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t relative z-10 ${
+            isWhite ? 'border-slate-200' : 'border-slate-800/80'
+          }`}>
             {/* Lowest Price */}
-            <div className="bg-[#0b162f] border border-emerald-500/30 rounded-2xl p-3.5 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Lowest Price</div>
-              <div className="text-base sm:text-lg font-black text-emerald-300">
+            <div className={`border rounded-2xl p-3.5 space-y-1 ${
+              isWhite ? 'bg-emerald-50/70 border-emerald-200' : 'bg-[#0b162f] border-emerald-500/30'
+            }`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-emerald-700' : 'text-emerald-400'}`}>Lowest Price</div>
+              <div className={`text-base sm:text-lg font-black ${isWhite ? 'text-emerald-700' : 'text-emerald-300'}`}>
                 ₹{stats.lowestPrice.toLocaleString('en-IN')}
               </div>
-              <div className="text-[10px] font-medium text-emerald-400/80 truncate">Historical Record</div>
+              <div className={`text-[10px] font-medium truncate ${isWhite ? 'text-emerald-600/80' : 'text-emerald-400/80'}`}>Historical Record</div>
             </div>
 
             {/* Highest Price */}
-            <div className="bg-[#0b162f] border border-rose-500/30 rounded-2xl p-3.5 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-rose-400 tracking-wider">Highest Price</div>
-              <div className="text-base sm:text-lg font-black text-rose-300">
+            <div className={`border rounded-2xl p-3.5 space-y-1 ${
+              isWhite ? 'bg-rose-50/70 border-rose-200' : 'bg-[#0b162f] border-rose-500/30'
+            }`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-rose-700' : 'text-rose-400'}`}>Highest Price</div>
+              <div className={`text-base sm:text-lg font-black ${isWhite ? 'text-rose-700' : 'text-rose-300'}`}>
                 ₹{stats.highestPrice.toLocaleString('en-IN')}
               </div>
-              <div className="text-[10px] font-medium text-rose-400/80 truncate">Peak Market Price</div>
+              <div className={`text-[10px] font-medium truncate ${isWhite ? 'text-rose-600/80' : 'text-rose-400/80'}`}>Peak Market Price</div>
             </div>
 
             {/* Average Price */}
-            <div className="bg-[#0b162f] border border-purple-500/30 rounded-2xl p-3.5 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-purple-400 tracking-wider">Average Price</div>
-              <div className="text-base sm:text-lg font-black text-purple-300">
+            <div className={`border rounded-2xl p-3.5 space-y-1 ${
+              isWhite ? 'bg-purple-50/70 border-purple-200' : 'bg-[#0b162f] border-purple-500/30'
+            }`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-purple-700' : 'text-purple-400'}`}>Average Price</div>
+              <div className={`text-base sm:text-lg font-black ${isWhite ? 'text-purple-700' : 'text-purple-300'}`}>
                 ₹{stats.averagePrice.toLocaleString('en-IN')}
               </div>
-              <div className="text-[10px] font-medium text-purple-400/80 truncate">Baseline Mean</div>
+              <div className={`text-[10px] font-medium truncate ${isWhite ? 'text-purple-600/80' : 'text-purple-400/80'}`}>Baseline Mean</div>
             </div>
 
             {/* Current Price */}
-            <div className="bg-[#0b162f] border border-cyan-500/30 rounded-2xl p-3.5 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Current Price</div>
-              <div className="text-base sm:text-lg font-black text-cyan-300">
+            <div className={`border rounded-2xl p-3.5 space-y-1 ${
+              isWhite ? 'bg-cyan-50/70 border-cyan-200' : 'bg-[#0b162f] border-cyan-500/30'
+            }`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-cyan-700' : 'text-cyan-400'}`}>Current Price</div>
+              <div className={`text-base sm:text-lg font-black ${isWhite ? 'text-cyan-700' : 'text-cyan-300'}`}>
                 ₹{stats.currentPrice.toLocaleString('en-IN')}
               </div>
-              <div className="text-[10px] font-bold text-cyan-400 truncate">Live Verified</div>
+              <div className={`text-[10px] font-bold truncate ${isWhite ? 'text-cyan-600' : 'text-cyan-400'}`}>Live Verified</div>
             </div>
 
             {/* Total Price Changes */}
-            <div className="bg-[#0b162f] border border-slate-800 rounded-2xl p-3.5 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Price Changes</div>
-              <div className="text-base sm:text-lg font-black text-white">{stats.totalChanges} Points</div>
-              <div className="text-[10px] font-medium text-slate-400 truncate">Recorded Cycles</div>
+            <div className={`border rounded-2xl p-3.5 space-y-1 ${
+              isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0b162f] border-slate-800'
+            }`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Price Changes</div>
+              <div className={`text-base sm:text-lg font-black ${isWhite ? 'text-slate-900' : 'text-white'}`}>{stats.totalChanges} Points</div>
+              <div className={`text-[10px] font-medium truncate ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Recorded Cycles</div>
             </div>
 
             {/* Last Price Update */}
-            <div className="bg-[#0b162f] border border-slate-800 rounded-2xl p-3.5 space-y-1">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Last Update</div>
-              <div className="text-xs sm:text-sm font-black text-slate-200 mt-1 truncate">{stats.lastUpdated}</div>
-              <div className="text-[10px] font-medium text-slate-400 flex items-center gap-1 truncate">
-                <Clock className="w-3 h-3 text-cyan-400 shrink-0" />
+            <div className={`border rounded-2xl p-3.5 space-y-1 ${
+              isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#0b162f] border-slate-800'
+            }`}>
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>Last Update</div>
+              <div className={`text-xs sm:text-sm font-black mt-1 truncate ${isWhite ? 'text-slate-800' : 'text-slate-200'}`}>{stats.lastUpdated}</div>
+              <div className={`text-[10px] font-medium flex items-center gap-1 truncate ${isWhite ? 'text-slate-500' : 'text-slate-400'}`}>
+                <Clock className="w-3 h-3 text-cyan-600 dark:text-cyan-400 shrink-0" />
                 <span>Synchronized</span>
               </div>
             </div>
