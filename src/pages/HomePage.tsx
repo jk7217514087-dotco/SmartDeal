@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from '../components/common/ProductCard';
@@ -129,45 +129,21 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  // Section 3: Click Page / Budget Buzz Deals matching Panel 3
-  const clickPageDeals = [
-    {
-      id: 'cp-deal-1',
-      name: 'boAt Rockerz 450 Wireless Headphone',
-      discount: '50% OFF',
-      price: '₹1,499',
-      mrp: '₹2,999',
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
-      link: '/product/prod-boat-rockerz-450'
-    },
-    {
-      id: 'cp-deal-2',
-      name: 'Fire-Boltt Ninja / Noise Smart Watch',
-      discount: '60% OFF',
-      price: '₹1,199',
-      mrp: '₹2,999',
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80',
-      link: '/product/prod-noise-endeavour-pro'
-    },
-    {
-      id: 'cp-deal-3',
-      name: 'Campus / Nike Athletic Shoes',
-      discount: '45% OFF',
-      price: '₹999',
-      mrp: '₹1,899',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80',
-      link: '/product/prod-nike-running-shoes'
-    },
-    {
-      id: 'cp-deal-4',
-      name: 'boAt Airdopes 141 TWS Earbuds',
-      discount: '71% OFF',
-      price: '₹1,299',
-      mrp: '₹4,490',
-      image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&auto=format&fit=crop&q=80',
-      link: '/product/prod-boat-airdopes'
-    }
-  ];
+  // Section 3: Real-time Live Click Page / Budget Buzz Deals
+  const clickPageDeals = useMemo(() => {
+    return [...products]
+      .filter(p => (p.discountPercent && p.discountPercent > 0) || (p.mrp > p.sellingPrice))
+      .map(p => ({
+        ...p,
+        calculatedDiscount: p.discountPercent || Math.round(((p.mrp - p.sellingPrice) / p.mrp) * 100)
+      }))
+      .sort((a, b) => b.calculatedDiscount - a.calculatedDiscount)
+      .slice(0, 4);
+  }, [products]);
+
+  const maxDealDiscount = useMemo(() => {
+    return Math.max(...clickPageDeals.map(p => p.calculatedDiscount), 70);
+  }, [clickPageDeals]);
 
   return (
     <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
@@ -496,7 +472,7 @@ export const HomePage: React.FC = () => {
               Budget Buzz Deals
             </h3>
             <p className="text-sm sm:text-base font-extrabold text-amber-300">
-              Up to 70% OFF • Grab the hottest deals before they're gone!
+              Up to {maxDealDiscount}% OFF • Grab the hottest deals before they're gone!
             </p>
           </div>
 
@@ -538,12 +514,12 @@ export const HomePage: React.FC = () => {
               {/* Top Red Discount Pill */}
               <div className="flex items-center justify-between mb-2">
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-xs">
-                  {deal.discount}
+                  {deal.calculatedDiscount}% OFF
                 </span>
               </div>
 
               {/* Centered Image */}
-              <Link to={deal.link} className="block relative w-full h-32 sm:h-36 flex items-center justify-center p-2 group-hover:scale-105 transition-transform">
+              <Link to={`/product/${deal.id}`} className="block relative w-full h-32 sm:h-36 flex items-center justify-center p-2 group-hover:scale-105 transition-transform">
                 <img
                   src={deal.image}
                   alt={deal.name}
@@ -558,15 +534,15 @@ export const HomePage: React.FC = () => {
                 </h4>
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
-                    {deal.price}
+                    ₹{deal.sellingPrice.toLocaleString('en-IN')}
                   </span>
                   <span className="text-[10px] sm:text-xs text-slate-400 line-through">
-                    {deal.mrp}
+                    ₹{deal.mrp.toLocaleString('en-IN')}
                   </span>
                 </div>
 
                 <Link
-                  to={deal.link}
+                  to={`/product/${deal.id}`}
                   className="mt-2 w-full py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-black text-xs text-center flex items-center justify-center gap-1 transition-all"
                 >
                   <span>View Deal</span>
