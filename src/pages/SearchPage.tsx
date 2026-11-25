@@ -576,38 +576,130 @@ export const SearchPage: React.FC = () => {
                   return (
                     <div
                       key={product.id}
-                      className="group relative p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-brand-500/50 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 sm:gap-6"
+                      className="group relative p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/50 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center gap-3.5 sm:gap-6"
                     >
-                      {/* Image Thumbnail Container (Slightly increased size, no Best Deal badge) */}
-                      <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-slate-50 dark:bg-slate-950 p-2.5 sm:p-3.5 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 group-hover:scale-105 transition-transform">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-contain drop-shadow-sm"
-                        />
-                      </div>
-
-                      {/* Center Info */}
-                      <div className="flex-1 min-w-0 space-y-2 text-center sm:text-left w-full sm:w-auto">
-                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                          <span className="text-[11px] font-extrabold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 rounded-md border border-brand-200 dark:border-brand-800/40">
-                            {product.brand}
-                          </span>
-                          <span className="text-xs text-amber-500 font-bold flex items-center gap-1">
-                            ★ {product.rating} <span className="text-slate-400 font-normal">({(product.reviewsCount / 1000).toFixed(1)}k)</span>
-                          </span>
-                        </div>
-
+                      {/* MOBILE CARD LAYOUT (Screen < sm): Balanced Horizontal Top + Action Bar Bottom */}
+                      <div className="flex sm:hidden items-start gap-3 w-full">
+                        {/* Mobile Left: Enlarged Product Image Thumbnail */}
                         <Link
                           to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                          className="block text-sm sm:text-base font-black text-slate-900 dark:text-white hover:text-brand-600 dark:hover:text-brand-400 transition-colors line-clamp-2 sm:line-clamp-1"
+                          className="relative w-32 h-32 rounded-xl bg-slate-50 dark:bg-slate-950 p-2 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 active:scale-95 transition-transform"
                         >
-                          {product.name}
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-contain drop-shadow-sm"
+                          />
                         </Link>
 
-                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-lg sm:text-xl font-black text-slate-950 dark:text-white">
+                        {/* Mobile Right: Left-aligned Info Hierarchy */}
+                        <div className="flex-1 min-w-0 space-y-1.5 text-left">
+                          {/* Brand, Rating & Wishlist in Top Row */}
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800/40">
+                              {product.brand}
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[11px] text-amber-500 font-bold flex items-center gap-0.5">
+                                ★ {product.rating}
+                              </span>
+                              <button
+                                onClick={() => toggleWishlist(product.id)}
+                                className={`p-1 rounded-lg transition-all cursor-pointer ${
+                                  isWishlisted
+                                    ? 'text-rose-500 bg-rose-50 dark:bg-rose-950/40'
+                                    : 'text-slate-400 hover:text-rose-500'
+                                }`}
+                                title="Save to wishlist"
+                              >
+                                <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-rose-500' : ''}`} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Product Title */}
+                          <Link
+                            to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                            className="block text-xs font-black text-slate-900 dark:text-white line-clamp-2 leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                          >
+                            {product.name}
+                          </Link>
+
+                          {/* Price Line */}
+                          <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
+                            <span className="text-base font-black text-slate-950 dark:text-white">
+                              ₹{product.sellingPrice.toLocaleString('en-IN')}
+                            </span>
+                            <span className="text-[10px] text-slate-400 line-through">
+                              ₹{product.mrp.toLocaleString('en-IN')}
+                            </span>
+                            <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded">
+                              {product.discountPercent}% OFF
+                            </span>
+                          </div>
+
+                          {/* Marketplace / Product Company Logo Badge */}
+                          <div className="flex items-center gap-1.5 pt-1">
+                            <MarketplaceBadge storeName={lowestStore?.sellerName || 'Amazon'} size="sm" />
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                              Available on <strong className="text-slate-800 dark:text-slate-200">{lowestStore?.sellerName || 'Amazon'}</strong>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Mobile Bottom Action Buttons (Full width dual buttons) */}
+                      <div className="flex sm:hidden items-center gap-2 w-full pt-1 border-t border-slate-100 dark:border-slate-800">
+                        <Link
+                          to={`/compare/${product.id}`}
+                          className="flex-1 py-2 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs text-center flex items-center justify-center gap-1 shadow-2xs hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"
+                        >
+                          <span>⇄</span>
+                          <span>Compare</span>
+                        </Link>
+                        <Link
+                          to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                          className="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs text-center shadow-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+                        >
+                          <span>View Details</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+
+                      {/* DESKTOP CARD LAYOUT (Screen >= sm) */}
+                      <div className="hidden sm:flex sm:items-center sm:gap-6 w-full">
+                        {/* Image Thumbnail Container (Enlarged size) */}
+                        <Link
+                          to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                          className="relative w-44 h-44 rounded-2xl bg-slate-50 dark:bg-slate-950 p-3 shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-800/80 group-hover:scale-105 transition-transform"
+                        >
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-contain drop-shadow-sm"
+                          />
+                        </Link>
+
+                        {/* Center Info */}
+                        <div className="flex-1 min-w-0 space-y-2 text-left">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800/40">
+                              {product.brand}
+                            </span>
+                            <span className="text-xs text-amber-500 font-bold flex items-center gap-1">
+                              ★ {product.rating} <span className="text-slate-400 font-normal">({(product.reviewsCount / 1000).toFixed(1)}k)</span>
+                            </span>
+                          </div>
+
+                          <Link
+                            to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                            className="block text-base font-black text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-1"
+                          >
+                            {product.name}
+                          </Link>
+
+                          <div className="flex items-baseline gap-2 pt-1">
+                            <span className="text-xl font-black text-slate-950 dark:text-white">
                               ₹{product.sellingPrice.toLocaleString('en-IN')}
                             </span>
                             <span className="text-xs text-slate-400 line-through">
@@ -617,45 +709,46 @@ export const SearchPage: React.FC = () => {
                               {product.discountPercent}% OFF
                             </span>
                           </div>
+
+                          {/* Marketplace / Product Company Logo Badge */}
+                          <div className="flex items-center gap-2 pt-1">
+                            <MarketplaceBadge storeName={lowestStore?.sellerName || 'Amazon'} size="md" />
+                            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                              Available on <strong className="text-slate-800 dark:text-slate-200">{lowestStore?.sellerName || 'Amazon'}</strong>
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Marketplace / Product Company Logo Badge (Replaced In Stock & Cashback) */}
-                        <div className="flex items-center gap-2 pt-1 flex-wrap justify-center sm:justify-start">
-                          <MarketplaceBadge storeName={lowestStore?.sellerName || 'Amazon'} size="md" />
-                          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                            Available on <strong className="text-slate-800 dark:text-slate-200">{lowestStore?.sellerName || 'Amazon'}</strong>
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Right Action Block matching Panel 4 */}
-                      <div className="flex flex-col sm:items-end justify-center gap-2.5 w-full sm:w-auto shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
-                        <button
-                          onClick={() => toggleWishlist(product.id)}
-                          className={`self-end p-2 rounded-xl transition-all cursor-pointer ${isWishlisted
-                              ? 'text-rose-500 bg-rose-50 dark:bg-rose-950/40'
-                              : 'text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        {/* Right Action Block matching Panel 4 */}
+                        <div className="flex flex-col items-end justify-center gap-2.5 shrink-0">
+                          <button
+                            onClick={() => toggleWishlist(product.id)}
+                            className={`p-2 rounded-xl transition-all cursor-pointer ${
+                              isWishlisted
+                                ? 'text-rose-500 bg-rose-50 dark:bg-rose-950/40'
+                                : 'text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800'
                             }`}
-                          title="Save to wishlist"
-                        >
-                          <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
-                        </button>
+                            title="Save to wishlist"
+                          >
+                            <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
+                          </button>
 
-                        <div className="flex sm:flex-col gap-2 w-full">
-                          <Link
-                            to={`/compare/${product.id}`}
-                            className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-800 dark:text-slate-200 font-bold text-xs text-center transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                          >
-                            <span>⇄</span>
-                            <span>Compare</span>
-                          </Link>
-                          <Link
-                            to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
-                            className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs text-center shadow-md transition-all cursor-pointer flex items-center justify-center gap-1"
-                          >
-                            <span>View Details</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
+                          <div className="flex flex-col gap-2 w-36">
+                            <Link
+                              to={`/compare/${product.id}`}
+                              className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-transparent text-slate-800 dark:text-slate-200 font-bold text-xs text-center transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                            >
+                              <span>⇄</span>
+                              <span>Compare</span>
+                            </Link>
+                            <Link
+                              to={product.id === 'prod-boat-airdopes' ? '/' : `/product/${product.id}`}
+                              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs text-center shadow-md transition-all cursor-pointer flex items-center justify-center gap-1"
+                            >
+                              <span>View Details</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
