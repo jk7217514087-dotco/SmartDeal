@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { SmartBuyRecommendation } from '../components/product/SmartBuyRecommendation';
@@ -35,6 +35,54 @@ export const PriceComparisonPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string>(id || products[0]?.id || '');
   const [selectedMarketplace, setSelectedMarketplace] = useState<string>('flipkart');
   const currentProduct = products.find(p => p.id === selectedId) || products[0];
+
+  // Interactive Live Search & Comparison State
+  const [compareSearchQuery, setCompareSearchQuery] = useState('');
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Close search dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsSearchDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (!compareSearchQuery.trim()) {
+      return products.slice(0, 6);
+    }
+    const q = compareSearchQuery.toLowerCase();
+    return products.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.brand.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [compareSearchQuery, products]);
+
+  const handleCompareSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchResults.length > 0) {
+      const targetProduct = searchResults[0];
+      setSelectedId(targetProduct.id);
+      setIsSearchDropdownOpen(false);
+      setCompareSearchQuery('');
+      navigate(`/compare/${targetProduct.id}`);
+    } else if (compareSearchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(compareSearchQuery.trim())}`);
+    }
+  };
+
+  const handleSelectProduct = (productId: string) => {
+    setSelectedId(productId);
+    setIsSearchDropdownOpen(false);
+    setCompareSearchQuery('');
+    navigate(`/compare/${productId}`);
+  };
 
   // Gallery images
   const productImages = currentProduct?.images && currentProduct.images.length > 0
@@ -226,29 +274,127 @@ export const PriceComparisonPage: React.FC = () => {
           </nav>
         </div>
 
-        {/* Product Switcher Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 min-w-0">
-            <Search className="w-4 h-4 text-blue-600 shrink-0" />
-            <span className="shrink-0 font-medium">Comparing Prices for:</span>
-            <span className="text-slate-900 dark:text-white font-black truncate">{currentProduct.name}</span>
+        {/* Interactive Product Search & Comparison Switcher Bar */}
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {/* Interactive Search Input with Live Dropdown */}
+            <div ref={searchContainerRef} className="relative flex-1 min-w-0">
+              <form onSubmit={handleCompareSearchSubmit} className="relative flex items-center">
+                <Search className="w-4 h-4 text-blue-600 dark:text-blue-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={compareSearchQuery}
+                  onChange={e => {
+                    setCompareSearchQuery(e.target.value);
+                    setIsSearchDropdownOpen(true);
+                  }}
+                  onFocus={() => setIsSearchDropdownOpen(true)}
+                  placeholder="Search any product to compare prices (e.g. iPhone 15, MacBook, boAt, Galaxy)..."
+                  className="w-full pl-10 pr-20 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs"
+                />
+                <div className="absolute right-2 flex items-center gap-1">
+                  {compareSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCompareSearchQuery('');
+                        setIsSearchDropdownOpen(false);
+                      }}
+                      className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+
+              {/* Live Autocomplete / Search Results Dropdown */}
+              {isSearchDropdownOpen && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-2 max-h-80 overflow-y-auto space-y-1">
+                  <div className="px-3 py-1.5 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>{compareSearchQuery.trim() ? `Search Results (${searchResults.length})` : 'Popular Products to Compare'}</span>
+                    <span className="text-[10px] text-blue-600 dark:text-blue-400">Click to compare</span>
+                  </div>
+
+                  {searchResults.length > 0 ? (
+                    searchResults.map(p => {
+                      const isCurrent = p.id === currentProduct.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => handleSelectProduct(p.id)}
+                          className={`w-full p-2.5 rounded-xl text-left flex items-center gap-3 transition-colors cursor-pointer ${
+                            isCurrent
+                              ? 'bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800'
+                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/80'
+                          }`}
+                        >
+                          <div className="w-11 h-11 rounded-lg bg-slate-100 dark:bg-slate-800 p-1 shrink-0 flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                            <img src={p.image} alt={p.name} className="w-full h-full object-contain" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase">
+                                {p.brand}
+                              </span>
+                              {isCurrent && (
+                                <span className="text-[9px] font-bold bg-blue-600 text-white px-1.5 py-0.2 rounded-full">
+                                  Currently Comparing
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                              {p.name}
+                            </p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                              Best Price: <strong className="text-slate-900 dark:text-white">₹{p.sellingPrice.toLocaleString('en-IN')}</strong> • {p.marketplacePrices?.length || 3} stores
+                            </p>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                      No matching products found. Press <strong>Search</strong> to browse all items.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Quick Switch Dropdown */}
+            <div className="w-full sm:w-72 shrink-0">
+              <select
+                value={selectedId}
+                onChange={e => {
+                  setSelectedId(e.target.value);
+                  navigate(`/compare/${e.target.value}`);
+                }}
+                className="w-full bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
+              >
+                {products.map(p => (
+                  <option key={p.id} value={p.id}>
+                    {p.name.slice(0, 32)}... (₹{p.sellingPrice.toLocaleString('en-IN')})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="w-full sm:w-80 shrink-0">
-            <select
-              value={selectedId}
-              onChange={e => {
-                setSelectedId(e.target.value);
-                navigate(`/compare/${e.target.value}`);
-              }}
-              className="w-full bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
-            >
-              {products.map(p => (
-                <option key={p.id} value={p.id}>
-                  {p.name.slice(0, 36)}... (₹{p.sellingPrice.toLocaleString('en-IN')})
-                </option>
-              ))}
-            </select>
+          {/* Current Comparison Pill Indicator */}
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+            <span className="font-semibold text-slate-600 dark:text-slate-300">Comparing Prices for:</span>
+            <span className="font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-lg border border-blue-200 dark:border-blue-800/40 truncate">
+              {currentProduct.name}
+            </span>
           </div>
         </div>
 
@@ -509,11 +655,7 @@ export const PriceComparisonPage: React.FC = () => {
               })}
             </div>
 
-            {/* Bottom Savings Banner matching Reference Panel 5 */}
-            <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm font-extrabold flex items-center gap-2 shadow-xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Save ₹{netSavings.toLocaleString('en-IN')} compared with the highest listed price.</span>
-            </div>
+
           </div>
         </div>
 
