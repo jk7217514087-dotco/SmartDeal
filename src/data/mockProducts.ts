@@ -1506,9 +1506,9 @@ export const mockProducts: Product[] = [
     name: 'Pigeon by Stovekraft Cruise 3 Burner Glass Top Gas Stove',
     brand: 'Pigeon',
     category: 'Home & Kitchen',
-    image: 'https://images.unsplash.com/photo-1585837575652-267c041d77d4?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1585837575652-267c041d77d4?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 6495,
     sellingPrice: 2199,

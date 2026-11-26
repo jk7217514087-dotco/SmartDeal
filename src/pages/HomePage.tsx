@@ -36,7 +36,6 @@ export const HomePage: React.FC = () => {
       : 'bg-white hover:bg-blue-50 border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 shadow-xs',
   };
   const navigate = useNavigate();
-  const [heroSearch, setHeroSearch] = useState('');
   const [bannerSlide, setBannerSlide] = useState(0);
   const [isBannerPaused, setIsBannerPaused] = useState(false);
 
@@ -77,14 +76,6 @@ export const HomePage: React.FC = () => {
     ? realOfferProducts[bannerSlide % realOfferProducts.length]
     : null;
 
-  const handleHeroSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (heroSearch.trim()) {
-      trackActivity('SEARCH_PRODUCT', { query: heroSearch.trim(), source: 'hero_search' });
-      navigate(`/search?q=${encodeURIComponent(heroSearch.trim())}`);
-    }
-  };
-
   // Section 3: Real-time Live Click Page / Budget Buzz Deals
   const clickPageDeals = useMemo(() => {
     return [...products]
@@ -103,208 +94,168 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
-      {/* 1. HERO SECTION: STREAMLINED & CONVERSION-OPTIMIZED MATCHING REFERENCE PANEL 1 */}
-      <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-8 sm:py-12 transition-all`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Column: Heading, Search & Partner Badges */}
-            <div className="lg:col-span-7 space-y-5 text-left">
-              {/* Trust Badge matching Panel 1 */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-xs transition-all bg-blue-50 dark:bg-blue-950/60 border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300">
-                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                <span className="text-xs font-bold tracking-wide">
-                  SmartDeal Platform • Intelligent Comparison
-                </span>
-              </div>
+      {/* 1. HERO SECTION: CENTERED SHOWCASE AD BANNER WITH LOWER PARTNER BADGES & VALUE PROPS */}
+      <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-6 sm:py-10 transition-all`}>
+        <div className="max-w-7xl mx-auto px-4 space-y-6">
+          {/* Centered Showcase Ad Banner (Orange Area) */}
+          <div className="w-full max-w-5xl mx-auto">
+            {activeOffer && (
+              <div
+                className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-5 sm:p-8 flex flex-col md:flex-row items-center justify-between min-h-[220px] sm:min-h-[250px] group select-none transition-all"
+                onMouseEnter={() => setIsBannerPaused(true)}
+                onMouseLeave={() => setIsBannerPaused(false)}
+              >
+                {/* Subtle Background Neon Atmosphere Glows */}
+                <div className="absolute top-0 right-1/4 w-80 h-80 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-10 left-10 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-500/15 rounded-full blur-2xl pointer-events-none" />
 
-              {/* Main Headline matching Reference Image */}
-              <div className="space-y-2">
-                <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15]">
-                  Find the Best Price. <br />
-                  Compare. Save. <span className="text-blue-600">Buy Smarter.</span>
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl font-medium">
-                  Compare prices, track deals and discover the biggest savings across top marketplaces.
-                </p>
-              </div>
+                {/* Left Column: Real Brand, Store, Name, Real % Offer, Real Prices */}
+                <div className="relative z-10 flex-1 min-w-0 pr-0 md:pr-6 space-y-2 sm:space-y-3 text-center md:text-left">
+                  <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
+                    <MarketplaceBadge storeName={activeOffer.storeName} size="sm" />
+                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-purple-200 bg-white/10 px-2.5 py-0.5 rounded-md border border-white/15">
+                      {activeOffer.product.brand}
+                    </span>
+                    {/* Real Active Discount Badge */}
+                    <span className="text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm ring-1 ring-white/30 animate-pulse">
+                      {activeOffer.discount}% OFF
+                    </span>
+                  </div>
 
-              {/* Search Bar matching Panel 1 */}
-              <form onSubmit={handleHeroSearch} className="max-w-xl">
-                <div className={`relative flex items-center rounded-2xl p-2 border transition-all ${heroTheme.searchContainer}`}>
-                  <Search className="w-5 h-5 text-slate-400 ml-3 shrink-0" />
-                  <input
-                    type="text"
-                    value={heroSearch}
-                    onChange={e => setHeroSearch(e.target.value)}
-                    placeholder="Search products, brands or categories..."
-                    className={`w-full bg-transparent px-3 py-2 text-sm ${isDarkMode ? 'text-white placeholder-slate-400' : 'text-slate-900 placeholder-slate-400'} focus:outline-none`}
-                  />
-                  <button
-                    type="submit"
-                    className={`px-6 py-2.5 rounded-xl font-black text-xs transition-all shrink-0 cursor-pointer active:scale-95 shadow-lg ${heroTheme.searchBtn}`}
+                  {/* Real Product Name */}
+                  <Link
+                    to={`/product/${activeOffer.product.id}`}
+                    className="block font-black text-base sm:text-2xl text-white hover:text-purple-300 transition-colors line-clamp-2 leading-tight drop-shadow-sm"
+                    title={activeOffer.product.name}
                   >
-                    Search
-                  </button>
-                </div>
-              </form>
+                    {activeOffer.product.name}
+                  </Link>
 
-              {/* Marketplace Partner Badges Row matching Panel 1 */}
-              <div className="pt-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  {[
-                    { name: 'amazon', color: 'bg-[#131921] text-amber-400 border-slate-700' },
-                    { name: 'Flipkart', color: 'bg-[#2874f0] text-yellow-300 border-blue-400' },
-                    { name: 'meesho', color: 'bg-[#f43397] text-white border-pink-400' },
-                    { name: 'myntra', color: 'bg-white text-[#ff3f6c] border-pink-200' },
-                    { name: 'AJIO', color: 'bg-[#2c4152] text-white border-slate-600' },
-                    { name: 'TATA CLiQ', color: 'bg-[#1f2228] text-rose-400 border-slate-700' },
-                    { name: 'CROMA', color: 'bg-[#00e9bf]/20 text-teal-600 dark:text-teal-300 border-teal-500/40' },
-                    { name: 'Reliance digital', color: 'bg-[#e42529] text-white border-red-500' },
-                    { name: '+ More', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700' },
-                  ].map(partner => (
-                    <button
-                      key={partner.name}
-                      type="button"
-                      onClick={() => navigate(`/search?q=${encodeURIComponent(partner.name.replace('+', '').trim())}`)}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold border shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer ${partner.color}`}
+                  {/* Real Price Line */}
+                  <div className="flex items-baseline gap-2 flex-wrap justify-center md:justify-start pt-1">
+                    <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                      ₹{activeOffer.product.sellingPrice.toLocaleString('en-IN')}
+                    </span>
+                    <span className="text-xs sm:text-sm text-purple-200/60 line-through">
+                      ₹{activeOffer.product.mrp.toLocaleString('en-IN')}
+                    </span>
+                    {activeOffer.savings > 0 && (
+                      <span className="text-xs sm:text-sm font-extrabold text-amber-300">
+                        Save ₹{activeOffer.savings.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Shop Now CTA Button */}
+                  <div className="pt-2 flex items-center justify-center md:justify-start">
+                    <Link
+                      to={`/product/${activeOffer.product.id}`}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all cursor-pointer hover:scale-105"
                     >
-                      {partner.name}
-                    </button>
+                      <span>Shop Now</span>
+                      <ArrowRight className="w-4 h-4 text-purple-700" />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Right Column: 3D Neon Isolated Product Artwork */}
+                <Link
+                  to={`/product/${activeOffer.product.id}`}
+                  className="relative z-10 w-44 sm:w-56 h-40 sm:h-52 shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer mt-4 md:mt-0"
+                  title={activeOffer.product.name}
+                >
+                  {/* Neon Halo behind artwork */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/35 via-indigo-500/20 to-pink-500/35 rounded-full blur-2xl pointer-events-none" />
+                  
+                  <img
+                    key={activeOffer.product.id}
+                    src={activeOffer.product.image}
+                    alt={activeOffer.product.name}
+                    className="max-h-36 sm:max-h-44 max-w-full object-contain drop-shadow-[0_20px_35px_rgba(168,85,247,0.55)] animate-fadeIn relative z-10"
+                    loading="eager"
+                  />
+
+                  {/* Neon Pedestal underneath */}
+                  <div className="w-32 sm:w-40 h-5 bg-gradient-to-r from-purple-500/40 via-indigo-400/50 to-pink-500/40 rounded-full blur-md -mt-2 pointer-events-none" />
+
+                  {/* 3D Floating Discount Tag */}
+                  <div className="absolute top-2 right-2 px-2.5 py-1 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-xs shadow-xl transform rotate-12 border border-white/40">
+                    {activeOffer.discount}% OFF
+                  </div>
+                </Link>
+
+                {/* Left Arrow */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setBannerSlide(prev => (prev - 1 + realOfferProducts.length) % realOfferProducts.length);
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
+                  title="Previous Deal"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Right Arrow */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setBannerSlide(prev => (prev + 1) % realOfferProducts.length);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
+                  title="Next Deal"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                {/* 3-Second Pagination Dots Bar */}
+                <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-auto z-20">
+                  {realOfferProducts.map((item, idx) => (
+                    <button
+                      key={item.product.id}
+                      onClick={() => setBannerSlide(idx)}
+                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        bannerSlide === idx
+                          ? 'w-6 bg-white shadow-md'
+                          : 'w-1.5 bg-white/40 hover:bg-white/70'
+                      }`}
+                      title={`Deal ${idx + 1}: ${item.product.name}`}
+                    />
                   ))}
                 </div>
               </div>
-            </div>
-
-            {/* Right Column: Dynamic Auto-Scrolling 3-Second Real Product Offer Ads (matching red-box size, real image, real % discount) */}
-            <div className="lg:col-span-5 flex justify-center relative w-full">
-              {activeOffer && (
-                <div
-                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-3.5 sm:p-5 flex items-center justify-between min-h-[195px] sm:min-h-[225px] group select-none"
-                  onMouseEnter={() => setIsBannerPaused(true)}
-                  onMouseLeave={() => setIsBannerPaused(false)}
-                >
-                  {/* Subtle Background Neon Atmosphere Glows */}
-                  <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-purple-600/25 blur-2xl pointer-events-none" />
-                  <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-indigo-600/25 blur-2xl pointer-events-none" />
-
-                  {/* Left Column: Real Brand, Store, Name, Real % Offer, Real Prices */}
-                  <div className="relative z-10 flex-1 min-w-0 pr-3 sm:pr-4 space-y-1.5 sm:space-y-2 text-left">
-                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                      <MarketplaceBadge storeName={activeOffer.storeName} size="sm" />
-                      <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-purple-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/15">
-                        {activeOffer.product.brand}
-                      </span>
-                      {/* Real Active Discount Badge */}
-                      <span className="text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm ring-1 ring-white/30 animate-pulse">
-                        {activeOffer.discount}% OFF
-                      </span>
-                    </div>
-
-                    {/* Real Product Name */}
-                    <Link
-                      to={`/product/${activeOffer.product.id}`}
-                      className="block font-black text-xs sm:text-base text-white hover:text-purple-300 transition-colors line-clamp-2 leading-snug drop-shadow-xs"
-                      title={activeOffer.product.name}
-                    >
-                      {activeOffer.product.name}
-                    </Link>
-
-                    {/* Real Price Line */}
-                    <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap pt-0.5">
-                      <span className="text-lg sm:text-2xl font-black text-white tracking-tight">
-                        ₹{activeOffer.product.sellingPrice.toLocaleString('en-IN')}
-                      </span>
-                      <span className="text-xs sm:text-sm text-purple-200/60 line-through">
-                        ₹{activeOffer.product.mrp.toLocaleString('en-IN')}
-                      </span>
-                      {activeOffer.savings > 0 && (
-                        <span className="text-[10px] sm:text-xs font-extrabold text-amber-300">
-                          Save ₹{activeOffer.savings.toLocaleString('en-IN')}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* View Deal Button */}
-                    <div className="pt-1">
-                      <Link
-                        to={`/product/${activeOffer.product.id}`}
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 sm:py-2 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-slate-950 font-black text-xs shadow-md transition-all cursor-pointer"
-                      >
-                        <span>Shop Now</span>
-                        <ArrowRight className="w-3.5 h-3.5 text-purple-700" />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Right Column: 3D Neon Isolated Product Artwork */}
-                  <Link
-                    to={`/product/${activeOffer.product.id}`}
-                    className="relative z-10 w-28 sm:w-44 h-28 sm:h-40 shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer"
-                    title={activeOffer.product.name}
-                  >
-                    {/* Neon Halo behind artwork */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/35 via-indigo-500/20 to-pink-500/35 rounded-full blur-xl pointer-events-none" />
-                    
-                    <img
-                      key={activeOffer.product.id}
-                      src={activeOffer.product.image}
-                      alt={activeOffer.product.name}
-                      className="w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(168,85,247,0.5)] animate-fadeIn relative z-10"
-                      loading="eager"
-                    />
-
-                    {/* Neon Pedestal underneath */}
-                    <div className="w-20 sm:w-28 h-4 bg-gradient-to-r from-purple-500/40 via-indigo-400/40 to-pink-500/40 rounded-full blur-sm -mt-2 pointer-events-none" />
-                  </Link>
-
-                  {/* Left Arrow */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setBannerSlide(prev => (prev - 1 + realOfferProducts.length) % realOfferProducts.length);
-                    }}
-                    className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
-                    title="Previous Deal"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-
-                  {/* Right Arrow */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setBannerSlide(prev => (prev + 1) % realOfferProducts.length);
-                    }}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
-                    title="Next Deal"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-
-                  {/* 3-Second Pagination Dots Bar */}
-                  <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-auto z-20">
-                    {realOfferProducts.map((item, idx) => (
-                      <button
-                        key={item.product.id}
-                        onClick={() => setBannerSlide(idx)}
-                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                          bannerSlide === idx
-                            ? 'w-6 bg-white shadow-md'
-                            : 'w-1.5 bg-white/40 hover:bg-white/70'
-                        }`}
-                        title={`Deal ${idx + 1}: ${item.product.name}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
 
-          {/* 4 FEATURE / VALUE PROPOSITION CARDS MATCHING REFERENCE SCREEN 1 */}
-          <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Marketplace Partner Badges Row (Positioned below the ad banner as requested) */}
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+            {[
+              { name: 'amazon', color: 'bg-[#131921] text-amber-400 border-slate-700' },
+              { name: 'Flipkart', color: 'bg-[#2874f0] text-yellow-300 border-blue-400' },
+              { name: 'meesho', color: 'bg-[#f43397] text-white border-pink-400' },
+              { name: 'myntra', color: 'bg-white text-[#ff3f6c] border-pink-200' },
+              { name: 'AJIO', color: 'bg-[#2c4152] text-white border-slate-600' },
+              { name: 'TATA CLiQ', color: 'bg-[#1f2228] text-rose-400 border-slate-700' },
+              { name: 'CROMA', color: 'bg-[#00e9bf]/20 text-teal-600 dark:text-teal-300 border-teal-500/40' },
+              { name: 'Reliance digital', color: 'bg-[#e42529] text-white border-red-500' },
+              { name: '+ More', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700' },
+            ].map(partner => (
+              <button
+                key={partner.name}
+                type="button"
+                onClick={() => navigate(`/search?q=${encodeURIComponent(partner.name.replace('+', '').trim())}`)}
+                className={`px-3 py-1 rounded-lg text-xs font-extrabold border shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer ${partner.color}`}
+              >
+                {partner.name}
+              </button>
+            ))}
+          </div>
+
+          {/* 4 FEATURE / VALUE PROPOSITION CARDS (Positioned below partner badges as requested) */}
+          <div className="pt-2 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-900">
