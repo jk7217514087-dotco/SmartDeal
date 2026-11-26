@@ -281,9 +281,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 128 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 89999,
@@ -491,9 +491,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 256 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 99990,
@@ -597,9 +597,9 @@ export const mockProducts: Product[] = [
     name: 'Apple iPhone 15 (Blue, 512 GB)',
     brand: 'Apple',
     category: 'Mobiles',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 119990,
@@ -703,9 +703,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Revolution 6 Running Shoes for Men (Black/White)',
     brand: 'Nike',
     category: 'Shoes',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 4995,
@@ -933,9 +933,9 @@ export const mockProducts: Product[] = [
     name: 'HP Pavilion 15 (15.6" FHD Laptop, Core i5 12th Gen, 16GB RAM, 512GB SSD)',
     brand: 'HP',
     category: 'Laptops',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 69990,
@@ -1206,8 +1206,8 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 4490,
-    sellingPrice: 1299,
-    discountPercent: 71,
+    sellingPrice: 1599,
+    discountPercent: 64,
     rating: 4.1,
     reviewsCount: 89320,
     seller: 'SoundWave Hub (SmartDeals Verified)',
@@ -1392,7 +1392,7 @@ export const mockProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
     images: [
       'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 69990,
     sellingPrice: 48990,
@@ -1618,9 +1618,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Air Max SC Mens Running Shoes & Sneakers',
     brand: 'Nike',
     category: 'Fashion',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 6995,
@@ -1752,7 +1752,7 @@ export const mockProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
     images: [
       'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 34990,
     sellingPrice: 28990,
@@ -2098,7 +2098,7 @@ export const mockProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
     images: [
       'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 54990,
     sellingPrice: 32990,
@@ -2246,15 +2246,16 @@ export const mockProducts: Product[] = [
     name: 'boAt Rockerz 450 (Bluetooth On-Ear Headphones, 15H Playtime, 40mm Dynamic Drivers, Luscious Black)',
     brand: 'boAt',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=80'
     ],
-    mrp: 3990,
-    sellingPrice: 1199,
+    mrp: 4999,
+    sellingPrice: 1499,
     discountPercent: 70,
-    rating: 4.3,
+    rating: 4.5,
     reviewsCount: 38450,
     seller: 'SuperComNet (Meesho Verified)',
     sellerRating: 4.6,
@@ -2291,35 +2292,35 @@ export const mockProducts: Product[] = [
       verdict: 'Superb Genuine Deal'
     },
     priceHistory: [
-      { date: '60d ago', price: 1999 },
-      { date: '30d ago', price: 1499 },
-      { date: 'Today', price: 1199, event: 'Mega Flash Sale' }
+      { date: '60d ago', price: 2999 },
+      { date: '30d ago', price: 1999 },
+      { date: 'Today', price: 1499, event: 'Mega Flash Sale' }
     ],
     buyNowRecommendation: {
       action: 'BUY NOW',
       confidence: 98,
-      reason: 'At ₹1,199 (70% OFF ₹3,990), this is the verified best price on Meesho with free delivery.',
-      expectedLow: 1199
+      reason: 'At ₹1,499 (70% OFF ₹4,999), this matches the lowest recorded price on Meesho & Amazon with verified free delivery.',
+      expectedLow: 1499
     },
     fakeDiscountAudit: {
       isGenuine: true,
       status: 'Genuine Deal',
       reason: 'Official boAt retail pricing verified. 100% original product guarantee.',
-      lowestPriceEver: 1199,
-      highestPriceEver: 3990
+      lowestPriceEver: 1499,
+      highestPriceEver: 4999
     },
     marketplacePrices: [
       {
         sellerName: 'Meesho',
         isSmartDealsSeller: false,
-        price: 1199,
+        price: 1499,
         deliveryCharge: 0,
         deliveryDate: '2-3 Days',
-        finalPrice: 1199,
+        finalPrice: 1499,
         smartCoins: 50,
         dealScore: 96,
         inStock: true,
-        rating: 4.4,
+        rating: 4.5,
         tag: 'Lowest Price',
         cashbackAmount: 50,
         discountPercent: 70,
@@ -2328,25 +2329,25 @@ export const mockProducts: Product[] = [
       {
         sellerName: 'Amazon',
         isSmartDealsSeller: false,
-        price: 1299,
+        price: 1599,
         deliveryCharge: 0,
         deliveryDate: 'Tomorrow, by 5 PM',
-        finalPrice: 1299,
+        finalPrice: 1599,
         smartCoins: 40,
         dealScore: 90,
         inStock: true,
-        rating: 4.3,
+        rating: 4.4,
         cashbackAmount: 40,
-        discountPercent: 67,
+        discountPercent: 68,
         url: 'https://www.amazon.in/dp/B07PR1CL3S?tag=smartdeal-21'
       },
       {
         sellerName: 'Flipkart',
         isSmartDealsSeller: false,
-        price: 1349,
+        price: 1699,
         deliveryCharge: 0,
         deliveryDate: 'Tomorrow',
-        finalPrice: 1349,
+        finalPrice: 1699,
         smartCoins: 35,
         dealScore: 88,
         inStock: true,
@@ -2358,17 +2359,248 @@ export const mockProducts: Product[] = [
       {
         sellerName: 'Myntra',
         isSmartDealsSeller: false,
-        price: 1499,
+        price: 1799,
         deliveryCharge: 0,
         deliveryDate: '3-4 Days',
-        finalPrice: 1499,
+        finalPrice: 1799,
         smartCoins: 30,
         dealScore: 82,
         inStock: true,
         rating: 4.2,
         cashbackAmount: 30,
-        discountPercent: 62,
+        discountPercent: 64,
         url: 'https://www.myntra.com/headphones/boat/boat-rockerz-450/11827490/buy'
+      }
+    ]
+  },
+  {
+    id: 'prod-fire-boltt-ninja',
+    name: 'Fire-Boltt Ninja (Bluetooth Calling Smartwatch, 1.3" Touch Screen, SpO2, IP68)',
+    brand: 'Fire-Boltt',
+    category: 'Electronics',
+    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80'
+    ],
+    mrp: 4999,
+    sellingPrice: 1999,
+    discountPercent: 60,
+    rating: 4.4,
+    reviewsCount: 18500,
+    seller: 'RetailNet (Flipkart Verified)',
+    sellerRating: 4.6,
+    deliveryDate: 'Tomorrow, by 11 AM',
+    deliveryCharge: 0,
+    smartCoinsEarned: 60,
+    dealScore: 94,
+    isSmartDealsChoice: true,
+    stock: 95,
+    returnDays: 7,
+    warranty: '1 Year Manufacturer Warranty',
+    description: 'Fire-Boltt Ninja features a sharp 1.3-inch full-touch display, Bluetooth calling, comprehensive SpO2 and 24/7 heart-rate tracking, and multi-sport tracking modes.',
+    features: [
+      '1.3" HD Color Full Touch Display with vibrant watch faces',
+      'Single-chip Bluetooth calling with dial pad and recent logs',
+      'Real-time SpO2, heart rate, and sleep monitoring',
+      'IP68 water resistant build for daily workouts'
+    ],
+    specs: {
+      'Display': '1.3" HD Touch Display',
+      'Battery Life': 'Up to 5 Days',
+      'Water Resistance': 'IP68 Water Resistant',
+      'Color': 'Active Black',
+      'Bluetooth': 'v5.0'
+    },
+    dealScoreBreakdown: {
+      priceAdvantage: 96,
+      historicalPrice: 94,
+      offerQuality: 95,
+      sellerReliability: 96,
+      delivery: 95,
+      transparency: 97,
+      overallScore: 94,
+      verdict: 'Superb Genuine Deal'
+    },
+    priceHistory: [
+      { date: '60d ago', price: 2999 },
+      { date: '30d ago', price: 2499 },
+      { date: 'Today', price: 1999, event: 'Mega Flash Sale' }
+    ],
+    buyNowRecommendation: {
+      action: 'BUY NOW',
+      confidence: 96,
+      reason: 'At ₹1,999 (60% OFF ₹4,999), this is ₹1,000 below regular street pricing with verified seller assurance.',
+      expectedLow: 1999
+    },
+    fakeDiscountAudit: {
+      isGenuine: true,
+      status: 'Genuine Deal',
+      reason: 'Official Fire-Boltt retail MRP verified. 100% original product guarantee.',
+      lowestPriceEver: 1999,
+      highestPriceEver: 4999
+    },
+    marketplacePrices: [
+      {
+        sellerName: 'Flipkart',
+        isSmartDealsSeller: false,
+        price: 1999,
+        deliveryCharge: 0,
+        deliveryDate: 'Tomorrow, by 11 AM',
+        finalPrice: 1999,
+        smartCoins: 60,
+        dealScore: 94,
+        inStock: true,
+        rating: 4.4,
+        tag: 'Lowest Price',
+        cashbackAmount: 60,
+        discountPercent: 60,
+        url: 'https://www.flipkart.com/search?q=Fire-Boltt+Ninja'
+      },
+      {
+        sellerName: 'Amazon',
+        isSmartDealsSeller: false,
+        price: 2199,
+        deliveryCharge: 0,
+        deliveryDate: 'Tomorrow',
+        finalPrice: 2199,
+        smartCoins: 50,
+        dealScore: 90,
+        inStock: true,
+        rating: 4.3,
+        cashbackAmount: 50,
+        discountPercent: 56,
+        url: 'https://www.amazon.in/dp/B09F7XWCCY'
+      },
+      {
+        sellerName: 'Croma',
+        isSmartDealsSeller: false,
+        price: 2499,
+        deliveryCharge: 0,
+        deliveryDate: '2 Days',
+        finalPrice: 2499,
+        smartCoins: 40,
+        dealScore: 84,
+        inStock: true,
+        rating: 4.2,
+        cashbackAmount: 40,
+        discountPercent: 50,
+        url: 'https://www.croma.com/search/?text=Fire-Boltt+Ninja'
+      }
+    ]
+  },
+  {
+    id: 'prod-campus-shoes',
+    name: 'Campus Shoes (Men\'s Running Shoes, Lightweight Breathable Mesh Sneakers, Blue/Grey)',
+    brand: 'Campus',
+    category: 'Fashion',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop&q=80'
+    ],
+    mrp: 1999,
+    sellingPrice: 999,
+    discountPercent: 50,
+    rating: 4.3,
+    reviewsCount: 9400,
+    seller: 'Campus Activewear Official',
+    sellerRating: 4.7,
+    deliveryDate: 'Tomorrow, by 2 PM',
+    deliveryCharge: 0,
+    smartCoinsEarned: 30,
+    dealScore: 92,
+    isSmartDealsChoice: true,
+    stock: 80,
+    returnDays: 14,
+    warranty: 'Brand Warranty for Manufacturing Defects',
+    description: 'Campus Men\'s Running Shoes offer responsive lightweight cushioning, breathable flyknit mesh upper, anti-skid rubber phylon outsole for running, gym and daily lifestyle.',
+    features: [
+      'High-grade breathable knitted mesh upper for superior ventilation',
+      'Cushioned memory tech foam insole for all-day arch support',
+      'Durable non-slip rubber phylon sole for maximum grip',
+      'Ultra lightweight construction designed for sports and fitness'
+    ],
+    specs: {
+      'Sole Material': 'Phylon / Anti-Skid Rubber',
+      'Upper Material': 'Breathable Mesh',
+      'Closure': 'Lace-Up',
+      'Color': 'Grey / Navy Blue'
+    },
+    dealScoreBreakdown: {
+      priceAdvantage: 95,
+      historicalPrice: 92,
+      offerQuality: 93,
+      sellerReliability: 96,
+      delivery: 94,
+      transparency: 97,
+      overallScore: 92,
+      verdict: 'Superb Genuine Deal'
+    },
+    priceHistory: [
+      { date: '60d ago', price: 1499 },
+      { date: '30d ago', price: 1299 },
+      { date: 'Today', price: 999, event: 'Deal of the Day' }
+    ],
+    buyNowRecommendation: {
+      action: 'BUY NOW',
+      confidence: 94,
+      reason: 'At ₹999 (50% OFF ₹1,999), this is an exceptional value for money running shoe from Campus.',
+      expectedLow: 999
+    },
+    fakeDiscountAudit: {
+      isGenuine: true,
+      status: 'Genuine Deal',
+      reason: 'Certified Campus Activewear MSRP ₹1,999. Current selling price of ₹999 is 100% genuine.',
+      lowestPriceEver: 999,
+      highestPriceEver: 1999
+    },
+    marketplacePrices: [
+      {
+        sellerName: 'Flipkart',
+        isSmartDealsSeller: false,
+        price: 999,
+        deliveryCharge: 0,
+        deliveryDate: 'Tomorrow, by 2 PM',
+        finalPrice: 999,
+        smartCoins: 30,
+        dealScore: 92,
+        inStock: true,
+        rating: 4.3,
+        tag: 'Lowest Price',
+        cashbackAmount: 30,
+        discountPercent: 50,
+        url: 'https://www.flipkart.com/search?q=Campus+Shoes'
+      },
+      {
+        sellerName: 'Amazon',
+        isSmartDealsSeller: false,
+        price: 1199,
+        deliveryCharge: 0,
+        deliveryDate: 'Tomorrow',
+        finalPrice: 1199,
+        smartCoins: 25,
+        dealScore: 88,
+        inStock: true,
+        rating: 4.2,
+        cashbackAmount: 25,
+        discountPercent: 40,
+        url: 'https://www.amazon.in/dp/B08X9CAMPUS'
+      },
+      {
+        sellerName: 'Myntra',
+        isSmartDealsSeller: false,
+        price: 1299,
+        deliveryCharge: 0,
+        deliveryDate: '2-3 Days',
+        finalPrice: 1299,
+        smartCoins: 20,
+        dealScore: 85,
+        inStock: true,
+        rating: 4.3,
+        cashbackAmount: 20,
+        discountPercent: 35,
+        url: 'https://www.myntra.com/campus-shoes'
       }
     ]
   },
@@ -2377,9 +2609,9 @@ export const mockProducts: Product[] = [
     name: 'Nike Court Vision Low (Triple White Retro Sneaker for Men)',
     brand: 'Nike',
     category: 'Shoes',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 5995,
