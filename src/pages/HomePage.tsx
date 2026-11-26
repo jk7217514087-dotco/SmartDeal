@@ -40,96 +40,42 @@ export const HomePage: React.FC = () => {
   const [bannerSlide, setBannerSlide] = useState(0);
   const [isBannerPaused, setIsBannerPaused] = useState(false);
 
-  // 6 Real Marketplace Ad Banners from User's Reference Mockup
-  const marketplaceBanners = useMemo(() => [
-    {
-      id: 'banner-amazon',
-      storeName: 'Amazon',
-      saleEvent: 'Great Indian Festival',
-      tagline: 'Best Deals. Bigger Savings.',
-      discountBadge: 'UP TO 80% OFF*',
-      image: '/banners/amazon-banner.png',
-      targetQuery: 'Amazon',
-      themeColor: '#FF9900'
-    },
-    {
-      id: 'banner-flipkart',
-      storeName: 'Flipkart',
-      saleEvent: 'Big Billion Days',
-      tagline: 'Smart Deals for Everyone',
-      discountBadge: 'UP TO 75% OFF*',
-      image: '/banners/flipkart-banner.png',
-      targetQuery: 'Flipkart',
-      themeColor: '#2874F0'
-    },
-    {
-      id: 'banner-myntra',
-      storeName: 'Myntra',
-      saleEvent: 'End of Season Sale',
-      tagline: 'Fashion. Beauty. More.',
-      discountBadge: 'UP TO 70% OFF*',
-      image: '/banners/myntra-banner.png',
-      targetQuery: 'Myntra',
-      themeColor: '#ff3f6c'
-    },
-    {
-      id: 'banner-meesho',
-      storeName: 'Meesho',
-      saleEvent: 'Sabse Saste Deals',
-      tagline: 'Lowest Prices. Best Quality.',
-      discountBadge: 'UP TO 80% OFF*',
-      image: '/banners/meesho-banner.png',
-      targetQuery: 'Meesho',
-      themeColor: '#f43397'
-    },
-    {
-      id: 'banner-ajio',
-      storeName: 'AJIO',
-      saleEvent: 'BIG FASHION SALE',
-      tagline: 'Trendy Styles. Best Prices.',
-      discountBadge: 'UP TO 70% OFF*',
-      image: '/banners/ajio-banner.png',
-      targetQuery: 'AJIO',
-      themeColor: '#2c4152'
-    },
-    {
-      id: 'banner-croma',
-      storeName: 'Croma',
-      saleEvent: 'Tech Bonanza',
-      tagline: 'Upgrade Your Life',
-      discountBadge: 'UP TO 60% OFF*',
-      image: '/banners/croma-banner.png',
-      targetQuery: 'Croma',
-      themeColor: '#00e9bf'
-    }
-  ], []);
+  // Top Live Real Offer Products directly from catalog (no fake data, real images, real discount %)
+  const realOfferProducts = useMemo(() => {
+    return [...products]
+      .filter(p => p.discountPercent > 0 || (p.mrp > p.sellingPrice))
+      .map(p => {
+        const lowestStore = (p.marketplacePrices || [])
+          .filter(m => !m.isSmartDealsSeller && !m.sellerName.toLowerCase().includes('smartdeal'))
+          .sort((a, b) => a.finalPrice - b.finalPrice)[0];
 
-  // Auto-scroll real marketplace ad banners every 5 seconds (5000ms) with hover pause
+        const realStoreName = lowestStore?.sellerName || p.seller || 'Amazon';
+        const realDiscount = p.discountPercent || Math.round(((p.mrp - p.sellingPrice) / p.mrp) * 100);
+        const realSavings = Math.max(0, p.mrp - p.sellingPrice);
+
+        return {
+          product: p,
+          storeName: realStoreName,
+          discount: realDiscount,
+          savings: realSavings
+        };
+      })
+      .sort((a, b) => b.discount - a.discount)
+      .slice(0, 8);
+  }, [products]);
+
+  // Auto-scroll real product offer ads every 3 seconds (3000ms) with hover pause
   useEffect(() => {
-    if (isBannerPaused) return;
+    if (isBannerPaused || realOfferProducts.length === 0) return;
     const bannerTimer = setInterval(() => {
-      setBannerSlide(prev => (prev + 1) % marketplaceBanners.length);
-    }, 5000);
+      setBannerSlide(prev => (prev + 1) % realOfferProducts.length);
+    }, 3000);
     return () => clearInterval(bannerTimer);
-  }, [isBannerPaused, marketplaceBanners.length]);
+  }, [isBannerPaused, realOfferProducts.length]);
 
-  const currentBanner = marketplaceBanners[bannerSlide];
-
-  // Real-time Live Catalog Data Connected to the Active Banner (No fake data)
-  const storeLiveData = useMemo(() => {
-    const s = currentBanner.storeName.toLowerCase();
-    const storeProducts = products.filter(p =>
-      p.marketplacePrices?.some(m => m.sellerName.toLowerCase().includes(s))
-    );
-    const count = storeProducts.length > 0 ? storeProducts.length : products.length;
-    const lowestPrice = storeProducts.length > 0
-      ? Math.min(...storeProducts.map(p => {
-          const m = p.marketplacePrices?.find(x => x.sellerName.toLowerCase().includes(s));
-          return m ? m.finalPrice : p.sellingPrice;
-        }))
-      : 499;
-    return { count, lowestPrice };
-  }, [currentBanner, products]);
+  const activeOffer = realOfferProducts.length > 0
+    ? realOfferProducts[bannerSlide % realOfferProducts.length]
+    : null;
 
   const handleHeroSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,76 +175,125 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Dynamic Auto-Scrolling 5-Second Real Marketplace Ad Showcase (matching blue area) */}
+            {/* Right Column: Dynamic Auto-Scrolling 3-Second Real Product Offer Ads (matching red-box size, real image, real % discount) */}
             <div className="lg:col-span-5 flex justify-center relative w-full">
-              <div
-                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-900 group"
-                onMouseEnter={() => setIsBannerPaused(true)}
-                onMouseLeave={() => setIsBannerPaused(false)}
-              >
-                {/* Real Live Marketplace Banner Image */}
-                <Link
-                  to={`/search?q=${encodeURIComponent(currentBanner.targetQuery)}`}
-                  className="block relative w-full aspect-[500/220] overflow-hidden cursor-pointer bg-slate-950"
-                  title={`${currentBanner.storeName} - ${currentBanner.saleEvent} (Click to browse verified live deals)`}
+              {activeOffer && (
+                <div
+                  className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 dark:border-slate-800 bg-gradient-to-r from-slate-900 via-[#0a1529] to-[#0f2142] text-white p-3.5 sm:p-5 flex items-center justify-between min-h-[195px] sm:min-h-[225px] group select-none"
+                  onMouseEnter={() => setIsBannerPaused(true)}
+                  onMouseLeave={() => setIsBannerPaused(false)}
                 >
-                  <img
-                    key={currentBanner.id}
-                    src={currentBanner.image}
-                    alt={`${currentBanner.storeName} - ${currentBanner.saleEvent}`}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
+                  {/* Subtle Background Glows */}
+                  <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-blue-500/15 blur-2xl pointer-events-none" />
+                  <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-amber-500/15 blur-2xl pointer-events-none" />
 
-                  {/* Real Live Data Floating Badge */}
-                  <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 text-white shadow-lg text-[10px] sm:text-xs font-bold pointer-events-none">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 -ml-3.5" />
-                    <span>{storeLiveData.count} Live Deals • From ₹{storeLiveData.lowestPrice.toLocaleString('en-IN')}</span>
+                  {/* Left Column: Real Brand, Store, Name, Real % Offer, Real Prices */}
+                  <div className="relative z-10 flex-1 min-w-0 pr-3 sm:pr-4 space-y-1.5 sm:space-y-2 text-left">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <MarketplaceBadge storeName={activeOffer.storeName} size="sm" />
+                      <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-300 bg-white/10 px-2 py-0.5 rounded-md border border-white/15">
+                        {activeOffer.product.brand}
+                      </span>
+                      {/* Real Active Discount Badge */}
+                      <span className="text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-md bg-emerald-500 text-slate-950 shadow-sm animate-pulse">
+                        {activeOffer.discount}% OFF
+                      </span>
+                    </div>
+
+                    {/* Real Product Name */}
+                    <Link
+                      to={`/product/${activeOffer.product.id}`}
+                      className="block font-black text-xs sm:text-base text-white hover:text-blue-300 transition-colors line-clamp-2 leading-snug drop-shadow-xs"
+                      title={activeOffer.product.name}
+                    >
+                      {activeOffer.product.name}
+                    </Link>
+
+                    {/* Real Price Line */}
+                    <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap pt-0.5">
+                      <span className="text-lg sm:text-2xl font-black text-white tracking-tight">
+                        ₹{activeOffer.product.sellingPrice.toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-xs sm:text-sm text-slate-400 line-through">
+                        ₹{activeOffer.product.mrp.toLocaleString('en-IN')}
+                      </span>
+                      {activeOffer.savings > 0 && (
+                        <span className="text-[10px] sm:text-xs font-extrabold text-amber-300">
+                          Save ₹{activeOffer.savings.toLocaleString('en-IN')}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* View Deal Button */}
+                    <div className="pt-1">
+                      <Link
+                        to={`/product/${activeOffer.product.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold text-xs shadow-md transition-all cursor-pointer"
+                      >
+                        <span>View Deal</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
                   </div>
-                </Link>
 
-                {/* Left Arrow */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setBannerSlide(prev => (prev - 1 + marketplaceBanners.length) % marketplaceBanners.length);
-                  }}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md"
-                  title="Previous Ad"
-                >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-
-                {/* Right Arrow */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setBannerSlide(prev => (prev + 1) % marketplaceBanners.length);
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md"
-                  title="Next Ad"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-
-                {/* 5-Second Pagination Dots Bar */}
-                <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-auto z-10">
-                  {marketplaceBanners.map((b, idx) => (
-                    <button
-                      key={b.id}
-                      onClick={() => setBannerSlide(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        bannerSlide === idx
-                          ? 'w-6 bg-white shadow-md'
-                          : 'w-1.5 bg-white/50 hover:bg-white/80'
-                      }`}
-                      title={`Ad ${idx + 1}: ${b.storeName} - ${b.saleEvent}`}
+                  {/* Right Column: Real Product Image */}
+                  <Link
+                    to={`/product/${activeOffer.product.id}`}
+                    className="relative z-10 w-28 sm:w-44 h-28 sm:h-40 shrink-0 flex items-center justify-center p-2 rounded-2xl bg-white/5 backdrop-blur-xs border border-white/10 group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    title={activeOffer.product.name}
+                  >
+                    <img
+                      key={activeOffer.product.id}
+                      src={activeOffer.product.image}
+                      alt={activeOffer.product.name}
+                      className="w-full h-full object-contain drop-shadow-2xl animate-fadeIn"
+                      loading="eager"
                     />
-                  ))}
+                  </Link>
+
+                  {/* Left Arrow */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setBannerSlide(prev => (prev - 1 + realOfferProducts.length) % realOfferProducts.length);
+                    }}
+                    className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
+                    title="Previous Deal"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {/* Right Arrow */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setBannerSlide(prev => (prev + 1) % realOfferProducts.length);
+                    }}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
+                    title="Next Deal"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+
+                  {/* 3-Second Pagination Dots Bar */}
+                  <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-auto z-20">
+                    {realOfferProducts.map((item, idx) => (
+                      <button
+                        key={item.product.id}
+                        onClick={() => setBannerSlide(idx)}
+                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                          bannerSlide === idx
+                            ? 'w-6 bg-white shadow-md'
+                            : 'w-1.5 bg-white/40 hover:bg-white/70'
+                        }`}
+                        title={`Deal ${idx + 1}: ${item.product.name}`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
