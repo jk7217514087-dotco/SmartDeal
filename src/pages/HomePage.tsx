@@ -94,14 +94,14 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
-      {/* 1. HERO SECTION: CENTERED SHOWCASE AD BANNER WITH LOWER PARTNER BADGES & VALUE PROPS */}
-      <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-6 sm:py-10 transition-all`}>
-        <div className="max-w-7xl mx-auto px-4 space-y-6">
-          {/* Centered Showcase Ad Banner (Orange Area) */}
-          <div className="w-full max-w-5xl mx-auto">
+      {/* 1. HERO SECTION: FULL-WIDTH SHOWCASE AD BANNER (Orange Marked Area) */}
+      <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-4 sm:py-7 transition-all`}>
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Full-Width Showcase Ad Banner */}
+          <div className="w-full">
             {activeOffer && (
               <div
-                className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-5 sm:p-8 flex flex-col md:flex-row items-center justify-between min-h-[220px] sm:min-h-[250px] group select-none transition-all"
+                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-3.5 sm:p-7 md:p-8 flex flex-row items-center justify-between min-h-[175px] sm:min-h-[220px] md:min-h-[260px] group select-none transition-all"
                 onMouseEnter={() => setIsBannerPaused(true)}
                 onMouseLeave={() => setIsBannerPaused(false)}
               >
@@ -111,14 +111,14 @@ export const HomePage: React.FC = () => {
                 <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-500/15 rounded-full blur-2xl pointer-events-none" />
 
                 {/* Left Column: Real Brand, Store, Name, Real % Offer, Real Prices */}
-                <div className="relative z-10 flex-1 min-w-0 pr-0 md:pr-6 space-y-2 sm:space-y-3 text-center md:text-left">
-                  <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
+                <div className="relative z-10 flex-1 min-w-0 pr-2.5 sm:pr-6 space-y-1 sm:space-y-2.5 text-left">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-start">
                     <MarketplaceBadge storeName={activeOffer.storeName} size="sm" />
-                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-purple-200 bg-white/10 px-2.5 py-0.5 rounded-md border border-white/15">
+                    <span className="text-[9px] sm:text-xs font-black uppercase tracking-wider text-purple-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/15">
                       {activeOffer.product.brand}
                     </span>
                     {/* Real Active Discount Badge */}
-                    <span className="text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm ring-1 ring-white/30 animate-pulse">
+                    <span className="text-[10px] sm:text-sm font-black px-2 sm:px-2.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm ring-1 ring-white/30 animate-pulse">
                       {activeOffer.discount}% OFF
                     </span>
                   </div>
@@ -126,35 +126,35 @@ export const HomePage: React.FC = () => {
                   {/* Real Product Name */}
                   <Link
                     to={`/product/${activeOffer.product.id}`}
-                    className="block font-black text-base sm:text-2xl text-white hover:text-purple-300 transition-colors line-clamp-2 leading-tight drop-shadow-sm"
+                    className="block font-black text-xs sm:text-xl md:text-2xl text-white hover:text-purple-300 transition-colors line-clamp-2 leading-tight drop-shadow-sm"
                     title={activeOffer.product.name}
                   >
                     {activeOffer.product.name}
                   </Link>
 
                   {/* Real Price Line */}
-                  <div className="flex items-baseline gap-2 flex-wrap justify-center md:justify-start pt-1">
-                    <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap justify-start pt-0.5 sm:pt-1">
+                    <span className="text-lg sm:text-2xl md:text-3xl font-black text-white tracking-tight">
                       ₹{activeOffer.product.sellingPrice.toLocaleString('en-IN')}
                     </span>
-                    <span className="text-xs sm:text-sm text-purple-200/60 line-through">
+                    <span className="text-[10px] sm:text-sm text-purple-200/60 line-through">
                       ₹{activeOffer.product.mrp.toLocaleString('en-IN')}
                     </span>
                     {activeOffer.savings > 0 && (
-                      <span className="text-xs sm:text-sm font-extrabold text-amber-300">
+                      <span className="text-[10px] sm:text-sm font-extrabold text-amber-300">
                         Save ₹{activeOffer.savings.toLocaleString('en-IN')}
                       </span>
                     )}
                   </div>
 
                   {/* Shop Now CTA Button */}
-                  <div className="pt-2 flex items-center justify-center md:justify-start">
+                  <div className="pt-1.5 sm:pt-2 flex items-center justify-start">
                     <Link
                       to={`/product/${activeOffer.product.id}`}
-                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all cursor-pointer hover:scale-105"
+                      className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-1.5 sm:py-2.5 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-slate-950 font-black text-[11px] sm:text-sm shadow-xl transition-all cursor-pointer hover:scale-105"
                     >
                       <span>Shop Now</span>
-                      <ArrowRight className="w-4 h-4 text-purple-700" />
+                      <ArrowRight className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-purple-700" />
                     </Link>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ export const HomePage: React.FC = () => {
                 {/* Right Column: 3D Neon Isolated Product Artwork */}
                 <Link
                   to={`/product/${activeOffer.product.id}`}
-                  className="relative z-10 w-44 sm:w-56 h-40 sm:h-52 shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer mt-4 md:mt-0"
+                  className="relative z-10 w-28 sm:w-44 md:w-56 h-28 sm:h-44 md:h-52 shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer"
                   title={activeOffer.product.name}
                 >
                   {/* Neon Halo behind artwork */}
@@ -172,15 +172,15 @@ export const HomePage: React.FC = () => {
                     key={activeOffer.product.id}
                     src={activeOffer.product.image}
                     alt={activeOffer.product.name}
-                    className="max-h-36 sm:max-h-44 max-w-full object-contain drop-shadow-[0_20px_35px_rgba(168,85,247,0.55)] animate-fadeIn relative z-10"
+                    className="max-h-24 sm:max-h-36 md:max-h-44 max-w-full object-contain drop-shadow-[0_20px_35px_rgba(168,85,247,0.55)] animate-fadeIn relative z-10"
                     loading="eager"
                   />
 
                   {/* Neon Pedestal underneath */}
-                  <div className="w-32 sm:w-40 h-5 bg-gradient-to-r from-purple-500/40 via-indigo-400/50 to-pink-500/40 rounded-full blur-md -mt-2 pointer-events-none" />
+                  <div className="w-24 sm:w-40 h-4 sm:h-5 bg-gradient-to-r from-purple-500/40 via-indigo-400/50 to-pink-500/40 rounded-full blur-md -mt-2 pointer-events-none" />
 
                   {/* 3D Floating Discount Tag */}
-                  <div className="absolute top-2 right-2 px-2.5 py-1 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-xs shadow-xl transform rotate-12 border border-white/40">
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-[10px] sm:text-xs shadow-xl transform rotate-12 border border-white/40">
                     {activeOffer.discount}% OFF
                   </div>
                 </Link>
@@ -228,81 +228,6 @@ export const HomePage: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Marketplace Partner Badges Row (Positioned below the ad banner as requested) */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-            {[
-              { name: 'amazon', color: 'bg-[#131921] text-amber-400 border-slate-700' },
-              { name: 'Flipkart', color: 'bg-[#2874f0] text-yellow-300 border-blue-400' },
-              { name: 'meesho', color: 'bg-[#f43397] text-white border-pink-400' },
-              { name: 'myntra', color: 'bg-white text-[#ff3f6c] border-pink-200' },
-              { name: 'AJIO', color: 'bg-[#2c4152] text-white border-slate-600' },
-              { name: 'TATA CLiQ', color: 'bg-[#1f2228] text-rose-400 border-slate-700' },
-              { name: 'CROMA', color: 'bg-[#00e9bf]/20 text-teal-600 dark:text-teal-300 border-teal-500/40' },
-              { name: 'Reliance digital', color: 'bg-[#e42529] text-white border-red-500' },
-              { name: '+ More', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700' },
-            ].map(partner => (
-              <button
-                key={partner.name}
-                type="button"
-                onClick={() => navigate(`/search?q=${encodeURIComponent(partner.name.replace('+', '').trim())}`)}
-                className={`px-3 py-1 rounded-lg text-xs font-extrabold border shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer ${partner.color}`}
-              >
-                {partner.name}
-              </button>
-            ))}
-          </div>
-
-          {/* 4 FEATURE / VALUE PROPOSITION CARDS (Positioned below partner badges as requested) */}
-          <div className="pt-2 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-900">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Real-Time Price Tracking</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Instant price updates across stores</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-900">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Trusted & Secure Shopping</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">100% verified merchant listings</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-900">
-                  <Bell className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Get Alerts on Price Drop</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Notifications at your target price</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 border border-purple-200 dark:border-purple-900">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Smart Deals Just for You</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">AI-powered lowest price picks</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -381,7 +306,85 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. CLICK PAGE / BUDGET BUZZ DEALS SECTION MATCHING REFERENCE PANEL 3 */}
+      {/* 3. STORE PARTNERS & TRUSTED SHOPPING PLATFORM FEATURES (Positioned below Finding Products as requested) */}
+      <section className="max-w-7xl mx-auto px-4 space-y-4">
+        {/* Marketplace Partner Badges Row */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {[
+            { name: 'amazon', color: 'bg-[#131921] text-amber-400 border-slate-700' },
+            { name: 'Flipkart', color: 'bg-[#2874f0] text-yellow-300 border-blue-400' },
+            { name: 'meesho', color: 'bg-[#f43397] text-white border-pink-400' },
+            { name: 'myntra', color: 'bg-white text-[#ff3f6c] border-pink-200' },
+            { name: 'AJIO', color: 'bg-[#2c4152] text-white border-slate-600' },
+            { name: 'TATA CLiQ', color: 'bg-[#1f2228] text-rose-400 border-slate-700' },
+            { name: 'CROMA', color: 'bg-[#00e9bf]/20 text-teal-600 dark:text-teal-300 border-teal-500/40' },
+            { name: 'Reliance digital', color: 'bg-[#e42529] text-white border-red-500' },
+            { name: '+ More', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700' },
+          ].map(partner => (
+            <button
+              key={partner.name}
+              type="button"
+              onClick={() => navigate(`/search?q=${encodeURIComponent(partner.name.replace('+', '').trim())}`)}
+              className={`px-3 py-1 rounded-lg text-xs font-extrabold border shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer ${partner.color}`}
+            >
+              {partner.name}
+            </button>
+          ))}
+        </div>
+
+        {/* 4 Feature / Value Proposition Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-900">
+                <Zap className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Real-Time Price Tracking</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Instant price updates across stores</p>
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-900">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Trusted & Secure Shopping</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">100% verified merchant listings</p>
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-900">
+                <Bell className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Get Alerts on Price Drop</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Notifications at your target price</p>
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 border border-purple-200 dark:border-purple-900">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Smart Deals Just for You</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">AI-powered lowest price picks</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. CLICK PAGE / BUDGET BUZZ DEALS SECTION MATCHING REFERENCE PANEL 3 */}
       <section className="max-w-7xl mx-auto px-4 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

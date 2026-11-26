@@ -270,8 +270,8 @@ export const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Global Wide Search Bar (Expanded in center where nav links used to be) */}
-        <div className="relative flex-1 max-w-xl lg:max-w-2xl mx-1 sm:mx-4">
+        {/* Global Wide Search Bar (Desktop: in center where nav links used to be) */}
+        <div className="relative flex-1 max-w-xl lg:max-w-2xl mx-2 sm:mx-4 hidden md:block">
           <form onSubmit={handleSearchSubmit} className="w-full">
             <div className="relative flex items-center w-full">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
@@ -307,7 +307,7 @@ export const Navbar: React.FC = () => {
                     className="p-3 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-3 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-xl border border-slate-100 dark:border-slate-800" />
+                      <img src={item.image} alt={item.name} className="w-10 h-10 object-contain rounded-xl border border-slate-100 dark:border-slate-800" />
                       <div>
                         <div className="text-xs font-bold text-slate-800 dark:text-white line-clamp-1">{item.name}</div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -324,15 +324,16 @@ export const Navbar: React.FC = () => {
           )}
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* Right Actions: Restored on both Mobile and Desktop */}
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* AI Assistant Button */}
           <button
             onClick={() => setIsAiAssistantOpen(true)}
-            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border font-extrabold text-xs shadow-xs transition-all hover:scale-105 cursor-pointer ${navTheme.aiBtn}`}
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-full border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all hover:scale-105 cursor-pointer ${navTheme.aiBtn}`}
+            title="Ask AI Assistant"
           >
             <Sparkles className={`w-3.5 h-3.5 ${navTheme.aiIcon}`} />
-            <span>Ask AI</span>
+            <span className="hidden xs:inline">Ask AI</span>
           </button>
 
           {/* Download & Install SmartDeal App Button */}
@@ -340,7 +341,7 @@ export const Navbar: React.FC = () => {
             onClick={() => {
               window.dispatchEvent(new CustomEvent('trigger-app-install'));
             }}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border font-extrabold text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-full border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all cursor-pointer active:scale-95 ${navTheme.appBtn}`}
             title="Direct Download SmartDeal App on Phone or Laptop"
           >
             <Download className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -350,7 +351,7 @@ export const Navbar: React.FC = () => {
           {/* 2-Mode Theme Toggle (Sun / Moon) */}
           <button
             onClick={toggleTheme}
-            className={`p-2 sm:px-2.5 sm:py-1.5 rounded-full border transition-all hover:scale-105 cursor-pointer shadow-xs flex items-center gap-1.5 ${navTheme.themeToggleBtn}`}
+            className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all hover:scale-105 cursor-pointer shadow-xs flex items-center gap-1.5 ${navTheme.themeToggleBtn}`}
             title={navTheme.tooltipText}
             aria-label="Toggle Theme Mode (Light / Dark)"
           >
@@ -370,11 +371,11 @@ export const Navbar: React.FC = () => {
           {/* Notifications with Red Badge */}
           <Link
             to="/notifications"
-            className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+            className="relative p-1.5 sm:p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
             title="Notifications"
           >
             <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700 dark:text-slate-200" />
-            <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center shadow-xs">
+            <span className="absolute top-0 right-0 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-rose-500 text-white text-[8px] sm:text-[10px] font-black flex items-center justify-center shadow-xs">
               3
             </span>
           </Link>
@@ -394,11 +395,11 @@ export const Navbar: React.FC = () => {
             ) : null}
           </Link>
 
-          {/* User Profile Avatar / Initial Badge (Circle badge with 'J' or user initial) */}
+          {/* User Profile Avatar / Initial Badge */}
           <div className="relative">
             <button
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-              className="w-8 h-8 rounded-full bg-slate-900 dark:bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-900 dark:bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform"
               title="Account & Login"
               aria-label="Account Profile"
             >
@@ -868,53 +869,48 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Search Collapsible Input */}
-      {isMobileSearchOpen && (
-        <div className="md:hidden px-4 pb-3 pt-2 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 animate-fadeIn">
-          <form
-            onSubmit={e => {
-              handleSearchSubmit(e);
-              setIsMobileSearchOpen(false);
-            }}
-          >
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                placeholder="Search products, brands, or deals..."
-                className="w-full pl-10 pr-20 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-brand-500"
-                autoFocus
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3" />
-              <button
-                type="submit"
-                className="absolute right-1 px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold transition-colors"
-              >
-                Search
-              </button>
-            </div>
-          </form>
+      {/* Mobile Persistent Search Bar Row (Green Marked Box in User Mockup) */}
+      <div className="md:hidden px-3.5 pb-2.5 pt-0.5">
+        <form onSubmit={handleSearchSubmit} className="w-full">
+          <div className="relative flex items-center w-full">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+              placeholder="Search products, brands or categories..."
+              className={`w-full pl-10 pr-20 py-2 rounded-full border text-xs text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all shadow-inner ${navTheme.searchInput}`}
+            />
+            <button
+              type="submit"
+              className={`absolute right-1 px-3.5 py-1.5 rounded-full text-xs font-black transition-all shadow-sm cursor-pointer ${navTheme.searchBtn}`}
+            >
+              Search
+            </button>
+          </div>
+        </form>
 
-          {isSearchFocused && filteredSuggestions.length > 0 && (
-            <div className="mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
+        {/* Autocomplete suggestions popup on Mobile */}
+        {isSearchFocused && filteredSuggestions.length > 0 && (
+          <div className={`mt-1.5 rounded-2xl shadow-2xl border overflow-hidden z-50 animate-fadeIn ${navTheme.searchPopup}`}>
+            <div className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
+              Matching Products
+            </div>
+            <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-60 overflow-y-auto">
               {filteredSuggestions.map(item => (
                 <div
                   key={item.id}
-                  onMouseDown={() => {
-                    setIsMobileSearchOpen(false);
-                    navigate(`/product/${item.id}`);
-                  }}
-                  className="p-2.5 flex items-center justify-between gap-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
+                  onMouseDown={() => navigate(`/product/${item.id}`)}
+                  className="p-2.5 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-2.5 cursor-pointer transition-colors"
                 >
-                  <div className="flex items-center gap-2">
-                    <img src={item.image} alt="" className="w-8 h-8 object-contain rounded-lg bg-slate-50 dark:bg-slate-800 p-0.5" />
-                    <div>
-                      <div className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.name}</div>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <img src={item.image} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-slate-100 dark:border-slate-800 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-slate-800 dark:text-white truncate">{item.name}</div>
                       <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                        ₹{item.sellingPrice.toLocaleString('en-IN')} • Score: {item.dealScore}/100
+                        ₹{item.sellingPrice.toLocaleString('en-IN')}
                       </div>
                     </div>
                   </div>
@@ -922,9 +918,9 @@ export const Navbar: React.FC = () => {
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* ============================================================== */}
       {/* THREE-LINE (☰) NAVIGATION DRAWER (Slide-over)                  */}
@@ -981,41 +977,7 @@ export const Navbar: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Session Status Banner: Guest Shopper or User */}
-                {!currentUser ? (
-                  <div className="mx-4 mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white border border-indigo-900/50 shadow-md">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-xs font-black tracking-wide">Guest Shopper</span>
-                      </div>
-                      <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/10 text-indigo-200">
-                        {guestSession?.guest_id ? guestSession.guest_id.slice(0, 8) : (guestSession?.sessionId ? guestSession.sessionId.slice(0, 8) : 'G-16F90Q')}
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-slate-300 mt-1">
-                      Anonymous browsing session active. Private & encrypted.
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mx-4 mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-brand-900/40 to-indigo-950/40 border border-brand-800/40 shadow-xs">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-brand-600 text-white font-black text-xs flex items-center justify-center">
-                        {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                          {currentUser.name || 'Member'}
-                        </div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                          {currentUser.email}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Explore & Compare Links */}
+                {/* Main Navigation Links: Home, Deals, Wishlist, Compare, Tracker (Requested in 3 lines menu) */}
                 <div className="p-4 space-y-1">
                   <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 py-1">
                     Explore & Navigation
@@ -1039,6 +1001,26 @@ export const Navbar: React.FC = () => {
                     <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
                   </Link>
 
+                  {/* Deals & Offers */}
+                  <Link
+                    to="/deals"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-rose-50/60 dark:hover:bg-rose-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Flame className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-rose-600 dark:text-rose-400">Deals & Offers</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Up to 70% off across marketplaces</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">
+                      HOT
+                    </span>
+                  </Link>
+
                   {/* Wishlist */}
                   <Link
                     to="/wishlist"
@@ -1059,6 +1041,42 @@ export const Navbar: React.FC = () => {
                     </span>
                   </Link>
 
+                  {/* Compare Stores */}
+                  <Link
+                    to="/compare"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Layers className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Compare Stores</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Live multi-store price comparison</div>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  {/* Price Tracker */}
+                  <Link
+                    to="/price-tracker"
+                    onClick={() => setIsNavDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Radio className="w-4 h-4 text-emerald-500 animate-pulse" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Price Tracker</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Track historical price drops & alerts</div>
+                      </div>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                  </Link>
+
                   {/* All Categories */}
                   <Link
                     to="/categories"
@@ -1075,26 +1093,6 @@ export const Navbar: React.FC = () => {
                       </div>
                     </div>
                     <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Deals */}
-                  <Link
-                    to="/deals"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-rose-50/60 dark:hover:bg-rose-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Flame className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-rose-600 dark:text-rose-400">Deals & Offers</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Up to 70% off across marketplaces</div>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">
-                      HOT
-                    </span>
                   </Link>
 
                   {/* Coupons & Offers */}

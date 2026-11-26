@@ -10,7 +10,7 @@ export const mockProducts: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 19999,
     sellingPrice: 9999,
@@ -1076,9 +1076,9 @@ export const mockProducts: Product[] = [
     name: 'Samsung Galaxy Watch6 Bluetooth (44mm, Graphite, Advanced Sleep Coaching)',
     brand: 'Samsung',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 29999,
     sellingPrice: 21999,
@@ -1302,9 +1302,9 @@ export const mockProducts: Product[] = [
     name: 'Noise ColorFit Pro 5 Smart Watch (1.85" AMOLED Display, BT Calling)',
     brand: 'Noise',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 8999,
@@ -2740,9 +2740,9 @@ export const mockProducts: Product[] = [
     name: 'Noise ColorFit Pro 5 (1.85" AMOLED Display, BT Calling, SOS, Rapid Health Suite, Jet Black)',
     brand: 'Noise',
     category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
     images: [
-      'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
     ],
     mrp: 7999,
