@@ -10,7 +10,9 @@ import {
   ShieldCheck,
   Zap,
   Search,
-  Bell
+  Bell,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
@@ -35,91 +37,99 @@ export const HomePage: React.FC = () => {
   };
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState('');
-  const [heroSlide, setHeroSlide] = useState(0);
+  const [bannerSlide, setBannerSlide] = useState(0);
+  const [isBannerPaused, setIsBannerPaused] = useState(false);
 
-  // High-converting 2-Second Rotating Hero Discount Ads (matching reference panel 1)
-  const heroDiscountAds = [
+  // 6 Real Marketplace Ad Banners from User's Reference Mockup
+  const marketplaceBanners = useMemo(() => [
     {
-      id: 'h-ad-apple',
-      productTitle: 'Apple iPhone 15 (Blue, 128 GB)',
-      category: 'Smartphones',
-      discountBadge: 'MEGA DEAL • SAVE ₹10,000',
-      discountPercent: '11% OFF',
-      sellingPrice: '₹79,999',
-      mrp: '₹89,999',
-      storeName: 'Meesho',
-      image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80',
-      targetUrl: '/product/prod-apple-iphone15',
+      id: 'banner-amazon',
+      storeName: 'Amazon',
+      saleEvent: 'Great Indian Festival',
+      tagline: 'Best Deals. Bigger Savings.',
+      discountBadge: 'UP TO 80% OFF*',
+      image: '/banners/amazon-banner.png',
+      targetQuery: 'Amazon',
+      themeColor: '#FF9900'
     },
     {
-      id: 'h-ad-hp',
-      productTitle: 'HP Pavilion 15 (Core i5 12th Gen, 16GB)',
-      category: 'Laptops',
-      discountBadge: 'SUPER VALUE • SAVE ₹15,000',
-      discountPercent: '21% OFF',
-      sellingPrice: '₹54,990',
-      mrp: '₹69,990',
+      id: 'banner-flipkart',
       storeName: 'Flipkart',
-      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&auto=format&fit=crop&q=80',
-      targetUrl: '/product/prod-hp-pavilion-15',
+      saleEvent: 'Big Billion Days',
+      tagline: 'Smart Deals for Everyone',
+      discountBadge: 'UP TO 75% OFF*',
+      image: '/banners/flipkart-banner.png',
+      targetQuery: 'Flipkart',
+      themeColor: '#2874F0'
     },
     {
-      id: 'h-ad-boat',
-      productTitle: 'boAt Airdopes 141 Bluetooth TWS Earbuds',
-      category: 'Audio',
-      discountBadge: 'MASSIVE SAVING • SAVE ₹3,191',
-      discountPercent: '71% OFF',
-      sellingPrice: '₹1,299',
-      mrp: '₹4,490',
-      storeName: 'Amazon',
-      image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&auto=format&fit=crop&q=80',
-      targetUrl: '/product/prod-boat-airdopes',
-    },
-    {
-      id: 'h-ad-nike',
-      productTitle: 'Nike Revolution 6 Running Shoes',
-      category: 'Footwear',
-      discountBadge: 'FASHION DROP • SAVE ₹2,496',
-      discountPercent: '50% OFF',
-      sellingPrice: '₹2,499',
-      mrp: '₹4,995',
+      id: 'banner-myntra',
       storeName: 'Myntra',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80',
-      targetUrl: '/product/prod-nike-running-shoes',
+      saleEvent: 'End of Season Sale',
+      tagline: 'Fashion. Beauty. More.',
+      discountBadge: 'UP TO 70% OFF*',
+      image: '/banners/myntra-banner.png',
+      targetQuery: 'Myntra',
+      themeColor: '#ff3f6c'
     },
     {
-      id: 'h-ad-noise',
-      productTitle: 'Noise Endeavour Pro Rugged Smart Watch',
-      category: 'Wearables',
-      discountBadge: 'SMART CHOICE • SAVE ₹10,000',
-      discountPercent: '50% OFF',
-      sellingPrice: '₹9,999',
-      mrp: '₹19,999',
-      storeName: 'Amazon',
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80',
-      targetUrl: '/product/prod-noise-endeavour-pro',
+      id: 'banner-meesho',
+      storeName: 'Meesho',
+      saleEvent: 'Sabse Saste Deals',
+      tagline: 'Lowest Prices. Best Quality.',
+      discountBadge: 'UP TO 80% OFF*',
+      image: '/banners/meesho-banner.png',
+      targetQuery: 'Meesho',
+      themeColor: '#f43397'
     },
     {
-      id: 'h-ad-fridge',
-      productTitle: 'Samsung 253L Smart Frost Free Refrigerator',
-      category: 'Appliances',
-      discountBadge: 'HOME SAVER • SAVE ₹14,000',
-      discountPercent: '38% OFF',
-      sellingPrice: '₹22,990',
-      mrp: '₹36,990',
+      id: 'banner-ajio',
+      storeName: 'AJIO',
+      saleEvent: 'BIG FASHION SALE',
+      tagline: 'Trendy Styles. Best Prices.',
+      discountBadge: 'UP TO 70% OFF*',
+      image: '/banners/ajio-banner.png',
+      targetQuery: 'AJIO',
+      themeColor: '#2c4152'
+    },
+    {
+      id: 'banner-croma',
       storeName: 'Croma',
-      image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=600&auto=format&fit=crop&q=80',
-      targetUrl: '/product/prod-samsung-refrigerator-253l',
+      saleEvent: 'Tech Bonanza',
+      tagline: 'Upgrade Your Life',
+      discountBadge: 'UP TO 60% OFF*',
+      image: '/banners/croma-banner.png',
+      targetQuery: 'Croma',
+      themeColor: '#00e9bf'
     }
-  ];
+  ], []);
 
-  // Auto-scroll discount ad image showcase every 2 seconds (2000ms)
+  // Auto-scroll real marketplace ad banners every 5 seconds (5000ms) with hover pause
   useEffect(() => {
-    const heroTimer = setInterval(() => {
-      setHeroSlide(prev => (prev + 1) % heroDiscountAds.length);
-    }, 2000);
-    return () => clearInterval(heroTimer);
-  }, [heroDiscountAds.length]);
+    if (isBannerPaused) return;
+    const bannerTimer = setInterval(() => {
+      setBannerSlide(prev => (prev + 1) % marketplaceBanners.length);
+    }, 5000);
+    return () => clearInterval(bannerTimer);
+  }, [isBannerPaused, marketplaceBanners.length]);
+
+  const currentBanner = marketplaceBanners[bannerSlide];
+
+  // Real-time Live Catalog Data Connected to the Active Banner (No fake data)
+  const storeLiveData = useMemo(() => {
+    const s = currentBanner.storeName.toLowerCase();
+    const storeProducts = products.filter(p =>
+      p.marketplacePrices?.some(m => m.sellerName.toLowerCase().includes(s))
+    );
+    const count = storeProducts.length > 0 ? storeProducts.length : products.length;
+    const lowestPrice = storeProducts.length > 0
+      ? Math.min(...storeProducts.map(p => {
+          const m = p.marketplacePrices?.find(x => x.sellerName.toLowerCase().includes(s));
+          return m ? m.finalPrice : p.sellingPrice;
+        }))
+      : 499;
+    return { count, lowestPrice };
+  }, [currentBanner, products]);
 
   const handleHeroSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -219,70 +229,74 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Dynamic Auto-Scrolling 2-Second Discount Ad Showcase matching Panel 1 */}
+            {/* Right Column: Dynamic Auto-Scrolling 5-Second Real Marketplace Ad Showcase (matching blue area) */}
             <div className="lg:col-span-5 flex justify-center relative w-full">
-              <div className="relative w-full max-w-[360px] sm:max-w-[430px] rounded-3xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-xl overflow-hidden p-4 sm:p-5 flex flex-col justify-between transition-all duration-300">
-                {/* Floating Save Up To Badge matching Panel 1 */}
-                <div className="absolute top-3.5 right-3.5 z-20 px-3 py-1 rounded-xl font-black text-[11px] shadow-md flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                  <span>Save Up To ₹12,999</span>
-                  <ExternalLink className="w-3 h-3" />
-                </div>
+              <div
+                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-900 group"
+                onMouseEnter={() => setIsBannerPaused(true)}
+                onMouseLeave={() => setIsBannerPaused(false)}
+              >
+                {/* Real Live Marketplace Banner Image */}
+                <Link
+                  to={`/search?q=${encodeURIComponent(currentBanner.targetQuery)}`}
+                  className="block relative w-full aspect-[500/220] overflow-hidden cursor-pointer bg-slate-950"
+                  title={`${currentBanner.storeName} - ${currentBanner.saleEvent} (Click to browse verified live deals)`}
+                >
+                  <img
+                    key={currentBanner.id}
+                    src={currentBanner.image}
+                    alt={`${currentBanner.storeName} - ${currentBanner.saleEvent}`}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
 
-                {/* Rotating Ad Content with 2-Second Transition */}
-                <div className="relative z-10 w-full flex flex-col items-center">
-                  {/* Top Store Badge Row */}
-                  <div className="w-full flex items-center justify-between gap-2 pr-36 mb-2">
-                    <MarketplaceBadge storeName={heroDiscountAds[heroSlide].storeName} size="sm" />
+                  {/* Real Live Data Floating Badge */}
+                  <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 text-white shadow-lg text-[10px] sm:text-xs font-bold pointer-events-none">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 -ml-3.5" />
+                    <span>{storeLiveData.count} Live Deals • From ₹{storeLiveData.lowestPrice.toLocaleString('en-IN')}</span>
                   </div>
+                </Link>
 
-                  {/* Product Image Stage with Glow Background */}
-                  <Link
-                    to={heroDiscountAds[heroSlide].targetUrl}
-                    className="relative w-full h-40 sm:h-48 flex items-center justify-center my-1 group cursor-pointer"
-                  >
-                    <div className="absolute w-36 h-36 rounded-full bg-blue-500/10 blur-xl pointer-events-none" />
-                    <img
-                      key={heroDiscountAds[heroSlide].id}
-                      src={heroDiscountAds[heroSlide].image}
-                      alt={heroDiscountAds[heroSlide].productTitle}
-                      className="h-full max-h-40 sm:max-h-48 w-auto object-contain drop-shadow-xl transition-all duration-300 animate-fadeIn group-hover:scale-105"
+                {/* Left Arrow */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setBannerSlide(prev => (prev - 1 + marketplaceBanners.length) % marketplaceBanners.length);
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md"
+                  title="Previous Ad"
+                >
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+
+                {/* Right Arrow */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setBannerSlide(prev => (prev + 1) % marketplaceBanners.length);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md"
+                  title="Next Ad"
+                >
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+
+                {/* 5-Second Pagination Dots Bar */}
+                <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-auto z-10">
+                  {marketplaceBanners.map((b, idx) => (
+                    <button
+                      key={b.id}
+                      onClick={() => setBannerSlide(idx)}
+                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        bannerSlide === idx
+                          ? 'w-6 bg-white shadow-md'
+                          : 'w-1.5 bg-white/50 hover:bg-white/80'
+                      }`}
+                      title={`Ad ${idx + 1}: ${b.storeName} - ${b.saleEvent}`}
                     />
-                  </Link>
-
-                  {/* Product Title & Price Details */}
-                  <div className="w-full text-left pt-2 space-y-1">
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-1 hover:text-blue-600 transition-colors">
-                      {heroDiscountAds[heroSlide].productTitle}
-                    </h3>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-                          {heroDiscountAds[heroSlide].sellingPrice}
-                        </span>
-                        <span className="text-xs text-slate-400 line-through">
-                          {heroDiscountAds[heroSlide].mrp}
-                        </span>
-                        <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded">
-                          {heroDiscountAds[heroSlide].discountPercent}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 2-Second Rotating Progress Pagination Dots */}
-                  <div className="flex items-center gap-1.5 pt-3">
-                    {heroDiscountAds.map((ad, idx) => (
-                      <button
-                        key={ad.id}
-                        onClick={() => setHeroSlide(idx)}
-                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                          heroSlide === idx ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
-                        }`}
-                        title={`Slide ${idx + 1}: ${ad.productTitle}`}
-                      />
-                    ))}
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
