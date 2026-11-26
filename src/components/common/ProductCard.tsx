@@ -104,14 +104,8 @@ export const ProductCard: React.FC<Props> = ({ product, variant = 'standard' }) 
 
   return (
     <div className="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 flex flex-col justify-between overflow-hidden relative p-3 sm:p-3.5">
-      {/* Top Badges & Wishlist / Alert Actions */}
-      <div className="flex items-center justify-between w-full absolute top-2.5 left-2.5 right-2.5 px-0.5 z-10 pointer-events-none">
-        {product.isSmartDealsChoice ? (
-          <span className="pointer-events-auto bg-slate-900 text-amber-300 text-[9px] font-black px-2 py-0.5 rounded shadow-sm border border-amber-400/30">
-            SmartDeals Choice
-          </span>
-        ) : <span />}
-
+      {/* Top Wishlist & Alert Actions */}
+      <div className="flex items-center justify-end w-full absolute top-2.5 right-2.5 px-0.5 z-10 pointer-events-none">
         <div className="flex items-center gap-1 pointer-events-auto">
           <button
             onClick={e => {

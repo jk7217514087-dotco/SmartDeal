@@ -192,27 +192,6 @@ export const HomePage: React.FC = () => {
                 </div>
               </form>
 
-              {/* Quick Search Chips directly under Search matching Panel 1 */}
-              <div className={`flex flex-wrap items-center gap-2 pt-1 text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                {[
-                  { name: 'Amazon', query: 'Amazon' },
-                  { name: 'Flipkart', query: 'Flipkart' },
-                  { name: 'Myntra', query: 'Myntra' },
-                  { name: 'Meesho', query: 'Meesho' },
-                  { name: 'Mobiles', query: 'Mobiles' },
-                  { name: 'Electronics', query: 'Electronics' }
-                ].map(item => (
-                  <button
-                    key={item.name}
-                    type="button"
-                    onClick={() => navigate(`/search?q=${encodeURIComponent(item.query)}`)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-95 border flex items-center gap-1.5 ${heroTheme.pillBg}`}
-                  >
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-
               {/* Marketplace Partner Badges Row matching Panel 1 */}
               <div className="pt-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -288,23 +267,6 @@ export const HomePage: React.FC = () => {
                           {heroDiscountAds[heroSlide].discountPercent}
                         </span>
                       </div>
-                    </div>
-
-                    {/* Action Buttons: View Details & Buy on Store */}
-                    <div className="w-full flex items-center gap-2 pt-2">
-                      <Link
-                        to={heroDiscountAds[heroSlide].targetUrl}
-                        className="flex-1 py-2 px-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-xs text-center transition-all cursor-pointer shadow-xs truncate"
-                      >
-                        View Details
-                      </Link>
-                      <Link
-                        to={heroDiscountAds[heroSlide].targetUrl}
-                        className="flex-1 py-2 px-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-xs flex items-center justify-center gap-1 shadow-xs transition-all cursor-pointer truncate"
-                      >
-                        <span className="truncate">Buy on {heroDiscountAds[heroSlide].storeName}</span>
-                        <ExternalLink className="w-3 h-3 shrink-0" />
-                      </Link>
                     </div>
                   </div>
 
