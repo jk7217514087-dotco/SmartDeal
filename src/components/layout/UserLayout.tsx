@@ -17,8 +17,8 @@ export const UserLayout: React.FC = () => {
       className={`flex flex-col min-h-screen w-full relative ${activeTheme === 'dark' ? 'text-slate-100' : 'text-slate-900'} transition-colors duration-200`}
       style={{ backgroundColor: currentBg }}
     >
-      {/* Subtle Diagonal SmartDeal Brand Watermark across all pages */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none opacity-[0.028] dark:opacity-[0.02]">
+      {/* Subtle Diagonal SmartDeal Brand Watermark across all pages ("isis type se page me SmartDeal likhna all me diagon") */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none opacity-[0.045] dark:opacity-[0.035]">
         <div className="absolute -top-10 -left-16 text-[14vw] font-black uppercase tracking-widest text-slate-900 dark:text-white -rotate-12 whitespace-nowrap font-sans">
           SmartDeal
         </div>

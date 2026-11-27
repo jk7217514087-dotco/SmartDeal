@@ -200,11 +200,6 @@ export const DealsPage: React.FC = () => {
               key={section.id}
               className="relative rounded-3xl p-4 sm:p-7 md:p-8 overflow-hidden shadow-xs border bg-[#EEF2FF] dark:bg-slate-900/90 border-indigo-100 dark:border-slate-800 transition-all"
             >
-              {/* Background Faint Diagonal Watermark: "SmartDeal" (Replacing old 'b' watermark with brand name diagonally) */}
-              <div className="absolute top-2 -right-3 sm:-right-6 text-4xl sm:text-6xl md:text-7xl font-black text-indigo-300/20 dark:text-slate-800/25 select-none pointer-events-none -rotate-12 tracking-wider uppercase font-sans">
-                SmartDeal
-              </div>
-
               {/* Top-Left Max Discount Badge (Fully inside container, completely visible) */}
               <div className="absolute top-3.5 left-3.5 sm:top-5 sm:left-6 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-blue-600 text-white font-black text-xs sm:text-sm shadow-md shadow-blue-500/30 z-10 tracking-tight select-none">
                 Up to {maxSecDiscount}% off

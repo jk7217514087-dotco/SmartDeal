@@ -183,14 +183,14 @@ export const Navbar: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-4">
           {/* Left Side: Three Lines Menu Button + Brand Logo */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Laptop / Desktop View: 3 lines button (Hidden on phone < md, where 3-dots in row 2 is shown) */}
+            {/* Three Lines Menu Button (Visible on all devices as shown in screenshots) */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsNavDrawerOpen(true);
               }}
-              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer items-center justify-center shrink-0 shadow-xs group hidden md:flex"
+              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs group"
               title="All Features & Categories (Menu)"
               aria-label="Navigation Menu"
             >
@@ -223,60 +223,6 @@ export const Navbar: React.FC = () => {
                 </p>
               </div>
             </Link>
-          </div>
-
-          {/* Global Wide Search Bar (Desktop: in center where nav links used to be) */}
-          <div className="relative flex-1 max-w-xl lg:max-w-2xl mx-2 sm:mx-4 hidden md:block">
-            <form onSubmit={handleSearchSubmit} className="w-full">
-              <div className="relative flex items-center w-full">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                  placeholder="Search products, brands or categories..."
-                  className={`w-full pl-10 pr-24 py-2 sm:py-2.5 rounded-full border text-xs sm:text-sm text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all shadow-inner ${navTheme.searchInput}`}
-                />
-                <button
-                  type="submit"
-                  className={`absolute right-1 px-4 py-1.5 rounded-full text-xs font-black transition-all shadow-sm cursor-pointer ${navTheme.searchBtn}`}
-                >
-                  Search
-                </button>
-              </div>
-            </form>
-
-            {/* Autocomplete suggestions popup */}
-            {isSearchFocused && filteredSuggestions.length > 0 && (
-              <div className={`absolute left-0 right-0 top-full mt-2 rounded-2xl shadow-2xl border overflow-hidden z-50 animate-fadeIn ${navTheme.searchPopup}`}>
-                <div className="p-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
-                  Matching Products
-                </div>
-                <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                  {filteredSuggestions.map(item => (
-                    <div
-                      key={item.id}
-                      onMouseDown={() => navigate(`/product/${item.id}`)}
-                      className="p-3 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-3 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img src={item.image} alt={item.name} className="w-10 h-10 object-contain rounded-xl border border-slate-100 dark:border-slate-800" />
-                        <div>
-                          <div className="text-xs font-bold text-slate-800 dark:text-white line-clamp-1">{item.name}</div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                            Lowest: <span className="font-extrabold text-blue-600 dark:text-blue-400">₹{item.sellingPrice.toLocaleString('en-IN')}</span>
-                            {' • '}Deal Score: <span className="font-bold text-emerald-600 dark:text-emerald-400">{item.dealScore}/100</span>
-                          </div>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Right Actions: Restored on both Mobile and Desktop */}
@@ -621,8 +567,8 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Persistent Search Bar Row with 3-Dots Menu on Side */}
-        <div className="md:hidden px-3.5 pb-2.5 pt-0.5 flex items-center gap-2">
+        {/* Persistent Global Search Bar Row with 3-Dots Menu on Side (Locked Fixed at Top on All Pages) */}
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-4 pb-2.5 pt-0.5 flex items-center gap-2">
           <form onSubmit={handleSearchSubmit} className="flex-1 min-w-0">
             <div className="relative flex items-center w-full">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
@@ -633,25 +579,25 @@ export const Navbar: React.FC = () => {
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 placeholder="Search products, brands or categories..."
-                className={`w-full pl-10 pr-20 py-2 rounded-full border text-xs text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all shadow-inner ${navTheme.searchInput}`}
+                className={`w-full pl-10 pr-20 sm:pr-24 py-2 sm:py-2.5 rounded-full border text-xs sm:text-sm text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all shadow-inner ${navTheme.searchInput}`}
               />
               <button
                 type="submit"
-                className={`absolute right-1 px-3.5 py-1.5 rounded-full text-xs font-black transition-all shadow-sm cursor-pointer ${navTheme.searchBtn}`}
+                className={`absolute right-1 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-black transition-all shadow-sm cursor-pointer ${navTheme.searchBtn}`}
               >
                 Search
               </button>
             </div>
           </form>
 
-          {/* 3-Dots Menu Button on Phone (Shifted to side of search as requested) */}
+          {/* 3-Dots Menu Button (Visible on all devices as shown in screenshots) */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               setIsNavDrawerOpen(true);
             }}
-            className="p-2 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+            className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
             title="Navigation Menu"
             aria-label="Navigation Menu"
           >
@@ -659,38 +605,40 @@ export const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Autocomplete suggestions popup on Mobile */}
+        {/* Autocomplete suggestions popup on all screen sizes */}
         {isSearchFocused && filteredSuggestions.length > 0 && (
-          <div className={`md:hidden mx-3.5 mt-1 rounded-2xl shadow-2xl border overflow-hidden z-50 animate-fadeIn ${navTheme.searchPopup}`}>
-            <div className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
-              Matching Products
-            </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-60 overflow-y-auto">
-              {filteredSuggestions.map(item => (
-                <div
-                  key={item.id}
-                  onMouseDown={() => navigate(`/product/${item.id}`)}
-                  className="p-2.5 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-2.5 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <img src={item.image} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-slate-100 dark:border-slate-800 shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-slate-800 dark:text-white truncate">{item.name}</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                        ₹{item.sellingPrice.toLocaleString('en-IN')}
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-4">
+            <div className={`mt-1 rounded-2xl shadow-2xl border overflow-hidden z-50 animate-fadeIn ${navTheme.searchPopup}`}>
+              <div className="p-2 text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
+                Matching Products
+              </div>
+              <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-60 overflow-y-auto">
+                {filteredSuggestions.map(item => (
+                  <div
+                    key={item.id}
+                    onMouseDown={() => navigate(`/product/${item.id}`)}
+                    className="p-2.5 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-2.5 cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img src={item.image} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-slate-100 dark:border-slate-800 shrink-0" />
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-800 dark:text-white truncate">{item.name}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                          ₹{item.sellingPrice.toLocaleString('en-IN')}
+                        </div>
                       </div>
                     </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}
       </header>
 
       {/* Fixed Header Height Spacer (Prevents page content from hiding behind fixed header on all screen sizes) */}
-      <div className="h-[112px] md:h-[65px] w-full shrink-0 pointer-events-none" aria-hidden="true" />
+      <div className="h-[114px] sm:h-[120px] w-full shrink-0 pointer-events-none" aria-hidden="true" />
 
       {/* ============================================================== */}
       {/* THREE-LINE (☰) NAVIGATION DRAWER (Compact User/Product Only)   */}
