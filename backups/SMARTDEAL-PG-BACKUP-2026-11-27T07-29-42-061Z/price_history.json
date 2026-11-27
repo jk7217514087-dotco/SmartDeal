@@ -1,0 +1,155 @@
+[
+  {
+    "id": "1",
+    "product_id": "prod-samsung-m14",
+    "platform_id": "amazon",
+    "recorded_price": "12490.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.989Z"
+  },
+  {
+    "id": "2",
+    "product_id": "prod-samsung-m14",
+    "platform_id": "flipkart",
+    "recorded_price": "12999.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.991Z"
+  },
+  {
+    "id": "3",
+    "product_id": "prod-samsung-m14",
+    "platform_id": "croma",
+    "recorded_price": "13490.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.992Z"
+  },
+  {
+    "id": "4",
+    "product_id": "prod-apple-iphone15",
+    "platform_id": "amazon",
+    "recorded_price": "69900.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.993Z"
+  },
+  {
+    "id": "5",
+    "product_id": "prod-apple-iphone15",
+    "platform_id": "flipkart",
+    "recorded_price": "70499.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.994Z"
+  },
+  {
+    "id": "6",
+    "product_id": "prod-apple-iphone15",
+    "platform_id": "reliancedigital",
+    "recorded_price": "71200.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.995Z"
+  },
+  {
+    "id": "7",
+    "product_id": "prod-asus-vivobook",
+    "platform_id": "amazon",
+    "recorded_price": "48990.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.996Z"
+  },
+  {
+    "id": "8",
+    "product_id": "prod-asus-vivobook",
+    "platform_id": "flipkart",
+    "recorded_price": "49490.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.997Z"
+  },
+  {
+    "id": "9",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "flipkart",
+    "recorded_price": "54990.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.998Z"
+  },
+  {
+    "id": "10",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "amazon",
+    "recorded_price": "56499.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.999Z"
+  },
+  {
+    "id": "11",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "croma",
+    "recorded_price": "57990.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:28.999Z"
+  },
+  {
+    "id": "12",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "reliancedigital",
+    "recorded_price": "58490.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:29.000Z"
+  },
+  {
+    "id": "13",
+    "product_id": "prod-noise-endeavour-pro",
+    "platform_id": "amazon",
+    "recorded_price": "9999.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:29.002Z"
+  },
+  {
+    "id": "14",
+    "product_id": "prod-noise-endeavour-pro",
+    "platform_id": "flipkart",
+    "recorded_price": "10499.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:29.002Z"
+  },
+  {
+    "id": "15",
+    "product_id": "prod-sony-wh1000xm5",
+    "platform_id": "amazon",
+    "recorded_price": "26990.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:29.004Z"
+  },
+  {
+    "id": "16",
+    "product_id": "prod-sony-wh1000xm5",
+    "platform_id": "flipkart",
+    "recorded_price": "28990.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:29.004Z"
+  },
+  {
+    "id": "17",
+    "product_id": "prod-sony-wh1000xm5",
+    "platform_id": "croma",
+    "recorded_price": "29990.00",
+    "recorded_date": "Today",
+    "event": "Live Marketplace Price",
+    "recorded_at": "2026-11-27T07:19:29.005Z"
+  }
+]

@@ -1,4 +1,18 @@
-// Vercel Serverless Function to handle /api/* requests smoothly
+// SmartDeal Production Serverless API Gateway
+// Fully secured: No hardcoded PINs, demo OTPs or mock bypass credentials
+
+import { pool, query } from '../server/db/connection.mjs';
+import {
+  hashPassword,
+  verifyPassword,
+  upgradeUserPasswordToArgon2,
+  createUserSession,
+  createAdminSession,
+  validateUserSession,
+  validateAdminSession,
+  generateSecureOtp
+} from '../server/security/auth.mjs';
+
 export default async function handler(req, res) {
   // CORS configuration
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -23,164 +37,173 @@ export default async function handler(req, res) {
     }
   }
 
-  // 1. ADMIN LOGIN
+  // 1. ADMIN LOGIN (Database-verified with Argon2id)
   if (url.includes('/admin/login')) {
-    const { email, password, pin } = body;
-
-    // Master PIN login
-    if (pin === '7217' || pin === '7217514087') {
-      return res.status(200).json({
-        success: true,
-        message: 'Master Owner PIN Verified! Opening Dashboard...',
-        token: 'smartdeal_admin_jwt_' + Date.now(),
-        admin: {
-          id: 'U10000',
-          name: 'SmartDeal Owner',
-          email: 'jk7217514087@gmail.com',
-          phone: '7217514087',
-          role: 'SUPER_ADMIN',
-          status: 'ACTIVE'
-        }
-      });
-    }
-
+    const { email, password } = body;
     const cleanEmail = (email || '').toLowerCase().trim();
-    const isMasterAdmin =
-      cleanEmail === 'jk7217514087@gmail.com' ||
-      cleanEmail === 'admin@smartdeal.com' ||
-      cleanEmail === 'admin' ||
-      cleanEmail.includes('admin');
 
-    const isPassValid =
-      password === 'admin123' ||
-      password === '7217514087' ||
-      password === '7217';
-
-    if (isMasterAdmin && isPassValid) {
-      return res.status(200).json({
-        success: true,
-        message: 'Admin Password Verified. Opening Dashboard...',
-        token: 'smartdeal_admin_jwt_' + Date.now(),
-        admin: {
-          id: 'U10000',
-          name: 'SmartDeal Owner',
-          email: cleanEmail,
-          phone: '7217514087',
-          role: 'SUPER_ADMIN',
-          status: 'ACTIVE'
-        }
-      });
-    }
-
-    return res.status(200).json({
-      success: false,
-      message: 'Incorrect Admin Password. Please try again.',
-      error: 'Incorrect Admin Password. Please try again.'
-    });
-  }
-
-  // 2. ADMIN FORGOT PASSWORD
-  if (url.includes('/admin/forgot-password')) {
-    const { email } = body;
-    const cleanEmail = (email || '').toLowerCase().trim();
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-
-    return res.status(200).json({
-      success: true,
-      message: `Verification code sent to admin email (${cleanEmail}) and phone!`,
-      devCode: code
-    });
-  }
-
-  // 2B. ADMIN VERIFY OTP
-  if (url.includes('/admin/verify-otp')) {
-    const { code } = body;
-    const isValid = String(code).trim().length === 6;
-    if (isValid) {
-      return res.status(200).json({
-        success: true,
-        message: 'OTP verified successfully! You may now setup your new password.'
-      });
-    }
-    return res.status(400).json({
-      success: false,
-      message: 'Invalid 6-digit OTP. Please enter the code sent to your email.'
-    });
-  }
-
-  // 3. ADMIN RESET PASSWORD
-  if (url.includes('/admin/reset-password')) {
-    const { code, newPassword } = body;
-    if (!code || code.length < 6) {
+    if (!cleanEmail || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide a valid 6-digit verification code.'
+        error: 'Email and password are required.'
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Admin password has been reset successfully! You can now sign in with your new password.'
-    });
+    try {
+      const rows = await query(`
+        SELECT u.id, u.full_name, u.email, u.phone, u.password_hash, u.role, u.status, a.permissions
+        FROM users u
+        JOIN admin_users a ON u.id = a.user_id
+        WHERE LOWER(u.email) = $1 AND u.status = 'ACTIVE' AND a.is_active = TRUE;
+      `, [cleanEmail]);
+
+      if (rows.length === 0) {
+        return res.status(401).json({
+          success: false,
+          error: 'Invalid administrative credentials.'
+        });
+      }
+
+      const admin = rows[0];
+      const { valid, needsUpgrade } = await verifyPassword(password, admin.password_hash);
+
+      if (!valid) {
+        return res.status(401).json({
+          success: false,
+          error: 'Invalid administrative credentials.'
+        });
+      }
+
+      if (needsUpgrade) {
+        await upgradeUserPasswordToArgon2(admin.id, password);
+      }
+
+      const token = await createAdminSession(admin.id, req.headers['x-forwarded-for'] || '127.0.0.1', req.headers['user-agent'] || '');
+
+      return res.status(200).json({
+        success: true,
+        message: 'Admin authentication successful.',
+        token,
+        admin: {
+          id: admin.id,
+          name: admin.full_name,
+          email: admin.email,
+          phone: admin.phone,
+          role: admin.role,
+          permissions: admin.permissions,
+          status: admin.status
+        }
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: 'Database authentication failed.' });
+    }
   }
 
-  // 4. USER AUTH (LOGIN)
+  // 2. USER AUTH LOGIN (Database-verified with Argon2id)
   if (url.includes('/auth/login')) {
     const { email, identifier, password } = body;
     const clean = (email || identifier || '').toLowerCase().trim();
-    return res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      token: 'user_jwt_' + Date.now(),
-      user: {
-        id: 'U10025',
-        name: 'SmartDeal Member',
-        email: clean || 'user@example.com',
-        role: 'USER',
-        status: 'ACTIVE'
+
+    if (!clean || !password) {
+      return res.status(400).json({ success: false, error: 'Email and password are required.' });
+    }
+
+    try {
+      const rows = await query(`
+        SELECT id, full_name, email, phone, password_hash, role, status
+        FROM users
+        WHERE (LOWER(email) = $1 OR phone = $1) AND status = 'ACTIVE';
+      `, [clean]);
+
+      if (rows.length === 0) {
+        return res.status(401).json({ success: false, error: 'Invalid credentials.' });
       }
-    });
+
+      const user = rows[0];
+      const { valid, needsUpgrade } = await verifyPassword(password, user.password_hash);
+
+      if (!valid) {
+        return res.status(401).json({ success: false, error: 'Invalid credentials.' });
+      }
+
+      if (needsUpgrade) {
+        await upgradeUserPasswordToArgon2(user.id, password);
+      }
+
+      const token = await createUserSession(user.id, req.headers['x-forwarded-for'] || '127.0.0.1', req.headers['user-agent'] || '');
+
+      return res.status(200).json({
+        success: true,
+        message: 'Login successful.',
+        token,
+        user: {
+          id: user.id,
+          name: user.full_name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          status: user.status
+        }
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: 'Login query failed.' });
+    }
   }
 
-  // 5. USER AUTH (REGISTER)
+  // 3. USER AUTH REGISTER (Argon2id persistence)
   if (url.includes('/auth/register')) {
-    const { name, email } = body;
-    return res.status(200).json({
-      success: true,
-      message: 'Registration successful!',
-      token: 'user_jwt_' + Date.now(),
-      user: {
-        id: 'U' + Date.now().toString().slice(-5),
-        name: name || 'SmartDeal Member',
-        email: (email || '').toLowerCase().trim(),
-        role: 'USER',
-        status: 'ACTIVE'
+    const { name, email, phone, password } = body;
+    const cleanEmail = (email || '').toLowerCase().trim();
+
+    if (!cleanEmail || !password || !name) {
+      return res.status(400).json({ success: false, error: 'Name, email, and password are required.' });
+    }
+
+    try {
+      const existing = await query('SELECT id FROM users WHERE LOWER(email) = $1;', [cleanEmail]);
+      if (existing.length > 0) {
+        return res.status(409).json({ success: false, error: 'Account already exists with this email address.' });
       }
-    });
-  }
 
-  // 6. USER FORGOT PASSWORD
-  if (url.includes('/auth/forgot-password')) {
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    return res.status(200).json({
-      success: true,
-      message: 'Password reset code sent to your email.',
-      devCode: code
-    });
-  }
+      const newId = `U-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`.toUpperCase();
+      const hash = await hashPassword(password);
 
-  // 7. USER RESET PASSWORD
-  if (url.includes('/auth/reset-password')) {
-    return res.status(200).json({
-      success: true,
-      message: 'Password reset successful!'
-    });
+      await query(`
+        INSERT INTO users (id, full_name, email, phone, password_hash, role, status)
+        VALUES ($1, $2, $3, $4, $5, 'USER', 'ACTIVE');
+      `, [newId, name, cleanEmail, phone || null, hash]);
+
+      // Initialize cashback wallet
+      await query(`
+        INSERT INTO cashback_wallets (id, user_id, confirmed_balance, pending_balance, redeemed_balance, lifetime_cashback)
+        VALUES ($1, $2, 0.00, 0.00, 0.00, 0.00);
+      `, [`wallet-${newId}`, newId]);
+
+      const token = await createUserSession(newId, req.headers['x-forwarded-for'] || '127.0.0.1', req.headers['user-agent'] || '');
+
+      return res.status(201).json({
+        success: true,
+        message: 'Account registered successfully.',
+        token,
+        user: {
+          id: newId,
+          name,
+          email: cleanEmail,
+          phone: phone || null,
+          role: 'USER',
+          status: 'ACTIVE'
+        }
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: 'Registration failed.' });
+    }
   }
 
   // Default response
   return res.status(200).json({
     success: true,
-    message: 'SmartDeal Vercel Serverless Gateway Active',
+    message: 'SmartDeal Real PostgreSQL Serverless Gateway Active',
+    engine: 'PostgreSQL 18',
     timestamp: new Date().toISOString()
   });
 }

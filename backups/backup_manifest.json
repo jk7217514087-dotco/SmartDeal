@@ -1,5 +1,181 @@
 [
   {
+    "batchId": "SMARTDEAL-PG-BACKUP-2026-11-27T07-29-42-061Z",
+    "timestamp": "2026-11-27T07:29:42.192Z",
+    "status": "VERIFIED_SUCCESSFUL",
+    "engine": "PostgreSQL 18",
+    "totalFiles": 24,
+    "totalSizeBytes": 133183,
+    "files": [
+      {
+        "fileName": "SMARTDEAL-PG-BACKUP-2026-11-27T07-29-42-061Z.sql",
+        "bytes": 66397,
+        "checksumSha256": "adc3bfbf69937526c652e4d2be10980c2b33962f004c793bf8041d912774de96"
+      },
+      {
+        "fileName": "roles.json",
+        "tableName": "roles",
+        "rowCount": 4,
+        "bytes": 595,
+        "checksumSha256": "e37186376bde29e3489581ba42f20d16746fa53da6a9a00487250aea68e12d12"
+      },
+      {
+        "fileName": "users.json",
+        "tableName": "users",
+        "rowCount": 45,
+        "bytes": 22272,
+        "checksumSha256": "a12f407243f0d39a2df8f24fc550a19d657e6195926400d600c2d925a983060c"
+      },
+      {
+        "fileName": "user_sessions.json",
+        "tableName": "user_sessions",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "user_profiles.json",
+        "tableName": "user_profiles",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "user_preferences.json",
+        "tableName": "user_preferences",
+        "rowCount": 45,
+        "bytes": 13025,
+        "checksumSha256": "f0f31f05e561d589973d10fd4d0a8e1470d912c7b549f5efc652e9d4c6c8d871"
+      },
+      {
+        "fileName": "addresses.json",
+        "tableName": "addresses",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "wishlist.json",
+        "tableName": "wishlist",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "admin_roles.json",
+        "tableName": "admin_roles",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "admin_users.json",
+        "tableName": "admin_users",
+        "rowCount": 2,
+        "bytes": 364,
+        "checksumSha256": "10a24d61498a987bbbb21003a5b6603234cf6a2881da94cc1511e4df08542b6a"
+      },
+      {
+        "fileName": "admin_sessions.json",
+        "tableName": "admin_sessions",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "audit_logs.json",
+        "tableName": "audit_logs",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "categories.json",
+        "tableName": "categories",
+        "rowCount": 6,
+        "bytes": 1207,
+        "checksumSha256": "45551a46232d1752e3f3688a3eca983d64127d74f06a29f586f725ffd4756704"
+      },
+      {
+        "fileName": "platforms.json",
+        "tableName": "platforms",
+        "rowCount": 8,
+        "bytes": 2918,
+        "checksumSha256": "79b046f7ce51bc2da1665b62637e53686322565b3261d718f4402833c806769d"
+      },
+      {
+        "fileName": "products.json",
+        "tableName": "products",
+        "rowCount": 6,
+        "bytes": 4432,
+        "checksumSha256": "5f1e16fd2d039151e9a6cd30398b626605d9b34d70ae34176a25092ad2f06ead"
+      },
+      {
+        "fileName": "marketplace_prices.json",
+        "tableName": "marketplace_prices",
+        "rowCount": 17,
+        "bytes": 5984,
+        "checksumSha256": "8405796dbb79c459f7e936ebd34387f8ccd9cefabf871fadb41604a13068b45a"
+      },
+      {
+        "fileName": "price_history.json",
+        "tableName": "price_history",
+        "rowCount": 17,
+        "bytes": 4166,
+        "checksumSha256": "49a7622f3da0ac0ffec02367fc71fbc455cc3975b6bd3c0ca163153bd82d18f0"
+      },
+      {
+        "fileName": "outbound_clicks.json",
+        "tableName": "outbound_clicks",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "affiliate_conversions.json",
+        "tableName": "affiliate_conversions",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "cashback_wallets.json",
+        "tableName": "cashback_wallets",
+        "rowCount": 45,
+        "bytes": 11315,
+        "checksumSha256": "434b23122444f860de54946bf57d26981ee3519b13a1d869fabde8c8aebc6de2"
+      },
+      {
+        "fileName": "cashback_ledger.json",
+        "tableName": "cashback_ledger",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "price_alerts.json",
+        "tableName": "price_alerts",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "notifications.json",
+        "tableName": "notifications",
+        "rowCount": 0,
+        "bytes": 2,
+        "checksumSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "fileName": "admin_settings.json",
+        "tableName": "admin_settings",
+        "rowCount": 1,
+        "bytes": 484,
+        "checksumSha256": "700b7828da56ef874e8fd809a5a4463e235601221c6dfc649e8b81857abc192a"
+      }
+    ]
+  },
+  {
     "batchId": "SMARTDEAL-BACKUP-2026-11-20T09-56-11-122Z",
     "timestamp": "2026-11-20T09:56:11.137Z",
     "status": "VERIFIED_SUCCESSFUL",

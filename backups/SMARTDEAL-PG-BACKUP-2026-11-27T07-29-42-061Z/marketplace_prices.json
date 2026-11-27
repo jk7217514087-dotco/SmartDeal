@@ -1,0 +1,189 @@
+[
+  {
+    "id": "prod-samsung-m14-amazon",
+    "product_id": "prod-samsung-m14",
+    "platform_id": "amazon",
+    "price": "12490.00",
+    "sku_url": "https://www.amazon.in/dp/B0BY8MCQ9S",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.987Z"
+  },
+  {
+    "id": "prod-samsung-m14-flipkart",
+    "product_id": "prod-samsung-m14",
+    "platform_id": "flipkart",
+    "price": "12999.00",
+    "sku_url": "https://www.flipkart.com/samsung-galaxy-m14-5g/p/itm124",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.990Z"
+  },
+  {
+    "id": "prod-samsung-m14-croma",
+    "product_id": "prod-samsung-m14",
+    "platform_id": "croma",
+    "price": "13490.00",
+    "sku_url": "https://www.croma.com/samsung-galaxy-m14-5g/p/271891",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.991Z"
+  },
+  {
+    "id": "prod-apple-iphone15-amazon",
+    "product_id": "prod-apple-iphone15",
+    "platform_id": "amazon",
+    "price": "69900.00",
+    "sku_url": "https://www.amazon.in/dp/B0CHX1W1XY",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.993Z"
+  },
+  {
+    "id": "prod-apple-iphone15-flipkart",
+    "product_id": "prod-apple-iphone15",
+    "platform_id": "flipkart",
+    "price": "70499.00",
+    "sku_url": "https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itmbf5553",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.994Z"
+  },
+  {
+    "id": "prod-apple-iphone15-reliancedigital",
+    "product_id": "prod-apple-iphone15",
+    "platform_id": "reliancedigital",
+    "price": "71200.00",
+    "sku_url": "https://www.reliancedigital.in/apple-iphone-15-128gb/p/4938392",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.995Z"
+  },
+  {
+    "id": "prod-asus-vivobook-amazon",
+    "product_id": "prod-asus-vivobook",
+    "platform_id": "amazon",
+    "price": "48990.00",
+    "sku_url": "https://www.amazon.in/dp/B0C1K9V2W3",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.996Z"
+  },
+  {
+    "id": "prod-asus-vivobook-flipkart",
+    "product_id": "prod-asus-vivobook",
+    "platform_id": "flipkart",
+    "price": "49490.00",
+    "sku_url": "https://www.flipkart.com/asus-vivobook-15-core-i5/p/itm872",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.997Z"
+  },
+  {
+    "id": "prod-hp-pavilion-15-flipkart",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "flipkart",
+    "price": "54990.00",
+    "sku_url": "https://www.flipkart.com/hp-pavilion-15/p/itm159",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.998Z"
+  },
+  {
+    "id": "prod-hp-pavilion-15-amazon",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "amazon",
+    "price": "56499.00",
+    "sku_url": "https://www.amazon.in/dp/B0B5H93H98",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.998Z"
+  },
+  {
+    "id": "prod-hp-pavilion-15-croma",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "croma",
+    "price": "57990.00",
+    "sku_url": "https://www.croma.com/hp-pavilion-15/p/261902",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:28.999Z"
+  },
+  {
+    "id": "prod-hp-pavilion-15-reliancedigital",
+    "product_id": "prod-hp-pavilion-15",
+    "platform_id": "reliancedigital",
+    "price": "58490.00",
+    "sku_url": "https://www.reliancedigital.in/hp-pavilion-15/p/492819",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:29.000Z"
+  },
+  {
+    "id": "prod-noise-endeavour-pro-amazon",
+    "product_id": "prod-noise-endeavour-pro",
+    "platform_id": "amazon",
+    "price": "9999.00",
+    "sku_url": "https://www.amazon.in/dp/B0CFX5N8PQ",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:29.001Z"
+  },
+  {
+    "id": "prod-noise-endeavour-pro-flipkart",
+    "product_id": "prod-noise-endeavour-pro",
+    "platform_id": "flipkart",
+    "price": "10499.00",
+    "sku_url": "https://www.flipkart.com/noise-endeavour-pro/p/itme98",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:29.002Z"
+  },
+  {
+    "id": "prod-sony-wh1000xm5-amazon",
+    "product_id": "prod-sony-wh1000xm5",
+    "platform_id": "amazon",
+    "price": "26990.00",
+    "sku_url": "https://www.amazon.in/dp/B09XS7JWHH",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:29.003Z"
+  },
+  {
+    "id": "prod-sony-wh1000xm5-flipkart",
+    "product_id": "prod-sony-wh1000xm5",
+    "platform_id": "flipkart",
+    "price": "28990.00",
+    "sku_url": "https://www.flipkart.com/sony-wh-1000xm5/p/itm771",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:29.004Z"
+  },
+  {
+    "id": "prod-sony-wh1000xm5-croma",
+    "product_id": "prod-sony-wh1000xm5",
+    "platform_id": "croma",
+    "price": "29990.00",
+    "sku_url": "https://www.croma.com/sony-wh-1000xm5/p/257321",
+    "in_stock": true,
+    "delivery_charge": "0.00",
+    "delivery_date_estimate": null,
+    "last_checked_at": "2026-11-27T07:19:29.005Z"
+  }
+]

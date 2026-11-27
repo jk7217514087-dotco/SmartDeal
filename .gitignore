@@ -38,3 +38,9 @@ dist-ssr/
 
 # Automated database backups
 backups/SMARTDEAL-BACKUP-*
+
+# Local PostgreSQL Data Directory
+.pgdata/
+postgres_data/
+server/test_pg_auth.mjs
+

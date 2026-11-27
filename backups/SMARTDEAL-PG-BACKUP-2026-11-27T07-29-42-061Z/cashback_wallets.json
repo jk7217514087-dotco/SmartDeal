@@ -1,0 +1,407 @@
+[
+  {
+    "id": "wallet-U10000",
+    "user_id": "U10000",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.929Z"
+  },
+  {
+    "id": "wallet-U10001",
+    "user_id": "U10001",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.932Z"
+  },
+  {
+    "id": "wallet-U10025",
+    "user_id": "U10025",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.933Z"
+  },
+  {
+    "id": "wallet-U10026",
+    "user_id": "U10026",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.935Z"
+  },
+  {
+    "id": "wallet-U-MWKPZNGH-07PR",
+    "user_id": "U-MWKPZNGH-07PR",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.937Z"
+  },
+  {
+    "id": "wallet-U-MWKPZNGO-QJOX",
+    "user_id": "U-MWKPZNGO-QJOX",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.938Z"
+  },
+  {
+    "id": "wallet-U-MWKQ0CAA-5GG3",
+    "user_id": "U-MWKQ0CAA-5GG3",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.939Z"
+  },
+  {
+    "id": "wallet-U-MWKQ0CAG-2XZC",
+    "user_id": "U-MWKQ0CAG-2XZC",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.941Z"
+  },
+  {
+    "id": "wallet-U-MWKQ59CO-OO0R",
+    "user_id": "U-MWKQ59CO-OO0R",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.942Z"
+  },
+  {
+    "id": "wallet-U-MWKQDMJT-ALZG",
+    "user_id": "U-MWKQDMJT-ALZG",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.943Z"
+  },
+  {
+    "id": "wallet-U-MWKQDMJW-WPLN",
+    "user_id": "U-MWKQDMJW-WPLN",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.944Z"
+  },
+  {
+    "id": "wallet-U-MWKQEPXO-56GY",
+    "user_id": "U-MWKQEPXO-56GY",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.946Z"
+  },
+  {
+    "id": "wallet-U-MWKQEPXR-VCGP",
+    "user_id": "U-MWKQEPXR-VCGP",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.947Z"
+  },
+  {
+    "id": "wallet-U-MWKQSFC3-3V6X",
+    "user_id": "U-MWKQSFC3-3V6X",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.948Z"
+  },
+  {
+    "id": "wallet-U-MWKQSFC4-3BB5",
+    "user_id": "U-MWKQSFC4-3BB5",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.949Z"
+  },
+  {
+    "id": "wallet-U-MWKRQLZS-YE66",
+    "user_id": "U-MWKRQLZS-YE66",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.950Z"
+  },
+  {
+    "id": "wallet-U-MWKRQLZX-3RCZ",
+    "user_id": "U-MWKRQLZX-3RCZ",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.951Z"
+  },
+  {
+    "id": "wallet-U-MWKRRYMM-HH8Q",
+    "user_id": "U-MWKRRYMM-HH8Q",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.952Z"
+  },
+  {
+    "id": "wallet-U-MWKRRYMP-5M4Q",
+    "user_id": "U-MWKRRYMP-5M4Q",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.954Z"
+  },
+  {
+    "id": "wallet-U-MWKRSCKU-BROB",
+    "user_id": "U-MWKRSCKU-BROB",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.955Z"
+  },
+  {
+    "id": "wallet-U-MWKRSCKX-LAU9",
+    "user_id": "U-MWKRSCKX-LAU9",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.956Z"
+  },
+  {
+    "id": "wallet-U-MWL10Q3O-6URH",
+    "user_id": "U-MWL10Q3O-6URH",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.957Z"
+  },
+  {
+    "id": "wallet-U-MWL10Q3S-4FV6",
+    "user_id": "U-MWL10Q3S-4FV6",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.958Z"
+  },
+  {
+    "id": "wallet-U-MWL1H5NV-W59E",
+    "user_id": "U-MWL1H5NV-W59E",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.959Z"
+  },
+  {
+    "id": "wallet-U-MWL1H5NZ-JYSW",
+    "user_id": "U-MWL1H5NZ-JYSW",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.961Z"
+  },
+  {
+    "id": "wallet-U-MWL1UYYV-T43Z",
+    "user_id": "U-MWL1UYYV-T43Z",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.962Z"
+  },
+  {
+    "id": "wallet-U-MWL1UYYZ-I6VT",
+    "user_id": "U-MWL1UYYZ-I6VT",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.963Z"
+  },
+  {
+    "id": "wallet-U-MWL2G68Z-CV5M",
+    "user_id": "U-MWL2G68Z-CV5M",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.964Z"
+  },
+  {
+    "id": "wallet-U-MWL2G692-U7E5",
+    "user_id": "U-MWL2G692-U7E5",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.966Z"
+  },
+  {
+    "id": "wallet-U-MWL2OQT2-IT84",
+    "user_id": "U-MWL2OQT2-IT84",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.967Z"
+  },
+  {
+    "id": "wallet-U-MWL2OQT5-7J5B",
+    "user_id": "U-MWL2OQT5-7J5B",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.968Z"
+  },
+  {
+    "id": "wallet-U-MWL3JVHC-RFOU",
+    "user_id": "U-MWL3JVHC-RFOU",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.969Z"
+  },
+  {
+    "id": "wallet-U-MWL3JVHG-C1SP",
+    "user_id": "U-MWL3JVHG-C1SP",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.970Z"
+  },
+  {
+    "id": "wallet-U-MWL4CEPG-Y97W",
+    "user_id": "U-MWL4CEPG-Y97W",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.971Z"
+  },
+  {
+    "id": "wallet-U-MWL4CEPJ-I42C",
+    "user_id": "U-MWL4CEPJ-I42C",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.972Z"
+  },
+  {
+    "id": "wallet-U-MWL52DST-8FPZ",
+    "user_id": "U-MWL52DST-8FPZ",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.974Z"
+  },
+  {
+    "id": "wallet-U-MWL52DSW-SKHV",
+    "user_id": "U-MWL52DSW-SKHV",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.975Z"
+  },
+  {
+    "id": "wallet-U-MWL5LBCN-6YIR",
+    "user_id": "U-MWL5LBCN-6YIR",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.977Z"
+  },
+  {
+    "id": "wallet-U-MWL5LBCO-SXXF",
+    "user_id": "U-MWL5LBCO-SXXF",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.978Z"
+  },
+  {
+    "id": "wallet-U-MWL64YH0-EBHZ",
+    "user_id": "U-MWL64YH0-EBHZ",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.979Z"
+  },
+  {
+    "id": "wallet-U-MWL64YH2-G3G0",
+    "user_id": "U-MWL64YH2-G3G0",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.980Z"
+  },
+  {
+    "id": "wallet-U-MWL6QOXG-AWYY",
+    "user_id": "U-MWL6QOXG-AWYY",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.981Z"
+  },
+  {
+    "id": "wallet-U-MWL6QOXJ-CAGJ",
+    "user_id": "U-MWL6QOXJ-CAGJ",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.982Z"
+  },
+  {
+    "id": "wallet-U-MWL6Y0UO-AD6S",
+    "user_id": "U-MWL6Y0UO-AD6S",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.984Z"
+  },
+  {
+    "id": "wallet-U-MWL6Y0UT-Z92Y",
+    "user_id": "U-MWL6Y0UT-Z92Y",
+    "confirmed_balance": "0.00",
+    "pending_balance": "0.00",
+    "redeemed_balance": "0.00",
+    "lifetime_cashback": "0.00",
+    "updated_at": "2026-11-27T07:19:28.985Z"
+  }
+]

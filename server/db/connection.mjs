@@ -1,68 +1,72 @@
 // ==========================================================
-// SMARTDEAL ENTERPRISE DATABASE CONNECTION MANAGER
-// Manages 3 Logically Separated MySQL 8 Connection Pools:
-// 1. smartdeal_users (Customers, Profiles, Preferences, Sessions)
-// 2. smartdeal_admin (Administrative Accounts, RBAC, Audit Logs)
-// 3. smartdeal_core  (Catalog, Marketplaces, Prices, Affiliate Financials)
+// SMARTDEAL REAL PRODUCTION POSTGRESQL CONNECTION MANAGER
+// Powered by pg (node-postgres) with connection pooling,
+// dynamic SSL detection for Render, telemetry & transaction support
 // ==========================================================
 
-import mysql from 'mysql2/promise';
+import pg from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Global Environment Configurations with Safe Defaults
-const DEFAULT_HOST = process.env.DB_HOST || '127.0.0.1';
-const DEFAULT_PORT = parseInt(process.env.DB_PORT || '3306', 10);
-const DEFAULT_USER = process.env.DB_USER || 'root';
-const DEFAULT_PASS = process.env.DB_PASSWORD || '';
+const { Pool } = pg;
 
-// Connection configurations per database
-export const DB_CONFIGS = {
-  users: {
-    host: process.env.DB_USERS_HOST || DEFAULT_HOST,
-    port: parseInt(process.env.DB_USERS_PORT || String(DEFAULT_PORT), 10),
-    user: process.env.DB_USERS_USER || DEFAULT_USER,
-    password: process.env.DB_USERS_PASSWORD || DEFAULT_PASS,
-    database: process.env.DB_USERS_NAME || 'smartdeal_users',
-    waitForConnections: true,
-    connectionLimit: parseInt(process.env.DB_USERS_POOL_LIMIT || '15', 10),
-    queueLimit: 50,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 10000,
-    timezone: '+00:00', // UTC
-    dateStrings: true
-  },
-  admin: {
-    host: process.env.DB_ADMIN_HOST || DEFAULT_HOST,
-    port: parseInt(process.env.DB_ADMIN_PORT || String(DEFAULT_PORT), 10),
-    user: process.env.DB_ADMIN_USER || DEFAULT_USER,
-    password: process.env.DB_ADMIN_PASSWORD || DEFAULT_PASS,
-    database: process.env.DB_ADMIN_NAME || 'smartdeal_admin',
-    waitForConnections: true,
-    connectionLimit: parseInt(process.env.DB_ADMIN_POOL_LIMIT || '10', 10),
-    queueLimit: 30,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 10000,
-    timezone: '+00:00', // UTC
-    dateStrings: true
-  },
-  core: {
-    host: process.env.DB_CORE_HOST || DEFAULT_HOST,
-    port: parseInt(process.env.DB_CORE_PORT || String(DEFAULT_PORT), 10),
-    user: process.env.DB_CORE_USER || DEFAULT_USER,
-    password: process.env.DB_CORE_PASSWORD || DEFAULT_PASS,
-    database: process.env.DB_CORE_NAME || 'smartdeal_core',
-    waitForConnections: true,
-    connectionLimit: parseInt(process.env.DB_CORE_POOL_LIMIT || '25', 10),
-    queueLimit: 100,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 10000,
-    timezone: '+00:00', // UTC
-    dateStrings: true
+// Parse configuration from DATABASE_URL or discrete parameters
+const parseConnectionConfig = () => {
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (databaseUrl) {
+    const isLocal = databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
+    const sslRequired = process.env.PGSSL === 'true' || 
+                        databaseUrl.includes('sslmode=require') || 
+                        (!isLocal && process.env.NODE_ENV === 'production');
+
+    return {
+      connectionString: databaseUrl,
+      ssl: sslRequired ? { rejectUnauthorized: false } : false,
+      max: parseInt(process.env.PG_MAX_POOL || '20', 10),
+      idleTimeoutMillis: parseInt(process.env.PG_IDLE_TIMEOUT_MS || '30000', 10),
+      connectionTimeoutMillis: parseInt(process.env.PG_CONNECTION_TIMEOUT_MS || '5000', 10)
+    };
   }
+
+  const host = process.env.PGHOST || process.env.DB_HOST || '127.0.0.1';
+  const port = parseInt(process.env.PGPORT || process.env.DB_PORT || '5433', 10);
+  const user = process.env.PGUSER || process.env.DB_USER || 'postgres';
+  const password = process.env.PGPASSWORD || process.env.DB_PASSWORD || '';
+  const database = process.env.PGDATABASE || process.env.DB_NAME || 'smartdeal';
+  const isLocal = host === '127.0.0.1' || host === 'localhost';
+  const sslRequired = process.env.PGSSL === 'true' || (!isLocal && process.env.NODE_ENV === 'production');
+
+  return {
+    host,
+    port,
+    user,
+    password,
+    database,
+    ssl: sslRequired ? { rejectUnauthorized: false } : false,
+    max: parseInt(process.env.PG_MAX_POOL || '20', 10),
+    idleTimeoutMillis: parseInt(process.env.PG_IDLE_TIMEOUT_MS || '30000', 10),
+    connectionTimeoutMillis: parseInt(process.env.PG_CONNECTION_TIMEOUT_MS || '5000', 10)
+  };
 };
 
-// Telemetry & Slow Query Monitoring State
+const poolConfig = parseConnectionConfig();
+
+// Backward compatibility configuration view
+export const DB_CONFIGS = {
+  postgres: {
+    host: poolConfig.host || 'connection-string',
+    port: poolConfig.port || 5432,
+    database: poolConfig.database || 'smartdeal',
+    maxPool: poolConfig.max,
+    ssl: !!poolConfig.ssl
+  },
+  users: { database: 'smartdeal (users schema/tables)' },
+  admin: { database: 'smartdeal (admin schema/tables)' },
+  core: { database: 'smartdeal (core schema/tables)' }
+};
+
+// Global Telemetry & Slow Query Monitoring State
 export const dbTelemetry = {
   totalQueries: 0,
   slowQueries: 0,
@@ -70,149 +74,143 @@ export const dbTelemetry = {
   totalLatencyMs: 0,
   slowQueryLog: [],
   mode: 'INITIALIZING',
-  poolsHealthy: {
-    users: false,
-    admin: false,
-    core: false
-  },
-  lastSlowQuery: null,
+  connected: false,
+  lastHealthCheck: null,
+  databaseVersion: null,
+  activePoolSize: 0,
+  idleConnections: 0,
+  waitingClients: 0,
   startedAt: new Date().toISOString()
 };
 
 const SLOW_QUERY_THRESHOLD_MS = parseInt(process.env.SLOW_QUERY_THRESHOLD_MS || '200', 10);
 
-// Initialize Pools
-let usersPool = null;
-let adminPool = null;
-let corePool = null;
+// Instantiate PostgreSQL Pool
+export const pool = new Pool(poolConfig);
 
-try {
-  usersPool = mysql.createPool(DB_CONFIGS.users);
-  adminPool = mysql.createPool(DB_CONFIGS.admin);
-  corePool = mysql.createPool(DB_CONFIGS.core);
-} catch (err) {
-  console.warn('[Database ConnectionPool Warning]: Unable to construct native pool:', err.message);
-}
+// Pool event listeners
+pool.on('error', (err) => {
+  console.error('[PostgreSQL Pool Unexpected Error]:', err.message);
+  dbTelemetry.failedQueries++;
+});
 
 /**
- * Checks connection health for all three pools
+ * Checks connection health to the PostgreSQL cluster
  */
 export const checkPoolsHealth = async () => {
   const result = {
+    connected: false,
     users: false,
     admin: false,
     core: false,
     allConnected: false,
+    engine: 'PostgreSQL 18',
+    version: '',
+    latencyMs: 0,
     message: ''
   };
 
+  const start = performance.now();
   try {
-    if (usersPool) {
-      const conn = await usersPool.getConnection();
-      await conn.query('SELECT 1');
-      conn.release();
+    const client = await pool.connect();
+    try {
+      const res = await client.query('SELECT version(), current_database(), current_user;');
+      const duration = Math.round(performance.now() - start);
+      result.connected = true;
       result.users = true;
-      dbTelemetry.poolsHealthy.users = true;
-    }
-  } catch (err) {
-    dbTelemetry.poolsHealthy.users = false;
-  }
-
-  try {
-    if (adminPool) {
-      const conn = await adminPool.getConnection();
-      await conn.query('SELECT 1');
-      conn.release();
       result.admin = true;
-      dbTelemetry.poolsHealthy.admin = true;
-    }
-  } catch (err) {
-    dbTelemetry.poolsHealthy.admin = false;
-  }
-
-  try {
-    if (corePool) {
-      const conn = await corePool.getConnection();
-      await conn.query('SELECT 1');
-      conn.release();
       result.core = true;
-      dbTelemetry.poolsHealthy.core = true;
+      result.allConnected = true;
+      result.version = res.rows[0]?.version || 'PostgreSQL';
+      result.latencyMs = duration;
+      result.message = `PostgreSQL connected successfully [DB: ${res.rows[0]?.current_database}, User: ${res.rows[0]?.current_user}]`;
+
+      dbTelemetry.connected = true;
+      dbTelemetry.databaseVersion = result.version;
+      dbTelemetry.mode = 'POSTGRESQL_PRODUCTION_POOLED';
+      dbTelemetry.lastHealthCheck = new Date().toISOString();
+      dbTelemetry.activePoolSize = pool.totalCount;
+      dbTelemetry.idleConnections = pool.idleCount;
+      dbTelemetry.waitingClients = pool.waitingCount;
+    } finally {
+      client.release();
     }
   } catch (err) {
-    dbTelemetry.poolsHealthy.core = false;
+    dbTelemetry.connected = false;
+    dbTelemetry.mode = 'DATABASE_UNREACHABLE';
+    dbTelemetry.lastHealthCheck = new Date().toISOString();
+    result.message = `PostgreSQL connection error: ${err.message}`;
+    console.error('[PostgreSQL Health Check Failed]:', err.message);
   }
-
-  result.allConnected = result.users && result.admin && result.core;
-  dbTelemetry.mode = result.allConnected ? 'MYSQL_POOLED' : 'RESILIENT_FILE_PERSISTENCE';
-  result.message = result.allConnected
-    ? 'All 3 MySQL 8 logical database pools connected successfully.'
-    : 'MySQL host unreachable or databases pending migration. Resilient in-memory/JSON store serving live traffic.';
 
   return result;
 };
 
 /**
- * Executes a prepared statement query on smartdeal_users pool
+ * Executes a monitored SQL query on PostgreSQL with latency tracking and slow query alerts
+ * @param {string} sql - Parameterized SQL query
+ * @param {Array} params - Query parameters ($1, $2, etc.)
  */
-export const queryUsers = async (sql, params = []) => {
-  return executeMonitoredQuery(usersPool, 'smartdeal_users', sql, params);
-};
-
-/**
- * Executes a prepared statement query on smartdeal_admin pool
- */
-export const queryAdmin = async (sql, params = []) => {
-  return executeMonitoredQuery(adminPool, 'smartdeal_admin', sql, params);
-};
-
-/**
- * Executes a prepared statement query on smartdeal_core pool
- */
-export const queryCore = async (sql, params = []) => {
-  return executeMonitoredQuery(corePool, 'smartdeal_core', sql, params);
-};
-
-/**
- * Internal query wrapper measuring latency, logging slow queries, and sanitizing params
- */
-const executeMonitoredQuery = async (pool, dbName, sql, params) => {
+export const query = async (sql, params = []) => {
   const start = performance.now();
   dbTelemetry.totalQueries++;
 
-  if (!pool || !dbTelemetry.poolsHealthy[dbName.replace('smartdeal_', '')]) {
-    // Return null so callers know to use resilient JSON fallback
-    return null;
-  }
-
   try {
-    const [rows, fields] = await pool.execute(sql, params);
+    const result = await pool.query(sql, params);
     const duration = Math.round(performance.now() - start);
     dbTelemetry.totalLatencyMs += duration;
 
     if (duration > SLOW_QUERY_THRESHOLD_MS) {
       dbTelemetry.slowQueries++;
       const slowEntry = {
-        database: dbName,
         sql: sql.slice(0, 160),
         durationMs: duration,
         timestamp: new Date().toISOString()
       };
-      dbTelemetry.lastSlowQuery = slowEntry;
       dbTelemetry.slowQueryLog.unshift(slowEntry);
       if (dbTelemetry.slowQueryLog.length > 50) dbTelemetry.slowQueryLog.pop();
-      console.warn(`[SLOW QUERY ${duration}ms in ${dbName}]: ${sql.slice(0, 120)}`);
+      console.warn(`[SLOW QUERY ${duration}ms]: ${sql.slice(0, 120)}`);
     }
 
-    return rows;
+    return result.rows;
   } catch (err) {
     dbTelemetry.failedQueries++;
-    console.error(`[DB Error in ${dbName}]:`, err.message);
+    console.error(`[PostgreSQL Query Error]: ${err.message} | SQL: ${sql.slice(0, 100)}`);
     throw err;
   }
 };
 
 /**
- * Diagnostic health endpoint payload for Admin Panel
+ * Executes operations inside an ACID database transaction
+ * @param {Function} callback - Async function receiving the transactional pg client
+ */
+export const withTransaction = async (callback) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await callback(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+// Backward-compatible query methods for existing route handlers
+export const queryUsers = async (sql, params = []) => query(sql, params);
+export const queryAdmin = async (sql, params = []) => query(sql, params);
+export const queryCore = async (sql, params = []) => query(sql, params);
+
+// Legacy pool reference aliases
+export const usersPool = pool;
+export const adminPool = pool;
+export const corePool = pool;
+
+/**
+ * Diagnostic health endpoint payload for Admin Panel & monitoring
  */
 export const getDatabaseHealth = async () => {
   const health = await checkPoolsHealth();
@@ -223,29 +221,16 @@ export const getDatabaseHealth = async () => {
   return {
     status: health.allConnected ? 'HEALTHY' : 'DEGRADED',
     mode: dbTelemetry.mode,
+    engine: 'PostgreSQL 18 (Pure Relational Architecture)',
     timestamp: new Date().toISOString(),
-    connectionPools: {
-      users: {
-        database: DB_CONFIGS.users.database,
-        host: DB_CONFIGS.users.host,
-        port: DB_CONFIGS.users.port,
-        limit: DB_CONFIGS.users.connectionLimit,
-        connected: health.users
-      },
-      admin: {
-        database: DB_CONFIGS.admin.database,
-        host: DB_CONFIGS.admin.host,
-        port: DB_CONFIGS.admin.port,
-        limit: DB_CONFIGS.admin.connectionLimit,
-        connected: health.admin
-      },
-      core: {
-        database: DB_CONFIGS.core.database,
-        host: DB_CONFIGS.core.host,
-        port: DB_CONFIGS.core.port,
-        limit: DB_CONFIGS.core.connectionLimit,
-        connected: health.core
-      }
+    connection: {
+      connected: health.connected,
+      database: poolConfig.database || 'smartdeal',
+      ssl: !!poolConfig.ssl,
+      activeConnections: pool.totalCount,
+      idleConnections: pool.idleCount,
+      waitingQueue: pool.waitingCount,
+      version: dbTelemetry.databaseVersion
     },
     performance: {
       totalQueriesExecuted: dbTelemetry.totalQueries,
@@ -256,9 +241,20 @@ export const getDatabaseHealth = async () => {
       recentSlowQueries: dbTelemetry.slowQueryLog.slice(0, 5)
     },
     resilienceNotice: health.allConnected
-      ? 'Direct MySQL 8 multi-pool connection active.'
-      : 'Using local persistence fallback. Multi-database schemas ready in migrations/ folder.'
+      ? 'Direct PostgreSQL production pool connected and accepting ACID queries.'
+      : 'PostgreSQL cluster unreachable. Verify DATABASE_URL or PGPORT.'
   };
 };
 
-export { usersPool, adminPool, corePool };
+export default {
+  pool,
+  query,
+  withTransaction,
+  checkPoolsHealth,
+  getDatabaseHealth,
+  queryUsers,
+  queryAdmin,
+  queryCore,
+  dbTelemetry,
+  DB_CONFIGS
+};

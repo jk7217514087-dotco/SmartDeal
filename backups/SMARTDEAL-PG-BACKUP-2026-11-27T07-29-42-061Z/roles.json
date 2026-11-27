@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "USER",
+    "description": "Standard platform customer",
+    "created_at": "2026-11-27T07:19:28.912Z"
+  },
+  {
+    "id": 2,
+    "name": "ADMIN",
+    "description": "Administrative staff with delegated access",
+    "created_at": "2026-11-27T07:19:28.914Z"
+  },
+  {
+    "id": 3,
+    "name": "SUPER_ADMIN",
+    "description": "System owner with unrestricted privileges",
+    "created_at": "2026-11-27T07:19:28.914Z"
+  },
+  {
+    "id": 4,
+    "name": "SELLER",
+    "description": "Verified merchant or brand partner",
+    "created_at": "2026-11-27T07:19:28.915Z"
+  }
+]

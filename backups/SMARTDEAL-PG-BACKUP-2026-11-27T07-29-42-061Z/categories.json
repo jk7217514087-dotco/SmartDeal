@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cat-mobiles",
+    "name": "Mobiles & Tablets",
+    "slug": "mobiles",
+    "icon": "Smartphone",
+    "count": 24,
+    "parent_id": null,
+    "created_at": "2026-11-27T07:19:28.920Z"
+  },
+  {
+    "id": "cat-laptops",
+    "name": "Laptops & Computers",
+    "slug": "laptops",
+    "icon": "Laptop",
+    "count": 18,
+    "parent_id": null,
+    "created_at": "2026-11-27T07:19:28.921Z"
+  },
+  {
+    "id": "cat-audio",
+    "name": "Audio & Headphones",
+    "slug": "audio",
+    "icon": "Headphones",
+    "count": 32,
+    "parent_id": null,
+    "created_at": "2026-11-27T07:19:28.922Z"
+  },
+  {
+    "id": "cat-wearables",
+    "name": "Smartwatches & Wearables",
+    "slug": "wearables",
+    "icon": "Watch",
+    "count": 15,
+    "parent_id": null,
+    "created_at": "2026-11-27T07:19:28.922Z"
+  },
+  {
+    "id": "cat-appliances",
+    "name": "Home Appliances",
+    "slug": "appliances",
+    "icon": "Tv",
+    "count": 20,
+    "parent_id": null,
+    "created_at": "2026-11-27T07:19:28.923Z"
+  },
+  {
+    "id": "cat-fashion",
+    "name": "Fashion & Footwear",
+    "slug": "fashion",
+    "icon": "ShoppingBag",
+    "count": 45,
+    "parent_id": null,
+    "created_at": "2026-11-27T07:19:28.923Z"
+  }
+]

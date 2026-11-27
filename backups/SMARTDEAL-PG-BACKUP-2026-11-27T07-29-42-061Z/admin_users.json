@@ -1,0 +1,22 @@
+[
+  {
+    "id": "U10000",
+    "user_id": "U10000",
+    "role": "ADMIN",
+    "permissions": [
+      "*"
+    ],
+    "is_active": true,
+    "created_at": "2026-11-27T07:19:28.926Z"
+  },
+  {
+    "id": "U10001",
+    "user_id": "U10001",
+    "role": "ADMIN",
+    "permissions": [
+      "*"
+    ],
+    "is_active": true,
+    "created_at": "2026-11-27T07:19:28.931Z"
+  }
+]

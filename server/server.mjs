@@ -7,7 +7,28 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import nodePath from 'node:path';
 import nodemailer from 'nodemailer';
-import { getDatabaseHealth, queryUsers, queryAdmin, queryCore, checkPoolsHealth } from './db/connection.mjs';
+import {
+  pool,
+  query,
+  withTransaction,
+  getDatabaseHealth,
+  queryUsers,
+  queryAdmin,
+  queryCore,
+  checkPoolsHealth
+} from './db/connection.mjs';
+import {
+  hashPassword,
+  verifyPassword,
+  upgradeUserPasswordToArgon2,
+  createUserSession,
+  validateUserSession,
+  destroyUserSession,
+  createAdminSession,
+  validateAdminSession,
+  destroyAdminSession,
+  generateSecureOtp
+} from './security/auth.mjs';
 import { runDatabaseBackup } from '../scripts/backup_databases.mjs';
 
 // Automatically load .env if present
@@ -931,6 +952,30 @@ export const getAuthSession = (req) => {
   return session;
 };
 
+export const getAuthSessionAsync = async (req) => {
+  const syncSession = getAuthSession(req);
+  if (syncSession) return syncSession;
+
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.substring(7).trim();
+
+  try {
+    const user = await validateUserSession(token);
+    if (!user) return null;
+    return {
+      userId: user.id,
+      role: user.role,
+      email: user.email,
+      name: user.name,
+      phone: user.phone,
+      expiresAt: Date.now() + 86400000 * 30
+    };
+  } catch {
+    return null;
+  }
+};
+
 // Calculate Wallet summary strictly from double-entry ledger transactions
 export const calculateCashbackWallet = (userId) => {
   const userTx = cashbackTransactions.filter(t => t.userId === userId);
@@ -1032,7 +1077,7 @@ export const server = http.createServer(async (req, res) => {
     }
 
     // ------------------------------------------------------------------------
-    // SECTION 19: IDENTITY & AUTHENTICATION ENDPOINTS
+    // SECTION 19: IDENTITY & AUTHENTICATION ENDPOINTS (PostgreSQL + Argon2id)
     // ------------------------------------------------------------------------
     if (method === 'POST' && (path === '/api/auth/register' || normalizedPath === '/api/auth/register')) {
       const { name, email, password, phone } = await parseJsonBody(req);
@@ -1042,37 +1087,73 @@ export const server = http.createServer(async (req, res) => {
       if (typeof password !== 'string' || password.length < 6) {
         return sendJSON(400, { success: false, error: 'Password must be at least 6 characters long.' });
       }
-      const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
-      if (existing) {
-        return sendJSON(409, { success: false, error: 'An account with this email already exists.' });
+
+      const cleanEmail = email.toLowerCase().trim();
+      const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+      const userAgent = req.headers['user-agent'] || '';
+
+      // Check existing in PostgreSQL
+      try {
+        const existingPg = await query('SELECT id FROM users WHERE LOWER(email) = $1;', [cleanEmail]);
+        if (existingPg.length > 0 || users.some(u => u.email.toLowerCase() === cleanEmail)) {
+          return sendJSON(409, { success: false, error: 'An account with this email already exists.' });
+        }
+
+        const newId = generateId('U');
+        const argonHash = await hashPassword(password);
+        const legacyHash = sha256(password);
+
+        // Insert into PostgreSQL
+        await query(`
+          INSERT INTO users (id, full_name, email, phone, password_hash, role, status)
+          VALUES ($1, $2, $3, $4, $5, 'USER', 'ACTIVE');
+        `, [newId, name.trim(), cleanEmail, phone ? phone.trim() : null, argonHash]);
+
+        // Initialize wallet and preferences in PostgreSQL
+        await query(`
+          INSERT INTO cashback_wallets (id, user_id, confirmed_balance, pending_balance, redeemed_balance, lifetime_cashback)
+          VALUES ($1, $2, 0.00, 0.00, 0.00, 0.00)
+          ON CONFLICT (user_id) DO NOTHING;
+        `, [`wallet-${newId}`, newId]);
+
+        await query(`
+          INSERT INTO user_preferences (id, user_id, theme, currency)
+          VALUES ($1, $2, 'steel-navy', 'INR')
+          ON CONFLICT (user_id) DO NOTHING;
+        `, [`pref-${newId}`, newId]);
+
+        // Persistent SQL session
+        const token = await createUserSession(newId, ip, userAgent);
+
+        // Keep in-memory cache synchronized for unit tests
+        const newUserObj = {
+          id: newId,
+          name: name.trim(),
+          email: cleanEmail,
+          phone: phone ? phone.trim() : '',
+          passwordHash: legacyHash,
+          role: 'USER',
+          status: 'ACTIVE',
+          createdAt: new Date().toISOString()
+        };
+        users.push(newUserObj);
+        userSessions.set(token, {
+          userId: newId,
+          role: 'USER',
+          email: cleanEmail,
+          expiresAt: Date.now() + 86400000 * 30
+        });
+
+        return sendJSON(201, {
+          success: true,
+          message: 'Account registered successfully.',
+          token,
+          user: { id: newId, name: name.trim(), email: cleanEmail, phone: phone ? phone.trim() : '', role: 'USER', createdAt: newUserObj.createdAt }
+        });
+      } catch (err) {
+        console.error('Registration error:', err.message);
+        return sendJSON(500, { success: false, error: 'Internal server registration error.' });
       }
-      const newUser = {
-        id: generateId('U'),
-        name: name.trim(),
-        email: email.toLowerCase().trim(),
-        phone: phone ? phone.trim() : '',
-        passwordHash: sha256(password),
-        role: 'USER',
-        status: 'ACTIVE',
-        createdAt: new Date().toISOString()
-      };
-      users.push(newUser);
-      saveUsersToFile();
-
-      const token = `tok_${crypto.randomBytes(24).toString('hex')}`;
-      userSessions.set(token, {
-        userId: newUser.id,
-        role: newUser.role,
-        email: newUser.email,
-        expiresAt: Date.now() + 86400000 * 7
-      });
-
-      return sendJSON(201, {
-        success: true,
-        message: 'Account registered successfully.',
-        token,
-        user: { id: newUser.id, name: newUser.name, email: newUser.email, phone: newUser.phone, role: newUser.role, createdAt: newUser.createdAt }
-      });
     }
 
     if (method === 'POST' && (path === '/api/auth/login' || normalizedPath === '/api/auth/login')) {
@@ -1086,94 +1167,97 @@ export const server = http.createServer(async (req, res) => {
 
       const cleanLower = rawIdentifier.toLowerCase();
       const digitsOnly = rawIdentifier.replace(/\D/g, '');
-      const hash = sha256(password);
+      const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+      const userAgent = req.headers['user-agent'] || '';
 
-      const isEmailInput = cleanLower.includes('@');
-      const isPhoneInput = !isEmailInput && digitsOnly.length >= 7;
+      try {
+        // Query PostgreSQL users
+        const dbUsers = await query(`
+          SELECT id, full_name, email, phone, password_hash, role, status
+          FROM users
+          WHERE (LOWER(email) = $1 OR phone = $1 OR (length($2) >= 7 AND phone LIKE '%' || $2 || '%'))
+            AND status = 'ACTIVE'
+          LIMIT 1;
+        `, [cleanLower, digitsOnly || 'N/A']);
 
-      const existingUser = users.find(u => {
-        const uEmail = (u.email || '').toLowerCase();
-        const uPhoneDigits = (u.phone || '').replace(/\D/g, '');
+        let userRecord = dbUsers[0];
 
-        if (isEmailInput) {
-          return uEmail === cleanLower;
-        }
-        if (isPhoneInput) {
-          return uPhoneDigits === digitsOnly || uPhoneDigits.endsWith(digitsOnly) || digitsOnly.endsWith(uPhoneDigits);
-        }
-        return false;
-      });
-
-      let user = existingUser;
-
-      if (existingUser) {
-        // Owner / Admin authentication flexibility:
-        // Automatically sync password and enforce ADMIN role for owner / admin accounts
-        const isOwner = existingUser.email.toLowerCase() === 'jk7217514087@gmail.com' ||
-                        existingUser.email.toLowerCase() === 'admin@smartdeal.com' ||
-                        (existingUser.phone && existingUser.phone.includes('7217514087'));
-
-        let isPasswordMatch = false;
-
-        if (isOwner) {
-          existingUser.passwordHash = hash;
-          existingUser.role = 'ADMIN';
-          saveUsersToFile();
-          isPasswordMatch = true;
-        } else {
-          isPasswordMatch = existingUser.passwordHash === hash;
+        // Fallback to in-memory store if DB query returned nothing
+        if (!userRecord) {
+          const memUser = users.find(u => {
+            const uEmail = (u.email || '').toLowerCase();
+            const uPhoneDigits = (u.phone || '').replace(/\D/g, '');
+            return uEmail === cleanLower || (digitsOnly.length >= 7 && (uPhoneDigits === digitsOnly || uPhoneDigits.endsWith(digitsOnly)));
+          });
+          if (memUser) {
+            userRecord = {
+              id: memUser.id,
+              full_name: memUser.name,
+              email: memUser.email,
+              phone: memUser.phone,
+              password_hash: memUser.passwordHash,
+              role: memUser.role,
+              status: memUser.status
+            };
+          }
         }
 
-        if (!isPasswordMatch) {
+        if (!userRecord) {
+          return sendJSON(401, {
+            success: false,
+            error: 'No active account found with these credentials. Please check or register.'
+          });
+        }
+
+        // Verify password (supports Argon2id and legacy SHA-256)
+        const { valid, needsUpgrade } = await verifyPassword(password, userRecord.password_hash);
+
+        if (!valid) {
           return sendJSON(401, {
             success: false,
             error: 'Invalid password. Please enter the correct password or click "Forgot Password".'
           });
         }
-      } else {
-        // New email or phone number: auto-provision user account seamlessly so users are never blocked with 401
-        const isOwnerEmail = cleanLower === 'jk7217514087@gmail.com' || digitsOnly === '7217514087';
-        const derivedName = isOwnerEmail
-          ? 'SmartDeal Owner'
-          : (cleanLower.includes('@')
-              ? cleanLower.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-              : `SmartDeal Shopper ${digitsOnly.slice(-4) || 'User'}`);
 
-        user = {
-          id: isOwnerEmail ? 'U10000' : generateId('U'),
-          name: derivedName,
-          email: cleanLower.includes('@') ? cleanLower : `${digitsOnly}@smartdeal.com`,
-          phone: digitsOnly.length >= 7 ? digitsOnly : (isOwnerEmail ? '7217514087' : ''),
-          passwordHash: hash,
-          role: isOwnerEmail ? 'ADMIN' : 'USER',
-          status: 'ACTIVE',
-          createdAt: new Date().toISOString()
-        };
-        users.push(user);
-        saveUsersToFile();
+        // Transparently upgrade legacy hash to Argon2id in PostgreSQL
+        if (needsUpgrade) {
+          await upgradeUserPasswordToArgon2(userRecord.id, password);
+        }
+
+        // Create persistent SQL session in user_sessions
+        const token = await createUserSession(userRecord.id, ip, userAgent);
+
+        // Keep in-memory userSessions synced for tests
+        userSessions.set(token, {
+          userId: userRecord.id,
+          role: userRecord.role,
+          email: userRecord.email,
+          expiresAt: Date.now() + 86400000 * 30
+        });
+
+        return sendJSON(200, {
+          success: true,
+          message: 'Authentication successful.',
+          token,
+          user: {
+            id: userRecord.id,
+            name: userRecord.full_name,
+            email: userRecord.email,
+            phone: userRecord.phone || '',
+            role: userRecord.role
+          }
+        });
+      } catch (err) {
+        console.error('Login error:', err.message);
+        return sendJSON(500, { success: false, error: 'Internal authentication service error.' });
       }
-
-      const token = `tok_${crypto.randomBytes(24).toString('hex')}`;
-      userSessions.set(token, {
-        userId: user.id,
-        role: user.role,
-        email: user.email,
-        expiresAt: Date.now() + 86400000 * 7
-      });
-
-      return sendJSON(200, {
-        success: true,
-        message: existingUser ? 'Authentication successful.' : 'Welcome to SmartDeal! Your account has been created.',
-        token,
-        user: { id: user.id, name: user.name, email: user.email, phone: user.phone || '', role: user.role, createdAt: user.createdAt },
-        isNewUser: !existingUser
-      });
     }
 
     if (method === 'POST' && (path === '/api/auth/logout' || normalizedPath === '/api/auth/logout')) {
       const authHeader = req.headers['authorization'];
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.substring(7).trim();
+        await destroyUserSession(token);
         userSessions.delete(token);
       }
       return sendJSON(200, { success: true, message: 'Logged out successfully.' });
@@ -1336,10 +1420,20 @@ export const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'GET' && (path === '/api/account/me' || normalizedPath === '/api/account/me' || path === '/api/auth/me' || normalizedPath === '/api/auth/me')) {
-      const session = getAuthSession(req);
+      const session = await getAuthSessionAsync(req);
       if (!session) {
         return sendJSON(401, { success: false, error: 'Authentication required.' });
       }
+      try {
+        const rows = await query('SELECT id, full_name, email, phone, role, created_at FROM users WHERE id = $1;', [session.userId]);
+        if (rows.length > 0) {
+          const u = rows[0];
+          return sendJSON(200, {
+            success: true,
+            user: { id: u.id, name: u.full_name, email: u.email, phone: u.phone || '', role: u.role, createdAt: u.created_at }
+          });
+        }
+      } catch {}
       const user = users.find(u => u.id === session.userId);
       if (!user) {
         return sendJSON(404, { success: false, error: 'User record not found.' });
@@ -1351,15 +1445,45 @@ export const server = http.createServer(async (req, res) => {
     }
 
     // ------------------------------------------------------------------------
-    // SECTION 19: CATEGORIES, PRODUCTS & COMPARISONS
+    // SECTION 19: CATEGORIES, PRODUCTS & COMPARISONS (PostgreSQL Powered)
     // ------------------------------------------------------------------------
     if (method === 'GET' && path === '/api/categories') {
+      try {
+        const catRows = await query('SELECT id, name, slug, icon, count FROM categories ORDER BY count DESC;');
+        if (catRows.length > 0) {
+          return sendJSON(200, { success: true, count: catRows.length, data: catRows });
+        }
+      } catch {}
       return sendJSON(200, { success: true, count: categories.length, data: categories });
     }
 
     if (method === 'GET' && path === '/api/products') {
       const q = reqUrl.searchParams.get('q');
       const cat = reqUrl.searchParams.get('category');
+      try {
+        let sql = `
+          SELECT p.id, p.name, p.brand, p.mrp, p.selling_price as "sellingPrice",
+                 p.discount_percent as "discountPercent", p.rating, p.reviews_count as "reviewsCount",
+                 p.deal_score as "dealScore", p.image_url as image, COALESCE(c.name, 'General') as category
+          FROM products p
+          LEFT JOIN categories c ON p.category_id = c.id
+          WHERE 1=1
+        `;
+        const params = [];
+        if (q) {
+          params.push(`%${q.toLowerCase()}%`);
+          sql += ` AND (LOWER(p.name) LIKE $${params.length} OR LOWER(p.brand) LIKE $${params.length})`;
+        }
+        if (cat) {
+          params.push(cat.toLowerCase());
+          sql += ` AND (LOWER(COALESCE(c.slug, '')) = $${params.length} OR LOWER(COALESCE(c.name, '')) = $${params.length})`;
+        }
+        sql += ` ORDER BY p.deal_score DESC;`;
+        const prodRows = await query(sql, params);
+        if (prodRows.length > 0) {
+          return sendJSON(200, { success: true, count: prodRows.length, data: prodRows });
+        }
+      } catch {}
       let result = products;
       if (q) {
         result = result.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.brand.toLowerCase().includes(q.toLowerCase()));
@@ -2142,22 +2266,53 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
       let adminUser = null;
       let authenticatedBy = null;
 
-      // 1. Password Authentication (Primary method requested by user: "Admin par password setup karo, password dalne par dashboard open ho")
+      // 1. Pure Relational Database-driven Password Authentication (Argon2id / SHA-256 transparent upgrade)
       if (email && password) {
-        const hash = sha256(password);
-        adminUser = users.find(u => 
-          (u.email.toLowerCase() === lookupEmail || 
-           (lookupEmail.includes('jk7217514087') && u.email === 'jk7217514087@gmail.com') ||
-           (lookupEmail.includes('admin') && (u.email === 'admin@smartdeal.com' || u.role === 'SUPER_ADMIN'))) && 
-          (u.passwordHash === hash || password === 'admin123' || password === '7217514087' || hash === '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9') && 
-          (u.role === 'SUPER_ADMIN' || u.role === 'ADMIN' || u.role === 'SUPPORT_ADMIN')
-        );
-        if (adminUser) authenticatedBy = 'PASSWORD';
-      } 
-      // 2. PIN Unlock (Owner Master PIN 7217 or 7217514087)
-      else if (pin && (pin.trim() === '7217' || pin.trim() === '7217514087')) {
-        adminUser = users.find(u => u.email === 'admin@smartdeal.com' || u.email === 'jk7217514087@gmail.com' || u.role === 'SUPER_ADMIN' || u.role === 'ADMIN');
-        if (adminUser) authenticatedBy = 'PIN';
+        try {
+          const adminRows = await query(`
+            SELECT u.id, u.full_name, u.email, u.phone, u.password_hash, u.role, u.status, a.permissions
+            FROM users u
+            JOIN admin_users a ON u.id = a.user_id
+            WHERE LOWER(u.email) = $1 AND u.status = 'ACTIVE' AND a.is_active = TRUE;
+          `, [lookupEmail]);
+
+          if (adminRows.length > 0) {
+            const dbAdmin = adminRows[0];
+            const { valid, needsUpgrade } = await verifyPassword(password, dbAdmin.password_hash);
+            if (valid) {
+              if (needsUpgrade) {
+                await upgradeUserPasswordToArgon2(dbAdmin.id, password);
+              }
+              adminUser = {
+                id: dbAdmin.id,
+                name: dbAdmin.full_name,
+                email: dbAdmin.email,
+                phone: dbAdmin.phone,
+                role: dbAdmin.role,
+                status: dbAdmin.status,
+                permissions: dbAdmin.permissions
+              };
+              authenticatedBy = 'POSTGRESQL_ARGON2ID';
+            }
+          }
+        } catch (dbErr) {
+          console.warn('PostgreSQL admin query error:', dbErr.message);
+        }
+
+        // Resilient fallback to memory if database is starting up
+        if (!adminUser) {
+          const candidate = users.find(u =>
+            (u.email.toLowerCase() === lookupEmail || (lookupEmail.includes('admin') && (u.email === 'admin@smartdeal.com' || u.role === 'SUPER_ADMIN'))) &&
+            (u.role === 'SUPER_ADMIN' || u.role === 'ADMIN' || u.role === 'SUPPORT_ADMIN')
+          );
+          if (candidate) {
+            const { valid } = await verifyPassword(password, candidate.passwordHash);
+            if (valid) {
+              adminUser = candidate;
+              authenticatedBy = 'PASSWORD_HASH';
+            }
+          }
+        }
       }
 
       if (!adminUser) {
@@ -2167,6 +2322,13 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
           lockedUntil = Date.now() + 15 * 60 * 1000;
         }
         loginAttemptTracker.set(lookupEmail, { count: prevAttempts, lockedUntil });
+
+        try {
+          await query(`
+            INSERT INTO audit_logs (admin_id, admin_email, action, target_entity, entity_id, changes, ip_address)
+            VALUES (NULL, $1, 'ADMIN_LOGIN_FAILED', 'AdminAuth', 'ROOT', $2, $3);
+          `, [lookupEmail || 'unknown', JSON.stringify({ ip, attemptNumber: prevAttempts }), ip]);
+        } catch {}
 
         auditLogs.unshift({
           id: generateId('AUDIT'),
@@ -2187,7 +2349,7 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
 
       // If requireMfa is explicitly requested, generate 6-digit challenge
       if (requireMfa) {
-        const mfaCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const mfaCode = generateSecureOtp();
         const mfaChallengeToken = generateId('MFA');
 
         mfaChallenges.set(mfaChallengeToken, {
@@ -2218,8 +2380,8 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         });
       }
 
-      // DIRECT PASSWORD LOGIN: Issue authenticated session and open Dashboard immediately!
-      const token = generateId('ADM-TOKEN');
+      // DIRECT PASSWORD LOGIN: Create persistent SQL Admin Session
+      const token = await createAdminSession(adminUser.id, ip, req.headers['user-agent'] || '');
       const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
 
       userSessions.set(token, {
@@ -2231,6 +2393,13 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         mfa_verified: true,
         expiresAt
       });
+
+      try {
+        await query(`
+          INSERT INTO audit_logs (admin_id, admin_email, action, target_entity, entity_id, changes, ip_address)
+          VALUES ($1, $2, 'ADMIN_LOGIN_SUCCESS', 'AdminAuth', $3, $4, $5);
+        `, [adminUser.id, adminUser.email, adminUser.id, JSON.stringify({ role: adminUser.role, authMethod: authenticatedBy }), ip]);
+      } catch {}
 
       auditLogs.unshift({
         id: generateId('AUDIT'),
@@ -2577,10 +2746,39 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         });
       }
 
-      // 2. USER MANAGEMENT
+      // 2. USER MANAGEMENT (PostgreSQL Driven)
       if (method === 'GET' && path === '/api/admin/users') {
         const search = (reqUrl.searchParams.get('q') || '').toLowerCase().trim();
         const statusFilter = reqUrl.searchParams.get('status');
+
+        try {
+          let sql = `
+            SELECT u.id, u.full_name as name, u.email, u.phone, u.role, u.status, u.created_at as "createdAt",
+                   COUNT(DISTINCT c.id) as "activityCount",
+                   COUNT(DISTINCT w.id) as "wishlistCount"
+            FROM users u
+            LEFT JOIN outbound_clicks c ON u.id = c.user_id
+            LEFT JOIN wishlist w ON u.id = w.user_id
+            WHERE 1=1
+          `;
+          const params = [];
+          if (search) {
+            params.push(`%${search}%`);
+            sql += ` AND (LOWER(u.full_name) LIKE $${params.length} OR LOWER(u.email) LIKE $${params.length} OR LOWER(u.id) LIKE $${params.length})`;
+          }
+          if (statusFilter && statusFilter !== 'ALL') {
+            params.push(statusFilter);
+            sql += ` AND u.status = $${params.length}`;
+          }
+          sql += ` GROUP BY u.id, u.full_name, u.email, u.phone, u.role, u.status, u.created_at ORDER BY u.created_at DESC;`;
+
+          const pgUsers = await query(sql, params);
+          if (pgUsers.length > 0) {
+            return sendJSON(200, { success: true, count: pgUsers.length, data: pgUsers });
+          }
+        } catch (dbErr) {
+          console.warn('PostgreSQL admin users query error:', dbErr.message);
+        }
 
         let filtered = users.map(u => ({
           id: u.id,
@@ -2616,6 +2814,12 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         const validStatuses = ['ACTIVE', 'INACTIVE', 'SUSPENDED'];
         if (!validStatuses.includes(status)) {
           return sendJSON(400, { success: false, error: 'Invalid status. Must be ACTIVE, INACTIVE, or SUSPENDED.' });
+        }
+
+        try {
+          await query('UPDATE users SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2;', [status, userId]);
+        } catch (err) {
+          console.warn('PostgreSQL update user status error:', err.message);
         }
 
         const user = users.find(u => u.id === userId);
@@ -2876,8 +3080,23 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         return sendJSON(200, { success: true, message: 'Settings saved.', data: adminSettings });
       }
 
-      // 11. AUDIT LOGS
+      // 11. AUDIT LOGS (PostgreSQL Relational Ledger)
       if (method === 'GET' && (path === '/api/admin/audit-logs' || path === '/api/admin/activity-logs')) {
+        try {
+          const pgLogs = await query(`
+            SELECT id, admin_id as "adminId", admin_email as "adminEmail", action,
+                   target_entity as "targetEntity", entity_id as "entityId", changes as details,
+                   ip_address as "ipAddress", created_at as timestamp
+            FROM audit_logs
+            ORDER BY created_at DESC
+            LIMIT 100;
+          `);
+          if (pgLogs.length > 0) {
+            return sendJSON(200, { success: true, count: pgLogs.length, data: pgLogs });
+          }
+        } catch (dbErr) {
+          console.warn('PostgreSQL audit log query error:', dbErr.message);
+        }
         return sendJSON(200, { success: true, count: auditLogs.length, data: auditLogs });
       }
 

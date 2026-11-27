@@ -1,0 +1,18 @@
+[
+  {
+    "id": "primary",
+    "settings": {
+      "ownerEmail": "jk7217514087@gmail.com",
+      "ownerPhone": "7217514087",
+      "platformName": "SmartDeal",
+      "supportEmail": "support@smartdeal.com",
+      "maintenanceMode": false,
+      "autoApproveSellers": false,
+      "minPayoutThreshold": 500,
+      "defaultAffiliateTag": "smartdeal-21",
+      "clickTrackingEnabled": true,
+      "priceAlertsGlobalEnabled": true
+    },
+    "updated_at": "2026-11-27T07:19:29.006Z"
+  }
+]
