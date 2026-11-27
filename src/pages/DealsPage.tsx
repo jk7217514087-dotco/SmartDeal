@@ -205,13 +205,13 @@ export const DealsPage: React.FC = () => {
                 b
               </div>
 
-              {/* Floating Top-Left Max Discount Badge */}
-              <div className="absolute top-0 left-4 sm:left-6 -translate-y-1/2 px-4 py-1.5 rounded-xl bg-blue-600 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-blue-500/25 z-10">
+              {/* Top-Left Max Discount Badge (Fully inside container, completely visible) */}
+              <div className="absolute top-3.5 left-3.5 sm:top-5 sm:left-6 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-blue-600 text-white font-black text-xs sm:text-sm shadow-md shadow-blue-500/30 z-10 tracking-tight select-none">
                 Up to {maxSecDiscount}% off
               </div>
 
               {/* Center Category Title & 3 Bullet Badges */}
-              <div className="text-center pt-2 pb-1 relative z-10">
+              <div className="text-center pt-9 sm:pt-2 pb-1 relative z-10">
                 <h2 className="font-extrabold text-xl sm:text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tight font-sans">
                   {section.title}
                 </h2>
