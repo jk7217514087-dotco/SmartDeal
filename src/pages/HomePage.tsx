@@ -232,81 +232,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. FINDING PRODUCTS SECTION (5 COLUMNS: 4 PRODUCTS + EXCLUSIVE DEALS CARD MATCHING PANEL 2) */}
-      <section className="max-w-7xl mx-auto px-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <span>Finding Products</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                Verified Best Prices
-              </span>
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-              Comparing live prices across Amazon, Flipkart, Croma, Myntra & partner stores
-            </p>
-          </div>
-          <Link
-            to="/categories"
-            className="text-xs font-extrabold text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1"
-          >
-            <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
-          {/* Card 1: iPhone 15 */}
-          {products.find(p => p.id === 'prod-apple-iphone15') && (
-            <ProductCard product={products.find(p => p.id === 'prod-apple-iphone15')!} variant="finding-products" />
-          )}
-
-          {/* Card 2: MacBook Air or HP Pavilion */}
-          {(products.find(p => p.id === 'prod-macbook-air-m2') || products.find(p => p.id === 'prod-hp-pavilion-15')) && (
-            <ProductCard product={(products.find(p => p.id === 'prod-macbook-air-m2') || products.find(p => p.id === 'prod-hp-pavilion-15'))!} variant="finding-products" />
-          )}
-
-          {/* Card 3: Sony WH-1000XM5 or boAt Airdopes */}
-          {(products.find(p => p.id === 'prod-sony-wh1000xm5') || products.find(p => p.id === 'prod-boat-airdopes')) && (
-            <ProductCard product={(products.find(p => p.id === 'prod-sony-wh1000xm5') || products.find(p => p.id === 'prod-boat-airdopes'))!} variant="finding-products" />
-          )}
-
-          {/* Card 4: Nike Running Shoes or Court Vision */}
-          {(products.find(p => p.id === 'prod-nike-court-vision') || products.find(p => p.id === 'prod-nike-running-shoes')) && (
-            <ProductCard product={(products.find(p => p.id === 'prod-nike-court-vision') || products.find(p => p.id === 'prod-nike-running-shoes'))!} variant="finding-products" />
-          )}
-
-          {/* Card 5: Exclusive Deals & Offers! Gradient Card matching Panel 2 */}
-          <div className="rounded-3xl p-5 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group transition-all duration-300 min-h-[340px] bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 border border-indigo-400/40">
-            <div className="absolute top-0 right-0 w-36 h-36 rounded-full blur-2xl pointer-events-none opacity-40 bg-white/20" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-30 bg-white/20" />
-            <div className="space-y-3 relative z-10">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-white/20 border border-white/30 text-white">
-                <Sparkles className="w-3 h-3 text-amber-300" />
-                <span>SmartDeal Exclusive</span>
-              </div>
-              <h3 className="text-xl font-black leading-tight text-white">
-                Exclusive Deals & Offers!
-              </h3>
-              <p className="text-xs text-indigo-100 leading-snug">
-                Save more with SmartDeal Premium and unlock exclusive partner prices.
-              </p>
-            </div>
-
-            <div className="pt-4 space-y-4 relative z-10">
-              <div className="text-3xl text-amber-300">👑</div>
-              <Link
-                to="/deals"
-                className="w-full py-2.5 px-4 rounded-xl font-black text-xs text-center flex items-center justify-center gap-1.5 shadow-lg bg-white text-indigo-700 hover:bg-slate-50 transition-all cursor-pointer active:scale-95"
-              >
-                <span>Explore Deals →</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. STORE PARTNERS & TRUSTED SHOPPING PLATFORM FEATURES (Positioned below Finding Products as requested) */}
+      {/* 2. STORE PARTNERS & TRUSTED SHOPPING PLATFORM FEATURES (Yellow Marked Area above Finding Products) */}
       <section className="max-w-7xl mx-auto px-4 space-y-4">
         {/* Marketplace Partner Badges Row */}
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -379,6 +305,80 @@ export const HomePage: React.FC = () => {
                 <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Smart Deals Just for You</h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">AI-powered lowest price picks</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. FINDING PRODUCTS SECTION (5 COLUMNS: 4 PRODUCTS + EXCLUSIVE DEALS CARD MATCHING PANEL 2) */}
+      <section className="max-w-7xl mx-auto px-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Finding Products</span>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                Verified Best Prices
+              </span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+              Comparing live prices across Amazon, Flipkart, Croma, Myntra & partner stores
+            </p>
+          </div>
+          <Link
+            to="/categories"
+            className="text-xs font-extrabold text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1"
+          >
+            <span>View All</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
+          {/* Card 1: iPhone 15 */}
+          {products.find(p => p.id === 'prod-apple-iphone15') && (
+            <ProductCard product={products.find(p => p.id === 'prod-apple-iphone15')!} variant="finding-products" />
+          )}
+
+          {/* Card 2: MacBook Air or HP Pavilion */}
+          {(products.find(p => p.id === 'prod-macbook-air-m2') || products.find(p => p.id === 'prod-hp-pavilion-15')) && (
+            <ProductCard product={(products.find(p => p.id === 'prod-macbook-air-m2') || products.find(p => p.id === 'prod-hp-pavilion-15'))!} variant="finding-products" />
+          )}
+
+          {/* Card 3: Sony WH-1000XM5 or boAt Airdopes */}
+          {(products.find(p => p.id === 'prod-sony-wh1000xm5') || products.find(p => p.id === 'prod-boat-airdopes')) && (
+            <ProductCard product={(products.find(p => p.id === 'prod-sony-wh1000xm5') || products.find(p => p.id === 'prod-boat-airdopes'))!} variant="finding-products" />
+          )}
+
+          {/* Card 4: Nike Running Shoes or Court Vision */}
+          {(products.find(p => p.id === 'prod-nike-court-vision') || products.find(p => p.id === 'prod-nike-running-shoes')) && (
+            <ProductCard product={(products.find(p => p.id === 'prod-nike-court-vision') || products.find(p => p.id === 'prod-nike-running-shoes'))!} variant="finding-products" />
+          )}
+
+          {/* Card 5: Exclusive Deals & Offers! Gradient Card matching Panel 2 */}
+          <div className="rounded-3xl p-5 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group transition-all duration-300 min-h-[340px] bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 border border-indigo-400/40">
+            <div className="absolute top-0 right-0 w-36 h-36 rounded-full blur-2xl pointer-events-none opacity-40 bg-white/20" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-30 bg-white/20" />
+            <div className="space-y-3 relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-white/20 border border-white/30 text-white">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                <span>SmartDeal Exclusive</span>
+              </div>
+              <h3 className="text-xl font-black leading-tight text-white">
+                Exclusive Deals & Offers!
+              </h3>
+              <p className="text-xs text-indigo-100 leading-snug">
+                Save more with SmartDeal Premium and unlock exclusive partner prices.
+              </p>
+            </div>
+
+            <div className="pt-4 space-y-4 relative z-10">
+              <div className="text-3xl text-amber-300">👑</div>
+              <Link
+                to="/deals"
+                className="w-full py-2.5 px-4 rounded-xl font-black text-xs text-center flex items-center justify-center gap-1.5 shadow-lg bg-white text-indigo-700 hover:bg-slate-50 transition-all cursor-pointer active:scale-95"
+              >
+                <span>Explore Deals →</span>
+              </Link>
             </div>
           </div>
         </div>

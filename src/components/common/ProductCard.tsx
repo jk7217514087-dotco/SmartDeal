@@ -152,6 +152,11 @@ export const ProductCard: React.FC<Props> = ({ product, variant = 'standard' }) 
             alt={product.name}
             className="h-full w-full object-contain"
             loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop&q=80';
+            }}
           />
         </div>
       </Link>
