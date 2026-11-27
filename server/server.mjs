@@ -1063,11 +1063,28 @@ export const server = http.createServer(async (req, res) => {
     // HEALTH CHECK & MOBILE APP APK DOWNLOAD
     // ------------------------------------------------------------------------
     if (method === 'GET' && path === '/api/health') {
+      const dbHealth = await checkPoolsHealth();
+      const isDbConnected = Boolean(dbHealth.connected && dbHealth.allConnected);
+      const isConfigured = dbHealth.configured !== false;
+
+      const dbStatus = isDbConnected
+        ? 'CONNECTED'
+        : (isConfigured ? 'DISCONNECTED' : 'NOT_CONFIGURED');
+
       return sendJSON(200, {
-        status: 'healthy',
+        status: isDbConnected ? 'healthy' : 'degraded',
         timestamp: new Date().toISOString(),
         version: '2.0.0-PROD',
-        database: 'PostgreSQL-Relational-Ready',
+        api: 'healthy',
+        database: {
+          status: dbStatus,
+          connected: isDbConnected,
+          configured: isConfigured,
+          engine: dbHealth.engine || 'PostgreSQL 18',
+          version: dbHealth.version || null,
+          latencyMs: dbHealth.latencyMs || 0,
+          error: isDbConnected ? null : (dbHealth.message || 'Database unreachable')
+        },
         security: 'Argon2id/SHA-256'
       });
     }

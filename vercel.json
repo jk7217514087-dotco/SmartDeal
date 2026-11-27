@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://smartdeal-api.onrender.com/api/$1"
+      "destination": "https://smartdeal-backend-10kv.onrender.com/api/$1"
     },
     {
       "source": "/((?!api/).*)",

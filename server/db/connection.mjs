@@ -10,6 +10,32 @@ dotenv.config();
 
 const { Pool } = pg;
 
+/**
+ * Detects if the current runtime environment is a deployed cloud production server (Render / Vercel / Production container)
+ */
+export const isCloudProduction = () => {
+  return (
+    process.env.NODE_ENV === 'production' ||
+    process.env.RENDER === 'true' ||
+    Boolean(process.env.RENDER_SERVICE_ID) ||
+    Boolean(process.env.RENDER_EXTERNAL_URL) ||
+    Boolean(process.env.VERCEL)
+  );
+};
+
+/**
+ * Validates whether PostgreSQL connection parameters are explicitly and safely configured
+ */
+export const isDatabaseConfigured = () => {
+  if (process.env.DATABASE_URL) return true;
+  if (!isCloudProduction()) {
+    // In local development, allow fallback to local cluster
+    return Boolean(process.env.PGHOST || '127.0.0.1');
+  }
+  // In cloud production, require an explicit DATABASE_URL or dedicated cloud DB host
+  return Boolean(process.env.PGHOST || process.env.DB_HOST);
+};
+
 // Parse configuration from DATABASE_URL or discrete parameters
 const parseConnectionConfig = () => {
   const databaseUrl = process.env.DATABASE_URL;
@@ -18,7 +44,7 @@ const parseConnectionConfig = () => {
     const isLocal = databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
     const sslRequired = process.env.PGSSL === 'true' || 
                         databaseUrl.includes('sslmode=require') || 
-                        (!isLocal && process.env.NODE_ENV === 'production');
+                        (!isLocal && (process.env.NODE_ENV === 'production' || isCloudProduction()));
 
     return {
       connectionString: databaseUrl,
@@ -29,13 +55,19 @@ const parseConnectionConfig = () => {
     };
   }
 
+  // If in cloud production without DATABASE_URL, fail safely without attempting local addresses
+  if (isCloudProduction() && !process.env.PGHOST && !process.env.DB_HOST) {
+    console.warn('⚠️ [SECURITY FAIL-SAFE]: Cloud production environment detected without DATABASE_URL. Silent fallback to 127.0.0.1:5433 is disabled to prevent connection errors.');
+    return null;
+  }
+
   const host = process.env.PGHOST || process.env.DB_HOST || '127.0.0.1';
   const port = parseInt(process.env.PGPORT || process.env.DB_PORT || '5433', 10);
   const user = process.env.PGUSER || process.env.DB_USER || 'postgres';
   const password = process.env.PGPASSWORD || process.env.DB_PASSWORD || '';
   const database = process.env.PGDATABASE || process.env.DB_NAME || 'smartdeal';
   const isLocal = host === '127.0.0.1' || host === 'localhost';
-  const sslRequired = process.env.PGSSL === 'true' || (!isLocal && process.env.NODE_ENV === 'production');
+  const sslRequired = process.env.PGSSL === 'true' || (!isLocal && (process.env.NODE_ENV === 'production' || isCloudProduction()));
 
   return {
     host,
@@ -55,11 +87,11 @@ const poolConfig = parseConnectionConfig();
 // Backward compatibility configuration view
 export const DB_CONFIGS = {
   postgres: {
-    host: poolConfig.host || 'connection-string',
-    port: poolConfig.port || 5432,
-    database: poolConfig.database || 'smartdeal',
-    maxPool: poolConfig.max,
-    ssl: !!poolConfig.ssl
+    host: poolConfig?.host || (poolConfig?.connectionString ? 'connection-string' : 'not-configured'),
+    port: poolConfig?.port || 5432,
+    database: poolConfig?.database || 'smartdeal',
+    maxPool: poolConfig?.max || 0,
+    ssl: Boolean(poolConfig?.ssl)
   },
   users: { database: 'smartdeal (users schema/tables)' },
   admin: { database: 'smartdeal (admin schema/tables)' },
@@ -73,8 +105,9 @@ export const dbTelemetry = {
   failedQueries: 0,
   totalLatencyMs: 0,
   slowQueryLog: [],
-  mode: 'INITIALIZING',
+  mode: poolConfig ? 'INITIALIZING' : 'DATABASE_NOT_CONFIGURED',
   connected: false,
+  configured: Boolean(poolConfig),
   lastHealthCheck: null,
   databaseVersion: null,
   activePoolSize: 0,
@@ -85,14 +118,16 @@ export const dbTelemetry = {
 
 const SLOW_QUERY_THRESHOLD_MS = parseInt(process.env.SLOW_QUERY_THRESHOLD_MS || '200', 10);
 
-// Instantiate PostgreSQL Pool
-export const pool = new Pool(poolConfig);
+// Instantiate PostgreSQL Pool safely
+export const pool = poolConfig ? new Pool(poolConfig) : null;
 
 // Pool error listener
-pool.on('error', (err) => {
-  console.error('[PostgreSQL Pool Unexpected Error]:', err.message);
-  dbTelemetry.failedQueries++;
-});
+if (pool) {
+  pool.on('error', (err) => {
+    console.error('[PostgreSQL Pool Unexpected Error]:', err.message);
+    dbTelemetry.failedQueries++;
+  });
+}
 
 /**
  * Checks connection health to the PostgreSQL cluster
@@ -100,6 +135,7 @@ pool.on('error', (err) => {
 export const checkPoolsHealth = async () => {
   const result = {
     connected: false,
+    configured: isDatabaseConfigured(),
     users: false,
     admin: false,
     core: false,
@@ -109,6 +145,14 @@ export const checkPoolsHealth = async () => {
     latencyMs: 0,
     message: ''
   };
+
+  if (!pool || !isDatabaseConfigured()) {
+    result.message = 'Database connection is not configured: DATABASE_URL environment variable is missing.';
+    dbTelemetry.connected = false;
+    dbTelemetry.mode = 'DATABASE_NOT_CONFIGURED';
+    dbTelemetry.lastHealthCheck = new Date().toISOString();
+    return result;
+  }
 
   const start = performance.now();
   try {
@@ -152,6 +196,12 @@ export const checkPoolsHealth = async () => {
  * @param {Array} params - Query parameters ($1, $2, etc.)
  */
 export const query = async (sql, params = []) => {
+  if (!pool || !isDatabaseConfigured()) {
+    const err = new Error('Database is not configured. DATABASE_URL environment variable is missing.');
+    err.statusCode = 503;
+    throw err;
+  }
+
   const start = performance.now();
   dbTelemetry.totalQueries++;
 
@@ -185,6 +235,12 @@ export const query = async (sql, params = []) => {
  * @param {Function} callback - Async function receiving the transactional pg client
  */
 export const withTransaction = async (callback) => {
+  if (!pool || !isDatabaseConfigured()) {
+    const err = new Error('Database is not configured. DATABASE_URL environment variable is missing.');
+    err.statusCode = 503;
+    throw err;
+  }
+
   const client = await pool.connect();
   try {
     await client.query('SET search_path TO identity, administration, catalog, marketplace, pricing, offers, affiliate, personalization, analytics, operations, public;');
@@ -254,11 +310,12 @@ export const getDatabaseHealth = async () => {
     timestamp: new Date().toISOString(),
     connection: {
       connected: health.connected,
-      database: poolConfig.database || 'smartdeal',
-      ssl: !!poolConfig.ssl,
-      activeConnections: pool.totalCount,
-      idleConnections: pool.idleCount,
-      waitingQueue: pool.waitingCount,
+      configured: isDatabaseConfigured(),
+      database: poolConfig?.database || (isDatabaseConfigured() ? 'smartdeal' : 'NOT_CONFIGURED'),
+      ssl: Boolean(poolConfig?.ssl),
+      activeConnections: pool?.totalCount || 0,
+      idleConnections: pool?.idleCount || 0,
+      waitingQueue: pool?.waitingCount || 0,
       version: dbTelemetry.databaseVersion,
       databaseSize: dbSize,
       totalTables,
