@@ -88,7 +88,7 @@ const SLOW_QUERY_THRESHOLD_MS = parseInt(process.env.SLOW_QUERY_THRESHOLD_MS || 
 // Instantiate PostgreSQL Pool
 export const pool = new Pool(poolConfig);
 
-// Pool event listeners
+// Pool error listener
 pool.on('error', (err) => {
   console.error('[PostgreSQL Pool Unexpected Error]:', err.message);
   dbTelemetry.failedQueries++;
@@ -187,6 +187,7 @@ export const query = async (sql, params = []) => {
 export const withTransaction = async (callback) => {
   const client = await pool.connect();
   try {
+    await client.query('SET search_path TO identity, administration, catalog, marketplace, pricing, offers, affiliate, personalization, analytics, operations, public;');
     await client.query('BEGIN');
     const result = await callback(client);
     await client.query('COMMIT');
@@ -218,10 +219,38 @@ export const getDatabaseHealth = async () => {
     ? (dbTelemetry.totalLatencyMs / dbTelemetry.totalQueries).toFixed(2)
     : '0.00';
 
+  let dbSize = 'Unknown';
+  let totalTables = 0;
+  let activeSchemas = [];
+
+  if (health.connected) {
+    try {
+      const sizeRes = await pool.query('SELECT pg_size_pretty(pg_database_size(current_database())) as size;');
+      dbSize = sizeRes.rows[0]?.size || 'Unknown';
+
+      const tableRes = await pool.query(`
+        SELECT count(*) as count 
+        FROM information_schema.tables 
+        WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations');
+      `);
+      totalTables = parseInt(tableRes.rows[0]?.count || '0', 10);
+
+      const schemaRes = await pool.query(`
+        SELECT schema_name 
+        FROM information_schema.schemata 
+        WHERE schema_name IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
+        ORDER BY schema_name;
+      `);
+      activeSchemas = schemaRes.rows.map(r => r.schema_name);
+    } catch {
+      // Non-fatal
+    }
+  }
+
   return {
     status: health.allConnected ? 'HEALTHY' : 'DEGRADED',
     mode: dbTelemetry.mode,
-    engine: 'PostgreSQL 18 (Pure Relational Architecture)',
+    engine: 'PostgreSQL 18 (Enterprise Logical Schemas)',
     timestamp: new Date().toISOString(),
     connection: {
       connected: health.connected,
@@ -230,7 +259,10 @@ export const getDatabaseHealth = async () => {
       activeConnections: pool.totalCount,
       idleConnections: pool.idleCount,
       waitingQueue: pool.waitingCount,
-      version: dbTelemetry.databaseVersion
+      version: dbTelemetry.databaseVersion,
+      databaseSize: dbSize,
+      totalTables,
+      logicalSchemas: activeSchemas
     },
     performance: {
       totalQueriesExecuted: dbTelemetry.totalQueries,
@@ -241,7 +273,7 @@ export const getDatabaseHealth = async () => {
       recentSlowQueries: dbTelemetry.slowQueryLog.slice(0, 5)
     },
     resilienceNotice: health.allConnected
-      ? 'Direct PostgreSQL production pool connected and accepting ACID queries.'
+      ? 'Direct PostgreSQL production pool connected with 10 enterprise logical schemas.'
       : 'PostgreSQL cluster unreachable. Verify DATABASE_URL or PGPORT.'
   };
 };

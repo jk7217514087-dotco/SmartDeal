@@ -225,10 +225,12 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <header 
-        className={`sticky top-0 z-50 backdrop-blur-xl border-b shadow-sm w-full transition-colors duration-300 ${navTheme.headerBg}`}
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b shadow-sm w-full transition-colors duration-300 ${navTheme.headerBg}`}
         style={{
-          position: 'sticky',
+          position: 'fixed',
           top: 0,
+          left: 0,
+          right: 0,
           zIndex: 50,
           backgroundColor: isDarkMode ? 'rgba(11, 19, 41, 0.98)' : 'rgba(255, 255, 255, 0.98)'
         }}
@@ -237,14 +239,14 @@ export const Navbar: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-4">
           {/* Left Side: Three Lines Menu Button + Brand Logo */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Laptop / Desktop View: 3 lines button */}
+            {/* Laptop / Desktop View: 3 lines button (Hidden on phone < md, where 3-dots in row 2 is shown) */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsNavDrawerOpen(true);
               }}
-              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer items-center justify-center shrink-0 shadow-xs group hidden sm:flex"
+              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer items-center justify-center shrink-0 shadow-xs group hidden md:flex"
               title="All Features & Categories (Menu)"
               aria-label="Navigation Menu"
             >
@@ -935,6 +937,9 @@ export const Navbar: React.FC = () => {
         </div>
       )}
     </header>
+
+    {/* Fixed Header Height Spacer (Prevents page content from hiding behind fixed header on all screen sizes) */}
+    <div className="h-[112px] md:h-[65px] w-full shrink-0 pointer-events-none" aria-hidden="true" />
 
     {/* ============================================================== */}
     {/* THREE-LINE (☰) NAVIGATION DRAWER (Compact User/Product Only)   */}
