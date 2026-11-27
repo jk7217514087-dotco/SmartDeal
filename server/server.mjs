@@ -110,6 +110,16 @@ export const users = [
     createdAt: '2026-08-01T10:00:00.000Z'
   },
   {
+    id: 'U10003',
+    name: 'SmartDeal Data Analyst',
+    email: 'analyst@smartdeal.com',
+    phone: '7217514089',
+    passwordHash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', // admin123
+    role: 'ANALYST',
+    status: 'ACTIVE',
+    createdAt: '2026-08-01T10:00:00.000Z'
+  },
+  {
     id: 'U10025',
     name: 'Rahul Sharma',
     email: 'rahul.sharma@example.com',
@@ -1865,6 +1875,17 @@ export const server = http.createServer(async (req, res) => {
       });
     }
 
+    // B2. Administrative Notification Gateway Management
+    if (path.startsWith('/api/notifications/')) {
+      const session = getAuthSession(req);
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Administrative credentials required.' });
+      }
+      if (!['SUPER_ADMIN', 'ADMIN', 'SUPPORT_ADMIN'].includes(session.role)) {
+        return sendJSON(403, { success: false, error: 'HTTP 403 Forbidden: Administrative role required to access notifications.' });
+      }
+    }
+
     if (method === 'GET' && path === '/api/notifications/logs') {
       return sendJSON(200, {
         success: true,
@@ -2018,14 +2039,32 @@ export const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'GET' && path === '/api/returns') {
+      const session = getAuthSession(req);
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Authentication required.' });
+      }
+      const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'ANALYST', 'SUPPORT_ADMIN'].includes(session.role);
+      const userReturns = isAdmin 
+        ? productReturns 
+        : productReturns.filter(r => (r.customerEmail || '').toLowerCase() === (session.email || '').toLowerCase());
       return sendJSON(200, {
         success: true,
-        count: productReturns.length,
-        data: productReturns
+        count: userReturns.length,
+        data: userReturns
       });
     }
 
     if (method === 'POST' && path === '/api/returns/update-status') {
+      const session = getAuthSession(req);
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Administrative credentials required.' });
+      }
+      if (session.role === 'ANALYST') {
+        return sendJSON(403, { success: false, error: 'HTTP 403 Forbidden: Analyst role is strictly read-only.' });
+      }
+      if (!['SUPER_ADMIN', 'ADMIN', 'SUPPORT_ADMIN'].includes(session.role)) {
+        return sendJSON(403, { success: false, error: 'HTTP 403 Forbidden: Administrative role required to update returns.' });
+      }
       const { returnId, newStatus, resolutionNotes } = await parseJsonBody(req);
       const ret = productReturns.find(r => r.id === returnId);
       if (!ret) {
@@ -2112,10 +2151,18 @@ export const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'GET' && path === '/api/purchases/status-list') {
+      const session = getAuthSession(req);
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Authentication required.' });
+      }
+      const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'ANALYST', 'SUPPORT_ADMIN'].includes(session.role);
+      const userPurchases = isAdmin
+        ? purchaseVerifications
+        : purchaseVerifications.filter(p => (p.customerEmail || '').toLowerCase() === (session.email || '').toLowerCase());
       return sendJSON(200, {
         success: true,
-        count: purchaseVerifications.length,
-        data: purchaseVerifications
+        count: userPurchases.length,
+        data: userPurchases
       });
     }
 
@@ -2124,24 +2171,37 @@ export const server = http.createServer(async (req, res) => {
     // ------------------------------------------------------------------------
     if (method === 'GET' && path === '/api/cashback/wallet') {
       const session = getAuthSession(req);
-      const userId = session?.userId || reqUrl.searchParams.get('userId') || 'U10025';
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Customer authentication required.' });
+      }
+      // IDOR Protection: Normal users can only inspect their own wallet. Admins can inspect via query param.
+      const requestedId = reqUrl.searchParams.get('userId');
+      const isAdmin = ['SUPER_ADMIN', 'ADMIN'].includes(session.role);
+      const userId = (isAdmin && requestedId) ? requestedId : session.userId;
       const wallet = calculateCashbackWallet(userId);
       return sendJSON(200, { success: true, wallet });
     }
 
     if (method === 'GET' && path === '/api/cashback/transactions') {
       const session = getAuthSession(req);
-      const userId = session?.userId || reqUrl.searchParams.get('userId') || 'U10025';
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Customer authentication required.' });
+      }
+      // IDOR Protection: Normal users can only inspect their own transactions.
+      const requestedId = reqUrl.searchParams.get('userId');
+      const isAdmin = ['SUPER_ADMIN', 'ADMIN'].includes(session.role);
+      const userId = (isAdmin && requestedId) ? requestedId : session.userId;
       const txs = cashbackTransactions.filter(t => t.userId === userId);
       return sendJSON(200, { success: true, count: txs.length, data: txs });
     }
 
     if (method === 'POST' && path === '/api/cashback/redeem') {
       const session = getAuthSession(req);
-      const userId = session?.userId || (await parseJsonBody(req)).userId;
-      if (!userId) {
-        return sendJSON(401, { success: false, error: 'User identification required for redemption.' });
+      if (!session) {
+        return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Authentication required for redemption.' });
       }
+      // IDOR Protection: Enforce authenticated user session ID, reject arbitrary body.userId tampering
+      const userId = session.userId;
 
       const { amount, method: payoutMethod, accountDetails } = await parseJsonBody(req);
       const amt = Number(amount);
@@ -2303,7 +2363,7 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         if (!adminUser) {
           const candidate = users.find(u =>
             (u.email.toLowerCase() === lookupEmail || (lookupEmail.includes('admin') && (u.email === 'admin@smartdeal.com' || u.role === 'SUPER_ADMIN'))) &&
-            (u.role === 'SUPER_ADMIN' || u.role === 'ADMIN' || u.role === 'SUPPORT_ADMIN')
+            (u.role === 'SUPER_ADMIN' || u.role === 'ADMIN' || u.role === 'SUPPORT_ADMIN' || u.role === 'ANALYST' || u.role === 'PRODUCT_MANAGER')
           );
           if (candidate) {
             const { valid } = await verifyPassword(password, candidate.passwordHash);
@@ -2677,14 +2737,34 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
       }
 
       const role = session.role;
-      if (!['SUPER_ADMIN', 'ADMIN', 'SUPPORT_ADMIN'].includes(role)) {
+      const validAdminRoles = ['SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER', 'ANALYST', 'SUPPORT_ADMIN'];
+      if (!validAdminRoles.includes(role)) {
         return sendJSON(403, {
           success: false,
           error: 'HTTP 403 Forbidden: Administrative role authorization required.'
         });
       }
 
-      // Role capability enforcement for SUPPORT_ADMIN
+      // 1. Strict Read-Only Enforcement for ANALYST Role
+      if (role === 'ANALYST' && method !== 'GET') {
+        return sendJSON(403, {
+          success: false,
+          error: 'HTTP 403 Forbidden: Analyst role is strictly read-only.'
+        });
+      }
+
+      // 2. Role Capability Enforcement for PRODUCT_MANAGER
+      if (role === 'PRODUCT_MANAGER') {
+        const isAllowedPm = path.startsWith('/api/admin/products') || path.startsWith('/api/admin/categories') || path.startsWith('/api/admin/overview') || path.startsWith('/api/admin/analytics');
+        if (!isAllowedPm || (method !== 'GET' && !path.startsWith('/api/admin/products') && !path.startsWith('/api/admin/categories'))) {
+          return sendJSON(403, {
+            success: false,
+            error: 'HTTP 403 Forbidden: Product Manager role cannot perform platform, financial or security administration.'
+          });
+        }
+      }
+
+      // 3. Role capability enforcement for SUPPORT_ADMIN
       if (role === 'SUPPORT_ADMIN') {
         if (
           (path === '/api/admin/settings' && method === 'PUT') ||
@@ -2697,6 +2777,29 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
             error: 'HTTP 403 Forbidden: Support Admin role is not permitted to perform this action.'
           });
         }
+      }
+
+      // 4. Automatic Audit Logging for all mutating admin actions
+      if (method !== 'GET') {
+        const auditAction = `${method}_${path.replace('/api/admin/', '').replace(/\//g, '_').toUpperCase()}`;
+        const auditEntry = {
+          id: generateId('AUDIT'),
+          adminId: session.userId || 'ADM-SYS',
+          adminEmail: session.email || 'admin@smartdeal.com',
+          action: auditAction,
+          targetEntity: path,
+          entityId: reqUrl.searchParams.get('id') || 'N/A',
+          changes: { method, path, timestamp: new Date().toISOString() },
+          ipAddress: req.socket?.remoteAddress || '127.0.0.1',
+          timestamp: new Date().toISOString()
+        };
+        auditLogs.unshift(auditEntry);
+        try {
+          query(`
+            INSERT INTO audit_logs (admin_id, admin_email, action, target_entity, entity_id, ip_address)
+            VALUES ($1, $2, $3, $4, $5, $6);
+          `, [auditEntry.adminId, auditEntry.adminEmail, auditAction, path, auditEntry.entityId, auditEntry.ipAddress]).catch(() => {});
+        } catch {}
       }
 
       // 1. OVERVIEW & ANALYTICS

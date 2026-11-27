@@ -1828,59 +1828,7 @@ class TrackingService {
         message: res?.error || res?.message || 'Incorrect Admin Password. Please try again.'
       };
     } catch (err: any) {
-      console.warn('Backend admin login unavailable or static endpoint (e.g. 405), verifying offline credentials:', err);
-      const cleanEmail = email.trim().toLowerCase();
-      const customPass = localStorage.getItem('smartdeal_admin_custom_password');
-
-      const isKnownAdmin =
-        cleanEmail === 'jk7217514087@gmail.com' ||
-        cleanEmail === 'admin@smartdeal.com' ||
-        cleanEmail === 'admin' ||
-        cleanEmail.includes('admin') ||
-        this.getUsers().some(u => u.email.toLowerCase() === cleanEmail && (u.role === 'ADMIN' || (u.role as any) === 'SUPER_ADMIN'));
-
-      if (isKnownAdmin) {
-        const isMatch =
-          passwordAttempt === 'admin123' ||
-          passwordAttempt === '7217514087' ||
-          passwordAttempt === '7217' ||
-          (customPass && passwordAttempt === customPass);
-
-        if (isMatch) {
-          const adminUser: TrackedUser = normalizeUser({
-            id: 'U10000',
-            name: 'SmartDeal Owner',
-            email: cleanEmail,
-            phone: '7217514087',
-            role: 'ADMIN',
-            status: 'ACTIVE',
-            totalSearches: 0,
-            totalViews: 0,
-            totalComparisons: 0,
-            totalClicks: 0,
-            totalCommissionEarned: 0,
-            total_spend: 0,
-            total_activities: 0,
-            lastLoginAt: new Date().toISOString(),
-            lastActivity: 'Admin Login (Secure Fallback)'
-          });
-          localStorage.setItem(AUTH_TOKEN_KEY, 'admin_token_' + Date.now());
-          sessionStorage.setItem('smartdeal_admin_authenticated', 'true');
-          this.setCurrentUser(adminUser);
-          return {
-            success: true,
-            message: 'Admin Password Verified! Opening Dashboard...',
-            token: 'admin_token',
-            admin: adminUser
-          };
-        } else {
-          return {
-            success: false,
-            message: 'Incorrect Admin Password. Please try again.'
-          };
-        }
-      }
-
+      console.error('Admin authentication failed:', err);
       return {
         success: false,
         message: err.message || 'Incorrect Admin Password. Please try again.'

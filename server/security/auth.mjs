@@ -205,7 +205,7 @@ export const validateAdminSession = async (rawToken) => {
       AND s.expires_at > CURRENT_TIMESTAMP 
       AND u.status = 'ACTIVE'
       AND a.is_active = TRUE
-      AND u.role IN ('ADMIN', 'SUPER_ADMIN', 'SUPPORT_ADMIN', 'FINANCE_ADMIN');
+      AND u.role IN ('ADMIN', 'SUPER_ADMIN', 'SUPPORT_ADMIN', 'FINANCE_ADMIN', 'ANALYST', 'PRODUCT_MANAGER');
   `, [tokenHash]);
 
   if (rows.length === 0) return null;
