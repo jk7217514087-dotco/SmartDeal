@@ -101,14 +101,14 @@ export const HomePage: React.FC = () => {
           <div className="w-full">
             {activeOffer && (
               <div
-                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-4 sm:p-8 md:p-12 lg:p-14 flex flex-row items-center justify-between min-h-[200px] sm:min-h-[280px] md:min-h-[380px] lg:min-h-[460px] group select-none transition-all"
+                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-indigo-500/30 bg-gradient-to-r from-[#0b1329] via-[#161f38] to-[#1e1b4b] text-white p-4 sm:p-8 md:p-12 lg:p-14 flex flex-row items-center justify-between min-h-[200px] sm:min-h-[280px] md:min-h-[380px] lg:min-h-[460px] group select-none transition-all"
                 onMouseEnter={() => setIsBannerPaused(true)}
                 onMouseLeave={() => setIsBannerPaused(false)}
               >
                 {/* Subtle Background Neon Atmosphere Glows */}
-                <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-10 left-10 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-blue-500/20 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-10 left-10 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-blue-500/15 rounded-full blur-2xl pointer-events-none" />
 
                 {/* Left Column: Real Brand, Store, Name, Real % Offer, Real Prices */}
                 <div className="relative z-10 flex-1 min-w-0 pr-3 sm:pr-8 md:pr-12 space-y-2 sm:space-y-4 md:space-y-5 text-left">
@@ -159,29 +159,29 @@ export const HomePage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right Column: 3D Neon Isolated Product Artwork */}
+                {/* Right Column: Premium Isolated Showcase Frame */}
                 <Link
                   to={`/product/${activeOffer.product.id}`}
-                  className="relative z-10 w-32 sm:w-60 md:w-80 lg:w-[420px] h-32 sm:h-60 md:h-80 lg:h-[400px] shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  className="relative z-10 w-36 sm:w-64 md:w-84 lg:w-[420px] h-36 sm:h-64 md:h-80 lg:h-[390px] shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer"
                   title={activeOffer.product.name}
                 >
-                  {/* Neon Halo behind artwork */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/40 via-indigo-500/25 to-pink-500/40 rounded-full blur-3xl pointer-events-none" />
-                  
-                  <img
-                    key={activeOffer.product.id}
-                    src={activeOffer.product.image}
-                    alt={activeOffer.product.name}
-                    className="max-h-28 sm:max-h-52 md:max-h-68 lg:max-h-80 max-w-full object-contain drop-shadow-[0_20px_40px_rgba(168,85,247,0.6)] animate-fadeIn relative z-10"
-                    loading="eager"
-                  />
+                  {/* Neon Glow behind artwork frame */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/30 via-indigo-500/20 to-pink-500/30 rounded-3xl blur-2xl pointer-events-none" />
 
-                  {/* Neon Pedestal underneath */}
-                  <div className="w-28 sm:w-56 md:w-72 lg:w-80 h-4 sm:h-6 bg-gradient-to-r from-purple-500/40 via-indigo-400/50 to-pink-500/40 rounded-full blur-md -mt-2 pointer-events-none" />
+                  {/* Clean Packshot Frame with Soft Rounded Container */}
+                  <div className="relative w-full h-full rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/90 p-2.5 sm:p-4 md:p-6 shadow-2xl border border-white/40 dark:border-white/10 flex items-center justify-center overflow-hidden backdrop-blur-xs">
+                    <img
+                      key={activeOffer.product.id}
+                      src={activeOffer.product.image}
+                      alt={activeOffer.product.name}
+                      className="max-h-full max-w-full object-contain rounded-xl drop-shadow-sm transition-transform duration-300 group-hover:scale-105"
+                      loading="eager"
+                    />
 
-                  {/* 3D Floating Discount Tag */}
-                  <div className="absolute top-1 right-1 sm:top-3 sm:right-3 px-2 sm:px-3.5 py-0.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-[10px] sm:text-sm shadow-2xl transform rotate-12 border border-white/40">
-                    {activeOffer.discount}% OFF
+                    {/* 3D Floating Discount Tag inside Frame */}
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-[10px] sm:text-xs shadow-lg transform rotate-6 border border-white/40">
+                      {activeOffer.discount}% OFF
+                    </div>
                   </div>
                 </Link>
 

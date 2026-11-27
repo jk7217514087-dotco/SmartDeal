@@ -234,21 +234,18 @@ export const Navbar: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-4">
           {/* Left Side: Three Lines Menu Button + Brand Logo */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Menu Button: Laptop -> 3 lines (Menu), Phone -> 3 dots (MoreVertical) */}
+            {/* Laptop / Desktop View: 3 lines button */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsNavDrawerOpen(true);
               }}
-              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs group"
+              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer items-center justify-center shrink-0 shadow-xs group hidden sm:flex"
               title="All Features & Categories (Menu)"
               aria-label="Navigation Menu"
             >
-              {/* Laptop/Desktop view: 3 lines */}
-              <Menu className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform hidden sm:block" />
-              {/* Phone/Mobile view: 3 dots */}
-              <MoreVertical className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform sm:hidden" />
+              <Menu className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform" />
             </button>
 
           {/* Brand Logo */}
@@ -868,9 +865,9 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Persistent Search Bar Row (Green Marked Box in User Mockup) */}
-      <div className="md:hidden px-3.5 pb-2.5 pt-0.5">
-        <form onSubmit={handleSearchSubmit} className="w-full">
+      {/* Mobile Persistent Search Bar Row with 3-Dots Menu on Side */}
+      <div className="md:hidden px-3.5 pb-2.5 pt-0.5 flex items-center gap-2">
+        <form onSubmit={handleSearchSubmit} className="flex-1 min-w-0">
           <div className="relative flex items-center w-full">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
             <input
@@ -891,39 +888,53 @@ export const Navbar: React.FC = () => {
           </div>
         </form>
 
-        {/* Autocomplete suggestions popup on Mobile */}
-        {isSearchFocused && filteredSuggestions.length > 0 && (
-          <div className={`mt-1.5 rounded-2xl shadow-2xl border overflow-hidden z-50 animate-fadeIn ${navTheme.searchPopup}`}>
-            <div className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
-              Matching Products
-            </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-60 overflow-y-auto">
-              {filteredSuggestions.map(item => (
-                <div
-                  key={item.id}
-                  onMouseDown={() => navigate(`/product/${item.id}`)}
-                  className="p-2.5 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-2.5 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <img src={item.image} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-slate-100 dark:border-slate-800 shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-slate-800 dark:text-white truncate">{item.name}</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                        ₹{item.sellingPrice.toLocaleString('en-IN')}
-                      </div>
+        {/* 3-Dots Menu Button on Phone (Shifted to side of search as requested) */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsNavDrawerOpen(true);
+          }}
+          className="p-2 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+          title="Navigation Menu"
+          aria-label="Navigation Menu"
+        >
+          <MoreVertical className="w-5 h-5 text-amber-500" />
+        </button>
+      </div>
+
+      {/* Autocomplete suggestions popup on Mobile */}
+      {isSearchFocused && filteredSuggestions.length > 0 && (
+        <div className={`md:hidden mx-3.5 mt-1 rounded-2xl shadow-2xl border overflow-hidden z-50 animate-fadeIn ${navTheme.searchPopup}`}>
+          <div className="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
+            Matching Products
+          </div>
+          <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-60 overflow-y-auto">
+            {filteredSuggestions.map(item => (
+              <div
+                key={item.id}
+                onMouseDown={() => navigate(`/product/${item.id}`)}
+                className="p-2.5 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-2.5 cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <img src={item.image} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-slate-100 dark:border-slate-800 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-slate-800 dark:text-white truncate">{item.name}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                      ₹{item.sellingPrice.toLocaleString('en-IN')}
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 </div>
-              ))}
-            </div>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              </div>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </header>
 
     {/* ============================================================== */}
-    {/* THREE-LINE (☰) NAVIGATION DRAWER (Full-height Slide-over)      */}
+    {/* THREE-LINE (☰) NAVIGATION DRAWER (Compact User/Product Only)   */}
     {/* ============================================================== */}
     {isNavDrawerOpen && (
       <div className="fixed inset-0 z-50 overflow-hidden animate-fadeIn">
@@ -937,323 +948,181 @@ export const Navbar: React.FC = () => {
           <div
             ref={navDrawerRef}
             onClick={(e) => e.stopPropagation()}
-            className="w-screen max-w-xs sm:max-w-sm md:max-w-md bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto h-full"
+            className="w-72 max-w-[280px] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto h-full"
           >
-              {/* Drawer Content */}
-              <div>
-                {/* Header */}
-                <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/40">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-md shadow-brand-500/20 bg-[#00061e] flex items-center justify-center shrink-0">
-                      <img
-                        src="/smartdeal_icon_mark.png"
-                        alt="SmartDeal Logo"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = 'none';
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white font-sans">
-                          Smart<span className={navTheme.logoTextGradient}>Deal</span>
-                        </span>
-                        <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
-                          PRO
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-400 font-medium">
-                        Compare • Save • Buy Smarter
-                      </p>
-                    </div>
+            {/* Drawer Content */}
+            <div>
+              {/* Header */}
+              <div className="p-3.5 sm:p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/40">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl overflow-hidden shadow-md shadow-brand-500/20 bg-[#00061e] flex items-center justify-center shrink-0">
+                    <img
+                      src="/smartdeal_icon_mark.png"
+                      alt="SmartDeal Logo"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
+                    />
                   </div>
-
-                  <button
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                    title="Close Menu"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  <div>
+                    <div className="flex items-center gap-1">
+                      <span className="font-black text-base tracking-tight text-slate-900 dark:text-white font-sans">
+                        Smart<span className={navTheme.logoTextGradient}>Deal</span>
+                      </span>
+                      <span className={`text-[8px] font-black px-1.5 py-0.2 rounded-md shadow-xs border ${navTheme.proBadge}`}>
+                        PRO
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-medium">
+                      Compare • Save • Buy Smarter
+                    </p>
+                  </div>
                 </div>
 
-                {/* Main Navigation Links: Home, Deals, Wishlist, Compare, Tracker (Requested in 3 lines menu) */}
-                <div className="p-4 space-y-1">
-                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 py-1">
-                    Explore & Navigation
-                  </div>
-
-                  {/* Home */}
-                  <Link
-                    to="/"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Home className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Home</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Return to SmartDeal storefront</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Deals & Offers */}
-                  <Link
-                    to="/deals"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-rose-50/60 dark:hover:bg-rose-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Flame className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-rose-600 dark:text-rose-400">Deals & Offers</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Up to 70% off across marketplaces</div>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">
-                      HOT
-                    </span>
-                  </Link>
-
-                  {/* Wishlist */}
-                  <Link
-                    to="/wishlist"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-pink-50 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Heart className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Wishlist / Saved Deals</div>
-                        <div className="text-[10px] text-slate-400 font-normal">View your price alerts & saved items</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300">
-                      {wishlist.length}
-                    </span>
-                  </Link>
-
-                  {/* Compare Stores */}
-                  <Link
-                    to="/compare"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Layers className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Compare Stores</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Live multi-store price comparison</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Price Tracker */}
-                  <Link
-                    to="/price-tracker"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Radio className="w-4 h-4 text-emerald-500 animate-pulse" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Price Tracker</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Track historical price drops & alerts</div>
-                      </div>
-                    </div>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                  </Link>
-
-                  {/* All Categories */}
-                  <Link
-                    to="/categories"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <SlidersHorizontal className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">All Categories</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Browse 100+ categories & products</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Coupons & Offers */}
-                  <Link
-                    to="/coupons"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Tag className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Coupons & Discounts</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Verified coupon codes & vouchers</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Compare Stores */}
-                  <Link
-                    to="/compare"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Layers className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Compare Stores</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Live multi-store price comparison</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Price Tracker */}
-                  <Link
-                    to="/price-tracker"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Radio className="w-4 h-4 text-emerald-500 animate-pulse" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Price Tracker</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Track historical price drops & alerts</div>
-                      </div>
-                    </div>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                  </Link>
-
-                  {/* Marketplaces */}
-                  <Link
-                    to="/marketplaces"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Store className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Marketplaces</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Amazon, Flipkart, Croma, Reliance</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Product vs Product AI */}
-                  <Link
-                    to="/product-vs-product"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-violet-50 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Sparkles className="w-4 h-4 text-violet-500" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-white">Product vs Product AI</div>
-                        <div className="text-[10px] text-slate-400 font-normal">AI head-to-head comparison engine</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  {/* Flowchart */}
-                  <Link
-                    to="/flowchart"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-cyan-50/60 dark:hover:bg-cyan-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Workflow className="w-4 h-4 text-cyan-500" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400">Flowchart</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Interactive deal finding pipeline</div>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-
-                {/* Trust & Help Section */}
-                <div className="p-4 pt-0 space-y-1">
-                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 py-1">
-                    Help & Assurance
-                  </div>
-
-                  <Link
-                    to="/support"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <HelpCircle className="w-4 h-4 text-slate-400" />
-                      <span>24/7 Support & Help Desk</span>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                  </Link>
-
-                  <Link
-                    to="/about"
-                    onClick={() => setIsNavDrawerOpen(false)}
-                    className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                      <span>Our Anti-Fake & Price Policy</span>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Drawer Bottom Actions */}
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 space-y-2">
                 <button
-                  onClick={() => {
-                    setIsNavDrawerOpen(false);
-                    window.dispatchEvent(new CustomEvent('trigger-app-install'));
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-600 hover:from-indigo-500 hover:to-brand-500 text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  title="Close Menu"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download SmartDeal App</span>
+                  <X className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Main Navigation Links: ONLY User & Product Relevant Features */}
+              <div className="p-3 space-y-1">
+                <div className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2.5 py-1">
+                  Store Navigation
+                </div>
+
+                {/* Home */}
+                <Link
+                  to="/"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                      <Home className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white">Home</div>
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+
+                {/* Deals & Offers */}
+                <Link
+                  to="/deals"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-rose-50/60 dark:hover:bg-rose-950/30 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                      <Flame className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-rose-600 dark:text-rose-400">Deals & Offers</div>
+                  </div>
+                  <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">
+                    HOT
+                  </span>
+                </Link>
+
+                {/* Wishlist / Saved Deals */}
+                <Link
+                  to="/wishlist"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-pink-50 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 flex items-center justify-center">
+                      <Heart className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white">Wishlist / Saved</div>
+                  </div>
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300">
+                    {wishlist.length}
+                  </span>
+                </Link>
+
+                {/* All Categories */}
+                <Link
+                  to="/categories"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                      <SlidersHorizontal className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white">All Categories</div>
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+
+                {/* Coupons & Discounts */}
+                <Link
+                  to="/coupons"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                      <Tag className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white">Coupons & Discounts</div>
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+
+                {/* My Orders / Track Order */}
+                <Link
+                  to="/orders"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                      <ShoppingCart className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white">Track Orders</div>
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+
+                {/* 24/7 Support & Help Desk */}
+                <Link
+                  to="/support"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                      <HelpCircle className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white">Help & Support</div>
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Drawer Bottom Actions */}
+            <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30">
+              <button
+                onClick={() => {
+                  setIsNavDrawerOpen(false);
+                  window.dispatchEvent(new CustomEvent('trigger-app-install'));
+                }}
+                className="w-full py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-600 hover:from-indigo-500 hover:to-brand-500 text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download App</span>
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
+    )}
     </>
   );
 };
