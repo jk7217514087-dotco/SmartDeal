@@ -222,25 +222,29 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header 
-      className={`sticky top-0 z-40 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}
-      style={{
-        backgroundColor: isDarkMode ? 'rgba(11, 19, 41, 0.95)' : 'rgba(255, 255, 255, 0.95)'
-      }}
-    >
-      {/* Main Navbar Bar */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left Side: Three Lines Menu Button + Brand Logo */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Three Lines Hamburger Menu (Yellow accent as requested by user) */}
-          <button
-            type="button"
-            onClick={() => setIsNavDrawerOpen(true)}
-            className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs group"
-            title="All Features & Categories (Menu)"
-          >
-            <Menu className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform" />
-          </button>
+    <>
+      <header 
+        className={`sticky top-0 z-40 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}
+        style={{
+          backgroundColor: isDarkMode ? 'rgba(11, 19, 41, 0.95)' : 'rgba(255, 255, 255, 0.95)'
+        }}
+      >
+        {/* Main Navbar Bar */}
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-4">
+          {/* Left Side: Three Lines Menu Button + Brand Logo */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Three Lines Hamburger Menu (Yellow accent as requested by user) */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsNavDrawerOpen(true);
+              }}
+              className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs group"
+              title="All Features & Categories (Menu)"
+            >
+              <Menu className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform" />
+            </button>
 
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
@@ -326,16 +330,6 @@ export const Navbar: React.FC = () => {
 
         {/* Right Actions: Restored on both Mobile and Desktop */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          {/* AI Assistant Button */}
-          <button
-            onClick={() => setIsAiAssistantOpen(true)}
-            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-full border font-extrabold text-[11px] sm:text-xs shadow-xs transition-all hover:scale-105 cursor-pointer ${navTheme.aiBtn}`}
-            title="Ask AI Assistant"
-          >
-            <Sparkles className={`w-3.5 h-3.5 ${navTheme.aiIcon}`} />
-            <span className="hidden xs:inline">Ask AI</span>
-          </button>
-
           {/* Download & Install SmartDeal App Button */}
           <button
             onClick={() => {
@@ -921,23 +915,25 @@ export const Navbar: React.FC = () => {
           </div>
         )}
       </div>
+    </header>
 
-      {/* ============================================================== */}
-      {/* THREE-LINE (☰) NAVIGATION DRAWER (Slide-over)                  */}
-      {/* ============================================================== */}
-      {isNavDrawerOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden animate-fadeIn">
-          {/* Backdrop */}
+    {/* ============================================================== */}
+    {/* THREE-LINE (☰) NAVIGATION DRAWER (Full-height Slide-over)      */}
+    {/* ============================================================== */}
+    {isNavDrawerOpen && (
+      <div className="fixed inset-0 z-50 overflow-hidden animate-fadeIn">
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+          onClick={() => setIsNavDrawerOpen(false)}
+        />
+
+        <div className="fixed inset-y-0 left-0 max-w-full flex h-full">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-            onClick={() => setIsNavDrawerOpen(false)}
-          />
-
-          <div className="fixed inset-y-0 left-0 max-w-full flex">
-            <div
-              ref={navDrawerRef}
-              className="w-screen max-w-xs sm:max-w-sm md:max-w-md bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto"
-            >
+            ref={navDrawerRef}
+            onClick={(e) => e.stopPropagation()}
+            className="w-screen max-w-xs sm:max-w-sm md:max-w-md bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto h-full"
+          >
               {/* Drawer Content */}
               <div>
                 {/* Header */}
@@ -1253,6 +1249,6 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 };

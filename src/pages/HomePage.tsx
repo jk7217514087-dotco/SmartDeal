@@ -229,88 +229,34 @@ export const HomePage: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
-      </section>
 
-      {/* 2. STORE PARTNERS & TRUSTED SHOPPING PLATFORM FEATURES (Yellow Marked Area above Finding Products) */}
-      <section className="max-w-7xl mx-auto px-4 space-y-4">
-        {/* Marketplace Partner Badges Row */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {[
-            { name: 'amazon', color: 'bg-[#131921] text-amber-400 border-slate-700' },
-            { name: 'Flipkart', color: 'bg-[#2874f0] text-yellow-300 border-blue-400' },
-            { name: 'meesho', color: 'bg-[#f43397] text-white border-pink-400' },
-            { name: 'myntra', color: 'bg-white text-[#ff3f6c] border-pink-200' },
-            { name: 'AJIO', color: 'bg-[#2c4152] text-white border-slate-600' },
-            { name: 'TATA CLiQ', color: 'bg-[#1f2228] text-rose-400 border-slate-700' },
-            { name: 'CROMA', color: 'bg-[#00e9bf]/20 text-teal-600 dark:text-teal-300 border-teal-500/40' },
-            { name: 'Reliance digital', color: 'bg-[#e42529] text-white border-red-500' },
-            { name: '+ More', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700' },
-          ].map(partner => (
-            <button
-              key={partner.name}
-              type="button"
-              onClick={() => navigate(`/search?q=${encodeURIComponent(partner.name.replace('+', '').trim())}`)}
-              className={`px-3 py-1 rounded-lg text-xs font-extrabold border shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer ${partner.color}`}
-            >
-              {partner.name}
-            </button>
-          ))}
-        </div>
-
-        {/* 4 Feature / Value Proposition Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-900">
-                <Zap className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Real-Time Price Tracking</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Instant price updates across stores</p>
-              </div>
-            </div>
-          </div>
-
-          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-900">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Trusted & Secure Shopping</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">100% verified merchant listings</p>
-              </div>
-            </div>
-          </div>
-
-          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-900">
-                <Bell className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Get Alerts on Price Drop</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Notifications at your target price</p>
-              </div>
-            </div>
-          </div>
-
-          <div className={`p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-slate-900/90 border-slate-800 text-slate-100' : 'bg-white border-slate-200/90 text-slate-800 shadow-xs'}`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 border border-purple-200 dark:border-purple-900">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Smart Deals Just for You</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">AI-powered lowest price picks</p>
-              </div>
-            </div>
+          {/* Marketplace Partner Badges Row - Slightly Bigger Size (Only Ads & Store Badges in Pink Section as requested) */}
+          <div className="pt-2 sm:pt-4 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+            {[
+              { name: 'amazon', color: 'bg-[#131921] text-amber-400 border-slate-700 hover:border-amber-400' },
+              { name: 'Flipkart', color: 'bg-[#2874f0] text-yellow-300 border-blue-400 hover:border-yellow-300' },
+              { name: 'meesho', color: 'bg-[#f43397] text-white border-pink-400 hover:border-white' },
+              { name: 'myntra', color: 'bg-white text-[#ff3f6c] border-pink-200 hover:border-[#ff3f6c]' },
+              { name: 'AJIO', color: 'bg-[#2c4152] text-white border-slate-600 hover:border-white' },
+              { name: 'TATA CLiQ', color: 'bg-[#1f2228] text-rose-400 border-slate-700 hover:border-rose-400' },
+              { name: 'CROMA', color: 'bg-[#00e9bf]/20 text-teal-600 dark:text-teal-300 border-teal-500/40 hover:border-teal-400' },
+              { name: 'Reliance digital', color: 'bg-[#e42529] text-white border-red-500 hover:border-white' },
+              { name: '+ More', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400' },
+            ].map(partner => (
+              <button
+                key={partner.name}
+                type="button"
+                onClick={() => navigate(`/search?q=${encodeURIComponent(partner.name.replace('+', '').trim())}`)}
+                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-black border shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer ${partner.color}`}
+              >
+                {partner.name}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 3. FINDING PRODUCTS SECTION (5 COLUMNS: 4 PRODUCTS + EXCLUSIVE DEALS CARD MATCHING PANEL 2) */}
+      {/* 2. FINDING PRODUCTS SECTION (5 COLUMNS: 4 PRODUCTS + EXCLUSIVE DEALS CARD MATCHING PANEL 2) */}
       <section className="max-w-7xl mx-auto px-4 space-y-4">
         <div className="flex items-center justify-between">
           <div>
