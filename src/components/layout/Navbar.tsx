@@ -225,8 +225,11 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <header 
-        className={`sticky top-0 z-50 backdrop-blur-xl border-b shadow-xs w-full transition-colors duration-300 ${navTheme.headerBg}`}
+        className={`sticky top-0 z-50 backdrop-blur-xl border-b shadow-sm w-full transition-colors duration-300 ${navTheme.headerBg}`}
         style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
           backgroundColor: isDarkMode ? 'rgba(11, 19, 41, 0.98)' : 'rgba(255, 255, 255, 0.98)'
         }}
       >
