@@ -14,14 +14,14 @@ export const UserLayout: React.FC = () => {
 
   return (
     <div 
-      className={`flex flex-col min-h-screen w-full max-w-full overflow-x-hidden ${activeTheme === 'dark' ? 'text-slate-100' : 'text-slate-900'} transition-colors duration-200`}
+      className={`flex flex-col min-h-screen w-full max-w-full overflow-x-clip ${activeTheme === 'dark' ? 'text-slate-100' : 'text-slate-900'} transition-colors duration-200`}
       style={{ backgroundColor: currentBg }}
     >
-      {/* Customer Header / Navigation */}
+      {/* Customer Header / Navigation (Sticky Fixed at Top on All Pages) */}
       <Navbar />
       
       {/* Main Customer Page Content */}
-      <main className="flex-1 w-full max-w-full overflow-x-hidden pb-16 sm:pb-0">
+      <main className="flex-1 w-full max-w-full overflow-x-clip pb-16 sm:pb-0">
         <Outlet />
       </main>
 

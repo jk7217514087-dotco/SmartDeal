@@ -200,9 +200,9 @@ export const DealsPage: React.FC = () => {
               key={section.id}
               className="relative rounded-3xl p-4 sm:p-7 md:p-8 overflow-hidden shadow-xs border bg-[#EEF2FF] dark:bg-slate-900/90 border-indigo-100 dark:border-slate-800 transition-all"
             >
-              {/* Background Faint Watermark Logo (b mark matching reference mockup) */}
-              <div className="absolute -top-6 -right-3 text-8xl sm:text-9xl font-black text-indigo-200/40 dark:text-slate-800/40 select-none pointer-events-none font-serif">
-                b
+              {/* Background Faint Diagonal Watermark: "SmartDeal" (Replacing old 'b' watermark with brand name diagonally) */}
+              <div className="absolute top-2 -right-3 sm:-right-6 text-4xl sm:text-6xl md:text-7xl font-black text-indigo-300/20 dark:text-slate-800/25 select-none pointer-events-none -rotate-12 tracking-wider uppercase font-sans">
+                SmartDeal
               </div>
 
               {/* Top-Left Max Discount Badge (Fully inside container, completely visible) */}
@@ -219,22 +219,22 @@ export const DealsPage: React.FC = () => {
                 {/* Subtitle with 3 Badges: Top Brands --- Best Deals --- Max Savings */}
                 <div className="flex items-center justify-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 mt-2 flex-wrap">
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[9px] flex items-center justify-center shadow-xs">
-                      b
+                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[8px] flex items-center justify-center shadow-xs">
+                      SD
                     </span>
                     <span>Top Brands</span>
                   </span>
                   <span className="text-slate-400">---</span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[9px] flex items-center justify-center shadow-xs">
-                      b
+                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[8px] flex items-center justify-center shadow-xs">
+                      SD
                     </span>
                     <span>Best Deals</span>
                   </span>
                   <span className="text-slate-400">---</span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[9px] flex items-center justify-center shadow-xs">
-                      b
+                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[8px] flex items-center justify-center shadow-xs">
+                      SD
                     </span>
                     <span>Max Savings</span>
                   </span>

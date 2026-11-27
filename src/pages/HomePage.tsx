@@ -92,7 +92,7 @@ export const HomePage: React.FC = () => {
   }, [clickPageDeals]);
 
   return (
-    <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
+    <div className="space-y-10 pb-16 w-full max-w-full overflow-x-clip">
       {/* 1. HERO SECTION: EXPANDED FULL-WIDTH SHOWCASE AD BANNER (Red Marked Area Size) */}
       <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-3 sm:py-6 transition-all`}>
         <div className="w-full max-w-[1500px] mx-auto px-2 sm:px-4 md:px-6">
