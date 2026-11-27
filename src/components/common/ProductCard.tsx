@@ -175,20 +175,28 @@ export const ProductCard: React.FC<Props> = ({ product, variant = 'standard' }) 
             </h3>
           </Link>
 
-          {/* Price Line with Store Logo on Right (matching reference image) */}
-          <div className="mt-2 flex items-center justify-between gap-1 flex-wrap">
+          {/* Price Line */}
+          <div className="mt-2 space-y-1">
             <div className="flex items-baseline gap-1.5 flex-wrap">
               <span className="text-sm sm:text-base font-black text-slate-950 dark:text-white">
                 ₹{product.sellingPrice.toLocaleString('en-IN')}
               </span>
-              <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
-                ₹{product.mrp.toLocaleString('en-IN')}
-              </span>
-              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded">
-                {product.discountPercent}% OFF
-              </span>
+              {product.mrp > product.sellingPrice && (
+                <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 line-through">
+                  ₹{product.mrp.toLocaleString('en-IN')}
+                </span>
+              )}
             </div>
-            <MarketplaceBadge storeName={lowestStoreListing?.sellerName || 'Amazon'} size="sm" />
+
+            {/* Discount Badge & Marketplace Badge Side-by-Side (Shifted next to % OFF as requested) */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {(product.discountPercent > 0 || product.mrp > product.sellingPrice) && (
+                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded shrink-0">
+                  {product.discountPercent || Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)}% OFF
+                </span>
+              )}
+              <MarketplaceBadge storeName={lowestStoreListing?.sellerName || 'Amazon'} size="sm" />
+            </div>
           </div>
         </div>
 
