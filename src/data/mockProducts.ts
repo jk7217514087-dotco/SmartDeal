@@ -2996,6 +2996,206 @@ export const mockProducts: Product[] = [
         url: 'https://www.reliancedigital.in/search?q=Samsung%20253L'
       }
     ]
+  },
+  {
+    id: 'prod-lg-refrigerator-185l',
+    name: 'LG 185L 5-Star Inverter Direct Cool Single Door Refrigerator (Shiny Steel, Smart Connect, Base Stand)',
+    brand: 'LG',
+    category: 'Appliances',
+    image: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=800&auto=format&fit=crop&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=800&auto=format&fit=crop&q=80'
+    ],
+    mrp: 22190,
+    sellingPrice: 16990,
+    discountPercent: 23,
+    rating: 4.6,
+    reviewsCount: 14200,
+    seller: 'Amazon India Official',
+    sellerRating: 4.8,
+    deliveryDate: 'Tomorrow, by 1 PM',
+    deliveryCharge: 0,
+    smartCoinsEarned: 340,
+    dealScore: 92,
+    isSmartDealsChoice: true,
+    stock: 30,
+    returnDays: 10,
+    warranty: '1 Year on Product + 10 Years on Smart Inverter Compressor',
+    description: 'LG 185L 5-Star Smart Inverter Single Door Refrigerator delivers unmatched energy efficiency, silent operation, and reliable cooling even during voltage fluctuations.',
+    features: [
+      'Smart Inverter Compressor with 10-Year Warranty',
+      '5 Star Energy Rating for maximum electricity savings',
+      'Fastest in Ice Making with patented lattice-type box cover',
+      'Base stand drawer for additional vegetable storage'
+    ],
+    specs: {
+      'Capacity': '185 Litres',
+      'Energy Rating': '5 Star',
+      'Defrost System': 'Direct Cool',
+      'Color': 'Shiny Steel',
+      'Compressor': 'Smart Inverter Compressor'
+    },
+    dealScoreBreakdown: {
+      priceAdvantage: 94,
+      historicalPrice: 93,
+      offerQuality: 92,
+      sellerReliability: 96,
+      delivery: 94,
+      transparency: 95,
+      overallScore: 92,
+      verdict: 'Superb Genuine Deal'
+    },
+    priceHistory: [
+      { date: '60d ago', price: 21990 },
+      { date: '30d ago', price: 18490 },
+      { date: 'Today', price: 16990, event: 'Amazon Super Sale Match' }
+    ],
+    buyNowRecommendation: {
+      action: 'BUY NOW',
+      confidence: 94,
+      reason: 'At ₹16,990 (23% OFF), this is the verified best price at Amazon India with free doorstep delivery.',
+      expectedLow: 16990
+    },
+    fakeDiscountAudit: {
+      isGenuine: true,
+      status: 'Genuine Deal',
+      reason: 'Official LG India MRP of ₹22,190 verified.',
+      lowestPriceEver: 16990,
+      highestPriceEver: 22190
+    },
+    marketplacePrices: [
+      {
+        sellerName: 'Amazon',
+        isSmartDealsSeller: false,
+        price: 16990,
+        deliveryCharge: 0,
+        deliveryDate: 'Tomorrow',
+        finalPrice: 16990,
+        smartCoins: 340,
+        dealScore: 92,
+        inStock: true,
+        rating: 4.6,
+        tag: 'Lowest Price',
+        cashbackAmount: 340,
+        discountPercent: 23,
+        url: 'https://www.amazon.in/s?k=LG+185L+Refrigerator'
+      },
+      {
+        sellerName: 'Flipkart',
+        isSmartDealsSeller: false,
+        price: 17490,
+        deliveryCharge: 0,
+        deliveryDate: '2 Days',
+        finalPrice: 17490,
+        smartCoins: 200,
+        dealScore: 88,
+        inStock: true,
+        rating: 4.5,
+        cashbackAmount: 200,
+        discountPercent: 21,
+        url: 'https://www.flipkart.com/search?q=LG+185L+Refrigerator'
+      }
+    ]
+  },
+  {
+    id: 'prod-whirlpool-refrigerator-265l',
+    name: 'Whirlpool 265L 3-Star IntelliFresh Inverter Frost Free Double Door Refrigerator (German Steel, Microblock Tech)',
+    brand: 'Whirlpool',
+    category: 'Appliances',
+    image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=800&auto=format&fit=crop&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=800&auto=format&fit=crop&q=80'
+    ],
+    mrp: 35150,
+    sellingPrice: 26490,
+    discountPercent: 25,
+    rating: 4.4,
+    reviewsCount: 6500,
+    seller: 'Flipkart SuperComNet',
+    sellerRating: 4.7,
+    deliveryDate: 'In 2 days',
+    deliveryCharge: 0,
+    smartCoinsEarned: 520,
+    dealScore: 90,
+    isSmartDealsChoice: true,
+    stock: 18,
+    returnDays: 10,
+    warranty: '1 Year Comprehensive + 10 Years on Compressor',
+    description: 'Whirlpool 265L Frost-Free Double Door Refrigerator with 6TH SENSE IntelliSensor Technology senses, adapts and controls cooling based on internal load and ambient weather.',
+    features: [
+      'Intellisense Inverter Technology with 10-Year Warranty',
+      'Microblock Technology prevents up to 99% bacterial growth',
+      'Freshflow Air Tower with Flexi Vents for uniform cooling',
+      'Active Deo filter keeps refrigerator environment odor-free'
+    ],
+    specs: {
+      'Capacity': '265 Litres',
+      'Energy Rating': '3 Star',
+      'Defrost System': 'Frost Free',
+      'Color': 'German Steel Metallic',
+      'Compressor': 'IntelliSense Inverter Compressor'
+    },
+    dealScoreBreakdown: {
+      priceAdvantage: 93,
+      historicalPrice: 91,
+      offerQuality: 90,
+      sellerReliability: 95,
+      delivery: 92,
+      transparency: 94,
+      overallScore: 90,
+      verdict: 'Superb Genuine Deal'
+    },
+    priceHistory: [
+      { date: '60d ago', price: 34990 },
+      { date: '30d ago', price: 29990 },
+      { date: 'Today', price: 26490, event: 'Flipkart Big Savings Deal' }
+    ],
+    buyNowRecommendation: {
+      action: 'BUY NOW',
+      confidence: 92,
+      reason: 'At ₹26,490 (25% OFF), this is the verified best price at Flipkart with 10-year compressor warranty.',
+      expectedLow: 26490
+    },
+    fakeDiscountAudit: {
+      isGenuine: true,
+      status: 'Genuine Deal',
+      reason: 'Official Whirlpool India MRP of ₹35,150 verified.',
+      lowestPriceEver: 26490,
+      highestPriceEver: 35150
+    },
+    marketplacePrices: [
+      {
+        sellerName: 'Flipkart',
+        isSmartDealsSeller: false,
+        price: 26490,
+        deliveryCharge: 0,
+        deliveryDate: '2 Days',
+        finalPrice: 26490,
+        smartCoins: 520,
+        dealScore: 90,
+        inStock: true,
+        rating: 4.4,
+        tag: 'Lowest Price',
+        cashbackAmount: 520,
+        discountPercent: 25,
+        url: 'https://www.flipkart.com/search?q=Whirlpool+265L+Refrigerator'
+      },
+      {
+        sellerName: 'Croma',
+        isSmartDealsSeller: false,
+        price: 27990,
+        deliveryCharge: 0,
+        deliveryDate: '3 Days',
+        finalPrice: 27990,
+        smartCoins: 300,
+        dealScore: 85,
+        inStock: true,
+        rating: 4.5,
+        cashbackAmount: 300,
+        discountPercent: 20,
+        url: 'https://www.croma.com/search?q=Whirlpool+265L'
+      }
+    ]
   }
 ];
 
