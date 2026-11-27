@@ -94,31 +94,31 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-10 pb-16 w-full max-w-full overflow-x-hidden">
-      {/* 1. HERO SECTION: FULL-WIDTH SHOWCASE AD BANNER (Orange Marked Area) */}
-      <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-4 sm:py-7 transition-all`}>
-        <div className="max-w-7xl mx-auto px-4">
-          {/* Full-Width Showcase Ad Banner */}
+      {/* 1. HERO SECTION: EXPANDED FULL-WIDTH SHOWCASE AD BANNER (Red Marked Area Size) */}
+      <section className={`relative border-b ${heroTheme.heroSectionBg} ${heroTheme.heroBorder} py-3 sm:py-6 transition-all`}>
+        <div className="w-full max-w-[1500px] mx-auto px-2 sm:px-4 md:px-6">
+          {/* Full-Width Showcase Ad Banner - Sized to Red Marked Region */}
           <div className="w-full">
             {activeOffer && (
               <div
-                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-3.5 sm:p-7 md:p-8 flex flex-row items-center justify-between min-h-[175px] sm:min-h-[220px] md:min-h-[260px] group select-none transition-all"
+                className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 bg-gradient-to-r from-[#0c0524] via-[#1b0d46] to-[#2c0e5a] text-white p-4 sm:p-8 md:p-12 lg:p-14 flex flex-row items-center justify-between min-h-[200px] sm:min-h-[280px] md:min-h-[380px] lg:min-h-[460px] group select-none transition-all"
                 onMouseEnter={() => setIsBannerPaused(true)}
                 onMouseLeave={() => setIsBannerPaused(false)}
               >
                 {/* Subtle Background Neon Atmosphere Glows */}
-                <div className="absolute top-0 right-1/4 w-80 h-80 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-10 left-10 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-500/15 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-10 left-10 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-blue-500/20 rounded-full blur-2xl pointer-events-none" />
 
                 {/* Left Column: Real Brand, Store, Name, Real % Offer, Real Prices */}
-                <div className="relative z-10 flex-1 min-w-0 pr-2.5 sm:pr-6 space-y-1 sm:space-y-2.5 text-left">
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-start">
-                    <MarketplaceBadge storeName={activeOffer.storeName} size="sm" />
-                    <span className="text-[9px] sm:text-xs font-black uppercase tracking-wider text-purple-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/15">
+                <div className="relative z-10 flex-1 min-w-0 pr-3 sm:pr-8 md:pr-12 space-y-2 sm:space-y-4 md:space-y-5 text-left">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-start">
+                    <MarketplaceBadge storeName={activeOffer.storeName} size="md" />
+                    <span className="text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-wider text-purple-200 bg-white/10 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-md border border-white/15">
                       {activeOffer.product.brand}
                     </span>
                     {/* Real Active Discount Badge */}
-                    <span className="text-[10px] sm:text-sm font-black px-2 sm:px-2.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm ring-1 ring-white/30 animate-pulse">
+                    <span className="text-xs sm:text-sm md:text-base font-black px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-md bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md ring-1 ring-white/30 animate-pulse">
                       {activeOffer.discount}% OFF
                     </span>
                   </div>
@@ -126,35 +126,35 @@ export const HomePage: React.FC = () => {
                   {/* Real Product Name */}
                   <Link
                     to={`/product/${activeOffer.product.id}`}
-                    className="block font-black text-xs sm:text-xl md:text-2xl text-white hover:text-purple-300 transition-colors line-clamp-2 leading-tight drop-shadow-sm"
+                    className="block font-black text-sm sm:text-2xl md:text-3xl lg:text-4xl text-white hover:text-purple-300 transition-colors line-clamp-2 leading-tight drop-shadow-md"
                     title={activeOffer.product.name}
                   >
                     {activeOffer.product.name}
                   </Link>
 
                   {/* Real Price Line */}
-                  <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap justify-start pt-0.5 sm:pt-1">
-                    <span className="text-lg sm:text-2xl md:text-3xl font-black text-white tracking-tight">
+                  <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap justify-start pt-0.5 sm:pt-1">
+                    <span className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight">
                       ₹{activeOffer.product.sellingPrice.toLocaleString('en-IN')}
                     </span>
-                    <span className="text-[10px] sm:text-sm text-purple-200/60 line-through">
+                    <span className="text-xs sm:text-base md:text-xl text-purple-200/60 line-through">
                       ₹{activeOffer.product.mrp.toLocaleString('en-IN')}
                     </span>
                     {activeOffer.savings > 0 && (
-                      <span className="text-[10px] sm:text-sm font-extrabold text-amber-300">
+                      <span className="text-xs sm:text-base md:text-lg font-extrabold text-amber-300">
                         Save ₹{activeOffer.savings.toLocaleString('en-IN')}
                       </span>
                     )}
                   </div>
 
                   {/* Shop Now CTA Button */}
-                  <div className="pt-1.5 sm:pt-2 flex items-center justify-start">
+                  <div className="pt-2 sm:pt-3 flex items-center justify-start">
                     <Link
                       to={`/product/${activeOffer.product.id}`}
-                      className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-1.5 sm:py-2.5 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-slate-950 font-black text-[11px] sm:text-sm shadow-xl transition-all cursor-pointer hover:scale-105"
+                      className="inline-flex items-center gap-2 sm:gap-2.5 px-4 sm:px-8 md:px-10 py-2 sm:py-3.5 md:py-4 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-slate-950 font-black text-xs sm:text-base md:text-lg shadow-2xl transition-all cursor-pointer hover:scale-105"
                     >
                       <span>Shop Now</span>
-                      <ArrowRight className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-purple-700" />
+                      <ArrowRight className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 text-purple-700" />
                     </Link>
                   </div>
                 </div>
@@ -162,25 +162,25 @@ export const HomePage: React.FC = () => {
                 {/* Right Column: 3D Neon Isolated Product Artwork */}
                 <Link
                   to={`/product/${activeOffer.product.id}`}
-                  className="relative z-10 w-28 sm:w-44 md:w-56 h-28 sm:h-44 md:h-52 shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  className="relative z-10 w-32 sm:w-60 md:w-80 lg:w-[420px] h-32 sm:h-60 md:h-80 lg:h-[400px] shrink-0 flex flex-col items-center justify-center group-hover:scale-105 transition-transform duration-300 cursor-pointer"
                   title={activeOffer.product.name}
                 >
                   {/* Neon Halo behind artwork */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/35 via-indigo-500/20 to-pink-500/35 rounded-full blur-2xl pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/40 via-indigo-500/25 to-pink-500/40 rounded-full blur-3xl pointer-events-none" />
                   
                   <img
                     key={activeOffer.product.id}
                     src={activeOffer.product.image}
                     alt={activeOffer.product.name}
-                    className="max-h-24 sm:max-h-36 md:max-h-44 max-w-full object-contain drop-shadow-[0_20px_35px_rgba(168,85,247,0.55)] animate-fadeIn relative z-10"
+                    className="max-h-28 sm:max-h-52 md:max-h-68 lg:max-h-80 max-w-full object-contain drop-shadow-[0_20px_40px_rgba(168,85,247,0.6)] animate-fadeIn relative z-10"
                     loading="eager"
                   />
 
                   {/* Neon Pedestal underneath */}
-                  <div className="w-24 sm:w-40 h-4 sm:h-5 bg-gradient-to-r from-purple-500/40 via-indigo-400/50 to-pink-500/40 rounded-full blur-md -mt-2 pointer-events-none" />
+                  <div className="w-28 sm:w-56 md:w-72 lg:w-80 h-4 sm:h-6 bg-gradient-to-r from-purple-500/40 via-indigo-400/50 to-pink-500/40 rounded-full blur-md -mt-2 pointer-events-none" />
 
                   {/* 3D Floating Discount Tag */}
-                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-[10px] sm:text-xs shadow-xl transform rotate-12 border border-white/40">
+                  <div className="absolute top-1 right-1 sm:top-3 sm:right-3 px-2 sm:px-3.5 py-0.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-black text-[10px] sm:text-sm shadow-2xl transform rotate-12 border border-white/40">
                     {activeOffer.discount}% OFF
                   </div>
                 </Link>
@@ -192,10 +192,10 @@ export const HomePage: React.FC = () => {
                     e.preventDefault();
                     setBannerSlide(prev => (prev - 1 + realOfferProducts.length) % realOfferProducts.length);
                   }}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2.5 sm:p-3.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-xl z-20"
                   title="Previous Deal"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6" />
                 </button>
 
                 {/* Right Arrow */}
@@ -205,22 +205,22 @@ export const HomePage: React.FC = () => {
                     e.preventDefault();
                     setBannerSlide(prev => (prev + 1) % realOfferProducts.length);
                   }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-md z-20"
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2.5 sm:p-3.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-xs transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-xl z-20"
                   title="Next Deal"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6" />
                 </button>
 
                 {/* 3-Second Pagination Dots Bar */}
-                <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-auto z-20">
+                <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5 sm:gap-2 pointer-events-auto z-20">
                   {realOfferProducts.map((item, idx) => (
                     <button
                       key={item.product.id}
                       onClick={() => setBannerSlide(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                         bannerSlide === idx
-                          ? 'w-6 bg-white shadow-md'
-                          : 'w-1.5 bg-white/40 hover:bg-white/70'
+                          ? 'w-7 sm:w-9 bg-white shadow-md'
+                          : 'w-2 sm:w-2.5 bg-white/40 hover:bg-white/70'
                       }`}
                       title={`Deal ${idx + 1}: ${item.product.name}`}
                     />

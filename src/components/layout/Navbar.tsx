@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import {
   Menu,
+  MoreVertical,
   Search,
   ShoppingCart,
   Heart,
@@ -233,7 +234,7 @@ export const Navbar: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-4">
           {/* Left Side: Three Lines Menu Button + Brand Logo */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Three Lines Hamburger Menu (Yellow accent as requested by user) */}
+            {/* Menu Button: Laptop -> 3 lines (Menu), Phone -> 3 dots (MoreVertical) */}
             <button
               type="button"
               onClick={(e) => {
@@ -242,8 +243,12 @@ export const Navbar: React.FC = () => {
               }}
               className="p-2 sm:p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-xs group"
               title="All Features & Categories (Menu)"
+              aria-label="Navigation Menu"
             >
-              <Menu className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform" />
+              {/* Laptop/Desktop view: 3 lines */}
+              <Menu className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform hidden sm:block" />
+              {/* Phone/Mobile view: 3 dots */}
+              <MoreVertical className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform sm:hidden" />
             </button>
 
           {/* Brand Logo */}
