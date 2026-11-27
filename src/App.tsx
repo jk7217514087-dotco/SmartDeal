@@ -7,6 +7,7 @@ import { AdminRouteGuard } from './components/admin/AdminRouteGuard';
 import { ScrollController } from './components/common/ScrollController';
 import { LiveSmsToast } from './components/common/LiveSmsToast';
 import { SmsAlertCenterModal } from './components/common/SmsAlertCenterModal';
+import { AuthModal } from './components/auth/AuthModal';
 
 // Public & Customer Pages
 import { HomePage } from './pages/HomePage';
@@ -47,7 +48,7 @@ import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 
 function AppContent() {
-  const { isSmsCenterOpen, setIsSmsCenterOpen, role, currentUser } = useApp();
+  const { isSmsCenterOpen, setIsSmsCenterOpen, role, currentUser, isAuthModalOpen, authModalTab, closeAuthModal } = useApp();
 
   // Guarantee smooth rotating loader visibility (1.2s) on phone screen, laptop window or slow internet
   React.useEffect(() => {
@@ -228,6 +229,12 @@ function AppContent() {
           <SmsAlertCenterModal isOpen={isSmsCenterOpen} onClose={() => setIsSmsCenterOpen(false)} />
         </>
       )}
+      {/* Global Premium Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={closeAuthModal}
+        initialTab={authModalTab}
+      />
     </Router>
   );
 }

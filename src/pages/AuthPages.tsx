@@ -148,29 +148,6 @@ export const LoginPage: React.FC = () => {
           >
             {isLoading ? 'Signing In...' : 'Sign In Securely'}
           </button>
-
-          {/* 1-Click Test Credentials - Shopper Only */}
-          <div className="pt-2">
-            <div className="text-[11px] font-semibold text-slate-400 mb-1.5 flex items-center justify-between">
-              <span>Quick Test Fill:</span>
-              <span className="text-emerald-500 font-bold">Shopper Login</span>
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  setIdentifier('rohit.kumar@example.com');
-                  setPassword('password123');
-                  setErrorMessage('');
-                  setInfoMessage('Filled User demo credentials (rohit.kumar@example.com)');
-                }}
-                className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-bold transition-all text-center border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <span>👤</span>
-                <span>Fill Demo Shopper Credentials (Rohit Kumar)</span>
-              </button>
-            </div>
-          </div>
         </form>
 
         <div className="relative flex items-center justify-center">
@@ -213,10 +190,24 @@ export const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
+
+  const calculateStrength = (pwd: string) => {
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd)) score++;
+    return score;
+  };
+
+  const strengthScore = calculateStrength(password);
+  const strengthLabels = ['Too Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+  const strengthColors = ['bg-slate-200 dark:bg-slate-700', 'bg-rose-500', 'bg-amber-500', 'bg-blue-500', 'bg-emerald-500'];
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,6 +222,10 @@ export const RegisterPage: React.FC = () => {
     }
     if (password.length < 6) {
       setErrorMessage('Password must be at least 6 characters.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMessage('Passwords do not match.');
       return;
     }
 
@@ -346,7 +341,7 @@ export const RegisterPage: React.FC = () => {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
-                  placeholder="Minimum 6 characters"
+                  placeholder="Minimum 8 characters"
                 />
                 <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <button
@@ -357,6 +352,42 @@ export const RegisterPage: React.FC = () => {
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
+              </div>
+
+              {password.length > 0 && (
+                <div className="space-y-1 pt-1">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-slate-500">Password strength:</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-300">
+                      {strengthLabels[strengthScore]}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex gap-1">
+                    {[1, 2, 3, 4].map(idx => (
+                      <div
+                        key={idx}
+                        className={`h-full flex-1 rounded-full transition-all duration-300 ${
+                          strengthScore >= idx ? strengthColors[strengthScore] : 'bg-slate-200 dark:bg-slate-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-slate-700 dark:text-slate-300">Confirm Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:border-brand-500 focus:outline-none"
+                  placeholder="Re-enter password"
+                />
+                <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
               </div>
             </div>
 

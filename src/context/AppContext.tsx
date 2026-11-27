@@ -47,6 +47,10 @@ interface AppContextType {
   currentUser: TrackedUser | null;
   guestSession: GuestSession;
   isAuthValidating: boolean;
+  isAuthModalOpen: boolean;
+  authModalTab: 'login' | 'signup' | 'forgot';
+  openAuthModal: (tab?: 'login' | 'signup' | 'forgot') => void;
+  closeAuthModal: () => void;
   loginUser: (emailOrPhone: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
   loginWithGoogle: (credential?: string, email?: string, name?: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
   registerUser: (name: string, email: string, phone: string, password: string) => Promise<{ success: boolean; message: string; user?: TrackedUser }>;
@@ -387,6 +391,56 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return getThemeDefaultBg(savedTheme === 'light' || savedTheme === 'pure-white' ? 'light' : 'dark');
   });
   const [isBgModalOpen, setIsBgModalOpen] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'signup' | 'forgot'>('login');
+
+  const openAuthModal = (tab: 'login' | 'signup' | 'forgot' = 'login') => {
+    setAuthModalTab(tab);
+    setIsAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+  };
+
+  // Seamlessly merges guest session wishlist & alerts to authenticated user without duplicate records
+  const mergeGuestData = (userId: string) => {
+    try {
+      const guestWishlistStr = localStorage.getItem('smartdeals_wishlist_guest');
+      if (guestWishlistStr) {
+        const guestItems: string[] = JSON.parse(guestWishlistStr);
+        if (Array.isArray(guestItems) && guestItems.length > 0) {
+          const userKey = `smartdeals_wishlist_${userId}`;
+          const existing: string[] = JSON.parse(localStorage.getItem(userKey) || '[]');
+          const merged = Array.from(new Set([...existing, ...guestItems]));
+          localStorage.setItem(userKey, JSON.stringify(merged));
+          setWishlist(merged);
+          localStorage.removeItem('smartdeals_wishlist_guest');
+        }
+      }
+    } catch (e) {
+      console.warn('Guest wishlist merge skipped:', e);
+    }
+
+    try {
+      const guestAlertsStr = localStorage.getItem('smartdeals_alerts_guest');
+      if (guestAlertsStr) {
+        const guestAlerts = JSON.parse(guestAlertsStr);
+        if (Array.isArray(guestAlerts) && guestAlerts.length > 0) {
+          const userKey = `smartdeals_alerts_${userId}`;
+          const existing = JSON.parse(localStorage.getItem(userKey) || '[]');
+          const existingIds = new Set(existing.map((a: any) => a.productId));
+          const newAlerts = guestAlerts.filter((a: any) => !existingIds.has(a.productId));
+          const merged = [...existing, ...newAlerts];
+          localStorage.setItem(userKey, JSON.stringify(merged));
+          setPriceAlerts(merged);
+          localStorage.removeItem('smartdeals_alerts_guest');
+        }
+      }
+    } catch (e) {
+      console.warn('Guest price alerts merge skipped:', e);
+    }
+  };
 
   useEffect(() => {
     const themeToApply = activeTheme === 'dark' ? 'dark' : 'light';
@@ -651,6 +705,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const res = await trackingService.authenticateUser(email, password);
     if (res.success && res.user) {
       setCurrentUser(res.user);
+      mergeGuestData(res.user.id);
       if (res.user.role === 'ADMIN') {
         setRoleState('ADMIN');
         localStorage.setItem('smartdeals_role', 'ADMIN');
@@ -666,6 +721,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const res = await trackingService.loginWithGoogle(credential, email, name);
     if (res.success && res.user) {
       setCurrentUser(res.user);
+      mergeGuestData(res.user.id);
       if (res.user.role === 'ADMIN') {
         setRoleState('ADMIN');
         localStorage.setItem('smartdeals_role', 'ADMIN');
@@ -681,6 +737,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const res = await trackingService.registerUser(name, email, phone, password);
     if (res.success && res.user) {
       setCurrentUser(res.user);
+      mergeGuestData(res.user.id);
       setRoleState('USER');
       localStorage.setItem('smartdeals_role', 'USER');
     }
@@ -1115,6 +1172,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resetCustomBg,
         isBgModalOpen,
         setIsBgModalOpen,
+        isAuthModalOpen,
+        authModalTab,
+        openAuthModal,
+        closeAuthModal,
         cashbackWallet,
         cashbackTransactions: cashbackWallet.transactions,
         redeemCashback,

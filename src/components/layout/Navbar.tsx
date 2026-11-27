@@ -48,6 +48,7 @@ export const Navbar: React.FC = () => {
     setRole,
     currentUser,
     guestSession,
+    openAuthModal,
     loginUser,
     loginWithGoogle,
     logoutUser,
@@ -92,13 +93,6 @@ export const Navbar: React.FC = () => {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [profileTab, setProfileTab] = useState<'signin' | 'menu'>('signin');
-  const [loginIdentifier, setLoginIdentifier] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [forgotSent, setForgotSent] = useState(false);
 
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const navDrawerRef = useRef<HTMLDivElement>(null);
@@ -152,56 +146,6 @@ export const Navbar: React.FC = () => {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isProfileMenuOpen]);
-
-  const handleQuickLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError(null);
-    setIsLoggingIn(true);
-    try {
-      const res = await loginUser(loginIdentifier, loginPassword);
-      setIsLoggingIn(false);
-      if (res.success && res.user) {
-        setIsProfileMenuOpen(false);
-        trackActivity('LOGIN', { method: 'dropdown_quick_login', email: res.user.email });
-        if (res.user.role === 'ADMIN') {
-          navigate('/admin/dashboard');
-        }
-      } else {
-        setLoginError(res.message || 'Invalid email or password.');
-      }
-    } catch {
-      setIsLoggingIn(false);
-      setLoginError('Authentication failed. Please try again.');
-    }
-  };
-
-  const handleGoogleQuickLogin = async () => {
-    setIsLoggingIn(true);
-    setLoginError('');
-    try {
-      const res = await loginWithGoogle();
-      if (res.success && res.user) {
-        setIsProfileMenuOpen(false);
-        if (res.user.role === 'ADMIN') {
-          navigate('/admin/dashboard');
-        } else {
-          navigate('/');
-        }
-      } else {
-        setLoginError(res.message || 'Google sign-in could not be completed.');
-      }
-    } catch (err: any) {
-      setLoginError(err.message || 'Google sign-in error occurred.');
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
-  const handleForgotTrigger = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsProfileMenuOpen(false);
-    navigate('/forgot-password');
-  };
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -576,24 +520,23 @@ export const Navbar: React.FC = () => {
                       </div>
                     </>
                   ) : (
-                    /* ----------------- GUEST SHOPPER / LOGIN VIEW ----------------- */
+                    /* ----------------- GUEST SHOPPER VIEW ----------------- */
                     <>
                       {/* Guest Header */}
-                      <div className="p-3.5 bg-gradient-to-r from-slate-50 via-white to-brand-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-brand-950/20 flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center font-black">
-                            <User className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                      <div className="p-4 bg-gradient-to-r from-slate-50 via-white to-blue-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-blue-950/20 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black">
+                            <User className="w-5 h-5" />
                           </div>
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-black text-slate-900 dark:text-white">Guest Shopper</span>
-                              <span className="text-[9px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-1.5 py-0.2 rounded border border-slate-200/80 dark:border-slate-700">
-                                {guestSession.guest_id || 'G-SESSION'}
+                              <span className="text-sm font-black text-slate-900 dark:text-white">Guest Shopper</span>
+                              <span className="text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                                Active
                               </span>
                             </div>
-                            <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                              <span>Anonymous session active</span>
+                            <div className="text-[11px] text-slate-400 flex items-center gap-1">
+                              <span>Local device session</span>
                             </div>
                           </div>
                         </div>
@@ -607,258 +550,69 @@ export const Navbar: React.FC = () => {
                         </button>
                       </div>
 
-                      {/* Tab Navigation: Sign In vs Quick Menu */}
-                      <div className="p-2 bg-slate-50/70 dark:bg-slate-950/40 flex items-center gap-1.5 text-xs font-bold">
-                        <button
-                          type="button"
-                          onClick={() => setProfileTab('signin')}
-                          className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${profileTab === 'signin'
-                              ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-xs border border-slate-200/80 dark:border-slate-700 font-extrabold'
-                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                            }`}
-                        >
-                          <LogIn className="w-3.5 h-3.5" />
-                          <span>Sign In</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setProfileTab('menu')}
-                          className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${profileTab === 'menu'
-                              ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-xs border border-slate-200/80 dark:border-slate-700 font-extrabold'
-                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                            }`}
-                        >
-                          <SlidersHorizontal className="w-3.5 h-3.5" />
-                          <span>Account Menu</span>
-                        </button>
-                      </div>
+                      {/* Guest Information & Upgrade CTA */}
+                      <div className="p-4 space-y-3">
+                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                          Your wishlist and price drop alerts are currently stored on this browser. Sign in or create an account to access them across all your devices.
+                        </div>
 
-                      {/* TAB CONTENT */}
-                      {profileTab === 'signin' ? (
-                        <div className="p-4 space-y-3.5">
-                          {/* Error Alert */}
-                          {loginError && (
-                            <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-[11px] font-semibold animate-fadeIn">
-                              {loginError}
-                            </div>
-                          )}
-
-                          {/* Password Reset Sent Banner */}
-                          {forgotSent && (
-                            <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-[11px] font-semibold flex items-center gap-1.5 animate-fadeIn">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                              <span>Reset instructions sent! Or visit <Link to="/forgot-password" onClick={() => setIsProfileMenuOpen(false)} className="underline font-bold">Forgot Password Page</Link></span>
-                            </div>
-                          )}
-
-                          {/* Complete Login Form */}
-                          <form onSubmit={handleQuickLogin} className="space-y-3">
-                            {/* 1. Email or Mobile Input */}
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between">
-                                <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                                  Email or Mobile Number
-                                </label>
-                                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                                  Auto-Register
-                                </span>
-                              </div>
-                              <div className="relative">
-                                <input
-                                  type="text"
-                                  required
-                                  value={loginIdentifier}
-                                  onChange={e => setLoginIdentifier(e.target.value)}
-                                  placeholder="name@example.com or phone..."
-                                  className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 transition-all font-medium"
-                                />
-                                <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-                              </div>
-                            </div>
-
-                            {/* 2. Password with Show/Hide and Forgot Password */}
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between">
-                                <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                                  Password
-                                </label>
-                                <button
-                                  type="button"
-                                  onClick={handleForgotTrigger}
-                                  className="text-[10px] font-bold text-brand-600 dark:text-brand-400 hover:underline cursor-pointer"
-                                >
-                                  Forgot Password?
-                                </button>
-                              </div>
-                              <div className="relative">
-                                <input
-                                  type={showPassword ? 'text' : 'password'}
-                                  required
-                                  value={loginPassword}
-                                  onChange={e => setLoginPassword(e.target.value)}
-                                  placeholder="Enter password..."
-                                  className="w-full pl-8 pr-8 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 transition-all font-medium"
-                                />
-                                <Lock className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-                                <button
-                                  type="button"
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                                  title={showPassword ? 'Hide password' : 'Show password'}
-                                >
-                                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* 1-Click Test Credentials - Shopper Only */}
-                            <div className="pt-1">
-                              <div className="text-[10px] font-semibold text-slate-400 mb-1 flex items-center justify-between">
-                                <span>Quick Demo Fill:</span>
-                                <span className="text-emerald-500 font-bold">Shopper Login</span>
-                              </div>
-                              <div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setLoginIdentifier('rohit.kumar@example.com');
-                                    setLoginPassword('password123');
-                                    setLoginError('');
-                                  }}
-                                  className="w-full py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold transition-all text-center border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center justify-center gap-1.5"
-                                >
-                                  <span>👤</span>
-                                  <span>Fill Demo Shopper Credentials (Rohit Kumar)</span>
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* 4. Sign In Button */}
-                            <button
-                              type="submit"
-                              disabled={isLoggingIn}
-                              className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-extrabold text-xs shadow-md active:scale-95 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5"
-                            >
-                              {isLoggingIn ? (
-                                <span>Signing In...</span>
-                              ) : (
-                                <>
-                                  <LogIn className="w-3.5 h-3.5" />
-                                  <span>Sign In Securely</span>
-                                </>
-                              )}
-                            </button>
-                          </form>
-
-                          {/* Divider */}
-                          <div className="relative flex items-center justify-center pt-1">
-                            <div className="border-t border-slate-200 dark:border-slate-800 w-full" />
-                            <span className="bg-white dark:bg-slate-900 px-2 text-[10px] uppercase font-bold text-slate-400 shrink-0">
-                              or
-                            </span>
-                          </div>
-
-                          {/* 5. Continue with Google */}
+                        {/* Primary Action Buttons */}
+                        <div className="grid grid-cols-2 gap-2">
                           <button
                             type="button"
-                            onClick={handleGoogleQuickLogin}
-                            disabled={isLoggingIn}
-                            className="w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                            onClick={() => {
+                              setIsProfileMenuOpen(false);
+                              openAuthModal('login');
+                            }}
+                            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                           >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
-                              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
-                              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
-                              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
-                              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
-                            </svg>
-                            <span>Continue with Google</span>
+                            <LogIn className="w-3.5 h-3.5" />
+                            <span>Sign In</span>
                           </button>
 
-                          {/* 6. Register & Full Login Page Options */}
-                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
-                            <div className="flex items-center justify-between">
-                              <span className="text-slate-500 dark:text-slate-400">New to SmartDeal?</span>
-                              <Link
-                                to="/register"
-                                onClick={() => setIsProfileMenuOpen(false)}
-                                className="font-extrabold text-brand-600 dark:text-brand-400 hover:underline"
-                              >
-                                Create Account / Register
-                              </Link>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-slate-500 dark:text-slate-400">Prefer full screen?</span>
-                              <Link
-                                to="/login"
-                                onClick={() => setIsProfileMenuOpen(false)}
-                                className="font-bold text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1"
-                              >
-                                <span>Dedicated Login Page</span>
-                                <ExternalLink className="w-3 h-3" />
-                              </Link>
-                            </div>
-                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsProfileMenuOpen(false);
+                              openAuthModal('signup');
+                            }}
+                            className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                          >
+                            <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                            <span>Register</span>
+                          </button>
                         </div>
-                      ) : (
-                        /* Guest Quick Menu Navigation */
-                        <div className="p-2 space-y-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          <Link
-                            to="/profile"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-                          >
-                            <User className="w-4 h-4 text-slate-400" />
-                            <span>Guest Shopper Profile</span>
-                          </Link>
+                      </div>
 
-                          <Link
-                            to="/orders"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-                          >
-                            <ShoppingCart className="w-4 h-4 text-slate-400" />
-                            <span>Track Existing Order</span>
-                          </Link>
+                      {/* Useful Quick Links */}
+                      <div className="p-2 space-y-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <Link
+                          to="/orders"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors"
+                        >
+                          <ShoppingCart className="w-4 h-4 text-slate-400" />
+                          <span>Track Existing Order</span>
+                        </Link>
 
-                          <Link
-                            to="/support"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-                          >
-                            <HelpCircle className="w-4 h-4 text-emerald-500" />
-                            <span>Help & Support Center</span>
-                          </Link>
+                        <Link
+                          to="/wishlist"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors"
+                        >
+                          <Heart className="w-4 h-4 text-slate-400" />
+                          <span>Saved Wishlist ({wishlist.length})</span>
+                        </Link>
 
-                          <Link
-                            to="/price-alerts"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-                          >
-                            <Bell className="w-4 h-4 text-slate-400" />
-                            <span>Price Drop Alerts</span>
-                          </Link>
-
-                          <Link
-                            to="/become-seller"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-bold transition-colors"
-                          >
-                            <Store className="w-4 h-4 text-amber-500" />
-                            <span>Become a Seller</span>
-                          </Link>
-
-                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                            <button
-                              type="button"
-                              onClick={() => setProfileTab('signin')}
-                              className="w-full py-2 rounded-xl bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 font-extrabold text-xs hover:bg-brand-100 dark:hover:bg-brand-900 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              <LogIn className="w-3.5 h-3.5" />
-                              <span>Sign In to Access Saved Data</span>
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                        <Link
+                          to="/support"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors"
+                        >
+                          <HelpCircle className="w-4 h-4 text-emerald-500" />
+                          <span>Help & Support Center</span>
+                        </Link>
+                      </div>
                     </>
                   )}
                 </div>
