@@ -128,6 +128,73 @@ export async function uploadToOffsiteStorage(fileName, fileBuffer) {
 }
 
 /**
+ * Cloudflare R2 / AWS S3 SigV4 Download Helper
+ */
+export async function downloadFromOffsiteStorage(fileName) {
+  const bucket = process.env.R2_BUCKET || process.env.S3_BUCKET;
+  const accessKey = process.env.R2_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+  const secretKey = process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
+  const endpoint = process.env.R2_ENDPOINT || process.env.S3_ENDPOINT;
+  const region = process.env.AWS_REGION || 'auto';
+
+  if (!bucket || !accessKey || !secretKey || !endpoint) {
+    return {
+      status: 'PENDING_CREDENTIALS',
+      message: 'Cloudflare R2 / AWS S3 credentials not configured in environment.'
+    };
+  }
+
+  try {
+    const url = new URL(`${endpoint.replace(/\/$/, '')}/${bucket}/${fileName}`);
+    const now = new Date();
+    const dateStamp = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, '');
+    const emptyPayloadHash = crypto.createHash('sha256').update('').digest('hex');
+
+    const canonicalHeaders = `host:${url.host}\nx-amz-content-sha256:${emptyPayloadHash}\nx-amz-date:${amzDate}\n`;
+    const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
+    const canonicalRequest = `GET\n/${bucket}/${fileName}\n\n${canonicalHeaders}\n${signedHeaders}\n${emptyPayloadHash}`;
+
+    const credentialScope = `${dateStamp}/${region}/s3/aws4_request`;
+    const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credentialScope}\n${crypto.createHash('sha256').update(canonicalRequest).digest('hex')}`;
+
+    const kDate = crypto.createHmac('sha256', `AWS4${secretKey}`).update(dateStamp).digest();
+    const kRegion = crypto.createHmac('sha256', kDate).update(region).digest();
+    const kService = crypto.createHmac('sha256', kRegion).update('s3').digest();
+    const kSigning = crypto.createHmac('sha256', kService).update('aws4_request').digest();
+    const signature = crypto.createHmac('sha256', kSigning).update(stringToSign).digest('hex');
+
+    const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+    const downloadRes = await new Promise((resolve, reject) => {
+      const req = https.request(url, {
+        method: 'GET',
+        headers: {
+          'Host': url.host,
+          'x-amz-date': amzDate,
+          'x-amz-content-sha256': emptyPayloadHash,
+          'Authorization': authorization
+        }
+      }, (res) => {
+        const chunks = [];
+        res.on('data', chunk => chunks.push(chunk));
+        res.on('end', () => resolve({ statusCode: res.statusCode, buffer: Buffer.concat(chunks) }));
+      });
+      req.on('error', reject);
+      req.end();
+    });
+
+    if (downloadRes.statusCode === 200) {
+      return { status: 'DOWNLOADED', buffer: downloadRes.buffer };
+    } else {
+      return { status: 'FAILED', error: `HTTP ${downloadRes.statusCode}` };
+    }
+  } catch (err) {
+    return { status: 'ERROR', error: err.message };
+  }
+}
+
+/**
  * Grandfather-Father-Son (GFS) Retention Policy Enforcement
  * Retains:
  * - 7 Daily backups (1 per day for past 7 days)
