@@ -2970,6 +2970,67 @@ Answer concisely with accurate product insights, comparisons, deal authenticity 
         return sendJSON(200, { success: true, message: `User status updated to ${status}.`, user: { id: user.id, email: user.email, status: user.status } });
       }
 
+      if (method === 'DELETE' && path.startsWith('/api/admin/users/')) {
+        const targetUserId = path.replace('/api/admin/users/', '').trim();
+        if (!targetUserId) {
+          return sendJSON(400, { success: false, error: 'User ID is required.' });
+        }
+
+        // Safety Guard: Protect System Super Administrators from deletion
+        if (targetUserId === 'U10000' || targetUserId === 'U10001') {
+          return sendJSON(403, { success: false, error: 'Protected Account: Primary system administrators cannot be deleted.' });
+        }
+
+        if (session.role !== 'SUPER_ADMIN') {
+          return sendJSON(403, { success: false, error: 'Forbidden: Super Administrator authorization required to delete accounts.' });
+        }
+
+        try {
+          // Check user in database
+          const existingUser = await query('SELECT id, email, role FROM users WHERE id = $1;', [targetUserId]);
+          if (existingUser.length === 0 && !users.some(u => u.id === targetUserId)) {
+            return sendJSON(404, { success: false, error: 'User account not found.' });
+          }
+
+          if (existingUser[0]?.role === 'SUPER_ADMIN') {
+            return sendJSON(403, { success: false, error: 'Protected Account: Cannot delete accounts with SUPER_ADMIN privileges.' });
+          }
+
+          // Delete from PostgreSQL (ON DELETE CASCADE removes sessions, profiles, preferences, alerts, wishlist)
+          await query('DELETE FROM users WHERE id = $1;', [targetUserId]);
+          await query('DELETE FROM price_alerts WHERE user_id = $1;', [targetUserId]).catch(() => {});
+          await query('DELETE FROM wishlist WHERE user_id = $1;', [targetUserId]).catch(() => {});
+
+          // In-memory sync
+          const idx = users.findIndex(u => u.id === targetUserId);
+          if (idx !== -1) users.splice(idx, 1);
+          wishlists.delete(targetUserId);
+          userProfiles.delete(targetUserId);
+          userPreferences.delete(targetUserId);
+
+          auditLogs.unshift({
+            id: generateId('AUDIT'),
+            adminId: session.userId,
+            adminEmail: session.email,
+            action: 'USER_DELETED',
+            targetEntity: 'User',
+            entityId: targetUserId,
+            details: { email: existingUser[0]?.email },
+            timestamp: new Date().toISOString(),
+            ipAddress: req.socket.remoteAddress || '127.0.0.1'
+          });
+
+          return sendJSON(200, {
+            success: true,
+            message: `User ${targetUserId} (${existingUser[0]?.email || ''}) and associated records permanently deleted.`,
+            deletedUserId: targetUserId
+          });
+        } catch (dbErr) {
+          console.error('User deletion error:', dbErr);
+          return sendJSON(500, { success: false, error: 'Failed to delete user record.', message: dbErr.message });
+        }
+      }
+
       // 3. GUEST MANAGEMENT
       if (method === 'GET' && path === '/api/admin/guests') {
         const guestsList = [
