@@ -1086,30 +1086,50 @@ export const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'POST' && path === '/api/system/migrate') {
-      const secret = (reqUrl.searchParams.get('secret') || '').trim();
-      if (secret !== 'smartdeal-prod-migrate-2026') {
-        return sendJSON(403, { success: false, error: 'Unauthorized: Invalid migration secret.' });
+      const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+      if (isRateLimited(ip, 5)) {
+        return sendJSON(429, { success: false, error: 'HTTP 429: Too many requests on migration endpoint.' });
       }
 
-      console.log('🏛️ [Manual Trigger]: Running enterprise database migrations on PostgreSQL...');
-      await runMigrations();
-      await seedBaselineData();
-      await runEnterpriseMigration();
+      // Check header or bearer token first to prevent query-param logging in proxies
+      const headerSecret = req.headers['x-system-migration-secret'] || 
+                           (req.headers['authorization']?.startsWith('Bearer ') ? req.headers['authorization'].slice(7) : null);
+      const querySecret = (reqUrl.searchParams.get('secret') || '').trim();
+      const providedSecret = headerSecret || querySecret;
+      const expectedSecret = process.env.SYSTEM_MIGRATION_SECRET || 'smartdeal-prod-migrate-2026';
 
-      const schemaRows = await pool.query(`
-        SELECT table_schema, COUNT(*)::int as count 
-        FROM information_schema.tables 
-        WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
-        GROUP BY table_schema ORDER BY table_schema;
-      `);
-      const totalTables = schemaRows.rows.reduce((sum, r) => sum + r.count, 0);
+      if (!providedSecret || providedSecret !== expectedSecret) {
+        return sendJSON(403, { success: false, error: 'Unauthorized: Invalid migration secret token.' });
+      }
 
-      return sendJSON(200, {
-        success: true,
-        message: 'Enterprise migration executed successfully across 10 schemas.',
-        totalTables,
-        schemas: schemaRows.rows
-      });
+      const lockRes = await pool.query('SELECT pg_try_advisory_lock(7217514087) as acquired;');
+      if (!lockRes.rows[0]?.acquired) {
+        return sendJSON(409, { success: false, error: 'Migration currently in progress by another worker.' });
+      }
+
+      try {
+        console.log('🏛️ [Manual Trigger]: Running enterprise database migrations on PostgreSQL...');
+        await runMigrations();
+        await seedBaselineData();
+        await runEnterpriseMigration();
+
+        const schemaRows = await pool.query(`
+          SELECT table_schema, COUNT(*)::int as count 
+          FROM information_schema.tables 
+          WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
+          GROUP BY table_schema ORDER BY table_schema;
+        `);
+        const totalTables = schemaRows.rows.reduce((sum, r) => sum + r.count, 0);
+
+        return sendJSON(200, {
+          success: true,
+          message: 'Enterprise migration executed successfully across 10 schemas.',
+          totalTables,
+          schemas: schemaRows.rows
+        });
+      } finally {
+        await pool.query('SELECT pg_advisory_unlock(7217514087);').catch(() => {});
+      }
     }
 
     if (method === 'GET' && (path === '/api/marketplaces' || path === '/api/stores')) {
@@ -3630,11 +3650,23 @@ export const ensureDatabaseInitialized = async () => {
     `);
     const count = tableRes.rows[0]?.count || 0;
     if (count === 0) {
-      console.log('🏛️ [Server Boot]: Uninitialized database detected. Running enterprise migrations...');
-      await runMigrations();
-      await seedBaselineData();
-      await runEnterpriseMigration();
-      console.log('✅ [Server Boot]: Enterprise schemas & tables successfully initialized.');
+      // Concurrency protection: acquire PostgreSQL advisory lock to ensure single worker execution
+      const lockRes = await pool.query('SELECT pg_try_advisory_lock(7217514087) as acquired;');
+      const lockAcquired = lockRes.rows[0]?.acquired;
+      if (!lockAcquired) {
+        console.log('⏳ [Server Boot]: Another deployment replica is initializing the database. Awaiting completion...');
+        return;
+      }
+
+      try {
+        console.log('🏛️ [Server Boot]: Exclusive migration lock acquired. Running enterprise migrations...');
+        await runMigrations();
+        await seedBaselineData();
+        await runEnterpriseMigration();
+        console.log('✅ [Server Boot]: Enterprise schemas & tables successfully initialized.');
+      } finally {
+        await pool.query('SELECT pg_advisory_unlock(7217514087);').catch(() => {});
+      }
     } else {
       console.log(`🏛️ [Server Boot]: Database verified initialized (${count} identity tables found).`);
     }
