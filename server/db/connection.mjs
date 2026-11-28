@@ -121,8 +121,11 @@ const SLOW_QUERY_THRESHOLD_MS = parseInt(process.env.SLOW_QUERY_THRESHOLD_MS || 
 // Instantiate PostgreSQL Pool safely
 export const pool = poolConfig ? new Pool(poolConfig) : null;
 
-// Pool error listener
+// Pool connect listener to configure search_path across all 10 enterprise schemas
 if (pool) {
+  pool.on('connect', (client) => {
+    client.query('SET search_path TO identity, administration, catalog, marketplace, pricing, offers, affiliate, personalization, analytics, operations, public;').catch(() => {});
+  });
   pool.on('error', (err) => {
     console.error('[PostgreSQL Pool Unexpected Error]:', err.message);
     dbTelemetry.failedQueries++;

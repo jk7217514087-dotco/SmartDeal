@@ -1049,8 +1049,24 @@ export const server = http.createServer(async (req, res) => {
         ? 'CONNECTED'
         : (isConfigured ? 'DISCONNECTED' : 'NOT_CONFIGURED');
 
+      let enterpriseTables = 0;
+      let enterpriseSchemas = [];
+      if (isDbConnected && pool) {
+        try {
+          const schemaRows = await pool.query(`
+            SELECT table_schema, COUNT(*)::int as count 
+            FROM information_schema.tables 
+            WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
+            GROUP BY table_schema ORDER BY table_schema;
+          `);
+          enterpriseTables = schemaRows.rows.reduce((sum, r) => sum + r.count, 0);
+          enterpriseSchemas = schemaRows.rows.map(r => `${r.table_schema} (${r.count})`);
+        } catch {}
+      }
+
       return sendJSON(200, {
         status: isDbConnected ? 'healthy' : 'degraded',
+        commit: 'e28a501',
         timestamp: new Date().toISOString(),
         version: '2.0.0-PROD',
         api: 'healthy',
@@ -1061,10 +1077,43 @@ export const server = http.createServer(async (req, res) => {
           engine: dbHealth.engine || 'PostgreSQL 18',
           version: dbHealth.version || null,
           latencyMs: dbHealth.latencyMs || 0,
+          enterpriseTables,
+          enterpriseSchemas,
           error: isDbConnected ? null : (dbHealth.message || 'Database unreachable')
         },
         security: 'Argon2id/SHA-256'
       });
+    }
+
+    if (method === 'POST' && path === '/api/system/migrate') {
+      const secret = (reqUrl.searchParams.get('secret') || '').trim();
+      if (secret !== 'smartdeal-prod-migrate-2026') {
+        return sendJSON(403, { success: false, error: 'Unauthorized: Invalid migration secret.' });
+      }
+
+      console.log('🏛️ [Manual Trigger]: Running enterprise database migrations on PostgreSQL...');
+      await runMigrations();
+      await seedBaselineData();
+      await runEnterpriseMigration();
+
+      const schemaRows = await pool.query(`
+        SELECT table_schema, COUNT(*)::int as count 
+        FROM information_schema.tables 
+        WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
+        GROUP BY table_schema ORDER BY table_schema;
+      `);
+      const totalTables = schemaRows.rows.reduce((sum, r) => sum + r.count, 0);
+
+      return sendJSON(200, {
+        success: true,
+        message: 'Enterprise migration executed successfully across 10 schemas.',
+        totalTables,
+        schemas: schemaRows.rows
+      });
+    }
+
+    if (method === 'GET' && (path === '/api/marketplaces' || path === '/api/stores')) {
+      return sendJSON(200, { success: true, count: marketplaces.length, data: marketplaces });
     }
 
     if (method === 'GET' && (path === '/SmartDeal.apk' || path === '/download/smartdeal.apk' || normalizedPath === '/smartdeal.apk' || path === '/api/download/apk')) {
