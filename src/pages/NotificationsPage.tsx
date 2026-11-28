@@ -17,7 +17,7 @@ interface NotificationItem {
   title: string;
   description: string;
   time: string;
-  type: 'price' | 'cashback' | 'order' | 'seller';
+  type: 'price' | 'deal' | 'order' | 'seller';
   read: boolean;
 }
 
@@ -33,10 +33,10 @@ export const NotificationsPage: React.FC = () => {
     },
     {
       id: 'notif-2',
-      title: 'Cashback Credited (+₹120)',
-      description: 'Purchase cashback reward successfully credited to your wallet.',
+      title: 'Exclusive Deal Verified',
+      description: 'Apple MacBook Air M2 dropped to ₹84,990 across verified retail partners.',
       time: '2 hours ago',
-      type: 'cashback',
+      type: 'deal',
       read: false
     },
     {
@@ -57,7 +57,7 @@ export const NotificationsPage: React.FC = () => {
     }
   ]);
 
-  const [filter, setFilter] = useState<'all' | 'unread' | 'price' | 'cashback' | 'order'>('all');
+  const [filter, setFilter] = useState<'all' | 'unread' | 'price' | 'deal' | 'order'>('all');
   const [showToast, setShowToast] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -86,7 +86,7 @@ export const NotificationsPage: React.FC = () => {
   const filteredNotifications = notifications.filter(n => {
     if (filter === 'unread') return !n.read;
     if (filter === 'price') return n.type === 'price';
-    if (filter === 'cashback') return n.type === 'cashback';
+    if (filter === 'deal') return n.type === 'deal';
     if (filter === 'order') return n.type === 'order';
     return true;
   });
@@ -114,7 +114,7 @@ export const NotificationsPage: React.FC = () => {
             )}
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Stay updated with price drops, courier dispatch timelines, and cashback rewards
+            Stay updated with price drops, courier dispatch timelines, and verified deals
           </p>
         </div>
 
@@ -135,7 +135,7 @@ export const NotificationsPage: React.FC = () => {
           { id: 'all', label: `All (${notifications.length})` },
           { id: 'unread', label: `Unread (${unreadCount})` },
           { id: 'price', label: 'Price Alerts' },
-          { id: 'cashback', label: 'Cashback & Rewards' },
+          { id: 'deal', label: 'Verified Deals' },
           { id: 'order', label: 'Orders' }
         ].map(tab => (
           <button
@@ -169,7 +169,7 @@ export const NotificationsPage: React.FC = () => {
                   className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
                     n.type === 'price'
                       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40'
-                      : n.type === 'cashback'
+                      : n.type === 'deal'
                       ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/40'
                       : n.type === 'order'
                       ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40'
@@ -177,7 +177,7 @@ export const NotificationsPage: React.FC = () => {
                   }`}
                 >
                   {n.type === 'price' && <TrendingDown className="w-5 h-5" />}
-                  {n.type === 'cashback' && <Sparkles className="w-5 h-5" />}
+                  {n.type === 'deal' && <Sparkles className="w-5 h-5" />}
                   {n.type === 'order' && <Truck className="w-5 h-5" />}
                   {n.type === 'seller' && <ShieldCheck className="w-5 h-5" />}
                 </div>

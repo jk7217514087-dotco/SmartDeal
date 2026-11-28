@@ -987,39 +987,15 @@ export const getAuthSessionAsync = async (req) => {
 };
 
 // Calculate Wallet summary strictly from double-entry ledger transactions
-export const calculateCashbackWallet = (userId) => {
-  const userTx = cashbackTransactions.filter(t => t.userId === userId);
-  let availablePaise = 0;
-  let pendingPaise = 0;
-  let totalEarnedPaise = 0;
-  let totalRedeemedPaise = 0;
-  let totalReversedPaise = 0;
-
-  for (const t of userTx) {
-    const amtPaise = toPaise(t.amount);
-    if (t.status === 'Available') {
-      availablePaise += amtPaise;
-      totalEarnedPaise += amtPaise;
-    } else if (t.status === 'Pending') {
-      pendingPaise += amtPaise;
-    } else if (t.status === 'Confirmed') {
-      totalEarnedPaise += amtPaise;
-    } else if (t.status === 'Redeemed') {
-      availablePaise += amtPaise; // negative amount
-      totalRedeemedPaise += Math.abs(amtPaise);
-    } else if (t.status === 'Reversed') {
-      availablePaise += amtPaise; // negative amount
-      totalReversedPaise += Math.abs(amtPaise);
-    }
-  }
-
+export const calculateCashbackWallet = (_userId) => {
+  // Cashback and rewards program is discontinued. SmartDeal retains 100% affiliate commission.
   return {
-    availableBalance: Math.max(0, fromPaise(availablePaise)),
-    pendingBalance: Math.max(0, fromPaise(pendingPaise)),
-    totalEarned: fromPaise(totalEarnedPaise),
-    totalRedeemed: fromPaise(totalRedeemedPaise),
-    totalReversed: fromPaise(totalReversedPaise),
-    transactions: userTx
+    availableBalance: 0,
+    pendingBalance: 0,
+    totalEarned: 0,
+    totalRedeemed: 0,
+    totalReversed: 0,
+    transactions: []
   };
 };
 
@@ -1750,9 +1726,9 @@ export const server = http.createServer(async (req, res) => {
 
       const rate = Number(commissionRate || 5.0);
       const commissionEarned = safeMoneyMultiply(saleAmount, rate);
-      // User gets 20% of SmartDeal's affiliate commission as cashback
-      const userCashbackAllocation = safeMoneyMultiply(commissionEarned, 20.0);
-      const smartdealRemaining = safeMoneySubtract(commissionEarned, userCashbackAllocation);
+      // SmartDeal retains 100% of affiliate commission. Customer cashback is 0.00.
+      const userCashbackAllocation = 0.00;
+      const smartdealRemaining = commissionEarned;
 
       const conversionRecord = {
         id: generateId('CONV'),
@@ -1779,7 +1755,7 @@ export const server = http.createServer(async (req, res) => {
       await dispatchOwnerNotification({
         type: 'PURCHASE_SUCCESS',
         title: `🎉 [SUCCESSFUL PURCHASE] ${conversionRecord.productName} on ${conversionRecord.marketplace}`,
-        smsText: `🎉 [SmartDeal SUCCESS] Product Purchased!\n• Product: ${conversionRecord.productName}\n• Store: ${conversionRecord.marketplace}\n• Price Paid: ₹${conversionRecord.saleAmount.toLocaleString('en-IN')}\n• Commission Earned: ₹${conversionRecord.commissionEarned.toLocaleString('en-IN')}\n• User Cashback: ₹${conversionRecord.userCashbackAllocation.toLocaleString('en-IN')}\n• Order Ref: ${conversionRecord.orderRef}\n• Customer: ${userId || guestId || 'Customer'}\n• Status: Confirmed & Credited`,
+        smsText: `🎉 [SmartDeal SUCCESS] Product Purchased!\n• Product: ${conversionRecord.productName}\n• Store: ${conversionRecord.marketplace}\n• Price Paid: ₹${conversionRecord.saleAmount.toLocaleString('en-IN')}\n• Affiliate Commission Earned: ₹${conversionRecord.commissionEarned.toLocaleString('en-IN')} (100% Platform Revenue)\n• Order Ref: ${conversionRecord.orderRef}\n• Customer: ${userId || guestId || 'Customer'}\n• Status: Confirmed & Credited`,
         emailSubject: `🎉 [SmartDeal SUCCESS] ₹${conversionRecord.commissionEarned} Commission Earned: ${conversionRecord.productName}`,
         metadata: {
           conversionId: conversionRecord.id,
@@ -1788,26 +1764,9 @@ export const server = http.createServer(async (req, res) => {
           marketplace: conversionRecord.marketplace,
           saleAmount: conversionRecord.saleAmount,
           commissionEarned: conversionRecord.commissionEarned,
-          userCashbackAllocation: conversionRecord.userCashbackAllocation
+          userCashbackAllocation: 0.00
         }
       });
-
-      // Credit user's double-entry cashback ledger (Section 21.9)
-      if (userId) {
-        cashbackTransactions.unshift({
-          id: generateId('CB-TX'),
-          userId,
-          orderRef,
-          marketplace: conversionRecord.marketplace,
-          productName: conversionRecord.productName,
-          amount: userCashbackAllocation,
-          status: 'Available',
-          type: 'AVAILABLE',
-          date: new Date().toISOString().split('T')[0],
-          timestamp: new Date().toISOString(),
-          idempotencyKey
-        });
-      }
 
       return sendJSON(201, {
         success: true,
@@ -2149,14 +2108,14 @@ export const server = http.createServer(async (req, res) => {
       if (status === 'BOUGHT_SUCCESS') {
         const rate = 5.0;
         const commissionEarned = safeMoneyMultiply(verificationRecord.saleAmount, rate);
-        const userCashback = safeMoneyMultiply(commissionEarned, 20.0);
+        const userCashback = 0.00;
 
         await dispatchOwnerNotification({
           type: 'PURCHASE_SUCCESS',
           title: `🎉 [SUCCESSFUL PURCHASE] ${productName} on ${marketplace}`,
-          smsText: `🎉 [SmartDeal SUCCESS] Product Purchased!\n• Product: ${productName}\n• Store: ${marketplace}\n• Price Paid: ₹${Number(saleAmount || 0).toLocaleString('en-IN')}\n• Commission Earned: ₹${commissionEarned}\n• User Cashback: ₹${userCashback}\n• Order Ref: ${verificationRecord.orderRef}\n• Customer: ${customerName} (${customerPhone})\n• Status: Verified & Confirmed`,
+          smsText: `🎉 [SmartDeal SUCCESS] Product Purchased!\n• Product: ${productName}\n• Store: ${marketplace}\n• Price Paid: ₹${Number(saleAmount || 0).toLocaleString('en-IN')}\n• Affiliate Commission Earned: ₹${commissionEarned} (100% Platform Revenue)\n• Order Ref: ${verificationRecord.orderRef}\n• Customer: ${customerName} (${customerPhone})\n• Status: Verified & Confirmed`,
           emailSubject: `🎉 [SmartDeal SUCCESS] ₹${commissionEarned} Commission Earned: ${productName}`,
-          metadata: { ...verificationRecord, commissionEarned, userCashback }
+          metadata: { ...verificationRecord, commissionEarned, userCashback: 0.00 }
         });
       }
 
@@ -2184,19 +2143,26 @@ export const server = http.createServer(async (req, res) => {
     }
 
     // ------------------------------------------------------------------------
-    // SECTION 13: CASHBACK WALLET & REDEMPTION
+    // SECTION 13: CASHBACK WALLET & REDEMPTION (DISCONTINUED)
     // ------------------------------------------------------------------------
     if (method === 'GET' && path === '/api/cashback/wallet') {
       const session = getAuthSession(req);
       if (!session) {
         return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Customer authentication required.' });
       }
-      // IDOR Protection: Normal users can only inspect their own wallet. Admins can inspect via query param.
-      const requestedId = reqUrl.searchParams.get('userId');
-      const isAdmin = ['SUPER_ADMIN', 'ADMIN'].includes(session.role);
-      const userId = (isAdmin && requestedId) ? requestedId : session.userId;
-      const wallet = calculateCashbackWallet(userId);
-      return sendJSON(200, { success: true, wallet });
+      return sendJSON(200, {
+        success: true,
+        discontinued: true,
+        message: 'Cashback program is discontinued. SmartDeal operates strictly as an affiliate price comparison platform.',
+        wallet: {
+          availableBalance: 0,
+          pendingBalance: 0,
+          totalEarned: 0,
+          totalRedeemed: 0,
+          totalReversed: 0,
+          transactions: []
+        }
+      });
     }
 
     if (method === 'GET' && path === '/api/cashback/transactions') {
@@ -2204,12 +2170,12 @@ export const server = http.createServer(async (req, res) => {
       if (!session) {
         return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Customer authentication required.' });
       }
-      // IDOR Protection: Normal users can only inspect their own transactions.
-      const requestedId = reqUrl.searchParams.get('userId');
-      const isAdmin = ['SUPER_ADMIN', 'ADMIN'].includes(session.role);
-      const userId = (isAdmin && requestedId) ? requestedId : session.userId;
-      const txs = cashbackTransactions.filter(t => t.userId === userId);
-      return sendJSON(200, { success: true, count: txs.length, data: txs });
+      return sendJSON(200, {
+        success: true,
+        discontinued: true,
+        count: 0,
+        data: []
+      });
     }
 
     if (method === 'POST' && path === '/api/cashback/redeem') {
@@ -2217,42 +2183,9 @@ export const server = http.createServer(async (req, res) => {
       if (!session) {
         return sendJSON(401, { success: false, error: 'HTTP 401 Unauthorized: Authentication required for redemption.' });
       }
-      // IDOR Protection: Enforce authenticated user session ID, reject arbitrary body.userId tampering
-      const userId = session.userId;
-
-      const { amount, method: payoutMethod, accountDetails } = await parseJsonBody(req);
-      const amt = Number(amount);
-      if (isNaN(amt) || amt <= 0) {
-        return sendJSON(400, { success: false, error: 'Valid positive withdrawal amount is required.' });
-      }
-
-      const wallet = calculateCashbackWallet(userId);
-      // Pending cashback cannot be treated as available for redemption! (Section 21.8)
-      if (amt > wallet.availableBalance) {
-        return sendJSON(400, {
-          success: false,
-          error: `Insufficient available balance. Available: ₹${wallet.availableBalance}, Requested: ₹${amt}. Pending cashback (₹${wallet.pendingBalance}) cannot be redeemed.`
-        });
-      }
-
-      cashbackTransactions.unshift({
-        id: generateId('CB-TX'),
-        userId,
-        orderRef: `RED-${Date.now().toString().slice(-8)}`,
-        marketplace: 'SmartDeal Payout',
-        productName: `Withdrawal via ${payoutMethod || 'UPI'} (${accountDetails || 'user@upi'})`,
-        amount: -amt,
-        status: 'Redeemed',
-        type: 'REDEEMED',
-        date: new Date().toISOString().split('T')[0],
-        timestamp: new Date().toISOString()
-      });
-
-      const updatedWallet = calculateCashbackWallet(userId);
-      return sendJSON(200, {
-        success: true,
-        message: `₹${amt} withdrawal executed successfully via ${payoutMethod || 'UPI'}.`,
-        newAvailableBalance: updatedWallet.availableBalance
+      return sendJSON(410, {
+        success: false,
+        error: 'Cashback redemption is discontinued. SmartDeal operates strictly as an affiliate price comparison platform.'
       });
     }
 

@@ -780,7 +780,7 @@ export const UserProfilePage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white">Two-Factor Authentication (2FA)</div>
-                    <div className="text-[11px] text-slate-400">Protect your cashback wallet with an authenticator app</div>
+                    <div className="text-[11px] text-slate-400">Protect your account and sensitive settings with an authenticator app</div>
                   </div>
                   <button
                     onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}

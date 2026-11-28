@@ -106,18 +106,12 @@ export const ProductDetailPage: React.FC = () => {
 
   const isWishlisted = wishlist.includes(product.id);
 
-  const fallbackCashback = Math.round(product.sellingPrice * 0.015);
   const bestMarketplace = product.marketplacePrices[0] || {
     sellerName: 'Amazon',
     price: product.sellingPrice,
-    finalPrice: Math.max(0, product.sellingPrice - fallbackCashback),
+    finalPrice: product.sellingPrice,
     url: '#',
-    cashbackAmount: fallbackCashback,
   };
-
-  const cashbackAmount =
-    bestMarketplace.cashbackAmount ??
-    fallbackCashback;
 
   const handleBuyAtBestPrice = (e?: React.MouseEvent) => {
     if (e) {

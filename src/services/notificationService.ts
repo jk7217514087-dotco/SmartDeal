@@ -363,9 +363,8 @@ class NotificationService {
     const email = config.ownerEmail || OWNER_EMAIL;
     const clickId = params.clickId || `SD-AFF-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
     const estCommission = Math.round(params.price * 0.05); // ~5% standard
-    const estCashback = Math.round(estCommission * 0.2);
 
-    const smsText = `🚨 [SmartDeal Alert] User Clicked Buy!\n• Product: ${params.productName}\n• Store: ${params.marketplace}\n• Price: ₹${params.price.toLocaleString('en-IN')}\n• Click ID: ${clickId}\n• Est. Commission: ₹${estCommission.toLocaleString('en-IN')}\n• Est. User Cashback: ₹${estCashback.toLocaleString('en-IN')}\n• User: ${params.userName || 'Guest Visitor'} (${params.userContact || 'Web Session'})\n• Status: Visited Store (Decision Pending)\n• Store Link: ${params.targetUrl}`;
+    const smsText = `🚨 [SmartDeal Alert] User Clicked Buy!\n• Product: ${params.productName}\n• Store: ${params.marketplace}\n• Price: ₹${params.price.toLocaleString('en-IN')}\n• Click ID: ${clickId}\n• Est. Commission: ₹${estCommission.toLocaleString('en-IN')} (100% Platform Revenue)\n• User: ${params.userName || 'Guest Visitor'} (${params.userContact || 'Web Session'})\n• Status: Visited Store (Decision Pending)\n• Store Link: ${params.targetUrl}`;
     const emailSubject = `🚨 [SmartDeal Alert] Outbound Click: ${params.productName} (${params.marketplace})`;
 
     const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(smsText)}`;
@@ -440,9 +439,8 @@ class NotificationService {
     const phone = config.ownerPhone || OWNER_PHONE;
     const email = config.ownerEmail || OWNER_EMAIL;
     const commission = params.commissionEarned || Math.round(params.pricePaid * 0.05);
-    const cashback = params.userCashback || Math.round(commission * 0.2);
 
-    const smsText = `✅ [SmartDeal SUCCESS] Product Purchased!\n• Product: ${params.productName}\n• Store: ${params.marketplace}\n• Price Paid: ₹${params.pricePaid.toLocaleString('en-IN')}\n• Order Ref: ${params.orderRef}\n• Commission Earned: ₹${commission.toLocaleString('en-IN')}\n• User Cashback: ₹${cashback.toLocaleString('en-IN')}\n• Customer: ${params.customerName || 'Customer'} (${params.customerContact || 'Verified'})\n• Click ID: ${params.clickId || 'SD-CONFIRMED'}\n• Status: Confirmed & Credited`;
+    const smsText = `✅ [SmartDeal SUCCESS] Product Purchased!\n• Product: ${params.productName}\n• Store: ${params.marketplace}\n• Price Paid: ₹${params.pricePaid.toLocaleString('en-IN')}\n• Order Ref: ${params.orderRef}\n• Commission Earned: ₹${commission.toLocaleString('en-IN')} (100% Platform Revenue)\n• Customer: ${params.customerName || 'Customer'} (${params.customerContact || 'Verified'})\n• Click ID: ${params.clickId || 'SD-CONFIRMED'}\n• Status: Confirmed & Credited`;
     const emailSubject = `🎉 [SmartDeal SUCCESS] ₹${commission} Commission Earned: ${params.productName}`;
 
     const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(smsText)}`;
@@ -456,8 +454,7 @@ class NotificationService {
           <tr><td style="padding: 8px; font-weight: bold; width: 140px;">Product:</td><td>${params.productName}</td></tr>
           <tr><td style="padding: 8px; font-weight: bold;">Store:</td><td>${params.marketplace}</td></tr>
           <tr><td style="padding: 8px; font-weight: bold;">Final Price:</td><td>₹${params.pricePaid.toLocaleString('en-IN')}</td></tr>
-          <tr><td style="padding: 8px; font-weight: bold; color: #059669;">Commission Earned:</td><td style="font-weight: bold; color: #059669;">₹${commission.toLocaleString('en-IN')}</td></tr>
-          <tr><td style="padding: 8px; font-weight: bold;">Cashback Credited:</td><td>₹${cashback.toLocaleString('en-IN')}</td></tr>
+          <tr><td style="padding: 8px; font-weight: bold; color: #059669;">Commission Earned:</td><td style="font-weight: bold; color: #059669;">₹${commission.toLocaleString('en-IN')} (100% Platform Revenue)</td></tr>
           <tr><td style="padding: 8px; font-weight: bold;">Order ID / Ref:</td><td>${params.orderRef}</td></tr>
           <tr><td style="padding: 8px; font-weight: bold;">Buyer:</td><td>${params.customerName || 'Customer'} (${params.customerContact || 'Verified'})</td></tr>
         </table>

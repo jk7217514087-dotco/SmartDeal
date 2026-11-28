@@ -5,7 +5,7 @@
     "email": "jk7217514087@gmail.com",
     "phone": "7217514087",
     "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
-    "role": "ADMIN",
+    "role": "SUPER_ADMIN",
     "status": "ACTIVE",
     "createdAt": "2026-08-01T10:00:00.000Z"
   },
@@ -15,7 +15,17 @@
     "email": "admin@smartdeal.com",
     "phone": "7217514087",
     "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
-    "role": "ADMIN",
+    "role": "SUPER_ADMIN",
+    "status": "ACTIVE",
+    "createdAt": "2026-08-01T10:00:00.000Z"
+  },
+  {
+    "id": "U10002",
+    "name": "SmartDeal Support Specialist",
+    "email": "support@smartdeal.com",
+    "phone": "7217514088",
+    "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "SUPPORT_ADMIN",
     "status": "ACTIVE",
     "createdAt": "2026-08-01T10:00:00.000Z"
   },
@@ -446,5 +456,43 @@
     "role": "USER",
     "status": "ACTIVE",
     "createdAt": "2026-11-17T21:14:59.669Z"
+  },
+  {
+    "id": "U-MWYZ83FW-5ZE5",
+    "name": "Test Shopper",
+    "email": "shopper_1795783658946@example.com",
+    "phone": "9876543210",
+    "passwordHash": "10399f89ca334c9cdad3d0abec60ffefee57cf3ffef1faa4d44c4c948ac67198",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-27T12:47:39.440Z"
+  },
+  {
+    "id": "U-MWYZ83XR-JSU9",
+    "name": "User B",
+    "email": "user_b_1795783659757@example.com",
+    "phone": "",
+    "passwordHash": "98983cb1e2d0b64f00a59ce61ed86f7fbdb5835c6cf2669e955b35be0f9c297f",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-27T12:47:40.062Z"
+  },
+  {
+    "id": "U-MWYZ8478-WIUY",
+    "name": "Alpha Customer",
+    "email": "customer.alpha@gmail.com",
+    "phone": "9876543220",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-27T12:47:40.100Z"
+  },
+  {
+    "id": "U-MWYZ847D-G58F",
+    "name": "Beta Customer",
+    "email": "customer.beta@gmail.com",
+    "phone": "9876543220",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-27T12:47:40.105Z"
   }
 ]

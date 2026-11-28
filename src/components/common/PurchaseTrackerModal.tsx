@@ -45,7 +45,6 @@ export const PurchaseTrackerModal: React.FC<PurchaseTrackerModalProps> = ({
   if (!isOpen) return null;
 
   const estCommission = Math.round(actualPrice * 0.05);
-  const estCashback = Math.round(estCommission * 0.2);
 
   const handleConfirmPurchase = async () => {
     setIsSubmitting(true);
@@ -59,7 +58,7 @@ export const PurchaseTrackerModal: React.FC<PurchaseTrackerModalProps> = ({
         pricePaid: Number(actualPrice),
         orderRef: generatedOrderRef,
         commissionEarned: estCommission,
-        userCashback: estCashback,
+        userCashback: 0,
         customerName: buyerName.trim() || 'Verified Customer',
         customerContact: buyerPhone.trim() || 'Website Visitor'
       });

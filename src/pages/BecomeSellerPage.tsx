@@ -66,8 +66,8 @@ export const BecomeSellerPage: React.FC = () => {
           </div>
           <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
             <Sparkles className="w-5 h-5 text-amber-400" />
-            <div className="font-extrabold text-sm text-white">Cashback Funded</div>
-            <div className="text-xs text-slate-400">SmartDeals subsidizes shopper cashback to boost your conversion rates.</div>
+            <div className="font-extrabold text-sm text-white">Direct Shopper Referral</div>
+            <div className="text-xs text-slate-400">SmartDeal routes high-intent buyers directly to your authentic store listings.</div>
           </div>
         </div>
       </div>

@@ -27,7 +27,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1523474253243-282a0762d115?w=100&auto=format&fit=crop&q=80',
       tagline: "India's largest online store for electronics, appliances, books & more.",
       averageCommission: '3.0% – 9.0%',
-      cashbackRate: 'Up to 2.5% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 7,
       affiliateStatus: 'Active Partner',
       categories: ['Mobiles', 'Laptops', 'Audio', 'Appliances', 'Fashion', 'Books']
@@ -39,7 +39,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=100&auto=format&fit=crop&q=80',
       tagline: 'Leading e-commerce destination for smartphones, TVs, fashion & super deals.',
       averageCommission: '2.5% – 8.5%',
-      cashbackRate: 'Up to 2.0% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 7,
       affiliateStatus: 'Active Partner',
       categories: ['Mobiles', 'Electronics', 'Appliances', 'Fashion', 'Home']
@@ -51,7 +51,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=100&auto=format&fit=crop&q=80',
       tagline: 'Premium electronics, gadgets, authentic manufacturer warranty and store pickup.',
       averageCommission: '2.0% – 5.0%',
-      cashbackRate: 'Up to 1.8% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 14,
       affiliateStatus: 'Verified Network',
       categories: ['Laptops', 'Audio', 'Tablets', 'Gaming', 'Smart Home']
@@ -63,7 +63,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=100&auto=format&fit=crop&q=80',
       tagline: 'Nationwide omnichannel consumer electronics, instant delivery & store support.',
       averageCommission: '2.0% – 4.5%',
-      cashbackRate: 'Up to 1.5% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 7,
       affiliateStatus: 'Verified Network',
       categories: ['Laptops', 'Smartphones', 'Audio', 'Home Entertainment']
@@ -75,7 +75,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=100&auto=format&fit=crop&q=80',
       tagline: 'Curated luxury lifestyle, high-end electronics, and authentic brand flagships.',
       averageCommission: '3.5% – 7.0%',
-      cashbackRate: 'Up to 2.2% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 10,
       affiliateStatus: 'Active Partner',
       categories: ['Electronics', 'Watches', 'Audio', 'Premium Fashion']
@@ -87,7 +87,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=100&auto=format&fit=crop&q=80',
       tagline: 'Everyday budget value e-commerce with lowest wholesale pricing across India.',
       averageCommission: '4.0% – 10.0%',
-      cashbackRate: 'Up to 3.0% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 7,
       affiliateStatus: 'Integrated API',
       categories: ['Fashion', 'Accessories', 'Home Decor', 'Footwear']
@@ -99,7 +99,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&auto=format&fit=crop&q=80',
       tagline: 'Premier fashion and lifestyle destination for branded sneakers and apparel.',
       averageCommission: '5.0% – 10.0%',
-      cashbackRate: 'Up to 3.5% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 14,
       affiliateStatus: 'Active Partner',
       categories: ['Sneakers', 'Sportswear', 'Fashion', 'Accessories']
@@ -111,7 +111,7 @@ export const MarketplacesPage: React.FC = () => {
       logo: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100&auto=format&fit=crop&q=80',
       tagline: 'Trendsetting streetwear, international brands, and exclusive lifestyle fashion.',
       averageCommission: '4.5% – 9.0%',
-      cashbackRate: 'Up to 2.8% Cashback',
+      cashbackRate: 'Verified Store',
       returnPolicyDays: 10,
       affiliateStatus: 'Active Partner',
       categories: ['Footwear', 'Apparel', 'Streetwear', 'Accessories']
@@ -168,7 +168,7 @@ export const MarketplacesPage: React.FC = () => {
 
                 <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Cashback:</span>
+                    <span className="text-slate-400">Store Status:</span>
                     <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{partner.cashbackRate}</strong>
                   </div>
                   <div className="flex items-center justify-between">
@@ -271,20 +271,20 @@ export const MarketplacesPage: React.FC = () => {
           <div className="space-y-2 p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-500" />
-              2. Shared Affiliate Commission
+              2. 100% Free Price Comparison
             </div>
             <p>
-              When you complete a purchase, the partner store pays SmartDeal a small referral commission at no additional cost to you. We allocate up to 50% of this commission directly back to your cashback wallet.
+              When you complete a purchase, the partner store pays SmartDeal a small referral commission at no additional cost to you. SmartDeal retains affiliate commissions as revenue to fund free, unbiased price comparisons for consumers.
             </p>
           </div>
 
           <div className="space-y-2 p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <RefreshCw className="w-4 h-4 text-cyan-500" />
-              3. Transparent Return Reversals
+              3. Unbiased Price Intelligence
             </div>
             <p>
-              Cashback stays pending during the marketplace's 7-14 day return window. If you return an order, the partner clawback reverses the commission and pending cashback idempotently with full ledger auditability.
+              SmartDeal indexes real prices, verified bank discounts, and shipping costs. Because we never inflate prices or distribute volatile incentives, our price intelligence remains 100% transparent and objective.
             </p>
           </div>
 

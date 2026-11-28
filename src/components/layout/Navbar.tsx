@@ -55,7 +55,6 @@ export const Navbar: React.FC = () => {
     trackActivity,
     cart,
     wishlist,
-    cashbackWallet,
     setIsAiAssistantOpen,
     searchQuery,
     setSearchQuery,
@@ -346,26 +345,6 @@ export const Navbar: React.FC = () => {
                             <X className="w-4 h-4" />
                           </button>
                         </div>
-
-                        {/* Cashback Wallet Pill */}
-                        <Link
-                          to="/account/cashback"
-                          onClick={() => setIsProfileMenuOpen(false)}
-                          className="mt-3 flex items-center justify-between p-2.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/60 hover:bg-emerald-100/70 transition-all group"
-                        >
-                          <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
-                            <Sparkles className="w-4 h-4 text-emerald-500" />
-                            <span>Cashback Wallet</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-xs font-black text-emerald-700 dark:text-emerald-300">
-                              ₹{cashbackWallet.availableBalance}
-                            </span>
-                            <span className="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 block">
-                              Direct Bank / UPI
-                            </span>
-                          </div>
-                        </Link>
                       </div>
 
                       {/* Navigation Links */}
@@ -386,15 +365,6 @@ export const Navbar: React.FC = () => {
                         >
                           <ShoppingCart className="w-4 h-4 text-slate-400" />
                           <span>My Orders & Live Tracking</span>
-                        </Link>
-
-                        <Link
-                          to="/account/cashback"
-                          onClick={() => setIsProfileMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-                        >
-                          <Sparkles className="w-4 h-4 text-emerald-500" />
-                          <span>Cashback & Rewards Ledger</span>
                         </Link>
 
                         <Link

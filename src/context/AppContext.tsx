@@ -610,15 +610,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshCashback();
   }, [currentUser]);
 
-  const redeemCashback = (amount: number, method: string = 'UPI', accountDetails: string = 'user@okaxis') => {
-    if (!currentUser?.id) {
-      return { success: false, message: 'Please sign in to redeem cashback' };
-    }
-    const res = trackingService.redeemCashback(currentUser.id, amount, method, accountDetails);
-    if (res.success) {
-      refreshCashback();
-    }
-    return res;
+  const redeemCashback = (_amount: number, _method: string = 'UPI', _accountDetails: string = 'user@okaxis') => {
+    return { success: false, message: 'Cashback program has been discontinued. SmartDeal operates strictly as an affiliate price comparison platform.' };
   };
 
   const processReturnReversal = (orderRef: string, reason: string) => {
@@ -987,28 +980,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const canClaimDaily = lastClaimDate !== todayStr;
 
   const claimDailyCoins = () => {
-    if (!canClaimDaily) {
-      return { success: false, message: 'You have already claimed today’s daily login reward. Come back tomorrow!' };
-    }
-    const reward = adminSettings.dailyLoginReward;
-    setSmartCoinsBalance(prev => prev + reward);
-    setSmartCoinsTransactions(prev => [
-      {
-        id: `tx-${Date.now()}-daily`,
-        date: 'Today',
-        type: 'earned',
-        amount: reward,
-        reason: 'Daily Login Reward streak bonus'
-      },
-      ...prev
-    ]);
-    setLastClaimDate(todayStr);
-    localStorage.setItem('smartdeals_last_claim', todayStr);
-
-    // Sync claim to backend REST server
-    fetch('http://localhost:3001/api/smartcoins/claim', { method: 'POST' }).catch(() => {});
-
-    return { success: true, message: `Congratulations! +${reward} SmartCoins added to your wallet!` };
+    return { success: false, message: 'Reward programs have been discontinued. SmartDeal operates strictly as an affiliate price comparison platform.' };
   };
 
   const addProduct = (newProdData: Omit<Product, 'id' | 'dealScore' | 'dealScoreBreakdown' | 'fakeDiscountAudit' | 'buyNowRecommendation' | 'priceHistory' | 'marketplacePrices'>) => {

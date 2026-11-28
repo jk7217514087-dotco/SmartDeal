@@ -144,7 +144,7 @@ export const validateUserSession = async (rawToken) => {
   if (rows.length === 0) return null;
 
   // Touch session last_active_at asynchronously
-  query(`UPDATE user_sessions SET last_active_at = CURRENT_TIMESTAMP WHERE id = $1;`, [rows[0].session_id]).catch(() => {});
+  query(`UPDATE user_sessions SET last_active_at = CURRENT_TIMESTAMP WHERE id = $1;`, [rows[0].session_id]).catch(() => { });
 
   return {
     id: rows[0].id,

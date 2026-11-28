@@ -429,7 +429,7 @@ ${comparison.verdict}`;
         `Price history of ${comparison.nameA.split(' ').slice(0, 2).join(' ')}`,
         `Camera comparison of ${comparison.nameA.split(' ')[0]} vs ${comparison.nameB.split(' ')[0]}`,
         'Should I buy now or wait for festival sale?',
-        'How does SmartDeal cashback work?'
+        'How does SmartDeal compare prices?'
       ],
       badges: ['Multi-Store Price Audit', 'Deal Score Verified', 'Hardware Benchmark Audited']
     };
@@ -537,7 +537,7 @@ Humare SmartDeal Real-Time SKU Engine ne official e-commerce companies ke live d
 • **Reliance Digital:** ₹${liveStores.find(s => s.storeKey === 'reliancedigital')?.price.toLocaleString('en-IN')} (Reliance ResQ Setup & OneCard ₹3,000 Off).
 
 💰 **SmartDeal Smart Buying Advice:**
-SmartDeal ke link se lene par aapko company ka official store discount + **Extra Affiliate Cashback** direct aapke SmartDeal wallet me milega!`
+SmartDeal ke link se lene par aapko company ka official store discount direct store page par milta hai, bina kisi extra markup ke!`
       : `🔴 **Official Live Marketplace Profile (${matched.name})**:
 Real-time API endpoints cross-checked across Indian retail companies:
 
@@ -558,7 +558,7 @@ Real-time API endpoints cross-checked across Indian retail companies:
 • **Reliance Digital:** ₹${liveStores.find(s => s.storeKey === 'reliancedigital')?.price.toLocaleString('en-IN')} (Reliance ResQ Setup + OneCard Promo).
 
 💰 **SmartDeal Value Guarantee:**
-Purchasing through SmartDeal passes 100% of the merchant discount to you PLUS double-entry affiliate cashback credited directly to your SmartDeal Wallet.`;
+Purchasing through SmartDeal takes you directly to the verified store SKU page at the lowest genuine market price.`;
 
     return {
       text: responseText,
@@ -629,7 +629,7 @@ Maine 5 marketplaces (Amazon, Flipkart, Croma, Reliance Digital) ke live price t
 • **Selling Price:** ₹${primary.sellingPrice.toLocaleString('en-IN')} (MRP: ₹${primary.mrp.toLocaleString('en-IN')}, **${primary.discountPercent}% OFF**)
 • **Deal Score:** ${primary.dealScore}/100 (${primary.dealScoreBreakdown?.verdict || 'Highly Recommended'})
 • **Authenticity Check:** ${primary.fakeDiscountAudit?.status || '100% Genuine Verified'}
-• **Cashback Eligible:** Real affiliate cash reward credited directly to your wallet
+• **Store Guarantee:** Verified authentic product listing with manufacturer warranty
 
 Ye product currently apne **90-Day Lowest Price** par chal raha hai!`
       : `🎯 **Top AI Recommendation${budgetNotice ? ` (Budget: Up to${budgetNotice})` : ''}**:
@@ -639,7 +639,7 @@ Our live Deal DNA engine evaluated historical price stability, fake MRP inflatio
 • **Lowest Verified Price:** ₹${primary.sellingPrice.toLocaleString('en-IN')} (MRP: ₹${primary.mrp.toLocaleString('en-IN')}, **${primary.discountPercent}% Verified Discount**)
 • **Deal Score:** ${primary.dealScore}/100 (${primary.dealScoreBreakdown?.verdict || 'Super Deal'})
 • **Price Integrity Audit:** ${primary.fakeDiscountAudit?.status || '100% Genuine Verified'}
-• **Cashback Eligible:** Instant affiliate reward tracking on purchase
+• **Store Guarantee:** Verified authentic product listing with manufacturer warranty
 
 Currently trending at its verified 90-day historic low.`;
 
@@ -654,7 +654,7 @@ Currently trending at its verified 90-day historic low.`;
       suggestedPrompts: [
         `Compare ${primary.name.split(' ').slice(0, 3).join(' ')} with others`,
         'Should I buy now or wait for price drop?',
-        'How to claim affiliate cashback?',
+        'How does SmartDeal compare prices?',
         'Check active coupons'
       ],
       badges: ['Deal DNA Verified', 'Price Match Guarantee', 'Lowest Cross-Store Price']
@@ -720,7 +720,7 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
   }
 
   // --------------------------------------------------------------------------
-  // 5. CASHBACK & FINANCIAL LEDGER ("cashback kaise milta hai", "wallet", "coins", "withdraw")
+  // 5. PRICE COMPARISON & AFFILIATE MODEL ("cashback", "wallet", "coins", "how it works")
   // --------------------------------------------------------------------------
   const isCashbackQuery =
     lower.includes('cashback') ||
@@ -734,30 +734,32 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
 
   if (isCashbackQuery) {
     const responseText = isHi
-      ? `💰 **SmartDeal Cashback & Financial Ledger System**:
+      ? `💰 **SmartDeal Free Price Comparison & Revenue Model**:
 
-1. **Cashback Kaise Earn Karein?**
-   • SmartDeal par link click karke Amazon/Flipkart par order complete karein.
-   • Store humein affiliate commission deta hai, jo hum transparently aapke **Cashback Wallet** me daal dete hain.
-   • Merchant return window (avg 14-30 days) khatam hote hi paise **Available** ho jaate hain.
+1. **SmartDeal Kaise Kaam Karta Hai?**
+   • SmartDeal 100% free price comparison engine hai.
+   • Hum Amazon, Flipkart, Croma, aur Reliance Digital ke live prices compare karke aapko lowest authentic price dikhate hain.
+   • SmartDeal consumer cashback ya rewards distribute nahi karta — hum direct, authentic store pricing provide karte hain.
 
-2. **Instant Withdrawal:**
-   • Available balance ko aap **Direct UPI (GPay/PhonePe/Paytm)** ya **Bank Account (NEFT/IMPS)** me bina kisi deduction ke withdraw kar sakte hain.
-
-3. **Active Promo Code:**
-   • **SMART200**: Flat ₹200 instant discount on orders above ₹1,999.`
-      : `💰 **SmartDeal Cashback & Double-Entry Ledger Guide**:
-
-1. **How Verified Cashback Works:**
-   • Click our outbound link and complete your purchase on Amazon, Flipkart, or Croma.
-   • The merchant pays SmartDeal an affiliate commission, which we transparently credit into your **Audited Cashback Wallet**.
-   • As soon as the store return window closes (avg 14-30 days), funds shift from 'Pending' to 'Available'.
-
-2. **Instant Withdrawal:**
-   • Transfer your available balance directly to any **UPI ID or Bank Account** with zero hidden fees.
+2. **SmartDeal Revenue Model:**
+   • Jab aap hamare comparison links se store par buy karte hain, toh partner marketplace SmartDeal ko referral commission deta hai.
+   • SmartDeal 100% affiliate commission ko platform operations aur unbiased pricing maintain karne ke liye retain karta hai.
 
 3. **Active Promo Codes:**
-   • **SMART200**: Flat ₹200 discount on orders above ₹1,999.`;
+   • **SMART200**: Flat ₹200 instant discount on eligible store offers above ₹1,999.`
+      : `💰 **SmartDeal Free Price Comparison & Revenue Model**:
+
+1. **How SmartDeal Works:**
+   • SmartDeal is a 100% free price comparison platform for Indian shoppers.
+   • We index live prices across Amazon, Flipkart, Croma, and Reliance Digital so you always get the lowest authentic price.
+   • SmartDeal does not distribute consumer cashback or reward wallets — shoppers get pure, transparent price comparison.
+
+2. **Our Business Model:**
+   • When you complete an order through our verified links, the merchant pays SmartDeal a standard affiliate referral commission.
+   • SmartDeal retains 100% of affiliate commissions as operating revenue to fund our free platform.
+
+3. **Active Promo Codes:**
+   • **SMART200**: Flat ₹200 discount on eligible orders above ₹1,999.`;
 
     return {
       text: responseText,
@@ -765,10 +767,10 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
       recommendations: catalog.slice(0, 2).map(p => ({
         product: p,
         highlightTag: `Verified Best Price`,
-        whyRecommended: 'Eligible for direct affiliate cashback to UPI/Bank'
+        whyRecommended: 'Verified authentic store deal at lowest market price'
       })),
       suggestedPrompts: [
-        'How to withdraw cashback to UPI?',
+        'How does SmartDeal compare prices?',
         'Best phone under ₹20,000?',
         'Check fake discount score',
         'Compare Amazon vs Flipkart prices'
@@ -820,7 +822,7 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
       suggestedPrompts: [
         'Best phone under ₹20,000?',
         'Compare iPhone 15 vs Samsung S24',
-        'How to claim cashback?',
+        'How does SmartDeal compare prices?',
         'Show genuine deals today'
       ],
       badges: ['Verified Merchant Warranty', '7-10 Days Return Window', '24/7 Dedicated Support']
@@ -838,12 +840,12 @@ Retailers often artificially inflate MRP before holiday sales to advertise phant
 Maine aapki query **"${query}"** ke liye humare verified product catalog, technical benchmarks, aur multi-store live pricing database ko scan kiya hai.
 
 💡 **AI Analysis & Insight:**
-SmartDeal par har product ka Deal Score, 90-day price trend, aur real affiliate cashback audit kiya jaata hai. Yahan sabse acche verified options diye gaye hain:`
+SmartDeal par har product ka Deal Score, 90-day price trend, aur multi-store pricing audit kiya jaata hai. Yahan sabse acche verified options diye gaye hain:`
     : `🤖 **SmartDeal Autonomous Shopping Intelligence**:
 I scanned our verified catalog, hardware benchmarks, and live multi-store pricing database for **"${query}"**.
 
 💡 **AI Analysis & Market Insight:**
-Every product on SmartDeal undergoes rigorous Deal Score auditing, 90-day price trend verification, and double-entry cashback matching. Here are the top verified options:`;
+Every product on SmartDeal undergoes rigorous Deal Score auditing, 90-day price trend verification, and cross-store pricing validation. Here are the top verified options:`;
 
   return {
     text: responseText,
@@ -857,7 +859,7 @@ Every product on SmartDeal undergoes rigorous Deal Score auditing, 90-day price 
       'Best phone under ₹30,000?',
       'Compare iPhone 15 vs Samsung S24',
       'Should I buy now or wait for price drop?',
-      'How does SmartDeal cashback work?'
+      'How does SmartDeal compare prices?'
     ],
     badges: ['Live Catalog Match', 'Verified Pricing', 'High Deal Score']
   };

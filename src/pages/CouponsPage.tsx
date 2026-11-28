@@ -162,7 +162,7 @@ export const CouponsPage: React.FC = () => {
             Save More with Verified Promo Codes & Bank Discounts
           </h1>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Combine marketplace coupon codes with instant credit card discounts and SmartDeal cashback to calculate your absolute lowest effective checkout price.
+            Combine marketplace coupon codes with instant credit card discounts and SmartDeal price comparison to calculate your absolute lowest effective checkout price.
           </p>
         </div>
       </div>

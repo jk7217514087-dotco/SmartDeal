@@ -542,7 +542,7 @@ export const PriceComparisonTable: React.FC<Props> = ({
               </div>
               <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60 text-slate-300 flex flex-col items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Cashback Tracking</span>
+                <span>Verified Store Deal</span>
               </div>
               <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60 text-slate-300 flex flex-col items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />

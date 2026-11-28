@@ -2077,12 +2077,12 @@ class TrackingService {
       totalPendingCommissions: pendingCommission,
       confirmedCommission,
       totalConfirmedCommissions: confirmedCommission,
-      netPlatformEarnings: confirmedCommission - cashbackAvailable,
-      cashbackPending,
-      cashbackAvailable,
-      cashbackConfirmed,
-      cashbackRedeemed,
-      cashbackReversed
+      netPlatformEarnings: confirmedCommission,
+      cashbackPending: 0,
+      cashbackAvailable: 0,
+      cashbackConfirmed: 0,
+      cashbackRedeemed: 0,
+      cashbackReversed: 0
     };
   }
 
@@ -2122,9 +2122,9 @@ class TrackingService {
     const saleAmount = Number(data.saleAmount || 0);
     const commissionRate = Number(data.commissionRate || 4.0);
     const commissionEarned = Math.round((saleAmount * commissionRate) / 100);
-    // User cashback liability: 20% of confirmed commission
-    const userCashbackAllocation = Math.round(commissionEarned * 0.20);
-    const smartdealRemaining = commissionEarned - userCashbackAllocation;
+    // SmartDeal retains 100% of affiliate commission. Customer cashback is 0.
+    const userCashbackAllocation = 0;
+    const smartdealRemaining = commissionEarned;
 
     const newConv: AffiliateConversion = {
       id: `CONV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -2147,20 +2147,6 @@ class TrackingService {
 
     conversions.unshift(newConv);
     localStorage.setItem(CONVERSIONS_KEY, JSON.stringify(conversions));
-
-    // If user is attached, add pending or confirmed cashback transaction
-    if (newConv.userId) {
-      this.addCashbackTransaction({
-        userId: newConv.userId,
-        orderRef: newConv.orderRef,
-        marketplace: newConv.marketplace,
-        productName: newConv.productName,
-        amount: newConv.userCashbackAllocation,
-        status: newConv.status === 'CONFIRMED' ? 'Confirmed' : 'Pending',
-        type: newConv.status === 'CONFIRMED' ? 'CONFIRMED' : 'EARNED_PENDING',
-        sourceEventId: newConv.id
-      });
-    }
 
     return {
       success: true,
@@ -2189,36 +2175,14 @@ class TrackingService {
     // Update corresponding click status
     this.updateCommissionStatus(conv.clickId, 'CONFIRMED', conv.commissionEarned);
 
-    // Update or credit cashback transaction
-    if (conv.userId) {
-      const allTx = this.getCashbackTransactions();
-      const userTx = allTx.find(t => t.sourceEventId === conv.id);
-      if (userTx) {
-        userTx.status = 'Available';
-        userTx.type = 'AVAILABLE';
-        localStorage.setItem(CASHBACK_KEY, JSON.stringify(allTx));
-      } else {
-        this.addCashbackTransaction({
-          userId: conv.userId,
-          orderRef: conv.orderRef,
-          marketplace: conv.marketplace,
-          productName: conv.productName,
-          amount: conv.userCashbackAllocation,
-          status: 'Available',
-          type: 'AVAILABLE',
-          sourceEventId: conv.id
-        });
-      }
-    }
-
     this.logAuditEvent('U10001', 'admin@smartdeal.com', 'CONVERSION_CONFIRM', 'AffiliateConversion', conv.id, {
       orderRef: conv.orderRef,
       commissionEarned: conv.commissionEarned,
-      userCashback: conv.userCashbackAllocation,
-      netRemaining: conv.smartdealRemaining
+      userCashback: 0,
+      netRemaining: conv.commissionEarned
     });
 
-    return { success: true, message: 'Conversion confirmed and cashback marked available.' };
+    return { success: true, message: 'Conversion confirmed and affiliate commission retained.' };
   }
 
   // --------------------------------------------------------------------------
@@ -2320,86 +2284,27 @@ class TrackingService {
     return newTx;
   }
 
-  public getCashbackWallet(userId?: string): CashbackWallet {
-    const all = this.getCashbackTransactions();
-    const uId = userId || this.getCurrentUser()?.id;
-    if (!uId) {
-      return {
-        availableBalance: 0,
-        pendingBalance: 0,
-        totalEarned: 0,
-        totalRedeemed: 0,
-        totalReversed: 0,
-        transactions: []
-      };
-    }
-    const userTx = all.filter(t => t.userId === uId);
-
-    let availableBalance = 0;
-    let pendingBalance = 0;
-    let totalEarned = 0;
-    let totalRedeemed = 0;
-    let totalReversed = 0;
-
-    for (const t of userTx) {
-      if (t.status === 'Available') {
-        availableBalance += t.amount;
-        totalEarned += t.amount;
-      } else if (t.status === 'Pending') {
-        pendingBalance += t.amount;
-      } else if (t.status === 'Confirmed') {
-        totalEarned += t.amount;
-      } else if (t.status === 'Redeemed') {
-        availableBalance += t.amount; // t.amount is negative
-        totalRedeemed += Math.abs(t.amount);
-      } else if (t.status === 'Reversed') {
-        availableBalance += t.amount; // t.amount is negative
-        totalReversed += Math.abs(t.amount);
-      }
-    }
-
+  public getCashbackWallet(_userId?: string): CashbackWallet {
+    // Cashback program is discontinued. Returns zero balances.
     return {
-      availableBalance: Math.max(0, availableBalance),
-      pendingBalance: Math.max(0, pendingBalance),
-      totalEarned,
-      totalRedeemed,
-      totalReversed,
-      transactions: userTx
+      availableBalance: 0,
+      pendingBalance: 0,
+      totalEarned: 0,
+      totalRedeemed: 0,
+      totalReversed: 0,
+      transactions: []
     };
   }
 
   public redeemCashback(
-    userId: string,
-    amount: number,
-    method: string = 'UPI',
-    accountDetails: string = 'user@okaxis'
+    _userId: string,
+    _amount: number,
+    _method: string = 'UPI',
+    _accountDetails: string = 'user@okaxis'
   ): { success: boolean; message: string; newBalance?: number } {
-    const wallet = this.getCashbackWallet(userId);
-    if (amount <= 0) {
-      return { success: false, message: 'Invalid redemption amount' };
-    }
-    if (wallet.availableBalance < amount) {
-      return {
-        success: false,
-        message: `Insufficient available cashback balance. Available: ₹${wallet.availableBalance}, Requested: ₹${amount}`
-      };
-    }
-
-    this.addCashbackTransaction({
-      userId,
-      orderRef: `RED-${Date.now().toString().slice(-8)}`,
-      marketplace: 'SmartDeal Payout',
-      productName: `Withdrawal via ${method} (${accountDetails})`,
-      amount: -amount,
-      status: 'Redeemed',
-      type: 'REDEEMED'
-    });
-
-    const updated = this.getCashbackWallet(userId);
     return {
-      success: true,
-      message: `₹${amount} cashback withdrawal initiated successfully via ${method}!`,
-      newBalance: updated.availableBalance
+      success: false,
+      message: 'Cashback program has been discontinued. SmartDeal operates strictly as an affiliate price comparison platform.'
     };
   }
 
