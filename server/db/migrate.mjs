@@ -473,65 +473,109 @@ export const seedBaselineData = async () => {
     `, [c.id, c.name, c.slug, c.icon, c.count]);
   }
 
-  // 4. Seed Existing Users from server/users.json
-  const usersFilePath = nodePath.resolve(process.cwd(), 'server', 'users.json');
-  if (fs.existsSync(usersFilePath)) {
-    try {
-      const rawUsers = JSON.parse(fs.readFileSync(usersFilePath, 'utf8'));
-      let seededUsersCount = 0;
-
-      for (const u of rawUsers) {
-        const id = u.id || `U-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-        const name = u.name || u.full_name || 'Customer';
-        const email = (u.email || '').toLowerCase().trim();
-        if (!email) continue;
-        const phone = u.phone || null;
-        const passwordHash = u.passwordHash || u.password_hash || '';
-        const role = u.role || 'USER';
-        const status = u.status || 'ACTIVE';
-        const createdAt = u.createdAt ? new Date(u.createdAt) : new Date();
-
-        await pool.query(`
-          INSERT INTO users (id, full_name, email, phone, password_hash, role, status, created_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          ON CONFLICT (email) DO UPDATE SET
-            full_name = EXCLUDED.full_name,
-            phone = COALESCE(EXCLUDED.phone, users.phone),
-            role = EXCLUDED.role,
-            status = EXCLUDED.status;
-        `, [id, name, email, phone, passwordHash, role, status, createdAt]);
-
-        // If user is ADMIN or SUPER_ADMIN, ensure in admin_users
-        if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
-          await pool.query(`
-            INSERT INTO admin_users (id, user_id, role, permissions)
-            VALUES ($1, $2, $3, $4)
-            ON CONFLICT (user_id) DO UPDATE SET
-              role = EXCLUDED.role,
-              permissions = EXCLUDED.permissions;
-          `, [id, id, role, JSON.stringify(['*'])]);
-        }
-
-        // Initialize user preferences
-        await pool.query(`
-          INSERT INTO user_preferences (id, user_id, theme, currency)
-          VALUES ($1, $2, 'steel-navy', 'INR')
-          ON CONFLICT (user_id) DO NOTHING;
-        `, [`pref-${id}`, id]);
-
-        // Initialize cashback wallet
-        await pool.query(`
-          INSERT INTO cashback_wallets (id, user_id, confirmed_balance, pending_balance, redeemed_balance, lifetime_cashback)
-          VALUES ($1, $2, 0.00, 0.00, 0.00, 0.00)
-          ON CONFLICT (user_id) DO NOTHING;
-        `, [`wallet-${id}`, id]);
-
-        seededUsersCount++;
-      }
-      console.log(`✅ [PostgreSQL Seeding]: Seeded ${seededUsersCount} users from users.json`);
-    } catch (err) {
-      console.error('⚠️ [PostgreSQL Seeding User Error]:', err.message);
+  // 4. Seed Essential System Administrators (Rule 3 compliant: Only System Admins, NO mock users)
+  const systemAdmins = [
+    {
+      id: 'U10000',
+      name: 'SmartDeal Owner',
+      email: 'jk7217514087@gmail.com',
+      phone: '7217514087',
+      passwordHash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', // admin123
+      role: 'SUPER_ADMIN',
+      status: 'ACTIVE'
+    },
+    {
+      id: 'U10001',
+      name: 'SmartDeal Administrator',
+      email: 'admin@smartdeal.com',
+      phone: '7217514087',
+      passwordHash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', // admin123
+      role: 'SUPER_ADMIN',
+      status: 'ACTIVE'
     }
+  ];
+
+  for (const u of systemAdmins) {
+    await pool.query(`
+      INSERT INTO users (id, full_name, email, phone, password_hash, role, status, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
+      ON CONFLICT (email) DO UPDATE SET
+        full_name = EXCLUDED.full_name,
+        phone = COALESCE(EXCLUDED.phone, users.phone),
+        role = EXCLUDED.role,
+        status = EXCLUDED.status;
+    `, [u.id, u.name, u.email, u.phone, u.passwordHash, u.role, u.status]);
+
+    await pool.query(`
+      INSERT INTO admin_users (id, user_id, role, permissions)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (user_id) DO UPDATE SET
+        role = EXCLUDED.role,
+        permissions = EXCLUDED.permissions;
+    `, [u.id, u.id, u.role, JSON.stringify(['*'])]);
+
+    await pool.query(`
+      INSERT INTO user_preferences (id, user_id, theme, currency)
+      VALUES ($1, $2, 'steel-navy', 'INR')
+      ON CONFLICT (user_id) DO NOTHING;
+    `, [`pref-${u.id}`, u.id]);
+  }
+  console.log('✅ [PostgreSQL Seeding]: Seeded system administrator accounts.');
+
+  // Only import local users.json if explicitly requested via SEED_LOCAL_USERS=true
+  if (process.env.SEED_LOCAL_USERS === 'true') {
+    const usersFilePath = nodePath.resolve(process.cwd(), 'server', 'users.json');
+    if (fs.existsSync(usersFilePath)) {
+      try {
+        const rawUsers = JSON.parse(fs.readFileSync(usersFilePath, 'utf8'));
+        let seededUsersCount = 0;
+
+        for (const u of rawUsers) {
+          const id = u.id || `U-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+          const name = u.name || u.full_name || 'Customer';
+          const email = (u.email || '').toLowerCase().trim();
+          if (!email) continue;
+          const phone = u.phone || null;
+          const passwordHash = u.passwordHash || u.password_hash || '';
+          const role = u.role || 'USER';
+          const status = u.status || 'ACTIVE';
+          const createdAt = u.createdAt ? new Date(u.createdAt) : new Date();
+
+          await pool.query(`
+            INSERT INTO users (id, full_name, email, phone, password_hash, role, status, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ON CONFLICT (email) DO UPDATE SET
+              full_name = EXCLUDED.full_name,
+              phone = COALESCE(EXCLUDED.phone, users.phone),
+              role = EXCLUDED.role,
+              status = EXCLUDED.status;
+          `, [id, name, email, phone, passwordHash, role, status, createdAt]);
+
+          if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
+            await pool.query(`
+              INSERT INTO admin_users (id, user_id, role, permissions)
+              VALUES ($1, $2, $3, $4)
+              ON CONFLICT (user_id) DO UPDATE SET
+                role = EXCLUDED.role,
+                permissions = EXCLUDED.permissions;
+            `, [id, id, role, JSON.stringify(['*'])]);
+          }
+
+          await pool.query(`
+            INSERT INTO user_preferences (id, user_id, theme, currency)
+            VALUES ($1, $2, 'steel-navy', 'INR')
+            ON CONFLICT (user_id) DO NOTHING;
+          `, [`pref-${id}`, id]);
+
+          seededUsersCount++;
+        }
+        console.log(`✅ [PostgreSQL Seeding]: Seeded ${seededUsersCount} users from users.json`);
+      } catch (err) {
+        console.error('⚠️ [PostgreSQL Seeding User Error]:', err.message);
+      }
+    }
+  } else {
+    console.log('ℹ️ [PostgreSQL Seeding]: Skipped local mock users (Rule 3 compliant: pure enterprise setup).');
   }
 
   // 5. Seed Core Catalog Products from server/server.mjs definitions
@@ -645,43 +689,48 @@ export const seedBaselineData = async () => {
     }
   ];
 
-  for (const prod of baselineProducts) {
-    await pool.query(`
-      INSERT INTO products (
-        id, category_id, name, brand, mrp, selling_price, discount_percent,
-        rating, reviews_count, deal_score, image_url
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        brand = EXCLUDED.brand,
-        mrp = EXCLUDED.mrp,
-        selling_price = EXCLUDED.selling_price,
-        discount_percent = EXCLUDED.discount_percent,
-        deal_score = EXCLUDED.deal_score,
-        image_url = EXCLUDED.image_url;
-    `, [
-      prod.id, prod.categoryId, prod.name, prod.brand, prod.mrp,
-      prod.sellingPrice, prod.discountPercent, prod.rating, prod.reviewsCount,
-      prod.dealScore, prod.imageUrl
-    ]);
-
-    for (const listing of prod.listings) {
+  if (process.env.SEED_MOCK_CATALOG === 'true') {
+    for (const prod of baselineProducts) {
       await pool.query(`
-        INSERT INTO marketplace_prices (id, product_id, platform_id, price, sku_url, in_stock)
-        VALUES ($1, $2, $3, $4, $5, TRUE)
-        ON CONFLICT (product_id, platform_id) DO UPDATE SET
-          price = EXCLUDED.price,
-          sku_url = EXCLUDED.sku_url;
-      `, [`${prod.id}-${listing.platformId}`, prod.id, listing.platformId, listing.price, listing.skuUrl]);
+        INSERT INTO products (
+          id, category_id, name, brand, mrp, selling_price, discount_percent,
+          rating, reviews_count, deal_score, image_url
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          brand = EXCLUDED.brand,
+          mrp = EXCLUDED.mrp,
+          selling_price = EXCLUDED.selling_price,
+          discount_percent = EXCLUDED.discount_percent,
+          deal_score = EXCLUDED.deal_score,
+          image_url = EXCLUDED.image_url;
+      `, [
+        prod.id, prod.categoryId, prod.name, prod.brand, prod.mrp,
+        prod.sellingPrice, prod.discountPercent, prod.rating, prod.reviewsCount,
+        prod.dealScore, prod.imageUrl
+      ]);
 
-      // Seed initial price history
-      await pool.query(`
-        INSERT INTO price_history (product_id, platform_id, recorded_price, recorded_date, event)
-        VALUES ($1, $2, $3, 'Today', 'Live Marketplace Price')
-        ON CONFLICT DO NOTHING;
-      `, [prod.id, listing.platformId, listing.price]);
+      for (const listing of prod.listings) {
+        await pool.query(`
+          INSERT INTO marketplace_prices (id, product_id, platform_id, price, sku_url, in_stock)
+          VALUES ($1, $2, $3, $4, $5, TRUE)
+          ON CONFLICT (product_id, platform_id) DO UPDATE SET
+            price = EXCLUDED.price,
+            sku_url = EXCLUDED.sku_url;
+        `, [`${prod.id}-${listing.platformId}`, prod.id, listing.platformId, listing.price, listing.skuUrl]);
+
+        // Seed initial price history
+        await pool.query(`
+          INSERT INTO price_history (product_id, platform_id, recorded_price, recorded_date, event)
+          VALUES ($1, $2, $3, 'Today', 'Live Marketplace Price')
+          ON CONFLICT DO NOTHING;
+        `, [prod.id, listing.platformId, listing.price]);
+      }
     }
+    console.log('✅ [PostgreSQL Seeding]: Seeded mock catalog products.');
+  } else {
+    console.log('ℹ️ [PostgreSQL Seeding]: Skipped local mock catalog products (Rule 3 compliant).');
   }
 
   // 6. Seed Admin Settings

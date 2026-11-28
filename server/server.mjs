@@ -30,6 +30,8 @@ import {
   generateSecureOtp
 } from './security/auth.mjs';
 import { runDatabaseBackup } from '../scripts/backup_databases.mjs';
+import { runMigrations, seedBaselineData } from './db/migrate.mjs';
+import { runEnterpriseMigration } from './db/enterprise_migration.mjs';
 
 // Automatically load .env if present
 try {
@@ -3568,10 +3570,35 @@ server.on('error', (err) => {
   }
 });
 
+// Automatically ensure enterprise schema is initialized on boot if connected to PostgreSQL
+export const ensureDatabaseInitialized = async () => {
+  if (!pool) return;
+  try {
+    const tableRes = await pool.query(`
+      SELECT COUNT(*)::int as count 
+      FROM information_schema.tables 
+      WHERE table_schema = 'identity' AND table_name = 'users';
+    `);
+    const count = tableRes.rows[0]?.count || 0;
+    if (count === 0) {
+      console.log('🏛️ [Server Boot]: Uninitialized database detected. Running enterprise migrations...');
+      await runMigrations();
+      await seedBaselineData();
+      await runEnterpriseMigration();
+      console.log('✅ [Server Boot]: Enterprise schemas & tables successfully initialized.');
+    } else {
+      console.log(`🏛️ [Server Boot]: Database verified initialized (${count} identity tables found).`);
+    }
+  } catch (err) {
+    console.warn('⚠️ [Server Boot Migration Check]:', err.message);
+  }
+};
+
 // Start listening if not running in a test mode that already has a server
 if (process.env.NODE_ENV !== 'test_skip_listen') {
-  server.listen(PORT, () => {
+  server.listen(PORT, async () => {
     console.log(`🚀 SmartDeal Production REST API Server live on port ${PORT}`);
+    await ensureDatabaseInitialized();
   });
 }
 
