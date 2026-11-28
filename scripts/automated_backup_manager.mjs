@@ -7,17 +7,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import http from 'node:http';
 import https from 'node:https';
 import { execSync } from 'node:child_process';
 import pg from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const getClient = (url) => url.protocol === 'http:' ? http : https;
+
 const { Pool } = pg;
 const BACKUP_ROOT = path.resolve('backups');
 const ENCRYPTION_ALGO = 'aes-256-gcm';
-const PG_DUMP_BIN = 'C:\\Program Files\\PostgreSQL\\18\\bin\\pg_dump.exe';
-const PSQL_BIN = 'C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe';
+
+// Dynamic PostgreSQL CLI paths for Cross-Platform compatibility (Render Linux vs Local Windows)
+const resolvePgBin = (binName) => {
+  if (process.env[`${binName.toUpperCase()}_PATH`]) return process.env[`${binName.toUpperCase()}_PATH`];
+  if (process.platform === 'win32') {
+    const defaultWin = `C:\\Program Files\\PostgreSQL\\18\\bin\\${binName}.exe`;
+    if (fs.existsSync(defaultWin)) return defaultWin;
+  }
+  return binName;
+};
+
+const PG_DUMP_BIN = resolvePgBin('pg_dump');
+const PSQL_BIN = resolvePgBin('psql');
 
 // Master Encryption Key: Derived using scrypt (KDF) from BACKUP_ENCRYPTION_KEY or JWT_SECRET
 const getMasterKey = () => {
@@ -97,7 +111,8 @@ export async function uploadToOffsiteStorage(fileName, fileBuffer) {
     const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     const uploadRes = await new Promise((resolve, reject) => {
-      const req = https.request(url, {
+      const client = getClient(url);
+      const req = client.request(url, {
         method: 'PUT',
         headers: {
           'Host': url.host,
@@ -167,7 +182,8 @@ export async function downloadFromOffsiteStorage(fileName) {
     const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     const downloadRes = await new Promise((resolve, reject) => {
-      const req = https.request(url, {
+      const client = getClient(url);
+      const req = client.request(url, {
         method: 'GET',
         headers: {
           'Host': url.host,
@@ -188,6 +204,76 @@ export async function downloadFromOffsiteStorage(fileName) {
       return { status: 'DOWNLOADED', buffer: downloadRes.buffer };
     } else {
       return { status: 'FAILED', error: `HTTP ${downloadRes.statusCode}` };
+    }
+  } catch (err) {
+    return { status: 'ERROR', error: err.message };
+  }
+}
+
+/**
+ * Cloudflare R2 / AWS S3 SigV4 HEAD Existence Check
+ */
+export async function checkRemoteObjectExists(fileName) {
+  const bucket = process.env.R2_BUCKET || process.env.S3_BUCKET;
+  const accessKey = process.env.R2_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+  const secretKey = process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
+  const endpoint = process.env.R2_ENDPOINT || process.env.S3_ENDPOINT;
+  const region = process.env.AWS_REGION || 'auto';
+
+  if (!bucket || !accessKey || !secretKey || !endpoint) {
+    return {
+      status: 'PENDING_CREDENTIALS',
+      message: 'Cloudflare R2 / AWS S3 credentials not configured in environment.'
+    };
+  }
+
+  try {
+    const url = new URL(`${endpoint.replace(/\/$/, '')}/${bucket}/${fileName}`);
+    const now = new Date();
+    const dateStamp = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, '');
+    const emptyPayloadHash = crypto.createHash('sha256').update('').digest('hex');
+
+    const canonicalHeaders = `host:${url.host}\nx-amz-content-sha256:${emptyPayloadHash}\nx-amz-date:${amzDate}\n`;
+    const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
+    const canonicalRequest = `HEAD\n/${bucket}/${fileName}\n\n${canonicalHeaders}\n${signedHeaders}\n${emptyPayloadHash}`;
+
+    const credentialScope = `${dateStamp}/${region}/s3/aws4_request`;
+    const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credentialScope}\n${crypto.createHash('sha256').update(canonicalRequest).digest('hex')}`;
+
+    const kDate = crypto.createHmac('sha256', `AWS4${secretKey}`).update(dateStamp).digest();
+    const kRegion = crypto.createHmac('sha256', kDate).update(region).digest();
+    const kService = crypto.createHmac('sha256', kRegion).update('s3').digest();
+    const kSigning = crypto.createHmac('sha256', kService).update('aws4_request').digest();
+    const signature = crypto.createHmac('sha256', kSigning).update(stringToSign).digest('hex');
+
+    const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+    const headRes = await new Promise((resolve, reject) => {
+      const client = getClient(url);
+      const req = client.request(url, {
+        method: 'HEAD',
+        headers: {
+          'Host': url.host,
+          'x-amz-date': amzDate,
+          'x-amz-content-sha256': emptyPayloadHash,
+          'Authorization': authorization
+        }
+      }, (res) => {
+        resolve({
+          statusCode: res.statusCode,
+          contentLength: res.headers['content-length'],
+          etag: res.headers['etag']
+        });
+      });
+      req.on('error', reject);
+      req.end();
+    });
+
+    if (headRes.statusCode === 200) {
+      return { status: 'EXISTS', contentLength: headRes.contentLength, etag: headRes.etag };
+    } else {
+      return { status: 'NOT_FOUND', statusCode: headRes.statusCode };
     }
   } catch (err) {
     return { status: 'ERROR', error: err.message };
@@ -264,10 +350,12 @@ export function applyGfsRetentionPolicy() {
 }
 
 /**
- * Dispatch Backup Status Notifications (Webhook / Console / Telemetry)
+ * Dispatch Backup Status Notifications (Webhook / Console / Telemetry / Dead Man's Snitch)
  */
 export async function sendBackupNotification(event) {
-  const webhookUrl = process.env.BACKUP_NOTIFICATION_WEBHOOK || process.env.SLACK_WEBHOOK_URL;
+  const webhookUrl = process.env.BACKUP_NOTIFICATION_WEBHOOK || process.env.SLACK_WEBHOOK_URL || process.env.DISCORD_WEBHOOK_URL;
+  const heartbeatUrl = process.env.HEARTBEAT_URL || process.env.HEALTHCHECK_URL || process.env.DEADMANS_SNITCH_URL;
+  
   const payload = {
     source: 'SmartDeal Backup Engine',
     timestamp: new Date().toISOString(),
@@ -296,7 +384,24 @@ export async function sendBackupNotification(event) {
         req.write(JSON.stringify(payload));
         req.end();
       });
-    } catch {}
+    } catch (err) {
+      console.warn(`[Notification Warning] Could not dispatch webhook: ${err.message}`);
+    }
+  }
+
+  // Ping Heartbeat / Dead Man's Snitch for missing backup detection (> 26 hours alert)
+  if (event.type === 'SUCCESS' && heartbeatUrl) {
+    try {
+      const hbUrl = new URL(heartbeatUrl);
+      await new Promise((resolve) => {
+        const req = https.request(hbUrl, { method: 'GET' }, () => resolve());
+        req.on('error', () => resolve());
+        req.end();
+      });
+      console.log('   ↳ Heartbeat signal dispatched to monitoring service.');
+    } catch (err) {
+      console.warn(`[Notification Warning] Could not ping heartbeat URL: ${err.message}`);
+    }
   }
 }
 
@@ -349,7 +454,7 @@ export function auditBackupIntegrity() {
  */
 export async function executeBackupPipelineAndDrill() {
   console.log('================================================================');
-  console.log('🛡️ SMARTDEAL PHASE 4: AUTOMATED BACKUP & RESTORE DRILL ENGINE');
+  console.log('🛡️ SMARTDEAL PHASE 5.2: PRODUCTION OFFSITE BACKUP & RESTORE ENGINE');
   console.log('================================================================\n');
 
   const startTime = Date.now();
@@ -358,152 +463,228 @@ export async function executeBackupPipelineAndDrill() {
   const targetDir = path.join(BACKUP_ROOT, batchId);
   fs.mkdirSync(targetDir, { recursive: true });
 
-  // 1. Full pg_dump across all 10 schemas
-  console.log('--- Step 1: Performing Full PostgreSQL Dump across 10 Enterprise Schemas ---');
-  const rawDumpPath = path.join(targetDir, `${batchId}.raw.sql`);
-  execSync(`"${PG_DUMP_BIN}" -h 127.0.0.1 -p 5433 -U postgres -d smartdeal -F p -f "${rawDumpPath}"`, {
-    stdio: 'pipe'
-  });
+  try {
+    // 1. Full pg_dump across all 10 schemas
+    console.log('--- Step 1: Performing Full PostgreSQL Dump across 10 Enterprise Schemas ---');
+    const rawDumpPath = path.join(targetDir, `${batchId}.raw.sql`);
+    const dbUrl = process.env.DATABASE_URL;
 
-  const rawBuffer = fs.readFileSync(rawDumpPath);
-  const rawSha256 = crypto.createHash('sha256').update(rawBuffer).digest('hex');
-  const rawKb = (rawBuffer.length / 1024).toFixed(1);
-  console.log(`  ✓ Raw SQL dump size: ${rawKb} KB`);
-  console.log(`  ✓ Plaintext SHA-256: ${rawSha256}`);
+    if (dbUrl) {
+      console.log('  ↳ Target: Configured PostgreSQL database (via DATABASE_URL)');
+      execSync(`"${PG_DUMP_BIN}" --dbname="${dbUrl}" -F p -f "${rawDumpPath}"`, {
+        stdio: 'pipe',
+        env: { ...process.env, PGOPTIONS: '-c statement_timeout=0' }
+      });
+    } else {
+      console.log('  ↳ Target: Local development PostgreSQL cluster (127.0.0.1:5433/smartdeal)');
+      execSync(`"${PG_DUMP_BIN}" -h 127.0.0.1 -p 5433 -U postgres -d smartdeal -F p -f "${rawDumpPath}"`, {
+        stdio: 'pipe',
+        env: { ...process.env, PGOPTIONS: '-c statement_timeout=0' }
+      });
+    }
 
-  // 2. Encrypt with AES-256-GCM
-  console.log('\n--- Step 2: Encrypting Archive with AES-256-GCM ---');
-  const encryptedPayload = encryptBuffer(rawBuffer);
-  const archiveJson = {
-    batchId,
-    timestamp: new Date().toISOString(),
-    algorithm: ENCRYPTION_ALGO,
-    sha256Plaintext: rawSha256,
-    byteSize: rawBuffer.length,
-    payload: encryptedPayload
-  };
-  const archivePath = path.join(targetDir, `${batchId}.enc.json`);
-  fs.writeFileSync(archivePath, JSON.stringify(archiveJson, null, 2), 'utf8');
-  console.log(`  ✓ Encrypted archive saved: ${archivePath}`);
+    const rawBuffer = fs.readFileSync(rawDumpPath);
+    const rawSha256 = crypto.createHash('sha256').update(rawBuffer).digest('hex');
+    const rawKb = (rawBuffer.length / 1024).toFixed(1);
+    console.log(`  ✓ Raw SQL dump size: ${rawKb} KB`);
+    console.log(`  ✓ Plaintext SHA-256: ${rawSha256}`);
 
-  // Clean raw dump file from disk immediately for security
-  fs.unlinkSync(rawDumpPath);
+    // 2. Encrypt with AES-256-GCM
+    console.log('\n--- Step 2: Encrypting Archive with AES-256-GCM (Authenticated Encryption) ---');
+    const encryptedPayload = encryptBuffer(rawBuffer);
+    const archiveJson = {
+      batchId,
+      timestamp: new Date().toISOString(),
+      algorithm: ENCRYPTION_ALGO,
+      sha256Plaintext: rawSha256,
+      byteSize: rawBuffer.length,
+      payload: encryptedPayload
+    };
+    const archivePath = path.join(targetDir, `${batchId}.enc.json`);
+    const archiveBuffer = Buffer.from(JSON.stringify(archiveJson, null, 2), 'utf8');
+    fs.writeFileSync(archivePath, archiveBuffer);
+    console.log(`  ✓ Encrypted archive generated: ${archivePath}`);
 
-  // 3. Offsite Cloud Synchronization (Cloudflare R2 / AWS S3)
-  console.log('\n--- Step 3: Offsite Cloud Synchronization ---');
-  const offsiteResult = await uploadToOffsiteStorage(`${batchId}.enc.json`, Buffer.from(JSON.stringify(archiveJson)));
-  console.log(`  ↳ Offsite Sync Status: ${offsiteResult.status}`);
-  if (offsiteResult.status === 'PENDING_CREDENTIALS') {
-    console.log(`  ℹ️ [Offsite Notice]: ${offsiteResult.message}`);
-  } else if (offsiteResult.status === 'UPLOADED') {
-    console.log(`  ✅ Synced to ${offsiteResult.provider} bucket: ${offsiteResult.bucket}`);
+    // Clean raw dump file from disk immediately for data security
+    fs.unlinkSync(rawDumpPath);
+
+    // 3. Offsite Cloud Synchronization & Verification (Cloudflare R2 / AWS S3)
+    console.log('\n--- Step 3: Offsite Cloud Synchronization & Cryptographic Verification ---');
+    const remoteFileName = `${batchId}.enc.json`;
+    const offsiteResult = await uploadToOffsiteStorage(remoteFileName, archiveBuffer);
+    console.log(`  ↳ Offsite Upload Status: ${offsiteResult.status}`);
+
+    let remoteVerified = false;
+    if (offsiteResult.status === 'UPLOADED') {
+      console.log(`  ✅ Successfully uploaded to ${offsiteResult.provider} bucket: ${offsiteResult.bucket}`);
+
+      // Step 3a: Verify Remote Object Exists (SigV4 HEAD)
+      console.log('  ↳ Verifying remote object existence via AWS SigV4 HEAD request...');
+      const headResult = await checkRemoteObjectExists(remoteFileName);
+      if (headResult.status !== 'EXISTS') {
+        throw new Error(`Remote Object Verification Failed: Object ${remoteFileName} was not found in bucket after upload (Status: ${headResult.statusCode || headResult.error})`);
+      }
+      console.log(`  ✓ Remote Object Confirmed: Size ${headResult.contentLength} bytes, ETag ${headResult.etag}`);
+
+      // Step 3b: Download and Verify Cryptographic Integrity (SigV4 GET)
+      console.log('  ↳ Downloading remote copy to verify end-to-end cloud roundtrip...');
+      const downloadResult = await downloadFromOffsiteStorage(remoteFileName);
+      if (downloadResult.status !== 'DOWNLOADED') {
+        throw new Error(`Remote Download Verification Failed: Could not download ${remoteFileName} from cloud storage (Status: ${downloadResult.error})`);
+      }
+
+      const downloadedParsed = JSON.parse(downloadResult.buffer.toString('utf8'));
+      const downloadedDecrypted = decryptPayload(downloadedParsed.payload);
+      const downloadedHash = crypto.createHash('sha256').update(downloadedDecrypted).digest('hex');
+      if (downloadedHash !== rawSha256) {
+        throw new Error(`Remote Integrity Violation: Downloaded backup SHA-256 (${downloadedHash}) does not match origin plaintext (${rawSha256})!`);
+      }
+      console.log(`  ✅ Remote Roundtrip Verification: 100% SHA-256 & AES-GCM MATCH`);
+      remoteVerified = true;
+    } else if (offsiteResult.status === 'PENDING_CREDENTIALS') {
+      console.log(`  ℹ️ [Offsite Notice]: ${offsiteResult.message}`);
+      if (process.env.REQUIRE_OFFSITE === 'true') {
+        throw new Error('REQUIRE_OFFSITE is true, but Cloudflare R2 / AWS S3 credentials are not configured.');
+      }
+    } else {
+      // FAILED or ERROR
+      throw new Error(`Offsite Cloud Sync Failed: ${offsiteResult.error || 'Unknown upload failure'}`);
+    }
+
+    // 4. GFS Retention Policy Application
+    console.log('\n--- Step 4: Applying Grandfather-Father-Son (GFS) Retention Policy ---');
+    const retentionResult = applyGfsRetentionPolicy();
+    console.log(`  ✓ Retained Backups: ${retentionResult.retained.length} slots`);
+    retentionResult.retained.forEach(r => console.log(`    ↳ [${r.reason}] ${r.batch}`));
+    if (retentionResult.pruned.length > 0) {
+      console.log(`  ✓ Pruned Expired Backups: ${retentionResult.pruned.length}`);
+      retentionResult.pruned.forEach(p => console.log(`    ↳ Pruned: ${p}`));
+    } else {
+      console.log('  ✓ No expired backup batches required pruning.');
+    }
+
+    // 5. Isolated Restore Drill (Safety Protected)
+    let restoreSec = 'N/A';
+    let totalTables = 0;
+    const isProductionCron = process.env.RENDER === 'true' && !process.env.RESTORE_TEST_DATABASE_URL;
+
+    if (isProductionCron || process.env.SKIP_RESTORE_DRILL === 'true') {
+      console.log('\n--- Step 5: Isolated Restore Drill Skipped (Production Cron Safety) ---');
+      console.log('  🛡️ Safety Guard Active: Never restoring over production database in automated cron.');
+    } else {
+      console.log('\n--- Step 5: Executing Isolated Restore Drill into Test DB ---');
+      console.log('  ⚠️ Target: smartdeal_restore_test (Local isolated test database)');
+
+      // Decrypt archive in-memory
+      const decryptedRestoreBuffer = decryptPayload(encryptedPayload);
+      const verifySha256 = crypto.createHash('sha256').update(decryptedRestoreBuffer).digest('hex');
+      if (verifySha256 !== rawSha256) {
+        throw new Error('Integrity Check Failed: Decrypted SHA-256 does not match original plaintext hash!');
+      }
+      console.log(`  ✓ Cryptographic Decryption & SHA-256 Verification: 100% MATCH`);
+
+      const tempRestoreSqlPath = path.join(targetDir, `${batchId}.temp_restore.sql`);
+      fs.writeFileSync(tempRestoreSqlPath, decryptedRestoreBuffer);
+
+      const localPool = new Pool({ host: '127.0.0.1', port: 5433, user: 'postgres', password: '', database: 'postgres' });
+      await localPool.query('DROP DATABASE IF EXISTS smartdeal_restore_test;');
+      await localPool.query('CREATE DATABASE smartdeal_restore_test;');
+      await localPool.end();
+
+      const restoreStart = performance.now();
+      execSync(`"${PSQL_BIN}" -h 127.0.0.1 -p 5433 -U postgres -d smartdeal_restore_test -f "${tempRestoreSqlPath}"`, {
+        stdio: 'pipe'
+      });
+      const restoreMs = Math.round(performance.now() - restoreStart);
+      restoreSec = (restoreMs / 1000).toFixed(2);
+      console.log(`  ✅ Restore successfully executed in ${restoreMs} ms (${restoreSec}s RTO).`);
+
+      // Unlink temp decrypted restore sql immediately
+      fs.unlinkSync(tempRestoreSqlPath);
+
+      // Schema & Table Parity Verification
+      console.log('\n--- Step 6: Verifying Schema, Table & Row Count Parity ---');
+      const restorePool = new Pool({ host: '127.0.0.1', port: 5433, user: 'postgres', password: '', database: 'smartdeal_restore_test' });
+
+      const tablesRes = await restorePool.query(`
+        SELECT table_schema, count(*)::int as count 
+        FROM information_schema.tables 
+        WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
+        GROUP BY table_schema ORDER BY table_schema;
+      `);
+
+      totalTables = tablesRes.rows.reduce((sum, r) => sum + r.count, 0);
+      console.log(`  ✓ Restored Enterprise Tables Count: ${totalTables} (Expected: 63)`);
+      for (const row of tablesRes.rows) {
+        console.log(`    ↳ Schema '${row.table_schema}': ${row.count} tables`);
+      }
+
+      // Representative records check
+      const adminCheck = await restorePool.query(`
+        SELECT a.id, a.user_id, a.role, u.email 
+        FROM administration.admin_users a 
+        JOIN identity.users u ON a.user_id = u.id 
+        ORDER BY a.id;
+      `);
+      console.log(`  ✓ Restored Super Admins: ${adminCheck.rows.length}`);
+
+      const catalogCheck = await restorePool.query('SELECT count(*)::int as count FROM catalog.products;');
+      console.log(`  ✓ Restored Catalog Products: ${catalogCheck.rows[0].count}`);
+
+      await restorePool.end();
+    }
+
+    // 7. Ephemeral Storage Cleanup (Render Cron Safety)
+    if (process.env.EPHEMERAL_STORAGE === 'true' || process.env.RENDER === 'true' || process.argv.includes('--cleanup')) {
+      console.log('\n--- Step 7: Ephemeral Workspace Cleanup ---');
+      try {
+        fs.rmSync(targetDir, { recursive: true, force: true });
+        console.log(`  ✓ Cleaned up ephemeral workspace directory: ${targetDir}`);
+      } catch (cleanErr) {
+        console.warn(`  ⚠️ Could not clean up ephemeral directory: ${cleanErr.message}`);
+      }
+    }
+
+    // 8. Dispatch Success Notification & Heartbeat
+    await sendBackupNotification({
+      type: 'SUCCESS',
+      batchId,
+      rtoSeconds: restoreSec,
+      rpoHours: '24',
+      sha256: rawSha256,
+      sizeKb: rawKb,
+      externalStatus: offsiteResult.status,
+      remoteVerified,
+      details: `Backup batch ${batchId} generated, AES-256-GCM encrypted, verified with SHA-256.`
+    });
+
+    console.log('\n================================================================');
+    console.log(`VERDICT: BACKUP OPERATION SUCCESSFUL (Batch: ${batchId}, Offsite: ${offsiteResult.status})`);
+    console.log('================================================================');
+
+    return {
+      batchId,
+      sha256: rawSha256,
+      byteSize: rawBuffer.length,
+      rtoSeconds: restoreSec,
+      tablesRestored: totalTables,
+      offsiteResult,
+      retentionResult
+    };
+  } catch (err) {
+    console.error('\n❌ Backup Pipeline Aborted:', err.message);
+    await sendBackupNotification({
+      type: 'FAILURE',
+      batchId,
+      details: err.message
+    });
+    throw err;
   }
-
-  // 4. GFS Retention Policy Application
-  console.log('\n--- Step 4: Applying Grandfather-Father-Son (GFS) Retention Policy ---');
-  const retentionResult = applyGfsRetentionPolicy();
-  console.log(`  ✓ Retained Backups: ${retentionResult.retained.length} slots`);
-  retentionResult.retained.forEach(r => console.log(`    ↳ [${r.reason}] ${r.batch}`));
-  if (retentionResult.pruned.length > 0) {
-    console.log(`  ✓ Pruned Expired Backups: ${retentionResult.pruned.length}`);
-    retentionResult.pruned.forEach(p => console.log(`    ↳ Pruned: ${p}`));
-  } else {
-    console.log('  ✓ No expired backup batches required pruning.');
-  }
-
-  // 5. Isolated Restore Drill
-  console.log('\n--- Step 5: Executing Isolated Restore Drill into temporary DB ---');
-  console.log('  ⚠️ Target: smartdeal_restore_test (Local isolated test database)');
-  
-  // Decrypt archive in-memory
-  const decryptedRestoreBuffer = decryptPayload(encryptedPayload);
-  const verifySha256 = crypto.createHash('sha256').update(decryptedRestoreBuffer).digest('hex');
-  if (verifySha256 !== rawSha256) {
-    throw new Error('Integrity Check Failed: Decrypted SHA-256 does not match original plaintext hash!');
-  }
-  console.log(`  ✓ Cryptographic Decryption & SHA-256 Verification: 100% MATCH`);
-
-  const tempRestoreSqlPath = path.join(targetDir, `${batchId}.temp_restore.sql`);
-  fs.writeFileSync(tempRestoreSqlPath, decryptedRestoreBuffer);
-
-  const localPool = new Pool({ host: '127.0.0.1', port: 5433, user: 'postgres', password: '', database: 'postgres' });
-  await localPool.query('DROP DATABASE IF EXISTS smartdeal_restore_test;');
-  await localPool.query('CREATE DATABASE smartdeal_restore_test;');
-  await localPool.end();
-
-  const restoreStart = performance.now();
-  execSync(`"${PSQL_BIN}" -h 127.0.0.1 -p 5433 -U postgres -d smartdeal_restore_test -f "${tempRestoreSqlPath}"`, {
-    stdio: 'pipe'
-  });
-  const restoreMs = Math.round(performance.now() - restoreStart);
-  const restoreSec = (restoreMs / 1000).toFixed(2);
-  console.log(`  ✅ Restore successfully executed in ${restoreMs} ms (${restoreSec}s RTO).`);
-
-  // Unlink temp decrypted restore sql immediately
-  fs.unlinkSync(tempRestoreSqlPath);
-
-  // 6. Schema & Table Parity Verification
-  console.log('\n--- Step 6: Verifying Schema, Table & Row Count Parity ---');
-  const restorePool = new Pool({ host: '127.0.0.1', port: 5433, user: 'postgres', password: '', database: 'smartdeal_restore_test' });
-  
-  const tablesRes = await restorePool.query(`
-    SELECT table_schema, count(*)::int as count 
-    FROM information_schema.tables 
-    WHERE table_schema IN ('identity', 'administration', 'catalog', 'marketplace', 'pricing', 'offers', 'affiliate', 'personalization', 'analytics', 'operations')
-    GROUP BY table_schema ORDER BY table_schema;
-  `);
-
-  const totalTables = tablesRes.rows.reduce((sum, r) => sum + r.count, 0);
-  console.log(`  ✓ Restored Enterprise Tables Count: ${totalTables} (Expected: 63)`);
-  for (const row of tablesRes.rows) {
-    console.log(`    ↳ Schema '${row.table_schema}': ${row.count} tables`);
-  }
-
-  // Representative records check
-  const adminCheck = await restorePool.query(`
-    SELECT a.id, a.user_id, a.role, u.email 
-    FROM administration.admin_users a 
-    JOIN identity.users u ON a.user_id = u.id 
-    ORDER BY a.id;
-  `);
-  console.log(`  ✓ Restored Super Admins: ${adminCheck.rows.length}`);
-  adminCheck.rows.forEach(a => console.log(`    ↳ [${a.id}] ${a.email} (${a.role})`));
-
-  const catalogCheck = await restorePool.query('SELECT count(*)::int as count FROM catalog.products;');
-  console.log(`  ✓ Restored Catalog Products: ${catalogCheck.rows[0].count}`);
-
-  await restorePool.end();
-
-  // 7. Dispatch Success Notification
-  await sendBackupNotification({
-    type: 'SUCCESS',
-    batchId,
-    rtoSeconds: restoreSec,
-    rpoHours: '6 - 24',
-    sha256: rawSha256,
-    sizeKb: rawKb,
-    externalStatus: offsiteResult.status,
-    details: `Backup batch ${batchId} generated, AES-256-GCM encrypted, verified with SHA-256, and restored into test DB in ${restoreSec}s.`
-  });
-
-  console.log('\n================================================================');
-  console.log(`VERDICT: RESTORE DRILL 100% SUCCESSFUL (RTO: ${restoreSec}s, Tables: ${totalTables}/63)`);
-  console.log('================================================================');
-
-  return {
-    batchId,
-    sha256: rawSha256,
-    byteSize: rawBuffer.length,
-    rtoSeconds: restoreSec,
-    tablesRestored: totalTables,
-    offsiteResult,
-    retentionResult
-  };
 }
 
 if (process.argv[1] && process.argv[1].endsWith('automated_backup_manager.mjs')) {
   executeBackupPipelineAndDrill().catch(err => {
-    console.error('Backup Engine Error:', err);
+    console.error('Fatal Backup Engine Error:', err.message);
     process.exit(1);
   });
 }
