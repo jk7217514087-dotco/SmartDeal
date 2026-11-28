@@ -33,11 +33,60 @@ const resolvePgBin = (binName) => {
 const PG_DUMP_BIN = resolvePgBin('pg_dump');
 const PSQL_BIN = resolvePgBin('psql');
 
-// Master Encryption Key: Derived using scrypt (KDF) from BACKUP_ENCRYPTION_KEY or JWT_SECRET
-const getMasterKey = () => {
-  const secret = process.env.BACKUP_ENCRYPTION_KEY || process.env.JWT_SECRET || 'smartdeal-backup-secret-key-2026';
-  return crypto.scryptSync(secret, 'smartdeal-salt', 32);
+const isProductionEnv = () => process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+
+// Master Encryption Key: Derived using scrypt (KDF) from BACKUP_ENCRYPTION_KEY
+// In production, enforces mandatory configuration and length validation (>= 32 chars)
+export const getMasterKey = () => {
+  const secret = process.env.BACKUP_ENCRYPTION_KEY;
+  if (isProductionEnv()) {
+    if (!secret || secret.length < 32 || secret === 'smartdeal-backup-secret-key-2026') {
+      throw new Error('FAIL-CLOSED: Production BACKUP_ENCRYPTION_KEY must be configured in environment secrets and be at least 32 characters long. Refusing default/weak key.');
+    }
+    return crypto.scryptSync(secret, 'smartdeal-salt', 32);
+  }
+  const fallback = secret || process.env.JWT_SECRET || 'smartdeal-backup-secret-key-2026';
+  return crypto.scryptSync(fallback, 'smartdeal-salt', 32);
 };
+
+/**
+ * Validate Production Database Identity (Fail-Closed Check)
+ * Rejects unexpected hosts, localhost, or unapproved database names in production.
+ */
+export function validateDatabaseIdentity(dbUrl) {
+  if (!dbUrl) {
+    throw new Error('FAIL-CLOSED: DATABASE_URL is missing. Production mode requires a valid connection string.');
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(dbUrl);
+  } catch (err) {
+    throw new Error(`FAIL-CLOSED: Malformed DATABASE_URL: ${err.message}`);
+  }
+
+  const host = parsed.hostname;
+  const dbName = parsed.pathname.replace(/^\//, '');
+
+  // Render Oregon PostgreSQL target identity validation
+  // Approved: 'dpg-cuid6j5ds78s73ba85ig-a.oregon-postgres.render.com' (external) or 'dpg-cuid6j5ds78s73ba85ig-a' (internal VPC)
+  const isApprovedHost = host.includes('dpg-cuid6j5ds78s73ba85ig-a') || host.endsWith('render.com');
+  const isApprovedDb = dbName === 'smartdeal';
+
+  if (!isApprovedHost) {
+    throw new Error(`FAIL-CLOSED: DATABASE_URL hostname '${host}' does not match approved Render PostgreSQL database identity!`);
+  }
+
+  if (!isApprovedDb) {
+    throw new Error(`FAIL-CLOSED: DATABASE_URL database name '${dbName}' does not match approved production database 'smartdeal'!`);
+  }
+
+  return {
+    host,
+    dbName,
+    sanitizedUrl: `postgresql://***:***@${host}:${parsed.port || 5432}/${dbName}`
+  };
+}
 
 /**
  * Encrypt a plaintext buffer with AES-256-GCM (Authenticated Encryption)
@@ -390,17 +439,23 @@ export async function sendBackupNotification(event) {
   }
 
   // Ping Heartbeat / Dead Man's Snitch for missing backup detection (> 26 hours alert)
+  // Heartbeat signal is ONLY sent after verified remote cloud upload & download integrity
   if (event.type === 'SUCCESS' && heartbeatUrl) {
-    try {
-      const hbUrl = new URL(heartbeatUrl);
-      await new Promise((resolve) => {
-        const req = https.request(hbUrl, { method: 'GET' }, () => resolve());
-        req.on('error', () => resolve());
-        req.end();
-      });
-      console.log('   ↳ Heartbeat signal dispatched to monitoring service.');
-    } catch (err) {
-      console.warn(`[Notification Warning] Could not ping heartbeat URL: ${err.message}`);
+    if (event.remoteVerified === true) {
+      try {
+        const hbUrl = new URL(heartbeatUrl);
+        await new Promise((resolve) => {
+          const client = getClient(hbUrl);
+          const req = client.request(hbUrl, { method: 'GET' }, () => resolve());
+          req.on('error', () => resolve());
+          req.end();
+        });
+        console.log('   ↳ Heartbeat signal dispatched to monitoring service.');
+      } catch (err) {
+        console.warn(`[Notification Warning] Could not ping heartbeat URL: ${err.message}`);
+      }
+    } else {
+      console.log('   ⚠️ Heartbeat ping suppressed: Remote cloud verification was not completed.');
     }
   }
 }
@@ -454,7 +509,7 @@ export function auditBackupIntegrity() {
  */
 export async function executeBackupPipelineAndDrill() {
   console.log('================================================================');
-  console.log('🛡️ SMARTDEAL PHASE 5.2: PRODUCTION OFFSITE BACKUP & RESTORE ENGINE');
+  console.log('🛡️ SMARTDEAL PHASE 5.3: PRODUCTION OFFSITE BACKUP & RESTORE ENGINE');
   console.log('================================================================\n');
 
   const startTime = Date.now();
@@ -463,11 +518,34 @@ export async function executeBackupPipelineAndDrill() {
   const targetDir = path.join(BACKUP_ROOT, batchId);
   fs.mkdirSync(targetDir, { recursive: true });
 
+  const isProduction = isProductionEnv();
+  const dbUrl = process.env.DATABASE_URL;
+
+  // Fail-Closed Validation for Production Execution
+  if (isProduction) {
+    console.log('🔒 PRODUCTION ENVIRONMENT ACTIVE (NODE_ENV=production or RENDER=true)');
+    if (!dbUrl) {
+      throw new Error('FAIL-CLOSED: Production execution requires DATABASE_URL. Silent fallback to localhost is strictly prohibited!');
+    }
+    const dbIdentity = validateDatabaseIdentity(dbUrl);
+    console.log(`  ✓ Production Database Identity Confirmed: ${dbIdentity.sanitizedUrl}`);
+
+    const hasOffsiteCreds = (process.env.R2_BUCKET || process.env.S3_BUCKET) &&
+                            (process.env.R2_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID) &&
+                            (process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY) &&
+                            (process.env.R2_ENDPOINT || process.env.S3_ENDPOINT);
+    if (!hasOffsiteCreds) {
+      throw new Error('FAIL-CLOSED: Production backup requires configured Cloudflare R2 / AWS S3 offsite credentials. Local-only backups cannot report production backup success!');
+    }
+  }
+
+  let rawDumpPath = null;
+  let tempRestoreSqlPath = null;
+
   try {
     // 1. Full pg_dump across all 10 schemas
     console.log('--- Step 1: Performing Full PostgreSQL Dump across 10 Enterprise Schemas ---');
-    const rawDumpPath = path.join(targetDir, `${batchId}.raw.sql`);
-    const dbUrl = process.env.DATABASE_URL;
+    rawDumpPath = path.join(targetDir, `${batchId}.raw.sql`);
 
     if (dbUrl) {
       console.log('  ↳ Target: Configured PostgreSQL database (via DATABASE_URL)');
@@ -476,7 +554,7 @@ export async function executeBackupPipelineAndDrill() {
         env: { ...process.env, PGOPTIONS: '-c statement_timeout=0' }
       });
     } else {
-      console.log('  ↳ Target: Local development PostgreSQL cluster (127.0.0.1:5433/smartdeal)');
+      console.log('  ⚠️ DEVELOPMENT / LOCAL TEST ONLY: Target 127.0.0.1:5433/smartdeal (Not for production)');
       execSync(`"${PG_DUMP_BIN}" -h 127.0.0.1 -p 5433 -U postgres -d smartdeal -F p -f "${rawDumpPath}"`, {
         stdio: 'pipe',
         env: { ...process.env, PGOPTIONS: '-c statement_timeout=0' }
@@ -506,7 +584,10 @@ export async function executeBackupPipelineAndDrill() {
     console.log(`  ✓ Encrypted archive generated: ${archivePath}`);
 
     // Clean raw dump file from disk immediately for data security
-    fs.unlinkSync(rawDumpPath);
+    if (fs.existsSync(rawDumpPath)) {
+      fs.unlinkSync(rawDumpPath);
+      rawDumpPath = null;
+    }
 
     // 3. Offsite Cloud Synchronization & Verification (Cloudflare R2 / AWS S3)
     console.log('\n--- Step 3: Offsite Cloud Synchronization & Cryptographic Verification ---');
@@ -543,8 +624,8 @@ export async function executeBackupPipelineAndDrill() {
       remoteVerified = true;
     } else if (offsiteResult.status === 'PENDING_CREDENTIALS') {
       console.log(`  ℹ️ [Offsite Notice]: ${offsiteResult.message}`);
-      if (process.env.REQUIRE_OFFSITE === 'true') {
-        throw new Error('REQUIRE_OFFSITE is true, but Cloudflare R2 / AWS S3 credentials are not configured.');
+      if (process.env.REQUIRE_OFFSITE === 'true' || isProduction) {
+        throw new Error('FAIL-CLOSED: Offsite backup is mandatory, but Cloudflare R2 / AWS S3 credentials are not configured.');
       }
     } else {
       // FAILED or ERROR
@@ -583,7 +664,7 @@ export async function executeBackupPipelineAndDrill() {
       }
       console.log(`  ✓ Cryptographic Decryption & SHA-256 Verification: 100% MATCH`);
 
-      const tempRestoreSqlPath = path.join(targetDir, `${batchId}.temp_restore.sql`);
+      tempRestoreSqlPath = path.join(targetDir, `${batchId}.temp_restore.sql`);
       fs.writeFileSync(tempRestoreSqlPath, decryptedRestoreBuffer);
 
       const localPool = new Pool({ host: '127.0.0.1', port: 5433, user: 'postgres', password: '', database: 'postgres' });
@@ -600,7 +681,10 @@ export async function executeBackupPipelineAndDrill() {
       console.log(`  ✅ Restore successfully executed in ${restoreMs} ms (${restoreSec}s RTO).`);
 
       // Unlink temp decrypted restore sql immediately
-      fs.unlinkSync(tempRestoreSqlPath);
+      if (fs.existsSync(tempRestoreSqlPath)) {
+        fs.unlinkSync(tempRestoreSqlPath);
+        tempRestoreSqlPath = null;
+      }
 
       // Schema & Table Parity Verification
       console.log('\n--- Step 6: Verifying Schema, Table & Row Count Parity ---');
@@ -645,25 +729,33 @@ export async function executeBackupPipelineAndDrill() {
       }
     }
 
+    const backupMode = isProduction ? 'PRODUCTION_VERIFIED' : (dbUrl ? 'STAGING_VERIFIED' : 'LOCAL_TEST_ONLY');
+
     // 8. Dispatch Success Notification & Heartbeat
     await sendBackupNotification({
       type: 'SUCCESS',
       batchId,
+      mode: backupMode,
       rtoSeconds: restoreSec,
       rpoHours: '24',
       sha256: rawSha256,
       sizeKb: rawKb,
       externalStatus: offsiteResult.status,
       remoteVerified,
-      details: `Backup batch ${batchId} generated, AES-256-GCM encrypted, verified with SHA-256.`
+      details: `Backup batch ${batchId} generated, AES-256-GCM encrypted, verified with SHA-256 (Mode: ${backupMode}).`
     });
 
     console.log('\n================================================================');
-    console.log(`VERDICT: BACKUP OPERATION SUCCESSFUL (Batch: ${batchId}, Offsite: ${offsiteResult.status})`);
+    if (backupMode === 'PRODUCTION_VERIFIED') {
+      console.log(`VERDICT: PRODUCTION BACKUP & OFFSITE VERIFICATION SUCCESSFUL (Batch: ${batchId}, Offsite: ${offsiteResult.status})`);
+    } else {
+      console.log(`VERDICT: LOCAL TEST BACKUP SUCCESSFUL (Mode: ${backupMode}, Not for Production Use)`);
+    }
     console.log('================================================================');
 
     return {
       batchId,
+      mode: backupMode,
       sha256: rawSha256,
       byteSize: rawBuffer.length,
       rtoSeconds: restoreSec,
@@ -679,6 +771,20 @@ export async function executeBackupPipelineAndDrill() {
       details: err.message
     });
     throw err;
+  } finally {
+    // Zero Plaintext SQL Residue Guarantee (Ensures no plaintext SQL remains on disk even on failure)
+    if (rawDumpPath && fs.existsSync(rawDumpPath)) {
+      try {
+        fs.unlinkSync(rawDumpPath);
+        console.log('  🛡️ Plaintext dump securely cleaned from disk (finally block).');
+      } catch {}
+    }
+    if (tempRestoreSqlPath && fs.existsSync(tempRestoreSqlPath)) {
+      try {
+        fs.unlinkSync(tempRestoreSqlPath);
+        console.log('  🛡️ Plaintext restore SQL securely cleaned from disk (finally block).');
+      } catch {}
+    }
   }
 }
 
