@@ -1,0 +1,53 @@
+name: SmartDeal Automated Daily Backup & Offsite Sync
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC (07:30 IST)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      force_offsite_sync:
+        description: 'Force upload to Cloudflare R2 / AWS S3'
+        required: false
+        default: 'true'
+
+jobs:
+  backup:
+    name: Execute Encrypted Backup & GFS Retention
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install PostgreSQL Client Tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Run Automated Backup Scheduler Daemon
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          BACKUP_NOTIFICATION_WEBHOOK: ${{ secrets.BACKUP_NOTIFICATION_WEBHOOK }}
+        run: node scripts/backup_scheduler_daemon.mjs
+
+      - name: Dispatch Backup Failure Alert on Error
+        if: failure()
+        run: |
+          echo "::error::Automated daily backup workflow failed. Please inspect logs."
