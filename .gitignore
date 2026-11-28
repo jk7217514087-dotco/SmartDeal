@@ -37,7 +37,8 @@ dist/
 dist-ssr/
 
 # Automated database backups
-backups/SMARTDEAL-BACKUP-*
+backups/
+screenshot.png
 
 # Local PostgreSQL Data Directory
 .pgdata/
